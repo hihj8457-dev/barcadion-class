@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>클랜 운영 시스템 - 보스 & 분배 관리</title>
+  <style>
+    /* 눈이 편안한 소프트 다크 테마 변수 설정 */
+    :root {
+      --bg-main: #181a1f;       /* 눈부심이 없는 차분한 다크 슬레이트 배경 */
+      --bg-card: #22252c;       /* 카드 및 섹션 배경 */
+      --bg-input: #2b2f38;      /* 입력창 배경 */
+      --border-color: #353a46;  /* 은은한 구분선 */
+      --text-primary: #e6e8ec;  /* 가독성 높은 오프화이트 본문 */
+      --text-secondary: #9aa1b0;/* 보조 설명 텍스트 */
+      --accent: #56b6c2;        /* 차분한 시안/민트 포인트 컬러 */
+      --accent-hover: #459ca7;
+      --danger: #e06c75;        /* 보스 젠 임박/강조 표시 */
+      --success: #98c379;       /* 등록 완료 상태 표시 */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* 상단 네비게이션 바 */
+    header {
+      background-color: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 20px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .clan-logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background-color: var(--bg-input);
+      color: var(--text-primary);
+    }
+
+    .nav-btn.active {
+      background-color: rgba(86, 182, 194, 0.15);
+      color: var(--accent);
+    }
+
+    /* 메인 컨테이너 */
+    main {
+      max-width: 960px;
+      margin: 32px auto;
+      padding: 0 20px;
+    }
+
+    .page-section {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header {
+      margin-bottom: 24px;
+    }
+
+    .section-header h2 {
+      font-size: 1.5rem;
+      margin-bottom: 6px;
+    }
+
+    .section-header p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    /* 카드 & 테이블 공통 스타일 */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    th {
+      color: var(--text-secondary);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .badge-soon {
+      background-color: rgba(224, 108, 117, 0.15);
+      color: var(--danger);
+    }
+
+    .badge-normal {
+      background-color: rgba(152, 195, 121, 0.15);
+      color: var(--success);
+    }
+
+    /* 폼(입력창) 스타일 */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .submit-btn {
+      background-color: var(--accent);
+      color: #181a1f;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .submit-btn:hover {
+      background-color: var(--accent-hover);
+    }
+
+    /* 모바일 대응 */
+    @media (max-width: 640px) {
+      .nav-container {
+        flex-direction: column;
+        height: auto;
+        padding: 12px;
+        gap: 10px;
+      }
+      .nav-btn {
+        padding: 8px 12px;
+        font-size: 0.88rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 메뉴 -->
+  <header>
+    <div class="nav-container">
+      <div class="clan-logo">CLAN RAID MANAGER</div>
+      <nav>
+        <button class="nav-btn active" onclick="showPage('boss-time', this)">보스 타임</button>
+        <button class="nav-btn" onclick="showPage('boss-join', this)">보스 참여 등록</button>
+        <button class="nav-btn" onclick="showPage('item-apply', this)">분배 아이템 신청</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. 보스 타임 섹션 -->
+    <section id="boss-time" class="page-section active">
+      <div class="section-header">
+        <h2>보스 젠 시간표</h2>
+        <p>주요 필드 및 레이드 보스의 다음 출현 예정 시간입니다.</p>
+      </div>
+
+      <div class="card">
+        <table>
+          <thead>
+            <tr>
+              <th>보스 이름</th>
+              <th>출현 지역</th>
+              <th>다음 젠 예정</th>
+              <th>상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>오르펜</strong></td>
+              <td>포자의 바다</td>
+              <td>21:30</td>
+              <td><span class="badge badge-soon">젠 임박</span></td>
+            </tr>
+            <tr>
+              <td><strong>코어</strong></td>
+              <td>크루마 탑 3층</td>
+              <td>22:15</td>
+              <td><span class="badge badge-normal">대기 중</span></td>
+            </tr>
+            <tr>
+              <td><strong>여왕 개미</strong></td>
+              <td>개미굴 3층</td>
+              <td>23:00</td>
+              <td><span class="badge badge-normal">대기 중</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 2. 보스 참여 등록 섹션 -->
+    <section id="boss-join" class="page-section">
+      <div class="section-header">
+        <h2>보스 참여 등록</h2>
+        <p>참여한 보스를 선택하고 캐릭터명을 등록해 주세요. (분배 기준 자료로 활용됩니다)</p>
+      </div>
+
+      <div class="card">
+        <form onsubmit="handleFormSubmit(event, '참여 등록')">
+          <div class="form-group">
+            <label for="join-nickname">캐릭터 닉네임</label>
+            <input type="text" id="join-nickname" placeholder="인게임 닉네임을 입력하세요" required />
+          </div>
+          <div class="form-group">
+            <label for="join-boss">참여 보스 선택</label>
+            <select id="join-boss" required>
+              <option value="">보스를 선택하세요</option>
+              <option value="오르펜">오르펜 (21:30)</option>
+              <option value="코어">코어 (22:15)</option>
+              <option value="여왕 개미">여왕 개미 (23:00)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="join-note">비고 (선택 사항)</label>
+            <input type="text" id="join-note" placeholder="예: 중도 합류, 막타 참여 등" />
+          </div>
+          <button type="submit" class="submit-btn">참여 등록하기</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 3. 분배 아이템 신청 섹션 -->
+    <section id="item-apply" class="page-section">
+      <div class="section-header">
+        <h2>분배 아이템 신청</h2>
+        <p>획득한 보스 전리품 및 분배 대상 아이템을 신청하는 공간입니다.</p>
+      </div>
+
+      <div class="card">
+        <form onsubmit="handleFormSubmit(event, '분배 신청')">
+          <div class="form-group">
+            <label for="item-nickname">신청자 닉네임</label>
+            <input type="text" id="item-nickname" placeholder="인게임 닉네임을 입력하세요" required />
+          </div>
+          <div class="form-group">
+            <label for="item-name">희망 아이템명</label>
+            <select id="item-name" required>
+              <option value="">현재 분배 가능한 아이템 선택</option>
+              <option value="오르펜의 귀걸이">오르펜의 귀걸이 (1개)</option>
+              <option value="코어의 반지">코어의 반지 (1개)</option>
+              <option value="영웅 제작 레시피">영웅 제작 레시피 (2개)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="item-reason">신청 사유 (착용/컬렉션/판매 분배 등)</label>
+            <textarea id="item-reason" rows="3" placeholder="예: 본캐 직접 착용 목적입니다." required></textarea>
+          </div>
+          <button type="submit" class="submit-btn">아이템 분배 신청</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // 메뉴 클릭 시 페이지(섹션) 전환 함수
+    function showPage(pageId, clickedBtn) {
+      // 모든 섹션 숨기기
+      document.querySelectorAll('.page-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      // 모든 메뉴 버튼 활성화 해제
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // 선택한 섹션과 버튼만 활성화
+      document.getElementById(pageId).classList.add('active');
+      clickedBtn.classList.add('active');
+    }
+
+    // 폼 제출 임시 알림 (추후 구글 시트 또는 디스코드 웹훅 연동 가능)
+    function handleFormSubmit(event, type) {
+      event.preventDefault();
+      alert(type + '이(가) 접수되었습니다! (현재는 화면 데모 상태입니다)');
+      event.target.reset();
+    }
+  </script>
+</body>
+</html>

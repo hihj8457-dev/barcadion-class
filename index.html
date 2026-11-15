@@ -104,14 +104,16 @@
             
             <div style="display: flex; flex-direction: column; gap: 14px;">
                 <div>
-                    <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px;">아이디 (닉네임)</label>
-                    <input type="text" id="auth-id" onkeyup="if(event.key==='Enter') handleAuthAction()" style="width: 100%; box-sizing: border-box; background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px 14px; color: white; font-size: 15px;" placeholder="아이디 입력">
+                    <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px;">로그인 아이디</label>
+                    <input type="text" id="auth-id" onkeyup="if(event.key==='Enter') handleAuthAction()" style="width: 100%; box-sizing: border-box; background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px 14px; color: white; font-size: 15px;" placeholder="영문 소문자·숫자·_ (4~20자)">
                 </div>
                 <div>
                     <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px;">비밀번호</label>
                     <input type="password" id="auth-pw" onkeyup="if(event.key==='Enter') handleAuthAction()" style="width: 100%; box-sizing: border-box; background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px 14px; color: white; font-size: 15px;" placeholder="비밀번호 입력">
                 </div>
 
+                <p id="auth-login-hint" style="font-size:11px;color:#94a3b8">기존 웹 관리자 계정은 등록한 이메일로 로그인할 수 있습니다.</p>
+                <div id="register-nickname-wrap" style="display:none"><label style="font-size:13px;color:#cbd5e1">게임 닉네임</label><input id="reg-nickname" maxlength="30" placeholder="게임 닉네임" style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:12px;color:white"></div>
                 <!-- 회원가입 추가 필드 -->
                 <div id="register-fields" style="display: none; flex-direction: column; gap: 12px;">
                     <div>
@@ -309,7 +311,7 @@
                             </div>
                         </div>
                         <div id="admin-control-panel" class="hidden space-y-2 pt-2 border-t border-slate-700">
-                            <p class="text-xs font-bold text-amber-400">관리자 전용 제어</p>
+                            <p class="text-xs font-bold text-amber-400">관리자 전용 제어</p><button type="button" onclick="initializeCloudDefaults()" class="w-full bg-emerald-700 text-white py-2 rounded-xl text-xs">최초 기본 데이터 등록 (한 번만)</button>
                             <button type="button" onclick="openWeeklyArchiveModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold">주간 보스 참여 내역 보관함</button>
                             <button onclick="openUserManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
                                 <i class="fa-solid fa-users-gear mr-1"></i> 길드원 직급 및 권한 관리
@@ -446,7 +448,7 @@
                 <button onclick="closeSiteSettingsModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-5 overflow-y-auto space-y-4 flex-1">
-                <p class="text-xs text-slate-400">아래 항목은 관리자 계정에서 수정할 수 있습니다. 화면 높이는 4개 메인 패널에 적용됩니다. 현재 데이터 저장은 브라우저별 localStorage 방식이라 다른 사용자 기기와 자동 공유되지는 않습니다.</p>
+                <p class="text-xs text-slate-400">아래 항목은 관리자 계정에서 수정할 수 있습니다. 화면 높이는 4개 메인 패널에 적용됩니다. 데이터는 Firebase에 저장되어 로그인한 길드원과 실시간 공유됩니다.</p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <label class="text-xs text-slate-300">홈페이지 제목<input id="setting-site-title" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
                     <label class="text-xs text-slate-300">홈페이지 부제목<input id="setting-site-subtitle" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
@@ -526,11 +528,12 @@
         </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script>
         const DEFAULT_DB = {
-            users: [
-                { id: '원투뜨리', pw: '123123', role: '웹 관리자', class: '레인저', power: 411121 }
-            ],
+            users: [],
             currentUser: null,
             settings: {
                 siteTitle: '바르카디온3 클래스',
@@ -602,148 +605,191 @@
             ]
         };
 
-        let db;
-        try {
-            const raw = localStorage.getItem('barcadion_db_v3');
-            db = raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(DEFAULT_DB));
-            if (!db.users || !Array.isArray(db.users) || db.users.length === 0) {
-                db.users = JSON.parse(JSON.stringify(DEFAULT_DB.users));
-            }
-        } catch (e) {
-            db = JSON.parse(JSON.stringify(DEFAULT_DB));
-        }
-
-        // 이전 버전의 최초 계정만 '웹 관리자'로 승격 (기존 저장 데이터 보존)
-        const initialWebAdminId = DEFAULT_DB.users[0].id;
-        const initialWebAdmin = db.users.find(u => u.id === initialWebAdminId);
-        if (initialWebAdmin && initialWebAdmin.role !== '웹 관리자') { initialWebAdmin.role = '웹 관리자'; try { localStorage.setItem('barcadion_db_v3', JSON.stringify(db)); } catch (e) { console.warn('관리자 등급 마이그레이션 저장 실패',e); } }
-        // 이전 기본 티어 6종만 사용 중인 브라우저는 새 분배 기준으로 전환한다.
-        const oldDefaultTierNames = ['영웅 5티어','영웅 4티어','영웅 3티어','영웅 2티어','영웅 1티어','전설 편린'];
-        if (!Array.isArray(db.tiers) || (db.tiers.length === 6 && db.tiers.every((t,i) => t.name === oldDefaultTierNames[i]))) {
-            db.tiers = JSON.parse(JSON.stringify(DEFAULT_DB.tiers));
-            try { localStorage.setItem('barcadion_db_v3', JSON.stringify(db)); } catch(e) { console.warn(e); }
-        }
-        db.tiers.forEach(t => { if (!t.category) t.category = '기타'; if (t.note == null) t.note = ''; });
-        if (!Array.isArray(db.items)) db.items = JSON.parse(JSON.stringify(DEFAULT_DB.items));
-        // 스키마 업데이트: 기존 길드원/신청/참여 기록을 삭제하지 않고 새 필드만 보충
-        const APP_SCHEMA_VERSION = 4;
-        if (!db.bossRecords || typeof db.bossRecords !== 'object') db.bossRecords = {};
-        if (!Array.isArray(db.weeklyArchives)) db.weeklyArchives = [];
-        if (!db.guildDiamondsByWeek || typeof db.guildDiamondsByWeek !== 'object') db.guildDiamondsByWeek = {};
-        if (!Array.isArray(db.bossListDef)) db.bossListDef = JSON.parse(JSON.stringify(DEFAULT_DB.bossListDef));
-        if (!db.bossScores) db.bossScores = JSON.parse(JSON.stringify(DEFAULT_DB.bossScores));
-        db.schemaVersion = APP_SCHEMA_VERSION;
-        db.items.forEach(item => { if (item && item.id != null) item.id = String(item.id); });
-        if (!db.settings) db.settings = JSON.parse(JSON.stringify(DEFAULT_DB.settings));
-        else db.settings = { ...DEFAULT_DB.settings, ...db.settings,
-            panelTitles: (db.settings.panelTitles || DEFAULT_DB.settings.panelTitles).map(v => String(v).replace(/^\s*[1-4]\.\s*/, '')),
-            tabLabels: { ...DEFAULT_DB.settings.tabLabels, ...(db.settings.tabLabels || {}) } };
-        const oldGuide = '40~60보스: 1점 | 70: 3점 | 75: 6점 | 80: 10점\n85: 15점 | 90: 20점 | 툴칸: 10점 | 라세리엔: 5점 | 발락: 30점';
-        if (db.settings.bossGuide === oldGuide) db.settings.bossGuide = DEFAULT_DB.settings.bossGuide;
-        let isRegisterMode = false;
-
-        function saveDB() {
-            try { localStorage.setItem('barcadion_db_v3', JSON.stringify(db)); }
-            catch (error) { console.error('저장 실패', error); alert('브라우저 저장에 실패했습니다. 저장 공간 또는 브라우저 설정을 확인하세요.'); }
-        }
-
-        window.onload = function() {
-            const savedUser = localStorage.getItem('barcadion_logged_user_v3');
-            if (savedUser && db.users.find(u => u.id === savedUser && u.approved !== false)) {
-                db.currentUser = savedUser;
-            }
-            ensureWeeklyRollover();
-            checkLoginState();
+        // Firebase Authentication + Cloud Firestore (GitHub Pages에서 CDN compat SDK 사용)
+        const FIREBASE_CONFIG = {
+          apiKey: "AIzaSyDttsNfHyL602vtx3AGTFW03jUoWEhS7pI",
+          authDomain: "barcadion-class.firebaseapp.com",
+          projectId: "barcadion-class",
+          storageBucket: "barcadion-class.firebasestorage.app",
+          messagingSenderId: "303286941468",
+          appId: "1:303286941468:web:1caa30acca126d32c82cd9"
         };
-
+        firebase.initializeApp(FIREBASE_CONFIG);
+        const auth = firebase.auth();
+        const store = firebase.firestore();
+        const ADMIN_UID = 'j33OjGYk9XXj5xiL8BG6iTsV3uw2';
+        let db = JSON.parse(JSON.stringify(DEFAULT_DB));
+        db.bossSpawnAnchors = {};
+        let isRegisterMode = false;
+        let cloudReady = false, cloudUnsubs = [], cloudUser = null, lastSnapshot = null;
+        let profileDocs = new Map(), recordDocs = new Map(), itemDocs = new Map(), applicationDocs = new Map();
+        const clone = x => JSON.parse(JSON.stringify(x));
+        const stable = x => JSON.stringify(x);
+        const errorText = e => (e && (e.message || e.code)) || String(e);
+        function showAuthError(msg) { const el=document.getElementById('auth-error'); el.textContent=msg; el.style.display='block'; }
+        function cloudProfile(u) { return {nickname:u.id, role:u.role==='웹 관리자'?'web_admin':u.role==='마스터'?'master':u.role==='운영진'?'staff':'member',approved:u.approved!==false,class:u.class||'레인저',power:Number(u.power)||0}; }
+        function localProfile(id,uid,d) {return {id,uid,role:d.role==='web_admin'?'웹 관리자':d.role==='master'?'마스터':d.role==='staff'?'운영진':'길드원',approved:true,class:d.class||'레인저',power:Number(d.power)||0};}
+        function cloudManager() {return cloudUser && ['web_admin','master','staff'].includes(profileDocs.get(cloudUser.uid)?.role) ;}
+        function cloudAdmin() {return cloudUser && profileDocs.get(cloudUser.uid)?.role==='web_admin' ;}
+        function detachCloud() { cloudUnsubs.forEach(fn=>fn()); cloudUnsubs=[]; cloudReady=false; profileDocs.clear();recordDocs.clear();itemDocs.clear();applicationDocs.clear();lastSnapshot=null; }
+        function buildCloudView() {
+          if (!cloudUser || !profileDocs.has(cloudUser.uid)) return;
+          const own = profileDocs.get(cloudUser.uid);
+          const shared = window.__sharedData || {};
+          const next = clone(DEFAULT_DB);
+          next.users = [...profileDocs].map(([uid,d])=>localProfile(d.nickname||uid,uid,d));
+          next.currentUser = own.nickname;
+          ['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','guildDiamondsByWeek','activeWeekKey'].forEach(k=>{
+            if(shared[k]!==undefined) next[k]=clone(shared[k]);
+          });
+          next.bossRecords={};
+          recordDocs.forEach((rec,uid)=>{const nick=profileDocs.get(uid)?.nickname; if(nick) next.bossRecords[nick]=clone(rec);});
+          next.items=[...itemDocs].map(([id,d])=>{
+            const applicants=[...applicationDocs].filter(([key,v])=>key.startsWith(id+'::') && v===true).map(([key])=>profileDocs.get(key.split('::')[1])?.nickname).filter(Boolean);
+            return {...clone(d),id,applicants,applicant:applicants[0]||null};
+          });
+          next.weeklyArchives=clone(window.__archiveData?.weeklyArchives||[]);
+          db=next; lastSnapshot=clone(next); cloudReady=true;
+          try {ensureWeeklyRollover();checkLoginState();} catch(e){console.error(e);}
+        }
+        function subscribeCloud() {
+          detachCloud();
+          cloudUnsubs.push(store.collection('users').onSnapshot(s=>{profileDocs=new Map(s.docs.map(d=>[d.id,d.data()]));
+            const me=profileDocs.get(cloudUser?.uid);
+            if(!me){cloudReady=false;document.getElementById('app-container').classList.add('hidden');document.getElementById('auth-modal').style.display='flex';showAuthError('계정 정보가 없거나 탈퇴 처리되었습니다.');return;}
+            buildCloudView();},e=>showAuthError('회원 정보 조회 실패: '+errorText(e))));
+          cloudUnsubs.push(store.doc('guildData/main').onSnapshot(s=>{window.__sharedData=s.exists?s.data():{};buildCloudView();},e=>console.error(e)));
+          cloudUnsubs.push(store.collection('bossRecords').onSnapshot(s=>{recordDocs=new Map(s.docs.map(d=>[d.id,d.data().entries||{}]));buildCloudView();},e=>console.error(e)));
+          cloudUnsubs.push(store.collection('items').onSnapshot(s=>{itemDocs=new Map(s.docs.map(d=>[d.id,d.data()]));buildCloudView();},e=>console.error(e)));
+          cloudUnsubs.push(store.doc('guildPrivate/archives').onSnapshot(s=>{window.__archiveData=s.exists?s.data():{};buildCloudView();},e=>{window.__archiveData={};}));
+          cloudUnsubs.push(store.collection('applications').onSnapshot(s=>{applicationDocs=new Map(s.docs.map(d=>[d.id,d.data().active===true]));buildCloudView();},e=>console.error(e)));
+        }
+        async function persistCloudChanges(before,after) {
+          if(!cloudReady || !cloudUser) throw new Error('서버 데이터 로딩 중입니다. 잠시 후 다시 시도하세요.');
+          const me=profileDocs.get(cloudUser.uid);
+          if(!me) throw new Error('등록된 계정만 저장할 수 있습니다.');
+          const ops=[];
+          const prevUsers=new Map(before.users.map(u=>[u.uid,u]));
+          const newUsers=new Map(after.users.map(u=>[u.uid,u]));
+          for(const [uid,u] of newUsers) {
+            const old=prevUsers.get(uid);
+            if(!old || stable(u)!==stable(old)) {
+              if(!uid) throw new Error('Firebase UID가 없는 사용자입니다.');
+              const data=cloudProfile(u);
+              if(uid!==cloudUser.uid && !cloudAdmin())throw new Error('다른 회원 정보는 웹 관리자만 수정할 수 있습니다.');
+              if(uid===cloudUser.uid && !cloudAdmin() && old && (data.role!==cloudProfile(old).role||data.approved!==cloudProfile(old).approved)) throw new Error('본인의 권한은 변경할 수 없습니다.');
+              ops.push(store.doc('users/'+uid).update(data));
+            }
+          }
+          for(const [uid,u] of prevUsers) if(!newUsers.has(uid)) {
+            if(!cloudAdmin() || uid===ADMIN_UID) throw new Error('탈퇴 처리는 웹 관리자만 할 수 있습니다.');
+            ops.push(store.doc('users/'+uid).delete());
+          }
+          const sharedKeys=['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','guildDiamondsByWeek','activeWeekKey'];
+          if(stable(before.weeklyArchives)!==stable(after.weeklyArchives)){if(!cloudManager())throw new Error('보관함은 관리자만 수정할 수 있습니다.');ops.push(store.doc('guildPrivate/archives').set({weeklyArchives:clone(after.weeklyArchives)}));}
+          const delta={};
+          sharedKeys.forEach(k=>{if(stable(before[k])!==stable(after[k]))delta[k]=clone(after[k]??null);});
+          if(Object.keys(delta).length){if(!cloudManager()) throw new Error('관리자 권한이 필요한 작업입니다.');ops.push(store.doc('guildData/main').set(delta,{merge:true}));}
+          const oldRec=before.bossRecords||{},newRec=after.bossRecords||{};
+          for(const name of new Set([...Object.keys(oldRec),...Object.keys(newRec)])){
+            if(stable(oldRec[name]||{})===stable(newRec[name]||{}))continue;
+            const uid=after.users.find(u=>u.id===name)?.uid || before.users.find(u=>u.id===name)?.uid;
+            if(!uid)continue;
+            if(uid!==cloudUser.uid && !cloudManager())throw new Error('다른 길드원의 보스 기록은 변경할 수 없습니다.');
+            ops.push(store.doc('bossRecords/'+uid).set({entries:clone(newRec[name]||{})}));
+          }
+          const oldItems=new Map((before.items||[]).map(i=>[String(i.id),i]));
+          const newItems=new Map((after.items||[]).map(i=>[String(i.id),i]));
+          for(const [id,item] of newItems){
+            const old=oldItems.get(id);
+            const base=x=>({name:x.name,category:x.category,price:Number(x.price)||0,distributed:!!x.distributed});
+            if(!old||stable(base(old))!==stable(base(item))){if(!cloudManager())throw new Error('아이템 수정은 관리자만 가능합니다.');ops.push(store.doc('items/'+id).set(base(item)));}
+            const oldApplicants=new Set(old?.applicants||[]),newApplicants=new Set(item.applicants||[]);
+            for(const nick of new Set([...oldApplicants,...newApplicants])){
+              if(oldApplicants.has(nick)===newApplicants.has(nick))continue;
+              const uid=after.users.find(u=>u.id===nick)?.uid||before.users.find(u=>u.id===nick)?.uid;
+              if(!uid)continue;
+              if(uid!==cloudUser.uid&&!cloudManager())throw new Error('본인 신청만 수정할 수 있습니다.');
+              const key=id+'::'+uid;
+              ops.push(store.doc('applications/'+key).set({itemId:id,userId:uid,active:newApplicants.has(nick)}));
+            }
+          }
+          for(const id of oldItems.keys())if(!newItems.has(id)){
+            if(!cloudManager())throw new Error('관리자만 아이템을 삭제할 수 있습니다.');
+            ops.push(store.doc('items/'+id).delete());
+          }
+          await Promise.all(ops);
+        }
+        function saveDB() {
+          if(!cloudReady)return;
+          const before=lastSnapshot;
+          const after=clone(db);
+          lastSnapshot=after;
+          persistCloudChanges(before,after).catch(e=>{console.error(e);alert('서버 저장 실패: '+errorText(e));});
+        }
+        auth.onAuthStateChanged(async user=>{
+          cloudUser=user;
+          if(!user){detachCloud();db=clone(DEFAULT_DB);db.currentUser=null;checkLoginState();return;}
+          subscribeCloud();
+        });
+        window.onload=()=>{checkLoginState();};
         function checkLoginState() {
-            const authModal = document.getElementById('auth-modal');
-            const appContainer = document.getElementById('app-container');
-
-            if (db.currentUser && !db.users.some(u=>u.id===db.currentUser && u.approved!==false)) db.currentUser=null;
-            if (db.currentUser) {
-                authModal.style.display = 'none';
-                appContainer.classList.remove('hidden');
-                initApp();
-            } else {
-                authModal.style.display = 'flex';
-                appContainer.classList.add('hidden');
-            }
+          const visible=!!(cloudUser&&cloudReady&&profileDocs.has(cloudUser.uid));
+          document.getElementById('auth-modal').style.display=visible?'none':'flex';
+          document.getElementById('app-container').classList.toggle('hidden',!visible);
+          if(visible)initApp();
         }
-
         function toggleAuthMode() {
-            isRegisterMode = !isRegisterMode;
-            const title = document.getElementById('auth-title');
-            const submitBtn = document.getElementById('auth-submit-btn');
-            const toggleBtn = document.getElementById('auth-toggle-btn');
-            const regFields = document.getElementById('register-fields');
-            const autoLoginBox = document.getElementById('auto-login-box');
-
-            if (isRegisterMode) {
-                title.innerText = "바르카디온3 클래스 회원가입";
-                submitBtn.innerText = "회원가입 완료";
-                toggleBtn.innerText = "이미 계정이 있으신가요? 로그인";
-                regFields.style.display = 'flex';
-                autoLoginBox.style.display = 'none';
-            } else {
-                title.innerText = "바르카디온3 클래스 로그인";
-                submitBtn.innerText = "로그인";
-                toggleBtn.innerText = "계정이 없으신가요? 회원가입";
-                regFields.style.display = 'none';
-                autoLoginBox.style.display = 'flex';
-            }
-            document.getElementById('auth-error').style.display = 'none';
+          isRegisterMode=!isRegisterMode;
+          document.getElementById('auth-title').innerText=isRegisterMode?'바르카디온3 클래스 회원가입':'바르카디온3 클래스 로그인';
+          document.getElementById('auth-submit-btn').innerText=isRegisterMode?'회원가입':'로그인';
+          document.getElementById('auth-toggle-btn').innerText=isRegisterMode?'이미 계정이 있으신가요? 로그인':'계정이 없으신가요? 회원가입';
+          document.getElementById('register-fields').style.display=isRegisterMode?'flex':'none';
+          document.getElementById('register-nickname-wrap').style.display=isRegisterMode?'block':'none';
+          document.getElementById('auto-login-box').style.display=isRegisterMode?'none':'flex';
+          document.getElementById('auth-error').style.display='none';
+          document.getElementById('auth-login-hint').style.display=isRegisterMode?'none':'block';
         }
-
-        function handleAuthAction() {
-            const id = document.getElementById('auth-id').value.trim();
-            const pw = document.getElementById('auth-pw').value.trim();
-            const errorBox = document.getElementById('auth-error');
-
-            if (!id || !pw) {
-                errorBox.innerText = "아이디와 비밀번호를 모두 입력해주세요.";
-                errorBox.style.display = 'block';
-                return;
-            }
-
-            if (isRegisterMode) {
-                const exist = db.users.find(u => u.id === id);
-                if (exist) {
-                    errorBox.innerText = "이미 존재하는 아이디입니다.";
-                    errorBox.style.display = 'block';
-                    return;
-                }
-                const newCls = document.getElementById('reg-class').value;
-                const newPower = parseInt(document.getElementById('reg-power').value) || 0;
-                db.users.push({ id, pw, role: '길드원', class: newCls, power: newPower, approved: false });
-                saveDB();
-                alert("가입 신청이 접수되었습니다. 웹 관리자의 승인을 받은 후 로그인할 수 있습니다. (이 브라우저에만 신청이 저장됩니다.)");
-                toggleAuthMode();
-            } else {
-                const user = db.users.find(u => u.id === id && u.pw === pw);
-                if (!user) {
-                    errorBox.innerText = "아이디 또는 비밀번호가 일치하지 않습니다.";
-                    errorBox.style.display = 'block';
-                    return;
-                }
-                if (user.approved === false) {
-                    errorBox.innerText = '웹 관리자 가입 승인 대기 중입니다.';
-                    errorBox.style.display = 'block'; return;
-                }
-                db.currentUser = user.id;
-                
-                const isAutoLogin = document.getElementById('auto-login-check').checked;
-                if (isAutoLogin) {
-                    localStorage.setItem('barcadion_logged_user_v3', user.id);
-                } else {
-                    localStorage.removeItem('barcadion_logged_user_v3');
-                }
-
-                saveDB();
-                checkLoginState();
-            }
+        // 닉네임과 독립된 고정 로그인 ID. Firebase Auth에는 내부용 주소로 변환하여 전달합니다.
+        // 이 주소는 실제 수신 가능한 이메일이 아니므로 비밀번호 이메일 재설정은 지원하지 않습니다.
+        const LOGIN_DOMAIN = 'barcadion-class.firebaseapp.com';
+        function loginEmail(loginId, registration=false) {
+          const id=loginId.trim().toLowerCase();
+          if (!registration && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(id)) return id; // 기존 웹 관리자 이메일
+          if (!/^[a-z0-9_]{4,20}$/.test(id)) throw new Error('로그인 아이디는 영문 소문자, 숫자, 밑줄(_) 4~20자로 입력하세요.');
+          return 'bc_'+id+'@'+LOGIN_DOMAIN;
         }
-
+        async function handleAuthAction() {
+          const loginId=document.getElementById('auth-id').value.trim();
+          const pw=document.getElementById('auth-pw').value;
+          if(!loginId||!pw)return showAuthError('로그인 아이디와 비밀번호를 입력하세요.');
+          const btn=document.getElementById('auth-submit-btn');btn.disabled=true;
+          try {
+            const email=loginEmail(loginId,isRegisterMode);
+            if(isRegisterMode){
+              const nickname=document.getElementById('reg-nickname').value.trim();
+              const power=Number(document.getElementById('reg-power').value);
+              if(!nickname||nickname.length>30)throw new Error('게임 닉네임을 입력하세요 (최대 30자).');
+              if(!Number.isSafeInteger(power)||power<0)throw new Error('전투력을 올바르게 입력하세요.');
+              if(pw.length<6)throw new Error('비밀번호는 최소 6자 이상이어야 합니다.');
+              await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+              const cred=await auth.createUserWithEmailAndPassword(email,pw);
+              try {
+                await store.doc('users/'+cred.user.uid).set({loginId:loginId.toLowerCase(),nickname,role:'member',approved:true,class:document.getElementById('reg-class').value,power});
+              } catch(e) {await auth.signOut();throw new Error('계정은 생성되었지만 프로필 저장에 실패했습니다. 관리자에게 문의하세요. '+errorText(e));}
+              alert('회원가입 완료! 로그인 아이디와 게임 닉네임은 서로 독립적입니다.');
+              isRegisterMode=false;
+            } else {
+              await auth.setPersistence(document.getElementById('auto-login-check').checked?firebase.auth.Auth.Persistence.LOCAL:firebase.auth.Auth.Persistence.SESSION);
+              const cred=await auth.signInWithEmailAndPassword(email,pw);
+              const doc=await store.doc('users/'+cred.user.uid).get();
+              if(!doc.exists){await auth.signOut();throw new Error('회원 정보가 없거나 탈퇴 처리된 계정입니다.');}
+            }
+          }catch(e){
+            const code=e?.code||'';
+            showAuthError(code==='auth/email-already-in-use'?'이미 사용 중인 로그인 아이디입니다.':code==='auth/invalid-credential'?'아이디 또는 비밀번호가 올바르지 않습니다.':errorText(e));
+          }finally{btn.disabled=false;}
+        }
         function openMyProfileModal() {
             const u = db.users.find(u=>u.id===db.currentUser);
             if (!u) return;
@@ -754,47 +800,21 @@
         }
         function closeMyProfileModal() { document.getElementById('my-profile-modal').classList.add('hidden'); }
         function saveMyProfile() {
-            const u=db.users.find(u=>u.id===db.currentUser);
-            if (!u) return;
-            const oldId=u.id;
-            const newId=document.getElementById('my-profile-id').value.trim();
-            const powerRaw=document.getElementById('my-profile-power').value.trim();
-            const power=Number(powerRaw);
+            const u=db.users.find(x=>x.uid===cloudUser?.uid); if(!u)return;
+            const nickname=document.getElementById('my-profile-id').value.trim();
+            const power=Number(document.getElementById('my-profile-power').value);
             const cls=document.getElementById('my-profile-class').value;
-            if (!newId || newId.length>30 || !powerRaw || !Number.isSafeInteger(power) || power<0) {alert('닉네임과 올바른 전투력을 입력하세요.');return;}
-            if (newId!==oldId && db.users.some(x=>x.id===newId)) {alert('이미 사용 중인 닉네임입니다.');return;}
-            if (newId!==oldId && !confirm('닉네임을 변경하면 기존 참여 기록과 아이템 신청자 이름도 변경됩니다. 계속할까요?')) return;
-            if (newId!==oldId) {
-                // 기존 기록, 주간 보관함, 신청 내역의 계정 참조를 일괄 이전
-                if (db.bossRecords && Object.prototype.hasOwnProperty.call(db.bossRecords,oldId)) {
-                    db.bossRecords[newId]=db.bossRecords[oldId]; delete db.bossRecords[oldId];
-                }
-                (db.items||[]).forEach(item=>{
-                    if (Array.isArray(item.applicants)) item.applicants=item.applicants.map(x=>x===oldId?newId:x);
-                    if(item.applicant===oldId)item.applicant=newId;
-                });
-                (db.weeklyArchives||[]).forEach(a=>{
-                    ['records','scores'].forEach(k=>{
-                        if(a[k] && !Array.isArray(a[k]) && Object.prototype.hasOwnProperty.call(a[k],oldId)) {
-                            a[k][newId]=a[k][oldId]; delete a[k][oldId];
-                        }
-                    });
-                });
-                u.id=newId;
-                db.currentUser=newId;
-                if(localStorage.getItem('barcadion_logged_user_v3')===oldId) localStorage.setItem('barcadion_logged_user_v3',newId);
+            if(!nickname||nickname.length>30||!Number.isSafeInteger(power)||power<0)return alert('닉네임과 전투력을 확인하세요.');
+            if(db.users.some(x=>x.uid!==u.uid&&x.id===nickname))return alert('중복된 닉네임입니다.');
+            const old=u.id;
+            if(old!==nickname){
+              if(db.bossRecords[old]){db.bossRecords[nickname]=db.bossRecords[old];delete db.bossRecords[old];}
+              db.items.forEach(i=>{i.applicants=(i.applicants||[]).map(n=>n===old?nickname:n);});
+              u.id=nickname;db.currentUser=nickname;
             }
-            u.power=power; u.class=cls;
-            saveDB(); closeMyProfileModal(); initApp();
-            alert('회원정보가 변경되었습니다.');
+            u.power=power;u.class=cls;saveDB();closeMyProfileModal();initApp();
         }
-
-        function logout() {
-            db.currentUser = null;
-            localStorage.removeItem('barcadion_logged_user_v3');
-            saveDB();
-            checkLoginState();
-        }
+        async function logout(){await auth.signOut();}
 
         function initApp() {
             const currentUserObj = db.users.find(u => u.id === db.currentUser);
@@ -1136,7 +1156,7 @@
         }
 
         function renderNotice() {
-            document.getElementById('notice-text-view').innerHTML = db.notice.replace(/\n/g, '<br>');
+            document.getElementById('notice-text-view').innerHTML = escapeHtml(db.notice).replace(/\n/g, '<br>');
             document.getElementById('notice-input').value = db.notice;
         }
         function saveNotice() {
@@ -1147,7 +1167,7 @@
         }
 
         function renderMembers() {
-            const sorted = db.users.filter(u=>u.approved !== false).slice().sort((a,b)=>Number(b.power||0)-Number(a.power||0));
+            const sorted = db.users.slice().sort((a,b)=>Number(b.power||0)-Number(a.power||0));
             const memberWeeklyScores = weeklyScores(currentWeekKey());
 
             let html = '';
@@ -1646,8 +1666,8 @@
         }
         function ensureWeeklyRollover() {
             const nowKey = currentWeekKey();
-            if (!db.activeWeekKey) { db.activeWeekKey = nowKey; saveDB(); return; }
-            if (db.activeWeekKey !== nowKey) {
+            if (!db.activeWeekKey) { if(cloudManager() && window.__sharedData && Object.keys(window.__sharedData).length){ db.activeWeekKey = nowKey; saveDB(); } return; }
+            if (db.activeWeekKey !== nowKey && cloudManager() && window.__sharedData && Object.keys(window.__sharedData).length) {
                 if (db.activeWeekKey < nowKey) archiveWeek(db.activeWeekKey);
                 db.activeWeekKey = nowKey;
                 saveDB();
@@ -1712,24 +1732,13 @@
             if (db.currentUser && db.activeWeekKey !== currentWeekKey()) { ensureWeeklyRollover(); renderDiamondSummary(); }
         }, 1000);
 
-        function approveSignup(userId) {
-            if (!isWebAdministrator()) { alert('가입 승인은 웹 관리자만 할 수 있습니다.'); return; }
-            const u=db.users.find(x=>x.id===userId);
-            if (!u) return;
-            u.approved=true; saveDB(); openUserManageModal(); renderMembers();
-        }
         function isWebAdministrator() {
             return db.users.some(u=>u.id===db.currentUser && u.role==='웹 관리자');
         }
         function openUserManageModal() {
             if (!isCurrentAdmin()) return;
             let html = '';
-            if (isWebAdministrator()) {
-                const pending=db.users.filter(u=>u.approved===false);
-                html += `<div class="text-amber-400 font-bold mb-2">가입 승인 대기 (${pending.length}명)</div>`;
-                html += pending.map(u=>`<div class="bg-slate-900/70 border border-amber-500/40 rounded-xl p-3 mb-2 flex items-center justify-between gap-2"><span class="text-sm">${escapeHtml(u.id)} · ${escapeHtml(u.class)} · ${Number(u.power||0).toLocaleString()}</span><div class="flex gap-2"><button onclick="approveSignup(decodeURIComponent('${encodeURIComponent(u.id)}'))" class="bg-emerald-600 text-white px-3 py-1 rounded">승인</button><button onclick="deleteUser(decodeURIComponent('${encodeURIComponent(u.id)}'))" class="bg-red-700 text-white px-3 py-1 rounded">거절</button></div></div>`).join('');
-            }
-            db.users.filter(u=>u.approved!==false).forEach(u => {
+            db.users.forEach(u => {
                 html += `
                     <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 flex justify-between items-center text-xs">
                         <div>
@@ -1738,7 +1747,7 @@
                             <div class="flex flex-wrap gap-1 mt-2">
                                 <select id="manage-class-${escapeAttribute(u.id)}" class="w-28 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white">${['레인저','소서리스','파이터','어쌔신'].map(c => `<option value="${c}" ${u.class === c ? 'selected' : ''}>${c}</option>`).join('')}</select>
                                 <input id="manage-power-${escapeAttribute(u.id)}" type="number" value="${Number(u.power)||0}" placeholder="전투력" class="w-24 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white">
-                                <input id="manage-pw-${escapeAttribute(u.id)}" type="password" placeholder="비밀번호 변경(선택)" class="w-32 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white">
+                                
                                 <button onclick="saveUserDetails('${escapeAttribute(u.id)}')" class="bg-amber-500 text-slate-950 font-bold px-2 py-1 rounded text-xs">정보 저장</button>
                             </div>
                         </div>
@@ -1762,9 +1771,9 @@
             const user = db.users.find(u => u.id === userId); if (!user) return;
             const className = document.getElementById(`manage-class-${userId}`).value.trim();
             const power = Number(document.getElementById(`manage-power-${userId}`).value);
-            const newPw = document.getElementById(`manage-pw-${userId}`).value;
+            const newPw = '';
             if (!className || !Number.isFinite(power) || power < 0) { alert('클래스와 올바른 전투력을 입력하세요.'); return; }
-            user.class = className; user.power = power; if (newPw) user.pw = newPw;
+            user.class = className; user.power = power; 
             saveDB(); openUserManageModal(); renderMembers();
             alert(`${userId}님의 정보를 저장했습니다.`);
         }
@@ -1775,7 +1784,6 @@
         }
         function deleteUser(userId) {
             if (!isCurrentAdmin()) return;
-            if (db.users.find(u=>u.id===userId)?.approved===false && !isWebAdministrator()) return;
             if (db.users.find(u=>u.id===userId)?.role === '웹 관리자') { alert("웹 관리자 계정은 삭제할 수 없습니다."); return; }
             if (confirm(`${userId} 계정을 삭제하시겠습니까?`)) {
                 db.users = db.users.filter(u => u.id !== userId);
@@ -1883,6 +1891,16 @@
             db.bossScores[bossName] = val;
             saveDB();
             alert(`[${bossName}] 배점이 ${val}점으로 수정되었습니다.`);
+        }
+        async function initializeCloudDefaults(){
+          if(!cloudAdmin())return alert('웹 관리자만 실행할 수 있습니다.');
+          const main=await store.doc('guildData/main').get();
+          if(main.exists)return alert('이미 공용 설정이 등록되어 있습니다.');
+          if(!confirm('기본 공지·보스·분배 기준과 예시 아이템을 최초 등록할까요?'))return;
+          const defaults=clone(DEFAULT_DB);delete defaults.users;delete defaults.currentUser;delete defaults.bossRecords;delete defaults.items;
+          await store.doc('guildData/main').set(defaults);
+          for(const i of DEFAULT_DB.items)await store.doc('items/'+String(i.id)).set({name:i.name,category:i.category,price:i.price,distributed:false});
+          alert('기본 데이터 등록 완료');
         }
     </script>
 </body>

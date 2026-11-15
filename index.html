@@ -88,6 +88,17 @@
 <style id="class-dashboard-style">
 body{background:#070b16!important;color:#f3f4fa}#app-container{max-width:1500px!important}#app-container>header{background:#0d1425!important;border-color:#343b60!important;margin-bottom:16px!important}#site-title{font-size:2rem!important;color:#fff!important}#site-subtitle{letter-spacing:.19em;color:#b7a5e9!important}#dashboard-grid{display:none!important}.class-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:22px}.class-nav button{padding:17px 8px;border:1px solid #41476a;border-radius:12px;background:#0d1629;color:#dfe5fa;font-weight:800;font-size:1.05rem}.class-nav button.active{background:linear-gradient(120deg,#392064,#211744);border-color:#ad70ff;box-shadow:0 0 17px #7131b35c;color:#fff}.class-page{display:none}.class-page.active{display:block}.class-card{background:#0d1426;border:1px solid #454568;border-radius:17px;padding:22px;box-shadow:0 9px 25px #0005}.class-card h2{font-size:1.28rem;font-weight:800;margin-bottom:17px}.class-home-top{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;margin-bottom:18px}.class-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.class-stat{background:#10182d;border:1px solid #343a5e;border-radius:14px;padding:20px 8px;text-align:center}.class-stat .symbol{font-size:30px;margin-bottom:12px}.class-stat .caption{font-size:14px;color:#c8cbe0}.class-stat .value{font-size:clamp(17px,2vw,29px);font-weight:900;margin-top:9px;overflow-wrap:anywhere}.class-bosses{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.class-boss{background:#10182d;border:1px solid #454769;border-radius:13px;padding:21px 10px;text-align:center}.class-boss:first-child{border-color:#ae68ff;box-shadow:0 0 13px #8646db55}.class-boss strong{display:block;font-size:18px;margin-bottom:12px}.class-boss span{font-size:clamp(16px,2vw,27px);font-weight:800}.class-panel-slot .dashboard-panel{height:auto!important;min-height:520px!important;width:100%!important}.class-panel-slot #member-list-view,.class-panel-slot #next-boss-preview,.class-panel-slot #item-market-list,.class-panel-slot #tier-list-view{max-height:none!important}.class-panel-slot #notice-text-view{max-height:none!important;min-height:120px!important}.class-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.class-btn{background:#242a45;border:1px solid #5b5b83;border-radius:10px;padding:8px 14px;font-weight:700;color:white}.class-admin-button{background:#2a2145;border:1px solid #8058b3;border-radius:10px;padding:9px 13px;color:#f4e8ff;font-weight:700}.class-page .dashboard-panel{background:#0d1426!important;border-color:#454568!important}.class-page .dashboard-panel>div{max-width:100%}@media(max-width:850px){.class-home-top{grid-template-columns:1fr}.class-bosses{grid-template-columns:repeat(2,minmax(0,1fr))}.class-stats{gap:6px}.class-card{padding:14px}.class-stat{padding:14px 4px}.class-nav button{font-size:13px;padding:13px 4px}#app-container>header{align-items:flex-start!important;gap:10px}#app-container>header>div:last-child{flex-wrap:wrap;gap:8px}}@media(max-width:450px){.class-nav button{font-size:12px}.class-bosses{gap:8px}.class-boss{padding:16px 5px}.class-stats .caption{font-size:12px}}
 </style>
+<style id="class-density-v13">
+.class-home-top{grid-template-columns:1fr 1fr!important;align-items:stretch}
+.class-weekly-card{margin-bottom:18px}.class-weekly-card .class-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.class-weekly-card .class-stat{padding:13px 8px}.class-weekly-card .class-stat .symbol{font-size:24px;margin-bottom:4px}.class-weekly-card .class-stat .value{margin-top:4px}.class-boss-register{background:#50328c!important;border-color:#a67cff!important;padding:10px 18px!important}
+#class-notice-slot #notice-text-view{max-height:340px!important;min-height:200px!important;font-size:15px!important;line-height:1.75!important}
+#class-diamond-slot #diamond-summary-panel{background:transparent!important;border:0!important;padding:0!important}#class-diamond-slot #diamond-summary-panel>div:first-child{display:none!important}#class-diamond-slot #diamond-summary-content{font-size:15px!important;line-height:1.8!important;gap:5px!important}#class-diamond-slot #diamond-summary-content strong{font-size:15px}
+#member-list-view{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px!important;align-content:start}#member-list-view .class-member-card{min-width:0;padding:14px;display:flex;flex-direction:column;gap:9px}#member-list-view .class-member-identity{display:flex;align-items:center;gap:8px;min-width:0}#member-list-view .class-member-rank{flex-shrink:0;color:#a6a9c4;font-size:12px;min-width:27px}#member-list-view .guild-member-name{font-size:clamp(12px,1.2vw,16px);min-width:0;flex:0 1 auto}#member-list-view .class-member-role{flex-shrink:0}#member-list-view .class-member-metrics{display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;column-gap:20px;row-gap:4px;padding-left:35px;font-size:14px}#member-list-view .class-member-metrics small{font-size:11px;color:#8e97ac;font-weight:400}#member-list-view .class-member-separator{color:#70778e;margin:0 3px}
+#item-market-list{font-size:14px!important}#item-market-list .class-item-row{padding:12px 15px!important}#item-market-list .class-item-line{display:flex;align-items:center;justify-content:space-between;gap:14px}#item-market-list .class-item-details{display:flex;flex-wrap:wrap;align-items:center;gap:7px 11px;min-width:0;font-size:14px}#item-market-list .class-item-name{font-size:16px;overflow-wrap:anywhere}#item-market-list .class-item-status{font-size:13px;font-weight:800;white-space:nowrap;padding:2px 8px;border-radius:7px;background:#1d2b48}#item-market-list .class-item-price{font-size:13px;color:#c2c8da;white-space:nowrap}#item-market-list .class-item-action{flex-shrink:0}#item-market-list .class-item-action button{font-size:14px;padding:8px 16px}#item-market-list .class-item-applicants{font-size:13px;margin-top:9px}
+@media(max-width:850px){.class-home-top{grid-template-columns:1fr!important}#member-list-view{grid-template-columns:1fr}#member-list-view .class-member-metrics{padding-left:34px}}
+@media(min-width:851px) and (max-width:1100px){#member-list-view .class-member-metrics{padding-left:0;gap:8px}#member-list-view .class-member-card{padding:10px}}
+@media(max-width:550px){#item-market-list .class-item-line{align-items:flex-start}#item-market-list .class-item-details{gap:6px}#item-market-list .class-item-price{white-space:normal}#item-market-list .class-item-action button{padding:8px 10px}.class-weekly-card .class-stats{gap:6px}.class-weekly-card .class-stat{padding:10px 3px}.class-weekly-card .class-stat .caption{font-size:11px}}
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
 
@@ -279,7 +290,7 @@ body{background:#070b16!important;color:#f3f4fa}#app-container{max-width:1500px!
                         </div>
                         <div class="flex gap-2">
                             <input type="search" placeholder="아이템 이름 검색" oninput="setItemSearch(this.value)" class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white" />
-                            <select onchange="setItemStatusFilter(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white"><option>전체</option><option>분배 중</option><option>분배완료</option></select>
+                            <select onchange="setItemStatusFilter(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white"><option>전체</option><option>분배 대기</option><option>분배완료</option></select>
                         </div>
                         <div class="max-h-[175px] overflow-y-auto space-y-2 pr-1" id="item-market-list"></div>
                         <div id="item-pagination" class="flex flex-wrap justify-center gap-1 pt-2"></div>
@@ -423,7 +434,7 @@ body{background:#070b16!important;color:#f3f4fa}#app-container{max-width:1500px!
             </div>
             <div class="p-5 overflow-y-auto space-y-4 flex-1">
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-3">
-                    <h4 class="text-sm font-bold text-white">신규 아이템 추가 <span class="text-sky-400 text-xs">(등록 시 분배 중)</span></h4>
+                    <h4 class="text-sm font-bold text-white">신규 아이템 추가 <span class="text-sky-400 text-xs">(등록 시 분배 대기)</span></h4>
                     <input type="text" id="new-item-name" placeholder="아이템 이름" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
                     <label class="block text-xs text-slate-300">아이템 등급
                         <select id="new-item-grade" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
@@ -1256,27 +1267,30 @@ body{background:#070b16!important;color:#f3f4fa}#app-container{max-width:1500px!
         window.addEventListener('resize', () => fitGuildMemberNames());
         function renderMembers() {
             const sorted = db.users.slice().sort((a,b)=>Number(b.power||0)-Number(a.power||0));
-            const memberWeeklyScores = weeklyScores(currentWeekKey());
-
+            const week = currentWeekKey();
+            const scores = weeklyScores(week);
+            const unit = diamondCalculation(week, scores).unit;
             let html = '';
-            sorted.forEach(u => {
-                let badgeColor = "bg-slate-700 text-slate-300";
-                if (u.role === '웹 관리자') badgeColor = "bg-purple-500/20 text-purple-300";
-                if (u.role === '마스터') badgeColor = "bg-red-500/20 text-red-400";
-                if (u.role === '운영진') badgeColor = "bg-amber-500/20 text-amber-400";
+            sorted.forEach((u, i) => {
+                let badgeColor = 'bg-slate-700 text-slate-300';
+                if (u.role === '웹 관리자') badgeColor = 'bg-purple-500/20 text-purple-300';
+                if (u.role === '마스터') badgeColor = 'bg-red-500/20 text-red-400';
+                if (u.role === '운영진') badgeColor = 'bg-amber-500/20 text-amber-400';
+                const points = Math.max(0, Math.floor(Number(scores[u.id]) || 0));
+                const diamonds = points * unit;
                 html += `
-                    <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50 flex items-center gap-2 text-xs min-w-0">
-                        <div class="flex items-center gap-1.5 min-w-0 flex-1 overflow-hidden">
+                    <div class="class-member-card bg-slate-900/60 rounded-xl border border-slate-700/50">
+                        <div class="class-member-identity">
+                            <span class="class-member-rank">${i+1}위</span>
                             ${guildClassIcon(u.class)}
-                            <span class="guild-member-name font-bold text-white min-w-0 whitespace-nowrap" title="${escapeAttribute(u.id)}">${escapeHtml(u.id)}</span>
-                            <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold whitespace-nowrap shrink-0 ${badgeColor}">${escapeHtml(u.role)}</span>
+                            <span class="guild-member-name font-bold text-white" title="${escapeAttribute(u.id)}">${escapeHtml(u.id)}</span>
+                            <span class="class-member-role px-1.5 py-0.5 rounded text-[10px] font-semibold whitespace-nowrap ${badgeColor}">${escapeHtml(u.role)}</span>
                         </div>
-                        <div class="text-right shrink-0 whitespace-nowrap leading-tight">
-                            <div class="text-amber-400 font-bold">${Number(u.power||0).toLocaleString()} <span class="text-[10px] text-slate-500">전투력</span></div>
-                            <div class="text-sky-300 mt-1">주간 ${Number(memberWeeklyScores[u.id]||0).toLocaleString()}점</div>
+                        <div class="class-member-metrics">
+                            <span class="text-amber-400 font-bold">${Number(u.power||0).toLocaleString()} <small>전투력</small></span>
+                            <span class="text-sky-300">주간 ${points.toLocaleString()}점 <span class="class-member-separator">/</span> <strong class="text-violet-300">${diamonds.toLocaleString()} 다이아</strong></span>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             document.getElementById('member-list-view').innerHTML = html;
             fitGuildMemberNames();
@@ -1352,7 +1366,7 @@ body{background:#070b16!important;color:#f3f4fa}#app-container{max-width:1500px!
         function setItemSearch(value) {itemSearchText=String(value||'').trim().toLowerCase();itemPage=1;renderItems();}
         function renderItems() {
             const filtered = (currentItemCategory === '전체' ? db.items : db.items.filter(i => i.category === currentItemCategory))
-                .filter(i => itemStatusFilter === '전체' || (itemStatusFilter === '분배 중' ? !i.distributed : !!i.distributed))
+                .filter(i => itemStatusFilter === '전체' || (itemStatusFilter === '분배 대기' ? !i.distributed : !!i.distributed))
                 .filter(i => !itemSearchText || String(i.name||'').toLowerCase().includes(itemSearchText))
                 .slice().sort((a,b) => Number(!!a.distributed) - Number(!!b.distributed));
             const perPage = getItemsPerPage();
@@ -1379,18 +1393,18 @@ body{background:#070b16!important;color:#f3f4fa}#app-container{max-width:1500px!
                     }
                     const adminBtn = '';  
                     html += `
-                        <div class="bg-slate-900/60 p-3 rounded-xl border ${item.distributed ? 'border-emerald-500/40' : 'border-slate-700/50'} text-xs space-y-2">
-                            <div class="flex justify-between items-start gap-2">
-                                <div class="min-w-0">
-                                    <span class="bg-slate-800 text-amber-400 px-1.5 py-0.5 rounded text-[10px] mr-1">${escapeDistributionText(item.category)}</span>
-                                    ${item.grade || itemRarity(item.name) ? `<span class="text-[10px] ${itemRarityClass(item)} mr-1">[${escapeDistributionText(item.grade || itemRarity(item.name))}]</span>` : ''}
-                                    <span class="font-bold break-words ${itemRarityClass(item)}">${escapeDistributionText(itemDisplayName(item.name))}</span>
-                                    <div class="mt-1 font-semibold ${item.distributed ? 'text-emerald-300' : 'text-sky-300'}">${item.distributed ? '분배완료' : '분배 중'}</div>
-                                    <div class="text-[10px] text-slate-400 mt-1">기준가: ${Number(item.price || 0).toLocaleString()} 다이아</div>
+                        <div class="class-item-row bg-slate-900/60 p-3 rounded-xl border ${item.distributed ? 'border-emerald-500/40' : 'border-slate-700/50'}">
+                            <div class="class-item-line">
+                                <div class="class-item-details">
+                                    <span class="bg-slate-800 text-amber-400 px-1.5 py-0.5 rounded text-xs">${escapeDistributionText(item.category)}</span>
+                                    ${item.grade || itemRarity(item.name) ? `<span class="text-xs ${itemRarityClass(item)}">[${escapeDistributionText(item.grade || itemRarity(item.name))}]</span>` : ''}
+                                    <span class="class-item-name font-bold ${itemRarityClass(item)}">${escapeDistributionText(itemDisplayName(item.name))}</span>
+                                    <span class="class-item-status ${item.distributed ? 'text-emerald-300' : 'text-sky-300'}">${item.distributed ? '분배완료' : '분배 대기'}</span>
+                                    <span class="class-item-price">기준가: ${Number(item.price || 0).toLocaleString()} 다이아</span>
                                 </div>
-                                <div class="shrink-0">${btnHtml}</div>
+                                <div class="class-item-action">${btnHtml}</div>
                             </div>
-                            <details class="border-t border-slate-700/60 pt-2">
+                            <details class="class-item-applicants border-t border-slate-700/60 pt-2">
                                 <summary class="cursor-pointer text-slate-400">신청자 ${item.applicants.length}명 · 펼쳐보기</summary>
                                 <div class="leading-6 mt-2">${applicantsHtml}</div>
                             </details>
@@ -2061,9 +2075,9 @@ body{background:#070b16!important;color:#f3f4fa}#app-container{max-width:1500px!
                             <span class="text-slate-400 ml-2">(${Number(item.price || 0).toLocaleString()}다이아)</span>
                             <div class="mt-1 text-slate-400">등급: <select aria-label="아이템 등급" data-item-action="grade" data-item-id="${escapeAttribute(item.id)}" class="bg-slate-950 border border-slate-600 text-white rounded px-1 py-1">${['','고급','희귀','영웅','전설'].map(g=>`<option value="${g}" ${(item.grade || itemRarity(item.name) || '')===g?'selected':''}>${g||'없음'}</option>`).join('')}</select></div>
                             <div class="mt-1 text-slate-400">신청자 ${item.applicants.length}명: ${names}</div>
-                            <div class="mt-1 ${item.distributed ? 'text-emerald-400' : 'text-sky-400'}">${item.distributed ? '분배완료' : '분배 중'}</div>
+                            <div class="mt-1 ${item.distributed ? 'text-emerald-400' : 'text-sky-400'}">${item.distributed ? '분배완료' : '분배 대기'}</div>
                         </div>
-                        <div class="flex flex-wrap gap-2 items-center"><select aria-label="분배 상태" data-item-action="status" data-item-id="${escapeAttribute(item.id)}" class="bg-slate-950 border border-slate-600 text-white rounded-lg px-2 py-1 cursor-pointer"><option value="progress" ${!item.distributed ? 'selected' : ''}>분배 중</option><option value="done" ${item.distributed ? 'selected' : ''}>분배완료</option></select><button type="button" onclick="editAdminItemByIndex(${db.items.indexOf(item)})" class="text-amber-400 hover:text-amber-300 cursor-pointer" title="수정"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteAdminItemByIndex(${db.items.indexOf(item)})" class="text-red-400 hover:text-red-300 cursor-pointer" title="삭제"><i class="fa-solid fa-trash"></i></button></div>
+                        <div class="flex flex-wrap gap-2 items-center"><select aria-label="분배 상태" data-item-action="status" data-item-id="${escapeAttribute(item.id)}" class="bg-slate-950 border border-slate-600 text-white rounded-lg px-2 py-1 cursor-pointer"><option value="progress" ${!item.distributed ? 'selected' : ''}>분배 대기</option><option value="done" ${item.distributed ? 'selected' : ''}>분배완료</option></select><button type="button" onclick="editAdminItemByIndex(${db.items.indexOf(item)})" class="text-amber-400 hover:text-amber-300 cursor-pointer" title="수정"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteAdminItemByIndex(${db.items.indexOf(item)})" class="text-red-400 hover:text-red-300 cursor-pointer" title="삭제"><i class="fa-solid fa-trash"></i></button></div>
                     </div>
                 `;
             });
@@ -2075,7 +2089,7 @@ body{background:#070b16!important;color:#f3f4fa}#app-container{max-width:1500px!
             if (!item) { alert('아이템을 찾을 수 없습니다.'); renderAdminItemList(); return; }
             const next = status === 'done';
             if (item.distributed === next) return;
-            if (!confirm(`[${item.name}] 상태를 ${next ? '분배완료' : '분배 중'}(으)로 변경할까요?`)) { renderAdminItemList(); return; }
+            if (!confirm(`[${item.name}] 상태를 ${next ? '분배완료' : '분배 대기'}(으)로 변경할까요?`)) { renderAdminItemList(); return; }
             item.distributed = next;
             saveDB();
             renderAdminItemList();
@@ -2106,10 +2120,10 @@ body{background:#070b16!important;color:#f3f4fa}#app-container{max-width:1500px!
             const priceText = prompt('기준가(다이아) 수정', item.price); if (priceText === null) return;
             const price = Number(priceText);
             if (!name.trim() || !['장비','스킬북','편린'].includes(category.trim()) || !Number.isFinite(price) || price < 0) { alert('아이템 이름, 카테고리, 기준가를 올바르게 입력하세요.'); return; }
-            const statusText = prompt('분배 상태를 입력하세요 (분배 중 / 분배완료)', item.distributed ? '분배완료' : '분배 중');
+            const statusText = prompt('분배 상태를 입력하세요 (분배 대기 / 분배완료)', item.distributed ? '분배완료' : '분배 대기');
             if (statusText === null) return;
             const status = statusText.trim().replace(/\s+/g, '');
-            if (!['분배중', '분배완료'].includes(status)) { alert('분배 중 또는 분배완료를 입력하세요.'); return; }
+            if (!['분배대기', '분배완료'].includes(status)) { alert('분배 대기 또는 분배완료를 입력하세요.'); return; }
             item.name = itemDisplayName(name.trim()); item.category = category.trim(); item.grade = grade; item.price = price;
             item.distributed = status === '분배완료';
             saveDB(); renderAdminItemList(); renderItems();
@@ -2184,10 +2198,10 @@ function init(){const app=$('app-container'),grid=$('dashboard-grid');if(!app||!
  const title=$('site-title');if(title)title.textContent='클래스';const subtitle=$('site-subtitle');if(subtitle)subtitle.textContent='CLASS';
  const header=app.querySelector('header');const profile=header.querySelector('button[onclick*="openMyProfileModal"]');if(profile)profile.textContent='마이페이지';const logout=header.querySelector('button[onclick*="logout"]');const admin=document.createElement('button');admin.id='class-admin-link';admin.className='class-admin-button';admin.textContent='⚙ 관리자';admin.style.display='none';admin.onclick=()=>page('admin');if(logout)logout.before(admin);
  const nav=document.createElement('nav');nav.id='class-nav';nav.className='class-nav';nav.innerHTML='<button type="button" data-target="home" class="active">⌂ 홈</button><button type="button" data-target="members">♟ 길드원</button><button type="button" data-target="boss">⚔ 보스 관리</button><button type="button" data-target="items">▣ 아이템/분배</button>';header.after(nav);nav.querySelectorAll('button').forEach(b=>b.onclick=()=>page(b.dataset.target));
- const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div class="class-home-top"><div class="class-card"><h2>📢 공지사항</h2><div id="class-notice-slot"></div></div><div class="class-card"><h2>▥ 이번 주 현황</h2><div class="class-stats"><div class="class-stat"><div class="symbol">👥</div><div class="caption">참여 인원</div><div class="value" style="color:#52ddcc" id="class-participants">-</div></div><div class="class-stat"><div class="symbol">⚔️</div><div class="caption">보스 처치</div><div class="value" style="color:#d9a5ff" id="class-kills">-</div></div><div class="class-stat"><div class="symbol">💎</div><div class="caption">분배 예정 다이아</div><div class="value" style="color:#b8a1ff" id="class-diamonds">-</div></div></div></div></div><div class="class-card"><div class="class-actions"><h2 style="margin:0">◷ 보스 타이머</h2><button class="class-btn" id="class-all-bosses">전체 보기 ›</button></div><div class="class-bosses" id="class-boss-list"></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div class="class-panel-slot" id="class-admin-slot"></div></section>`;
- $('class-all-bosses').onclick=()=>{page('boss');const b=$('btn-tab-boss-sched-2');if(b)b.click()};$('class-admin-back').onclick=()=>page('home');
+ const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div class="class-home-top"><div class="class-card"><h2>📢 공지사항</h2><div id="class-notice-slot"></div></div><div class="class-card"><h2>💎 주간 다이아 분배</h2><div id="class-diamond-slot"></div></div></div><div class="class-card class-weekly-card"><h2>▥ 이번 주 현황</h2><div class="class-stats"><div class="class-stat"><div class="symbol">👥</div><div class="caption">참여 인원</div><div class="value" style="color:#52ddcc" id="class-participants">-</div></div><div class="class-stat"><div class="symbol">⚔️</div><div class="caption">보스 처치</div><div class="value" style="color:#d9a5ff" id="class-kills">-</div></div><div class="class-stat"><div class="symbol">💎</div><div class="caption">분배 예정 다이아</div><div class="value" style="color:#b8a1ff" id="class-diamonds">-</div></div></div></div><div class="class-card class-boss-card"><div class="class-actions"><h2 style="margin:0">◷ 보스 타이머</h2><button class="class-btn class-boss-register" id="class-all-bosses">보스 참여 등록</button></div><div class="class-bosses" id="class-boss-list"></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div class="class-panel-slot" id="class-admin-slot"></div></section>`;
+ $('class-all-bosses').onclick=()=>openBossModal();$('class-admin-back').onclick=()=>page('home');
  $('class-member-slot').append(panels[0]);$('class-boss-slot').append(panels[1]);$('class-item-slot').append(panels[2]);$('class-admin-slot').append(panels[3]);
- const notice=$('content-notice-1');if(notice){$('class-notice-slot').append(notice);notice.classList.remove('hidden')};
+ const notice=$('content-notice-1');if(notice){$('class-notice-slot').append(notice);notice.classList.remove('hidden')};const diamond=$('diamond-summary-panel');if(diamond){$('class-diamond-slot').append(diamond);diamond.classList.remove('hidden')};
  const member=$('content-member-1');if(member)member.classList.remove('hidden');
  const tabs=$('btn-tab-notice-1')?.parentElement;if(tabs)tabs.style.display='none';
  const memberPanel=$('class-member-slot').querySelector('.dashboard-panel');if(memberPanel){const h=memberPanel.querySelector('#panel-title-1');if(h)h.textContent='길드원 명단'}

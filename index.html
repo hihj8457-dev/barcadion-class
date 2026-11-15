@@ -1,375 +1,907 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>클랜 운영 시스템 - 보스 & 분배 관리</title>
-  <style>
-    /* 눈이 편안한 소프트 다크 테마 변수 설정 */
-    :root {
-      --bg-main: #181a1f;       /* 눈부심이 없는 차분한 다크 슬레이트 배경 */
-      --bg-card: #22252c;       /* 카드 및 섹션 배경 */
-      --bg-input: #2b2f38;      /* 입력창 배경 */
-      --border-color: #353a46;  /* 은은한 구분선 */
-      --text-primary: #e6e8ec;  /* 가독성 높은 오프화이트 본문 */
-      --text-secondary: #9aa1b0;/* 보조 설명 텍스트 */
-      --accent: #56b6c2;        /* 차분한 시안/민트 포인트 컬러 */
-      --accent-hover: #459ca7;
-      --danger: #e06c75;        /* 보스 젠 임박/강조 표시 */
-      --success: #98c379;       /* 등록 완료 상태 표시 */
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-main);
-      color: var(--text-primary);
-      line-height: 1.6;
-      min-height: 100vh;
-    }
-
-    /* 상단 네비게이션 바 */
-    header {
-      background-color: var(--bg-card);
-      border-bottom: 1px solid var(--border-color);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .nav-container {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 0 20px;
-      height: 64px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .clan-logo {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--accent);
-      letter-spacing: -0.5px;
-    }
-
-    nav {
-      display: flex;
-      gap: 8px;
-    }
-
-    .nav-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-      font-weight: 600;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .nav-btn:hover {
-      background-color: var(--bg-input);
-      color: var(--text-primary);
-    }
-
-    .nav-btn.active {
-      background-color: rgba(86, 182, 194, 0.15);
-      color: var(--accent);
-    }
-
-    /* 메인 컨테이너 */
-    main {
-      max-width: 960px;
-      margin: 32px auto;
-      padding: 0 20px;
-    }
-
-    .page-section {
-      display: none;
-      animation: fadeIn 0.25s ease-in-out;
-    }
-
-    .page-section.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .section-header {
-      margin-bottom: 24px;
-    }
-
-    .section-header h2 {
-      font-size: 1.5rem;
-      margin-bottom: 6px;
-    }
-
-    .section-header p {
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-    }
-
-    /* 카드 & 테이블 공통 스타일 */
-    .card {
-      background-color: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 20px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-
-    th, td {
-      padding: 14px 12px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    th {
-      color: var(--text-secondary);
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    .badge-soon {
-      background-color: rgba(224, 108, 117, 0.15);
-      color: var(--danger);
-    }
-
-    .badge-normal {
-      background-color: rgba(152, 195, 121, 0.15);
-      color: var(--success);
-    }
-
-    /* 폼(입력창) 스타일 */
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 12px 14px;
-      background-color: var(--bg-input);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      color: var(--text-primary);
-      font-size: 0.95rem;
-      outline: none;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--accent);
-    }
-
-    .submit-btn {
-      background-color: var(--accent);
-      color: #181a1f;
-      border: none;
-      padding: 12px 24px;
-      font-size: 1rem;
-      font-weight: 700;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .submit-btn:hover {
-      background-color: var(--accent-hover);
-    }
-
-    /* 모바일 대응 */
-    @media (max-width: 640px) {
-      .nav-container {
-        flex-direction: column;
-        height: auto;
-        padding: 12px;
-        gap: 10px;
-      }
-      .nav-btn {
-        padding: 8px 12px;
-        font-size: 0.88rem;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>바르카디온3 클래스 - 보스 & 분배 매니저</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        body { font-family: 'Pretendard', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; }
+        /* 버튼이 절대 사라지지 않도록 명시적 스타일 지정 */
+        .btn-primary {
+            display: block !important;
+            width: 100%;
+            background-color: #f59e0b !important;
+            color: #0f172a !important;
+            font-weight: 800;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 16px;
+            text-align: center;
+        }
+        .btn-primary:hover { background-color: #d97706 !important; }
+        .btn-link {
+            display: inline-block !important;
+            background: none;
+            border: none;
+            color: #94a3b8 !important;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 14px;
+        }
+        .btn-link:hover { color: #fbbf24 !important; }
+    </style>
 </head>
-<body>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
 
-  <!-- 상단 메뉴 -->
-  <header>
-    <div class="nav-container">
-      <div class="clan-logo">CLAN RAID MANAGER</div>
-      <nav>
-        <button class="nav-btn active" onclick="showPage('boss-time', this)">보스 타임</button>
-        <button class="nav-btn" onclick="showPage('boss-join', this)">보스 참여 등록</button>
-        <button class="nav-btn" onclick="showPage('item-apply', this)">분배 아이템 신청</button>
-      </nav>
+    <!-- 로그인 모달 -->
+    <div id="auth-modal" style="position: fixed; inset: 0; background-color: rgba(2, 6, 23, 0.95); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 16px;">
+        <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 28px; width: 100%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+            <h2 id="auth-title" style="font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 20px; color: #fbbf24;">바르카디온3 클래스 로그인</h2>
+            
+            <div id="auth-error" style="display: none; background-color: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; font-size: 13px; padding: 10px; border-radius: 8px; margin-bottom: 14px;"></div>
+            
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                    <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px;">아이디 (닉네임)</label>
+                    <input type="text" id="auth-id" onkeyup="if(event.key==='Enter') handleAuthAction()" style="width: 100%; box-sizing: border-box; background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px 14px; color: white; font-size: 15px;" placeholder="admin">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px;">비밀번호</label>
+                    <input type="password" id="auth-pw" onkeyup="if(event.key==='Enter') handleAuthAction()" style="width: 100%; box-sizing: border-box; background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px 14px; color: white; font-size: 15px;" placeholder="1234">
+                </div>
+
+                <!-- 회원가입 추가 필드 -->
+                <div id="register-fields" style="display: none; flex-direction: column; gap: 12px;">
+                    <div>
+                        <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px;">직업 (클래스)</label>
+                        <select id="reg-class" style="width: 100%; box-sizing: border-box; background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; color: white;">
+                            <option value="군주">군주</option>
+                            <option value="기사">기사</option>
+                            <option value="요정">요정</option>
+                            <option value="마법사">마법사</option>
+                            <option value="총사">총사</option>
+                            <option value="투사">투사</option>
+                            <option value="암흑사제">암흑사제</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px;">전투력</label>
+                        <input type="number" id="reg-power" style="width: 100%; box-sizing: border-box; background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; color: white;" placeholder="전투력 숫자 입력">
+                    </div>
+                </div>
+                
+                <!-- 자동 로그인 -->
+                <div id="auto-login-box" style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                    <input type="checkbox" id="auto-login-check" checked style="width: 16px; height: 16px; cursor: pointer;">
+                    <label for="auto-login-check" style="font-size: 13px; color: #cbd5e1; cursor: pointer;">자동 로그인 유지</label>
+                </div>
+
+                <!-- 로그인 / 회원가입 실행 버튼 -->
+                <button type="button" id="auth-submit-btn" onclick="handleAuthAction()" class="btn-primary">로그인</button>
+            </div>
+
+            <div style="text-align: center;">
+                <button type="button" onclick="toggleAuthMode()" id="auth-toggle-btn" class="btn-link">계정이 없으신가요? 회원가입</button>
+            </div>
+            
+            <div style="margin-top: 16px; font-size: 12px; text-align: center; color: #64748b; border-top: 1px solid #334155; padding-top: 12px;">
+                초기 마스터 계정: <span style="color: #fbbf24; font-weight: bold;">admin</span> / <span style="color: #fbbf24; font-weight: bold;">1234</span>
+            </div>
+        </div>
     </div>
-  </header>
 
-  <main>
-    <!-- 1. 보스 타임 섹션 -->
-    <section id="boss-time" class="page-section active">
-      <div class="section-header">
-        <h2>보스 젠 시간표</h2>
-        <p>주요 필드 및 레이드 보스의 다음 출현 예정 시간입니다.</p>
-      </div>
+    <!-- 메인 앱 컨테이너 -->
+    <div id="app-container" class="hidden max-w-7xl mx-auto px-4 py-6">
+        <!-- 상단 헤더 -->
+        <header class="flex flex-col md:flex-row justify-between items-center bg-slate-800/80 backdrop-blur border border-slate-700 rounded-2xl p-5 mb-8 shadow-xl">
+            <div class="flex items-center space-x-3 mb-4 md:mb-0">
+                <div class="bg-amber-500/20 p-3 rounded-xl border border-amber-500/50">
+                    <i class="fa-solid fa-shield-halved text-amber-400 text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">바르카디온3 클래스</h1>
+                    <p class="text-xs text-slate-400">혈맹 보스 매니저 및 분배 시스템</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="text-right">
+                    <div class="flex items-center space-x-2">
+                        <span id="user-display-name" class="font-bold text-amber-400"></span>
+                        <span id="user-badge" class="text-xs px-2 py-0.5 rounded-full font-semibold"></span>
+                    </div>
+                    <span id="user-display-power" class="text-xs text-slate-400"></span>
+                </div>
+                <button onclick="logout()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-xl text-sm font-semibold transition cursor-pointer">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> 로그아웃
+                </button>
+            </div>
+        </header>
 
-      <div class="card">
-        <table>
-          <thead>
-            <tr>
-              <th>보스 이름</th>
-              <th>출현 지역</th>
-              <th>다음 젠 예정</th>
-              <th>상태</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>오르펜</strong></td>
-              <td>포자의 바다</td>
-              <td>21:30</td>
-              <td><span class="badge badge-soon">젠 임박</span></td>
-            </tr>
-            <tr>
-              <td><strong>코어</strong></td>
-              <td>크루마 탑 3층</td>
-              <td>22:15</td>
-              <td><span class="badge badge-normal">대기 중</span></td>
-            </tr>
-            <tr>
-              <td><strong>여왕 개미</strong></td>
-              <td>개미굴 3층</td>
-              <td>23:00</td>
-              <td><span class="badge badge-normal">대기 중</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+        <!-- 4개 메인 프레임 그리드 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <!-- [프레임 1] 공지사항 & 길드원 -->
+            <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
+                        <h2 class="text-lg font-bold text-amber-400 flex items-center">
+                            <i class="fa-solid fa-bullhorn mr-2"></i> 1. 공지사항 & 길드원
+                        </h2>
+                    </div>
+                    <div class="flex space-x-2 mb-4">
+                        <button onclick="switchTab('notice', '1')" id="btn-tab-notice-1" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer">공지사항</button>
+                        <button onclick="switchTab('member', '1')" id="btn-tab-member-1" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer">길드원 명단</button>
+                    </div>
+                    
+                    <div id="content-notice-1" class="space-y-3">
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 text-sm text-slate-300 min-h-[180px] max-h-[220px] overflow-y-auto" id="notice-text-view"></div>
+                        <div id="admin-notice-edit-box" class="hidden">
+                            <textarea id="notice-input" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-xs text-white focus:outline-none focus:border-amber-500 mb-2" rows="3"></textarea>
+                            <button onclick="saveNotice()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-1.5 rounded-lg text-xs transition cursor-pointer">공지 수정 저장</button>
+                        </div>
+                    </div>
 
-    <!-- 2. 보스 참여 등록 섹션 -->
-    <section id="boss-join" class="page-section">
-      <div class="section-header">
-        <h2>보스 참여 등록</h2>
-        <p>참여한 보스를 선택하고 캐릭터명을 등록해 주세요. (분배 기준 자료로 활용됩니다)</p>
-      </div>
+                    <div id="content-member-1" class="hidden space-y-2">
+                        <div class="text-xs text-slate-400 flex justify-between items-center mb-1">
+                            <span>직급/전투력순 정렬</span>
+                            <span id="total-member-count">0명</span>
+                        </div>
+                        <div class="max-h-[210px] overflow-y-auto space-y-1.5 pr-1" id="member-list-view"></div>
+                    </div>
+                </div>
+            </div>
 
-      <div class="card">
-        <form onsubmit="handleFormSubmit(event, '참여 등록')">
-          <div class="form-group">
-            <label for="join-nickname">캐릭터 닉네임</label>
-            <input type="text" id="join-nickname" placeholder="인게임 닉네임을 입력하세요" required />
-          </div>
-          <div class="form-group">
-            <label for="join-boss">참여 보스 선택</label>
-            <select id="join-boss" required>
-              <option value="">보스를 선택하세요</option>
-              <option value="오르펜">오르펜 (21:30)</option>
-              <option value="코어">코어 (22:15)</option>
-              <option value="여왕 개미">여왕 개미 (23:00)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="join-note">비고 (선택 사항)</label>
-            <input type="text" id="join-note" placeholder="예: 중도 합류, 막타 참여 등" />
-          </div>
-          <button type="submit" class="submit-btn">참여 등록하기</button>
-        </form>
-      </div>
-    </section>
+            <!-- [프레임 2] 보스 관리 -->
+            <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
+                        <h2 class="text-lg font-bold text-amber-400 flex items-center">
+                            <i class="fa-solid fa-dragon mr-2"></i> 2. 보스 관리
+                        </h2>
+                    </div>
+                    <div class="flex space-x-2 mb-4">
+                        <button onclick="switchTab('boss-reg', '2')" id="btn-tab-boss-reg-2" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer">참여 등록</button>
+                        <button onclick="switchTab('boss-sched', '2')" id="btn-tab-boss-sched-2" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer">스케줄 보기</button>
+                    </div>
 
-    <!-- 3. 분배 아이템 신청 섹션 -->
-    <section id="item-apply" class="page-section">
-      <div class="section-header">
-        <h2>분배 아이템 신청</h2>
-        <p>획득한 보스 전리품 및 분배 대상 아이템을 신청하는 공간입니다.</p>
-      </div>
+                    <div id="content-boss-reg-2" class="space-y-4">
+                        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 text-center">
+                            <p class="text-xs text-slate-400 mb-2">구글 시트형 보스 참여 체크</p>
+                            <button onclick="openBossModal()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-sm transition shadow-lg flex items-center justify-center cursor-pointer">
+                                <i class="fa-solid fa-square-check mr-2"></i> 보스 참여 등록 모달 열기
+                            </button>
+                        </div>
+                        <div class="text-xs text-slate-400 bg-slate-900/40 p-3 rounded-xl space-y-1">
+                            <p class="font-semibold text-amber-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> 기본 보스 배점</p>
+                            <p>40~60보스: 1점 | 70: 3점 | 75: 6점 | 80: 10점</p>
+                            <p>85: 15점 | 90: 20점 | 툴칸: 10점 | 라세리엔: 5점 | 발락: 30점</p>
+                        </div>
+                    </div>
 
-      <div class="card">
-        <form onsubmit="handleFormSubmit(event, '분배 신청')">
-          <div class="form-group">
-            <label for="item-nickname">신청자 닉네임</label>
-            <input type="text" id="item-nickname" placeholder="인게임 닉네임을 입력하세요" required />
-          </div>
-          <div class="form-group">
-            <label for="item-name">희망 아이템명</label>
-            <select id="item-name" required>
-              <option value="">현재 분배 가능한 아이템 선택</option>
-              <option value="오르펜의 귀걸이">오르펜의 귀걸이 (1개)</option>
-              <option value="코어의 반지">코어의 반지 (1개)</option>
-              <option value="영웅 제작 레시피">영웅 제작 레시피 (2개)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="item-reason">신청 사유 (착용/컬렉션/판매 분배 등)</label>
-            <textarea id="item-reason" rows="3" placeholder="예: 본캐 직접 착용 목적입니다." required></textarea>
-          </div>
-          <button type="submit" class="submit-btn">아이템 분배 신청</button>
-        </form>
-      </div>
-    </section>
-  </main>
+                    <div id="content-boss-sched-2" class="hidden space-y-3">
+                        <div class="text-xs text-slate-400 flex justify-between items-center">
+                            <span>보스별 출현 및 배점 현황</span>
+                            <button onclick="openBossScoreEditModal()" class="text-amber-400 hover:underline admin-only hidden cursor-pointer">[배점 수정]</button>
+                        </div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 max-h-[210px] overflow-y-auto space-y-2" id="next-boss-preview"></div>
+                    </div>
+                </div>
+            </div>
 
-  <script>
-    // 메뉴 클릭 시 페이지(섹션) 전환 함수
-    function showPage(pageId, clickedBtn) {
-      // 모든 섹션 숨기기
-      document.querySelectorAll('.page-section').forEach(section => {
-        section.classList.remove('active');
-      });
-      // 모든 메뉴 버튼 활성화 해제
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
+            <!-- [프레임 3] 분배 관리 -->
+            <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
+                        <h2 class="text-lg font-bold text-amber-400 flex items-center">
+                            <i class="fa-solid fa-coins mr-2"></i> 3. 분배 관리
+                        </h2>
+                    </div>
+                    <div class="flex space-x-2 mb-4">
+                        <button onclick="switchTab('dist-기준', '3')" id="btn-tab-dist-기준-3" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer">분배 기준</button>
+                        <button onclick="switchTab('dist-신청', '3')" id="btn-tab-dist-신청-3" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer">아이템 신청</button>
+                    </div>
 
-      // 선택한 섹션과 버튼만 활성화
-      document.getElementById(pageId).classList.add('active');
-      clickedBtn.classList.add('active');
-    }
+                    <div id="content-dist-기준-3" class="space-y-2">
+                        <div class="flex justify-between items-center text-xs text-slate-400">
+                            <span>티어별 분배 기준가</span>
+                        </div>
+                        <div class="max-h-[210px] overflow-y-auto space-y-1.5 pr-1" id="tier-list-view"></div>
+                    </div>
 
-    // 폼 제출 임시 알림 (추후 구글 시트 또는 디스코드 웹훅 연동 가능)
-    function handleFormSubmit(event, type) {
-      event.preventDefault();
-      alert(type + '이(가) 접수되었습니다! (현재는 화면 데모 상태입니다)');
-      event.target.reset();
-    }
-  </script>
+                    <div id="content-dist-신청-3" class="hidden space-y-3">
+                        <div class="flex space-x-1 overflow-x-auto pb-1">
+                            <button onclick="filterItemCategory('전체')" class="item-cat-btn px-2 py-1 text-xs rounded bg-amber-500 text-slate-950 font-bold cursor-pointer">전체</button>
+                            <button onclick="filterItemCategory('장비')" class="item-cat-btn px-2 py-1 text-xs rounded bg-slate-700 text-slate-300 cursor-pointer">장비</button>
+                            <button onclick="filterItemCategory('스킬북')" class="item-cat-btn px-2 py-1 text-xs rounded bg-slate-700 text-slate-300 cursor-pointer">스킬북</button>
+                            <button onclick="filterItemCategory('편린')" class="item-cat-btn px-2 py-1 text-xs rounded bg-slate-700 text-slate-300 cursor-pointer">편린</button>
+                        </div>
+                        <div class="max-h-[175px] overflow-y-auto space-y-2 pr-1" id="item-market-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- [프레임 4] 길드 현황 & 관리자 설정 -->
+            <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
+                        <h2 class="text-lg font-bold text-amber-400 flex items-center">
+                            <i class="fa-solid fa-gears mr-2"></i> 4. 길드 현황 & 설정
+                        </h2>
+                    </div>
+                    <div class="space-y-3 text-sm">
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">등록된 길드원:</span>
+                                <span id="stat-member-count" class="font-bold text-white">0명</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">등록된 아이템:</span>
+                                <span id="stat-item-count" class="font-bold text-white">0개</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-400">내 접속 계정:</span>
+                                <span id="stat-my-id" class="font-bold text-amber-400"></span>
+                            </div>
+                        </div>
+
+                        <div id="admin-control-panel" class="hidden space-y-2 pt-2 border-t border-slate-700">
+                            <p class="text-xs font-bold text-amber-400">관리자 전용 제어</p>
+                            <button onclick="openUserManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
+                                <i class="fa-solid fa-users-gear mr-1"></i> 길드원 직급 및 권한 관리
+                            </button>
+                            <button onclick="openItemManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
+                                <i class="fa-solid fa-box-archive mr-1"></i> 분배 아이템 등록/삭제
+                            </button>
+                            <button onclick="openBossScoreEditModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
+                                <i class="fa-solid fa-star mr-1"></i> 보스 배점 수정
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 모달 창들 -->
+    <div id="boss-reg-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
+                <h3 class="text-xl font-bold text-amber-400 flex items-center"><i class="fa-solid fa-square-check mr-2"></i> 보스 참여 등록</h3>
+                <button onclick="closeBossModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 overflow-y-auto space-y-4 flex-1">
+                <div class="grid grid-cols-2 gap-3 bg-slate-900/80 p-4 rounded-xl border border-slate-700">
+                    <div class="text-center">
+                        <span class="text-xs text-slate-400 block mb-1">주간 총합 대비 참여율</span>
+                        <span id="modal-participation-rate" class="text-lg font-extrabold text-amber-400">0.0%</span>
+                    </div>
+                    <div class="text-center border-l border-slate-700">
+                        <span class="text-xs text-slate-400 block mb-1">예상 획득 점수</span>
+                        <span id="modal-expected-score" class="text-lg font-extrabold text-white">0점</span>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">참여 닉네임</label>
+                    <select id="modal-target-user" onchange="loadUserBossRecords()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 font-bold"></select>
+                </div>
+                <div class="flex space-x-2">
+                    <button onclick="toggleAllAccordion(true)" class="bg-slate-700 hover:bg-slate-600 text-xs px-3 py-1.5 rounded-lg text-slate-200 cursor-pointer">전체 펼치기</button>
+                    <button onclick="toggleAllAccordion(false)" class="bg-slate-700 hover:bg-slate-600 text-xs px-3 py-1.5 rounded-lg text-slate-200 cursor-pointer">전체 접기</button>
+                    <button onclick="clearAllBossCheck()" class="bg-red-500/20 hover:bg-red-500/30 text-xs px-3 py-1.5 rounded-lg text-red-300 cursor-pointer">전체 체크 해제</button>
+                </div>
+                <div class="space-y-2" id="accordion-days-container"></div>
+            </div>
+            <div class="p-4 border-t border-slate-700 bg-slate-900/50 flex justify-between items-center">
+                <span class="text-xs text-slate-400">체크박스는 실시간 반영됩니다.</span>
+                <button onclick="saveBossRecords()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-6 py-2.5 rounded-xl transition cursor-pointer">참여 기록 저장</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="user-manage-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
+                <h3 class="text-xl font-bold text-amber-400">길드원 직급 및 권한 관리</h3>
+                <button onclick="closeUserManageModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 overflow-y-auto space-y-3 flex-1" id="user-manage-list"></div>
+        </div>
+    </div>
+
+    <div id="item-manage-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-lg max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
+                <h3 class="text-xl font-bold text-amber-400">분배 아이템 등록/삭제</h3>
+                <button onclick="closeItemManageModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 overflow-y-auto space-y-4 flex-1">
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-3">
+                    <h4 class="text-sm font-bold text-white">신규 아이템 추가</h4>
+                    <input type="text" id="new-item-name" placeholder="아이템 이름" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="new-item-cat" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                            <option value="장비">장비</option>
+                            <option value="스킬북">스킬북</option>
+                            <option value="편린">편린</option>
+                        </select>
+                        <input type="number" id="new-item-price" placeholder="기준가 (다이아)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                    </div>
+                    <button onclick="addNewItem()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-lg text-sm cursor-pointer">아이템 등록</button>
+                </div>
+                <div class="space-y-2" id="admin-item-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="boss-score-edit-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
+                <h3 class="text-xl font-bold text-amber-400">보스별 배점 수정</h3>
+                <button onclick="closeBossScoreEditModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 overflow-y-auto space-y-3 flex-1" id="boss-score-edit-list"></div>
+        </div>
+    </div>
+
+    <script>
+        const DEFAULT_DB = {
+            users: [
+                { id: 'admin', pw: '1234', role: '마스터', class: '군주', power: 999999 }
+            ],
+            currentUser: null,
+            notice: "안녕하세요 바르카디온3 클래스 혈맹원 여러분.\n1. 보스 참여는 매주 성실히 체크해주세요.\n2. 분배 신청은 본인 명의로만 가능합니다.",
+            tiers: [
+                { name: '영웅 5티어', price: 5000 },
+                { name: '영웅 4티어', price: 4000 },
+                { name: '영웅 3티어', price: 3000 },
+                { name: '영웅 2티어', price: 2000 },
+                { name: '영웅 1티어', price: 1000 },
+                { name: '전설 편린', price: 2500 }
+            ],
+            bossScores: {
+                '40보스': 1, '50보스': 1, '60보스': 1,
+                '70보스': 3, '75보스': 6, '80보스': 10,
+                '85보스': 15, '90보스': 20, '99보스': 25,
+                '라세리엔': 5, '툴칸': 10, '발락': 30
+            },
+            bossListDef: [
+                { name: '40보스', cycleHours: 8, days: ['월','화','수','목','금','토','일'] },
+                { name: '50보스', cycleHours: 8, days: ['월','화','수','목','금','토','일'] },
+                { name: '60보스', cycleHours: 10, days: ['월','화','수','목','금','토','일'] },
+                { name: '70보스', cycleHours: 12, days: ['월','화','수','목','금','토','일'] },
+                { name: '75보스', cycleHours: 12, days: ['월','화','수','목','금','토','일'] },
+                { name: '80보스', cycleHours: 15, days: ['월','화','수','목','금','토','일'] },
+                { name: '라세리엔', fixedTime: '21:00', days: ['월','화','수','목','금','토','일'] },
+                { name: '85보스', fixedTime: '21:00', days: ['금'] },
+                { name: '90보스', fixedTime: '21:00', days: ['토'] },
+                { name: '발락', fixedTime: '21:00', days: ['토'] },
+                { name: '99보스', fixedTime: '21:00', days: ['일'] },
+                { name: '툴칸', fixedTime: '21:00', days: ['일'] }
+            ],
+            bossRecords: {},
+            items: [
+                { id: 1, name: '영웅 5티어 장갑', category: '장비', price: 5000, applicant: null },
+                { id: 2, name: '전설 스킬북 [앱솔루트]', category: '스킬북', price: 20000, applicant: null }
+            ]
+        };
+
+        let db;
+        try {
+            const raw = localStorage.getItem('barcadion_db_v3');
+            db = raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(DEFAULT_DB));
+            if (!db.users || !Array.isArray(db.users) || db.users.length === 0) {
+                db.users = JSON.parse(JSON.stringify(DEFAULT_DB.users));
+            }
+        } catch (e) {
+            db = JSON.parse(JSON.stringify(DEFAULT_DB));
+        }
+
+        let isRegisterMode = false;
+
+        function saveDB() {
+            localStorage.setItem('barcadion_db_v3', JSON.stringify(db));
+        }
+
+        window.onload = function() {
+            const savedUser = localStorage.getItem('barcadion_logged_user_v3');
+            if (savedUser && db.users.find(u => u.id === savedUser)) {
+                db.currentUser = savedUser;
+            }
+            checkLoginState();
+        };
+
+        function checkLoginState() {
+            const authModal = document.getElementById('auth-modal');
+            const appContainer = document.getElementById('app-container');
+
+            if (db.currentUser) {
+                authModal.style.display = 'none';
+                appContainer.classList.remove('hidden');
+                initApp();
+            } else {
+                authModal.style.display = 'flex';
+                appContainer.classList.add('hidden');
+            }
+        }
+
+        function toggleAuthMode() {
+            isRegisterMode = !isRegisterMode;
+            const title = document.getElementById('auth-title');
+            const submitBtn = document.getElementById('auth-submit-btn');
+            const toggleBtn = document.getElementById('auth-toggle-btn');
+            const regFields = document.getElementById('register-fields');
+            const autoLoginBox = document.getElementById('auto-login-box');
+
+            if (isRegisterMode) {
+                title.innerText = "바르카디온3 클래스 회원가입";
+                submitBtn.innerText = "회원가입 완료";
+                toggleBtn.innerText = "이미 계정이 있으신가요? 로그인";
+                regFields.style.display = 'flex';
+                autoLoginBox.style.display = 'none';
+            } else {
+                title.innerText = "바르카디온3 클래스 로그인";
+                submitBtn.innerText = "로그인";
+                toggleBtn.innerText = "계정이 없으신가요? 회원가입";
+                regFields.style.display = 'none';
+                autoLoginBox.style.display = 'flex';
+            }
+            document.getElementById('auth-error').style.display = 'none';
+        }
+
+        function handleAuthAction() {
+            const id = document.getElementById('auth-id').value.trim();
+            const pw = document.getElementById('auth-pw').value.trim();
+            const errorBox = document.getElementById('auth-error');
+
+            if (!id || !pw) {
+                errorBox.innerText = "아이디와 비밀번호를 모두 입력해주세요.";
+                errorBox.style.display = 'block';
+                return;
+            }
+
+            if (isRegisterMode) {
+                const exist = db.users.find(u => u.id === id);
+                if (exist) {
+                    errorBox.innerText = "이미 존재하는 아이디입니다.";
+                    errorBox.style.display = 'block';
+                    return;
+                }
+                const newCls = document.getElementById('reg-class').value;
+                const newPower = parseInt(document.getElementById('reg-power').value) || 0;
+                db.users.push({ id, pw, role: '길드원', class: newCls, power: newPower });
+                saveDB();
+                alert("회원가입이 완료되었습니다! 방금 가입한 아이디로 로그인해주세요.");
+                toggleAuthMode();
+            } else {
+                const user = db.users.find(u => u.id === id && u.pw === pw);
+                if (!user) {
+                    errorBox.innerText = "아이디 또는 비밀번호가 일치하지 않습니다.";
+                    errorBox.style.display = 'block';
+                    return;
+                }
+                db.currentUser = user.id;
+                
+                const isAutoLogin = document.getElementById('auto-login-check').checked;
+                if (isAutoLogin) {
+                    localStorage.setItem('barcadion_logged_user_v3', user.id);
+                } else {
+                    localStorage.removeItem('barcadion_logged_user_v3');
+                }
+
+                saveDB();
+                checkLoginState();
+            }
+        }
+
+        function logout() {
+            db.currentUser = null;
+            localStorage.removeItem('barcadion_logged_user_v3');
+            saveDB();
+            checkLoginState();
+        }
+
+        function initApp() {
+            const currentUserObj = db.users.find(u => u.id === db.currentUser);
+            if (!currentUserObj) { logout(); return; }
+
+            document.getElementById('user-display-name').innerText = currentUserObj.id;
+            const badge = document.getElementById('user-badge');
+            badge.innerText = currentUserObj.role;
+            if (currentUserObj.role === '마스터') badge.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-red-500/20 text-red-400 border border-red-500/40";
+            else if (currentUserObj.role === '운영진') badge.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/40";
+            else badge.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-slate-700 text-slate-300";
+
+            document.getElementById('user-display-power').innerText = `전투력: ${currentUserObj.power.toLocaleString()} | 클래스: ${currentUserObj.class}`;
+            document.getElementById('stat-my-id').innerText = currentUserObj.id;
+
+            const isAdmin = (currentUserObj.role === '마스터' || currentUserObj.role === '운영진');
+            document.querySelectorAll('.admin-only').forEach(el => {
+                if (isAdmin) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+            const adminPanel = document.getElementById('admin-control-panel');
+            if (isAdmin) adminPanel.classList.remove('hidden');
+            else adminPanel.classList.add('hidden');
+
+            const noticeEditBox = document.getElementById('admin-notice-edit-box');
+            if (isAdmin) noticeEditBox.classList.remove('hidden');
+            else noticeEditBox.classList.add('hidden');
+
+            renderNotice();
+            renderMembers();
+            renderTiers();
+            renderItems();
+            renderBossPreview();
+        }
+
+        function switchTab(tabName, frameNum) {
+            if (frameNum === '1') {
+                if (tabName === 'notice') {
+                    document.getElementById('btn-tab-notice-1').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer";
+                    document.getElementById('btn-tab-member-1').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer";
+                    document.getElementById('content-notice-1').classList.remove('hidden');
+                    document.getElementById('content-member-1').classList.add('hidden');
+                } else {
+                    document.getElementById('btn-tab-member-1').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer";
+                    document.getElementById('btn-tab-notice-1').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer";
+                    document.getElementById('content-member-1').classList.remove('hidden');
+                    document.getElementById('content-notice-1').classList.add('hidden');
+                }
+            } else if (frameNum === '2') {
+                if (tabName === 'boss-reg') {
+                    document.getElementById('btn-tab-boss-reg-2').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer";
+                    document.getElementById('btn-tab-boss-sched-2').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer";
+                    document.getElementById('content-boss-reg-2').classList.remove('hidden');
+                    document.getElementById('content-boss-sched-2').classList.add('hidden');
+                } else {
+                    document.getElementById('btn-tab-boss-sched-2').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer";
+                    document.getElementById('btn-tab-boss-reg-2').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer";
+                    document.getElementById('content-boss-sched-2').classList.remove('hidden');
+                    document.getElementById('content-boss-reg-2').classList.add('hidden');
+                }
+            } else if (frameNum === '3') {
+                if (tabName === 'dist-기준') {
+                    document.getElementById('btn-tab-dist-기준-3').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer";
+                    document.getElementById('btn-tab-dist-신청-3').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer";
+                    document.getElementById('content-dist-기준-3').classList.remove('hidden');
+                    document.getElementById('content-dist-신청-3').classList.add('hidden');
+                } else {
+                    document.getElementById('btn-tab-dist-신청-3').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer";
+                    document.getElementById('btn-tab-dist-기준-3').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer";
+                    document.getElementById('content-dist-신청-3').classList.remove('hidden');
+                    document.getElementById('content-dist-기준-3').classList.add('hidden');
+                }
+            }
+        }
+
+        function renderNotice() {
+            document.getElementById('notice-text-view').innerHTML = db.notice.replace(/\n/g, '<br>');
+            document.getElementById('notice-input').value = db.notice;
+        }
+        function saveNotice() {
+            db.notice = document.getElementById('notice-input').value;
+            saveDB();
+            renderNotice();
+            alert("공지사항이 수정되었습니다.");
+        }
+
+        function renderMembers() {
+            const roleOrder = { '마스터': 1, '운영진': 2, '길드원': 3 };
+            const sorted = [...db.users].sort((a, b) => {
+                if (roleOrder[a.role] !== roleOrder[b.role]) return roleOrder[a.role] - roleOrder[b.role];
+                return b.power - a.power;
+            });
+
+            let html = '';
+            sorted.forEach(u => {
+                let badgeColor = "bg-slate-700 text-slate-300";
+                if (u.role === '마스터') badgeColor = "bg-red-500/20 text-red-400";
+                if (u.role === '운영진') badgeColor = "bg-amber-500/20 text-amber-400";
+                html += `
+                    <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50 flex justify-between items-center text-xs">
+                        <div>
+                            <span class="font-bold text-white mr-1.5">${u.id}</span>
+                            <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold ${badgeColor}">${u.role}</span>
+                            <span class="text-slate-400 ml-1.5">[${u.class}]</span>
+                        </div>
+                        <div class="text-amber-400 font-bold">${u.power.toLocaleString()} <span class="text-[10px] text-slate-500">전투력</span></div>
+                    </div>
+                `;
+            });
+            document.getElementById('member-list-view').innerHTML = html;
+            document.getElementById('total-member-count').innerText = `${sorted.length}명`;
+            document.getElementById('stat-member-count').innerText = `${sorted.length}명`;
+        }
+
+        function renderTiers() {
+            let html = '';
+            db.tiers.forEach(t => {
+                html += `
+                    <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50 flex justify-between items-center text-xs">
+                        <span class="font-bold text-white">${t.name}</span>
+                        <span class="text-amber-400 font-bold">${t.price.toLocaleString()} 다이아</span>
+                    </div>
+                `;
+            });
+            document.getElementById('tier-list-view').innerHTML = html;
+        }
+
+        let currentItemCategory = '전체';
+        function filterItemCategory(cat) {
+            currentItemCategory = cat;
+            document.querySelectorAll('.item-cat-btn').forEach(btn => {
+                if (btn.innerText === cat) btn.className = "item-cat-btn px-2 py-1 text-xs rounded bg-amber-500 text-slate-950 font-bold cursor-pointer";
+                else btn.className = "item-cat-btn px-2 py-1 text-xs rounded bg-slate-700 text-slate-300 cursor-pointer";
+            });
+            renderItems();
+        }
+
+        function renderItems() {
+            const filtered = currentItemCategory === '전체' ? db.items : db.items.filter(i => i.category === currentItemCategory);
+            let html = '';
+            if (filtered.length === 0) {
+                html = `<div class="text-center py-6 text-xs text-slate-500">등록된 아이템이 없습니다.</div>`;
+            } else {
+                filtered.forEach(item => {
+                    const isMyApplicant = item.applicant === db.currentUser;
+                    const isApplied = item.applicant !== null;
+                    let btnHtml = '';
+                    if (!isApplied) btnHtml = `<button onclick="applyItem(${item.id})" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer">신청</button>`;
+                    else if (isMyApplicant) btnHtml = `<button onclick="cancelItem(${item.id})" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/40 px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer">취소</button>`;
+                    else btnHtml = `<span class="text-xs text-slate-500 font-semibold">신청완료 (${item.applicant})</span>`;
+
+                    html += `
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 flex justify-between items-center text-xs">
+                            <div>
+                                <span class="bg-slate-800 text-amber-400 px-1.5 py-0.5 rounded text-[10px] mr-1">${item.category}</span>
+                                <span class="font-bold text-white">${item.name}</span>
+                                <div class="text-[10px] text-slate-400 mt-0.5">기준가: ${item.price.toLocaleString()} 다이아</div>
+                            </div>
+                            <div>${btnHtml}</div>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('item-market-list').innerHTML = html;
+            document.getElementById('stat-item-count').innerText = `${db.items.length}개`;
+        }
+
+        function applyItem(itemId) {
+            const item = db.items.find(i => i.id === itemId);
+            if (!item) return;
+            if (confirm(`[${item.name}] 아이템을 본인 명의(${db.currentUser})로 신청하시겠습니까?`)) {
+                item.applicant = db.currentUser;
+                saveDB();
+                renderItems();
+                alert("신청이 완료되었습니다.");
+            }
+        }
+
+        function cancelItem(itemId) {
+            const item = db.items.find(i => i.id === itemId);
+            if (!item) return;
+            if (confirm(`[${item.name}] 신청을 취소하시겠습니까?`)) {
+                item.applicant = null;
+                saveDB();
+                renderItems();
+                alert("신청이 취소되었습니다.");
+            }
+        }
+
+        const daysOfWeek = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
+        const dayShorts = { '월요일': '월', '화요일': '화', '수요일': '수', '목요일': '목', '금요일': '금', '토요일': '토', '일요일': '일' };
+
+        function openBossModal() {
+            let selectHtml = '';
+            db.users.forEach(u => {
+                selectHtml += `<option value="${u.id}" ${u.id === db.currentUser ? 'selected' : ''}>${u.id} (${u.role})</option>`;
+            });
+            document.getElementById('modal-target-user').innerHTML = selectHtml;
+            document.getElementById('boss-reg-modal').classList.remove('hidden');
+            loadUserBossRecords();
+        }
+        function closeBossModal() { document.getElementById('boss-reg-modal').classList.add('hidden'); }
+
+        function loadUserBossRecords() {
+            const targetUser = document.getElementById('modal-target-user').value;
+            if (!db.bossRecords[targetUser]) db.bossRecords[targetUser] = {};
+
+            let containerHtml = '';
+            let totalScore = 0;
+            let maxPossibleScore = 0;
+
+            daysOfWeek.forEach(dayFull => {
+                const dayKey = dayShorts[dayFull];
+                const bossesOnThisDay = db.bossListDef.filter(b => b.days.includes(dayKey));
+                let dayScore = 0, dayMaxScore = 0, checkboxesHtml = '';
+
+                bossesOnThisDay.forEach((boss, idx) => {
+                    const uniqueKey = `${dayKey}_${boss.name}_${idx}`;
+                    const isChecked = db.bossRecords[targetUser][uniqueKey] === true;
+                    const bScore = db.bossScores[boss.name] || 1;
+                    dayMaxScore += bScore;
+                    maxPossibleScore += bScore;
+                    if (isChecked) { dayScore += bScore; totalScore += bScore; }
+
+                    checkboxesHtml += `
+                        <label class="flex items-center space-x-2 bg-slate-900/80 p-2 rounded-lg border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition">
+                            <input type="checkbox" data-user="${targetUser}" data-key="${uniqueKey}" data-score="${bScore}" ${isChecked ? 'checked' : ''} onchange="onBossCheckChange(this)" class="w-4 h-4 text-amber-500 rounded bg-slate-800 border-slate-600">
+                            <span class="text-xs text-white font-medium">${boss.name}</span>
+                            <span class="text-[10px] text-amber-400 ml-auto">+${bScore}점</span>
+                        </label>
+                    `;
+                });
+
+                containerHtml += `
+                    <div class="bg-slate-900/60 border border-slate-700 rounded-xl overflow-hidden">
+                        <div onclick="toggleAccordionDay(this)" class="flex justify-between items-center p-3.5 bg-slate-800/80 cursor-pointer hover:bg-slate-750 transition">
+                            <span class="font-bold text-sm text-white flex items-center"><i class="fa-solid fa-calendar-day mr-2 text-amber-400"></i> ${dayFull}</span>
+                            <span class="text-xs font-bold text-amber-400">${dayScore}점 / ${dayMaxScore}점</span>
+                        </div>
+                        <div class="accordion-body p-3 grid grid-cols-2 sm:grid-cols-3 gap-2 border-t border-slate-700/50">
+                            ${checkboxesHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('accordion-days-container').innerHTML = containerHtml;
+            const rate = maxPossibleScore > 0 ? ((totalScore / maxPossibleScore) * 100).toFixed(1) : '0.0';
+            document.getElementById('modal-participation-rate').innerText = `${rate}%`;
+            document.getElementById('modal-expected-score').innerText = `${totalScore}점`;
+        }
+
+        function toggleAccordionDay(headerEl) {
+            const body = headerEl.nextElementSibling;
+            body.style.display = (body.style.display === 'none') ? 'grid' : 'none';
+        }
+        function toggleAllAccordion(isOpen) {
+            document.querySelectorAll('.accordion-body').forEach(b => b.style.display = isOpen ? 'grid' : 'none');
+        }
+        function clearAllBossCheck() {
+            const targetUser = document.getElementById('modal-target-user').value;
+            if (confirm(`${targetUser}님의 모든 보스 참여 체크를 초기화하시겠습니까?`)) {
+                db.bossRecords[targetUser] = {};
+                saveDB();
+                loadUserBossRecords();
+            }
+        }
+        function onBossCheckChange(checkbox) {
+            const user = checkbox.getAttribute('data-user');
+            const key = checkbox.getAttribute('data-key');
+            if (!db.bossRecords[user]) db.bossRecords[user] = {};
+            db.bossRecords[user][key] = checkbox.checked;
+            saveDB();
+            loadUserBossRecords();
+        }
+        function saveBossRecords() {
+            saveDB();
+            alert("참여 기록이 정상적으로 저장되었습니다.");
+            closeBossModal();
+            renderBossPreview();
+        }
+
+        function renderBossPreview() {
+            let html = '';
+            db.bossListDef.forEach(b => {
+                const score = db.bossScores[b.name] || 1;
+                html += `
+                    <div class="flex justify-between items-center text-xs bg-slate-900/40 p-2.5 rounded-lg border border-slate-700/40">
+                        <div>
+                            <span class="font-bold text-white">${b.name}</span>
+                            <span class="text-slate-400 ml-1">(${b.fixedTime ? '고정 ' + b.fixedTime : b.cycleHours + '시간 주기'})</span>
+                        </div>
+                        <span class="text-amber-400 font-bold">${score}점</span>
+                    </div>
+                `;
+            });
+            document.getElementById('next-boss-preview').innerHTML = html;
+        }
+
+        function openUserManageModal() {
+            let html = '';
+            db.users.forEach(u => {
+                html += `
+                    <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 flex justify-between items-center text-xs">
+                        <div>
+                            <span class="font-bold text-white text-sm">${u.id}</span>
+                            <span class="text-slate-400 ml-2">[${u.class} / 전력: ${u.power.toLocaleString()}]</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <select onchange="changeUserRole('${u.id}', this.value)" class="bg-slate-900 border border-slate-700 text-white rounded p-1 text-xs">
+                                <option value="마스터" ${u.role === '마스터' ? 'selected' : ''}>마스터</option>
+                                <option value="운영진" ${u.role === '운영진' ? 'selected' : ''}>운영진</option>
+                                <option value="길드원" ${u.role === '길드원' ? 'selected' : ''}>길드원</option>
+                            </select>
+                            <button onclick="deleteUser('${u.id}')" class="text-red-400 hover:text-red-300 px-2 py-1 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('user-manage-list').innerHTML = html;
+            document.getElementById('user-manage-modal').classList.remove('hidden');
+        }
+        function closeUserManageModal() { document.getElementById('user-manage-modal').classList.add('hidden'); renderMembers(); }
+        function changeUserRole(userId, newRole) {
+            const user = db.users.find(u => u.id === userId);
+            if (user) { user.role = newRole; saveDB(); }
+        }
+        function deleteUser(userId) {
+            if (userId === 'admin') { alert("기본 관리자 계정은 삭제할 수 없습니다."); return; }
+            if (confirm(`${userId} 계정을 삭제하시겠습니까?`)) {
+                db.users = db.users.filter(u => u.id !== userId);
+                saveDB();
+                openUserManageModal();
+            }
+        }
+
+        function openItemManageModal() { renderAdminItemList(); document.getElementById('item-manage-modal').classList.remove('hidden'); }
+        function closeItemManageModal() { document.getElementById('item-manage-modal').classList.add('hidden'); renderItems(); }
+        function renderAdminItemList() {
+            let html = '';
+            db.items.forEach(item => {
+                html += `
+                    <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700 flex justify-between items-center text-xs">
+                        <div>
+                            <span class="text-amber-400">[${item.category}]</span>
+                            <span class="font-bold text-white ml-1">${item.name}</span>
+                            <span class="text-slate-400 ml-2">(${item.price.toLocaleString()}다이아)</span>
+                        </div>
+                        <button onclick="deleteAdminItem(${item.id})" class="text-red-400 hover:text-red-300 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
+            document.getElementById('admin-item-list').innerHTML = html;
+        }
+        function addNewItem() {
+            const name = document.getElementById('new-item-name').value.trim();
+            const category = document.getElementById('new-item-cat').value;
+            const price = parseInt(document.getElementById('new-item-price').value) || 0;
+            if (!name) { alert("아이템 이름을 입력하세요."); return; }
+            const newId = db.items.length > 0 ? Math.max(...db.items.map(i => i.id)) + 1 : 1;
+            db.items.push({ id: newId, name, category, price, applicant: null });
+            saveDB();
+            document.getElementById('new-item-name').value = '';
+            document.getElementById('new-item-price').value = '';
+            renderAdminItemList();
+        }
+        function deleteAdminItem(itemId) {
+            db.items = db.items.filter(i => i.id !== itemId);
+            saveDB();
+            renderAdminItemList();
+        }
+
+        function openBossScoreEditModal() {
+            let html = '';
+            for (const [bossName, score] of Object.entries(db.bossScores)) {
+                html += `
+                    <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700 flex justify-between items-center text-xs">
+                        <span class="font-bold text-white">${bossName}</span>
+                        <div class="flex items-center space-x-2">
+                            <input type="number" id="score-input-${bossName}" value="${score}" class="w-16 bg-slate-900 border border-slate-700 rounded p-1 text-white text-center font-bold">
+                            <button onclick="updateBossScore('${bossName}')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-2 py-1 rounded text-xs cursor-pointer">저장</button>
+                        </div>
+                    </div>
+                `;
+            }
+            document.getElementById('boss-score-edit-list').innerHTML = html;
+            document.getElementById('boss-score-edit-modal').classList.remove('hidden');
+        }
+        function closeBossScoreEditModal() { document.getElementById('boss-score-edit-modal').classList.add('hidden'); renderBossPreview(); }
+        function updateBossScore(bossName) {
+            const val = parseInt(document.getElementById(`score-input-${bossName}`).value) || 0;
+            db.bossScores[bossName] = val;
+            saveDB();
+            alert(`[${bossName}] 배점이 ${val}점으로 수정되었습니다.`);
+        }
+    </script>
 </body>
 </html>

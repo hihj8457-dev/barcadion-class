@@ -176,7 +176,7 @@ body{background:radial-gradient(ellipse at 50% -22%,#1b1636 0%,#080c19 48%,#0609
 #class-profile-wrap{display:flex;align-items:center;gap:12px;padding-right:16px;border-right:1px solid #6b6d86;min-height:52px}
 #class-profile-wrap #user-display-name{font-size:19px!important;color:#fff!important;line-height:1.2;white-space:nowrap}
 #class-profile-wrap #user-display-power{display:block;font-size:14px!important;color:#f4f2ff!important;white-space:nowrap;line-height:1.5}
-#class-profile-wrap .class-power-number{font-weight:800;color:#d77cff;font-size:17px;text-shadow:0 0 8px #ab40e04d}
+#class-profile-wrap .class-power-number{font-weight:800;color:#f4f2ff;font-size:17px;text-shadow:none}
 #class-profile-wrap #user-badge{display:none!important}
 #app-container>header button[onclick*="openMyProfileModal"],#app-container>header button[onclick*="logout"],#class-admin-link{background:linear-gradient(180deg,#283450,#11172b 72%,#1d213a)!important;border:1px solid #a4a6c7!important;border-radius:15px!important;padding:11px 15px!important;color:#fff!important;box-shadow:inset 0 1px #ffffff38,0 2px 7px #0008!important;font-weight:700!important;white-space:nowrap}
 .class-nav{gap:9px!important;margin-bottom:12px!important}
@@ -448,6 +448,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                             <button onclick="filterItemCategory('장비')" class="item-cat-btn px-2 py-1 text-xs rounded bg-slate-700 text-slate-300 cursor-pointer">장비</button>
                             <button onclick="filterItemCategory('스킬북')" class="item-cat-btn px-2 py-1 text-xs rounded bg-slate-700 text-slate-300 cursor-pointer">스킬북</button>
                             <button onclick="filterItemCategory('편린')" class="item-cat-btn px-2 py-1 text-xs rounded bg-slate-700 text-slate-300 cursor-pointer">편린</button>
+                            <button onclick="filterItemCategory('기타')" class="item-cat-btn px-2 py-1 text-xs rounded bg-slate-700 text-slate-300 cursor-pointer">기타</button>
                         </div>
                         <div class="flex gap-2">
                             <input type="search" placeholder="아이템 이름 검색" oninput="setItemSearch(this.value)" class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white" />
@@ -607,6 +608,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                             <option value="장비">장비</option>
                             <option value="스킬북">스킬북</option>
                             <option value="편린">편린</option>
+                            <option value="기타">기타</option>
                         </select>
                         <input type="number" id="new-item-price" placeholder="기준가 (다이아)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
                     </div>
@@ -1444,7 +1446,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                 html += `
                     <div class="class-member-card bg-slate-900/60 rounded-xl border border-slate-700/50">
                         <div class="class-member-identity">
-                            <span class="class-member-rank">${i+1}위</span>
+                            
                             ${guildClassIcon(u.class)}
                             <span class="guild-member-name font-bold text-white" title="${escapeAttribute(u.id)}">${escapeHtml(u.id)}</span>
                             <span class="class-member-role px-1.5 py-0.5 rounded text-[10px] font-semibold whitespace-nowrap ${badgeColor}">${escapeHtml(u.role)}</span>
@@ -2286,7 +2288,7 @@ body{background:#060915!important;color:#f7f7ff!important}
         function editAdminItem(itemId) {
             const item = db.items.find(i => String(i.id) === String(itemId)); if (!item) return;
             const name = prompt('아이템 이름 수정', item.name); if (name === null) return;
-            const category = prompt('카테고리 입력 (장비 / 스킬북 / 편린)', item.category); if (category === null) return;
+            const category = prompt('카테고리 입력 (장비 / 스킬북 / 편린 / 기타)', item.category); if (category === null) return;
             const gradeText = prompt('등급 선택: 고급 / 희귀 / 영웅 / 전설 / 없음', item.grade || itemRarity(item.name) || '없음');
             if (gradeText === null) return;
             const grade = gradeText.trim() === '없음' ? '' : gradeText.trim();

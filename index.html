@@ -99,6 +99,35 @@ body{background:#070b16!important;color:#f3f4fa}#app-container{max-width:1500px!
 @media(min-width:851px) and (max-width:1100px){#member-list-view .class-member-metrics{padding-left:0;gap:8px}#member-list-view .class-member-card{padding:10px}}
 @media(max-width:550px){#item-market-list .class-item-line{align-items:flex-start}#item-market-list .class-item-details{gap:6px}#item-market-list .class-item-price{white-space:normal}#item-market-list .class-item-action button{padding:8px 10px}.class-weekly-card .class-stats{gap:6px}.class-weekly-card .class-stat{padding:10px 3px}.class-weekly-card .class-stat .caption{font-size:11px}}
 </style>
+<style id="class-home-compact-v14">
+@media (min-width:851px){
+ #class-home .class-home-top{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;gap:12px!important;margin-bottom:12px!important}
+ #class-home .class-home-top>.class-card{min-width:0;height:214px;min-height:0;padding:13px 16px!important;overflow:hidden;display:flex;flex-direction:column}
+ #class-home .class-home-top>.class-card>h2{flex:none;margin-bottom:7px!important;font-size:17px!important}
+ #class-home #class-notice-slot,#class-home #class-diamond-slot{min-height:0;flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#49476d transparent}
+ #class-home #class-notice-slot #notice-text-view{min-height:0!important;max-height:none!important;line-height:1.5!important;font-size:14px!important}
+ #class-home #class-diamond-slot #diamond-summary-content{font-size:13px!important;line-height:1.45!important;gap:2px!important}
+ #class-home #class-diamond-slot #diamond-summary-content>div{margin-top:0!important;margin-bottom:0!important}
+ #class-home .class-weekly-card{margin-bottom:12px!important}
+ #class-home .class-weekly-card>.class-stats{gap:10px}
+ #class-home .class-boss-card{padding:15px 18px!important}
+ #class-home .class-boss-card .class-actions{margin-bottom:10px!important}
+ #class-home .class-boss{padding:12px 8px!important}
+ #class-home .class-boss strong{margin-bottom:5px!important;font-size:16px!important}
+ #class-home .class-boss span{font-size:clamp(16px,1.7vw,24px)!important}
+ .class-nav{margin-bottom:12px!important}
+ .class-nav button{padding:12px 8px!important}
+ #app-container>header{margin-bottom:10px!important}
+}
+@media(max-width:850px){
+ #class-home .class-home-top{grid-template-columns:1fr!important;gap:10px!important;margin-bottom:10px!important}
+ #class-home .class-home-top>.class-card{padding:12px 14px!important}
+ #class-home #class-notice-slot #notice-text-view{min-height:0!important;max-height:160px!important;overflow-y:auto}
+ #class-home #class-diamond-slot #diamond-summary-content{font-size:13px!important;line-height:1.5!important}
+ #class-home .class-weekly-card{margin-bottom:10px!important}
+ #class-home .class-boss{padding:12px 5px!important}
+}
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
 

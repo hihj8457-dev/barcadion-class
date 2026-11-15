@@ -36,7 +36,48 @@
             margin-top: 14px;
         }
         .btn-link:hover { color: #fbbf24 !important; }
-        .dashboard-panel { min-height: var(--dashboard-panel-min-height, 560px); }
+        /* 메인 프레임의 설정 높이를 실제 내부 레이아웃에도 적용 */
+        .dashboard-panel {
+            min-height: var(--dashboard-panel-min-height, 800px);
+            display: flex;
+            flex-direction: column;
+        }
+        .dashboard-panel > div:first-child {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        /* 공통 탭 콘텐츠: 패널 안에서 남는 높이를 차지 */
+        #content-notice-1:not(.hidden),
+        #content-member-1:not(.hidden),
+        #content-boss-reg-2:not(.hidden),
+        #content-boss-sched-2:not(.hidden),
+        #content-dist-기준-3:not(.hidden),
+        #content-dist-신청-3:not(.hidden) {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        /* 공지/명단/스케줄/티어/아이템 목록의 고정 max-height 해제 후 가변 확장 */
+        #notice-text-view,
+        #member-list-view,
+        #next-boss-preview,
+        #tier-list-view,
+        #item-market-list {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-height: none !important;
+            overflow-y: auto;
+        }
+        #content-notice-1 #notice-text-view { min-height: 180px; }
+        #content-member-1 #member-list-view,
+        #content-boss-sched-2 #next-boss-preview,
+        #content-dist-기준-3 #tier-list-view,
+        #content-dist-신청-3 #item-market-list { min-height: 180px; }
+        /* 보스 참여 등록 탭은 정보 블록이 패널 높이를 무리하게 밀지 않도록 */
+        #content-boss-reg-2 { justify-content: flex-start; }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
@@ -51,11 +92,11 @@
             <div style="display: flex; flex-direction: column; gap: 14px;">
                 <div>
                     <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px;">아이디 (닉네임)</label>
-                    <input type="text" id="auth-id" onkeyup="if(event.key==='Enter') handleAuthAction()" style="width: 100%; box-sizing: border-box; background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px 14px; color: white; font-size: 15px;" placeholder="admin">
+                    <input type="text" id="auth-id" onkeyup="if(event.key==='Enter') handleAuthAction()" style="width: 100%; box-sizing: border-box; background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px 14px; color: white; font-size: 15px;" placeholder="아이디 입력">
                 </div>
                 <div>
                     <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px;">비밀번호</label>
-                    <input type="password" id="auth-pw" onkeyup="if(event.key==='Enter') handleAuthAction()" style="width: 100%; box-sizing: border-box; background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px 14px; color: white; font-size: 15px;" placeholder="1234">
+                    <input type="password" id="auth-pw" onkeyup="if(event.key==='Enter') handleAuthAction()" style="width: 100%; box-sizing: border-box; background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px 14px; color: white; font-size: 15px;" placeholder="비밀번호 입력">
                 </div>
 
                 <!-- 회원가입 추가 필드 -->
@@ -63,13 +104,10 @@
                     <div>
                         <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px;">직업 (클래스)</label>
                         <select id="reg-class" style="width: 100%; box-sizing: border-box; background-color: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; color: white;">
-                            <option value="군주">군주</option>
-                            <option value="기사">기사</option>
-                            <option value="요정">요정</option>
-                            <option value="마법사">마법사</option>
-                            <option value="총사">총사</option>
-                            <option value="투사">투사</option>
-                            <option value="암흑사제">암흑사제</option>
+                            <option value="레인저">레인저</option>
+<option value="소서리스">소서리스</option>
+<option value="파이터">파이터</option>
+<option value="어쌔신">어쌔신</option>
                         </select>
                     </div>
                     <div>
@@ -91,10 +129,6 @@
             <div style="text-align: center;">
                 <button type="button" onclick="toggleAuthMode()" id="auth-toggle-btn" class="btn-link">계정이 없으신가요? 회원가입</button>
             </div>
-            
-            <div style="margin-top: 16px; font-size: 12px; text-align: center; color: #64748b; border-top: 1px solid #334155; padding-top: 12px;">
-                초기 마스터 계정: <span style="color: #fbbf24; font-weight: bold;">admin</span> / <span style="color: #fbbf24; font-weight: bold;">1234</span>
-            </div>
         </div>
     </div>
 
@@ -108,7 +142,7 @@
                 </div>
                 <div>
                     <h1 id="site-title" class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">바르카디온3 클래스</h1>
-                    <p id="site-subtitle" class="text-xs text-slate-400">혈맹 보스 매니저 및 분배 시스템</p>
+                    <p id="site-subtitle" class="text-xs text-slate-400">보스 매니저 및 분배 시스템</p>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
@@ -133,7 +167,7 @@
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
                         <h2 id="panel-title-1" class="text-lg font-bold text-amber-400 flex items-center">
-                            <i class="fa-solid fa-bullhorn mr-2"></i> 1. 공지사항 & 길드원
+                            <i class="fa-solid fa-bullhorn mr-2"></i> 공지사항 & 길드원
                         </h2>
                     </div>
                     <div class="flex space-x-2 mb-4">
@@ -164,7 +198,7 @@
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
                         <h2 id="panel-title-2" class="text-lg font-bold text-amber-400 flex items-center">
-                            <i class="fa-solid fa-dragon mr-2"></i> 2. 보스 관리
+                            <i class="fa-solid fa-dragon mr-2"></i> 보스 관리
                         </h2>
                     </div>
                     <div class="flex space-x-2 mb-4">
@@ -187,7 +221,7 @@
 
                     <div id="content-boss-sched-2" class="hidden space-y-3">
                         <div class="text-xs text-slate-400 flex justify-between items-center">
-                            <span>보스별 출현 및 배점 현황</span>
+                            <span>실시간 보스 출현 카운트다운 · 남은 시간순</span>
                             <button onclick="openBossScoreEditModal()" class="text-amber-400 hover:underline admin-only hidden cursor-pointer">[배점 수정]</button>
                         </div>
                         <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 max-h-[210px] overflow-y-auto space-y-2" id="next-boss-preview"></div>
@@ -200,7 +234,7 @@
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
                         <h2 id="panel-title-3" class="text-lg font-bold text-amber-400 flex items-center">
-                            <i class="fa-solid fa-coins mr-2"></i> 3. 분배 관리
+                            <i class="fa-solid fa-coins mr-2"></i> 분배 관리
                         </h2>
                     </div>
                     <div class="flex space-x-2 mb-4">
@@ -232,7 +266,7 @@
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
                         <h2 id="panel-title-4" class="text-lg font-bold text-amber-400 flex items-center">
-                            <i class="fa-solid fa-gears mr-2"></i> 4. 길드 현황 & 설정
+                            <i class="fa-solid fa-gears mr-2"></i> 길드 현황 & 설정
                         </h2>
                     </div>
                     <div class="space-y-3 text-sm">
@@ -269,7 +303,7 @@
                                 <i class="fa-solid fa-tags mr-1"></i> 분배 티어 기준 관리
                             </button>
                             <button onclick="openBossManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
-                                <i class="fa-solid fa-dragon mr-1"></i> 보스 이름 / 시간 / 요일 관리
+                                <i class="fa-solid fa-dragon mr-1"></i> 보스 관리
                             </button>
                         </div>
                     </div>
@@ -328,12 +362,12 @@
     <div id="item-manage-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-lg max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
             <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
-                <h3 class="text-xl font-bold text-amber-400">분배 아이템 등록/삭제</h3>
+                <h3 class="text-xl font-bold text-amber-400">분배 아이템 등록 및 상태 관리</h3>
                 <button onclick="closeItemManageModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-5 overflow-y-auto space-y-4 flex-1">
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-3">
-                    <h4 class="text-sm font-bold text-white">신규 아이템 추가</h4>
+                    <h4 class="text-sm font-bold text-white">신규 아이템 추가 <span class="text-sky-400 text-xs">(등록 시 분배 중)</span></h4>
                     <input type="text" id="new-item-name" placeholder="아이템 이름" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
                     <div class="grid grid-cols-2 gap-2">
                         <select id="new-item-cat" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
@@ -356,7 +390,14 @@
                 <h3 class="text-xl font-bold text-amber-400">보스별 배점 수정</h3>
                 <button onclick="closeBossScoreEditModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-5 overflow-y-auto space-y-3 flex-1" id="boss-score-edit-list"></div>
+            <div class="p-5 overflow-y-auto space-y-3 flex-1">
+                <div class="bg-slate-900/70 border border-amber-500/30 rounded-xl p-3 space-y-2">
+                    <h4 class="text-sm font-bold text-amber-300">보스 추가 등록</h4>
+                    <p class="text-xs text-slate-400">이름과 배점을 입력하면 보스 스케줄 관리에도 추가됩니다. 출현 시간·요일은 스케줄 관리에서 설정하세요.</p>
+                    <div class="flex gap-2"><input id="score-new-boss-name" placeholder="보스 이름" class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white"><input id="score-new-boss-value" type="number" min="0" value="1" aria-label="배점" class="w-20 bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white"><button type="button" onclick="addBossFromScoreModal()" class="bg-amber-500 text-slate-950 rounded px-3 text-sm font-bold">추가</button></div>
+                </div>
+                <div id="boss-score-edit-list" class="space-y-3"></div>
+            </div>
         </div>
     </div>
 
@@ -379,9 +420,9 @@
                     <label class="text-xs text-slate-300">4번 패널 제목<input id="setting-panel-4" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
                 </div>
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-2">
-                    <label class="text-sm font-bold text-amber-300" for="setting-panel-height">메인 패널 최소 높이: <span id="setting-panel-height-value">560</span>px</label>
-                    <input id="setting-panel-height" type="range" min="350" max="1000" step="10" value="560" class="w-full" oninput="document.getElementById('setting-panel-height-value').innerText=this.value">
-                    <p class="text-xs text-slate-400">값을 높이면 4개 패널이 세로로 더 길어집니다. 350~1000px 조절 가능.</p>
+                    <label class="text-sm font-bold text-amber-300" for="setting-panel-height">메인 패널 최소 높이: <span id="setting-panel-height-value">800</span>px</label>
+                    <input id="setting-panel-height" type="range" min="350" max="1200" step="10" value="800" class="w-full" oninput="document.getElementById('setting-panel-height-value').innerText=this.value">
+                    <p class="text-xs text-slate-400">값을 높이면 4개 패널이 세로로 더 길어집니다. 350~1200px 조절 가능. 목록 영역도 패널 높이에 맞춰 함께 확장됩니다.</p>
                 </div>
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-3">
                     <h4 class="text-sm font-bold text-amber-300">메인 탭 이름</h4>
@@ -425,18 +466,18 @@
     <div id="boss-manage-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
             <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
-                <h3 class="text-xl font-bold text-amber-400">보스 이름 / 시간 / 요일 관리</h3>
+                <h3 class="text-xl font-bold text-amber-400">보스 관리</h3>
                 <button onclick="closeBossManageModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-5 overflow-y-auto space-y-3 flex-1">
-                <p class="text-xs text-slate-400">보스명, 고정 출현 시간 또는 주기, 출현 요일, 배점을 관리자 권한으로 수정할 수 있습니다.</p>
+                <p class="text-xs text-slate-400">주기가 설정되면 입력한 시간은 첫 등장 기준 시각입니다. 예: 01:24 / 8시간 → 01:24, 09:24, 17:24. 변경 후 하단의 일괄 저장을 누르세요.</p>
                 <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 space-y-2">
                     <h4 class="text-sm font-bold text-amber-300">새 보스 추가</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <input id="new-boss-name" placeholder="보스 이름" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
                         <input id="new-boss-score" type="number" placeholder="배점" value="1" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
                         <input id="new-boss-fixed-time" type="time" placeholder="고정 시간 (선택)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
-                        <input id="new-boss-cycle" type="number" placeholder="주기 시간 (고정시간 없을 때)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                        <input id="new-boss-cycle" type="number" placeholder="주기 시간 (시간 단위)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
                     </div>
                     <div class="flex flex-wrap gap-2 text-xs text-slate-300" id="new-boss-days">
                         <label><input type="checkbox" value="월" checked> 월</label><label><input type="checkbox" value="화" checked> 화</label><label><input type="checkbox" value="수" checked> 수</label><label><input type="checkbox" value="목" checked> 목</label><label><input type="checkbox" value="금" checked> 금</label><label><input type="checkbox" value="토" checked> 토</label><label><input type="checkbox" value="일" checked> 일</label>
@@ -444,6 +485,7 @@
                     <button onclick="addBossDefinition()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-lg text-sm">보스 추가</button>
                 </div>
                 <div id="admin-boss-list" class="space-y-2"></div>
+                <button type="button" onclick="saveAllBossDefinitions()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl">보스 설정 일괄 저장</button>
             </div>
         </div>
     </div>
@@ -451,18 +493,18 @@
     <script>
         const DEFAULT_DB = {
             users: [
-                { id: 'admin', pw: '1234', role: '마스터', class: '군주', power: 999999 }
+                { id: 'admin', pw: '1234', role: '마스터', class: '파이터', power: 999999 }
             ],
             currentUser: null,
             settings: {
                 siteTitle: '바르카디온3 클래스',
-                siteSubtitle: '혈맹 보스 매니저 및 분배 시스템',
-                panelTitles: ['1. 공지사항 & 길드원', '2. 보스 관리', '3. 분배 관리', '4. 길드 현황 & 설정'],
-                panelHeight: 560,
+                siteSubtitle: '보스 매니저 및 분배 시스템',
+                panelTitles: ['공지사항 & 길드원', '보스 관리', '분배 관리', '길드 현황 & 설정'],
+                panelHeight: 800,
                 tabLabels: { notice: '공지사항', members: '길드원 명단', bossReg: '참여 등록', bossSched: '스케줄 보기', distStandard: '분배 기준', distApply: '아이템 신청' },
-                bossGuide: '40~60보스: 1점 | 70: 3점 | 75: 6점 | 80: 10점\n85: 15점 | 90: 20점 | 툴칸: 10점 | 라세리엔: 5점 | 발락: 30점'
+                bossGuide: '40, 50, 60보스 : 1점\n\n70보스 : 3점\n\n75보스 : 6점\n\n80보스 : 10점\n\n85보스 : 15점\n\n90보스 : 20점\n\n99보스 : 25점\n\n툴칸 : 10점\n\n라세리엔 : 5점\n\n발락 : 30점'
             },
-            notice: "안녕하세요 바르카디온3 클래스 혈맹원 여러분.\n1. 보스 참여는 매주 성실히 체크해주세요.\n2. 분배 신청은 본인 명의로만 가능합니다.",
+            notice: "안녕하세요 바르카디온3 클래스 길드원 여러분.\n1. 보스 참여는 매주 성실히 체크해주세요.\n2. 분배 신청은 본인 명의로만 가능합니다.",
             tiers: [
                 { name: '영웅 5티어', price: 5000 },
                 { name: '영웅 4티어', price: 4000 },
@@ -493,8 +535,8 @@
             ],
             bossRecords: {},
             items: [
-                { id: 1, name: '영웅 5티어 장갑', category: '장비', price: 5000, applicant: null },
-                { id: 2, name: '전설 스킬북 [앱솔루트]', category: '스킬북', price: 20000, applicant: null }
+                { id: 1, name: '영웅 5티어 장갑', category: '장비', price: 5000, applicants: [], distributed: false },
+                { id: 2, name: '전설 스킬북 [앱솔루트]', category: '스킬북', price: 20000, applicants: [], distributed: false }
             ]
         };
 
@@ -509,14 +551,19 @@
             db = JSON.parse(JSON.stringify(DEFAULT_DB));
         }
 
+        if (!Array.isArray(db.items)) db.items = JSON.parse(JSON.stringify(DEFAULT_DB.items));
+        db.items.forEach(item => { if (item && item.id != null) item.id = String(item.id); });
         if (!db.settings) db.settings = JSON.parse(JSON.stringify(DEFAULT_DB.settings));
         else db.settings = { ...DEFAULT_DB.settings, ...db.settings,
-            panelTitles: db.settings.panelTitles || DEFAULT_DB.settings.panelTitles,
+            panelTitles: (db.settings.panelTitles || DEFAULT_DB.settings.panelTitles).map(v => String(v).replace(/^\s*[1-4]\.\s*/, '')),
             tabLabels: { ...DEFAULT_DB.settings.tabLabels, ...(db.settings.tabLabels || {}) } };
+        const oldGuide = '40~60보스: 1점 | 70: 3점 | 75: 6점 | 80: 10점\n85: 15점 | 90: 20점 | 툴칸: 10점 | 라세리엔: 5점 | 발락: 30점';
+        if (db.settings.bossGuide === oldGuide) db.settings.bossGuide = DEFAULT_DB.settings.bossGuide;
         let isRegisterMode = false;
 
         function saveDB() {
-            localStorage.setItem('barcadion_db_v3', JSON.stringify(db));
+            try { localStorage.setItem('barcadion_db_v3', JSON.stringify(db)); }
+            catch (error) { console.error('저장 실패', error); alert('브라우저 저장에 실패했습니다. 저장 공간 또는 브라우저 설정을 확인하세요.'); }
         }
 
         window.onload = function() {
@@ -701,7 +748,7 @@
                 const el = document.getElementById(`panel-title-${index + 1}`);
                 if (el) {
                     const icon = el.querySelector('i');
-                    el.innerHTML = (icon ? icon.outerHTML : '') + ' ' + escapeHtml(title);
+                    el.innerHTML = (icon ? icon.outerHTML : '') + ' ' + escapeHtml(String(title).replace(/^\s*[1-4]\.\s*/, ''));
                 }
             });
             const labels = s.tabLabels || DEFAULT_DB.settings.tabLabels;
@@ -714,9 +761,9 @@
                 const el = document.getElementById(id);
                 if (el && label) el.innerText = label;
             });
-            document.documentElement.style.setProperty('--dashboard-panel-min-height', `${Number(s.panelHeight) || 560}px`);
+            document.documentElement.style.setProperty('--dashboard-panel-min-height', `${Number(s.panelHeight) || 800}px`);
             const guide = document.getElementById('boss-guide-text');
-            if (guide) guide.innerText = s.bossGuide || '';
+            if (guide) { guide.style.whiteSpace = 'pre-line'; guide.innerText = s.bossGuide || ''; }
         }
 
         function openSiteSettingsModal() {
@@ -725,8 +772,8 @@
             document.getElementById('setting-site-title').value = s.siteTitle || '';
             document.getElementById('setting-site-subtitle').value = s.siteSubtitle || '';
             (s.panelTitles || []).forEach((v, i) => { const el = document.getElementById(`setting-panel-${i+1}`); if (el) el.value = v; });
-            document.getElementById('setting-panel-height').value = s.panelHeight || 560;
-            document.getElementById('setting-panel-height-value').innerText = s.panelHeight || 560;
+            document.getElementById('setting-panel-height').value = s.panelHeight || 800;
+            document.getElementById('setting-panel-height-value').innerText = s.panelHeight || 800;
             const t = s.tabLabels || {};
             document.getElementById('setting-tab-notice').value = t.notice || '';
             document.getElementById('setting-tab-members').value = t.members || '';
@@ -832,10 +879,10 @@
                         <input id="boss-cycle-${index}" type="number" value="${Number(boss.cycleHours)||''}" placeholder="주기 시간" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white" aria-label="주기 시간">
                     </div>
                     <div class="flex flex-wrap gap-2 text-xs text-slate-300">${days.map(day => `<label><input id="boss-day-${index}-${day}" type="checkbox" value="${day}" ${checkedDays.includes(day)?'checked':''}> ${day}</label>`).join('')}</div>
-                    <div class="flex justify-end gap-2"><button onclick="saveBossDefinition(${index})" class="bg-amber-500 text-slate-950 font-bold px-3 py-2 rounded text-xs">저장</button><button onclick="deleteBossDefinition(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
+                    <div class="flex justify-end gap-2"><button type="button" onclick="deleteBossDefinition(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
                 </div>`;
             });
-            document.getElementById('admin-boss-list').innerHTML = html || '<p class="text-slate-400 text-sm">등록된 보스가 없습니다.</p>';
+            document.getElementById('admin-boss-list').innerHTML = html || '<p class="text-slate-400 text-sm">오늘 남은 보스 일정이 없습니다.</p>';
         }
         function getBossDaysFromForm(prefix, index) {
             const days = ['월','화','수','목','금','토','일'];
@@ -844,6 +891,52 @@
                 const el = prefix === 'new' ? document.querySelector(`#new-boss-days input[value="${day}"]`) : document.getElementById(id);
                 return el && el.checked;
             });
+        }
+        function saveAllBossDefinitions() {
+            if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
+            const previous = db.bossListDef;
+            const updated = [];
+            const scores = { ...db.bossScores };
+            const renames = [];
+            for (let i = 0; i < previous.length; i++) {
+                const name = document.getElementById(`boss-name-${i}`).value.trim();
+                const scoreText = document.getElementById(`boss-score-${i}`).value;
+                const score = Number(scoreText);
+                const fixedTime = document.getElementById(`boss-time-${i}`).value;
+                const cycleText = document.getElementById(`boss-cycle-${i}`).value.trim();
+                const cycleHours = cycleText === '' ? 0 : Number(cycleText);
+                const days = getBossDaysFromForm('edit', i);
+                if (!name || !Number.isFinite(score) || score < 0 || !days.length ||
+                    (!fixedTime && !(cycleHours > 0)) || !Number.isFinite(cycleHours) || cycleHours < 0) {
+                    alert(`${i+1}번째 보스의 이름, 배점, 요일, 시간 또는 주기를 확인하세요.`); return;
+                }
+                if (updated.some(b => b.name === name)) { alert(`보스 이름이 중복됩니다: ${name}`); return; }
+                const def = { name, days };
+                if (fixedTime) def.fixedTime = fixedTime;
+                if (cycleHours > 0) def.cycleHours = cycleHours;
+                updated.push(def);
+                if (previous[i].name !== name) renames.push([previous[i].name, name]);
+                scores[name] = score;
+            }
+            for (const [oldName, newName] of renames) {
+                if (db.bossSpawnAnchors && db.bossSpawnAnchors[oldName] != null) {
+                    db.bossSpawnAnchors[newName] = db.bossSpawnAnchors[oldName];
+                    delete db.bossSpawnAnchors[oldName];
+                }
+                delete scores[oldName];
+                Object.values(db.bossRecords || {}).forEach(records => {
+                    Object.keys(records).forEach(key => {
+                        if (key.includes(`_${oldName}_`)) {
+                            const newKey = key.replace(`_${oldName}_`, `_${newName}_`);
+                            records[newKey] = records[key]; delete records[key];
+                        }
+                    });
+                });
+            }
+            db.bossListDef = updated;
+            db.bossScores = scores;
+            saveDB(); renderAdminBossList(); renderBossPreview();
+            alert('보스 설정을 모두 저장했습니다.');
         }
         function saveBossDefinition(index) {
             const oldName = db.bossListDef[index].name;
@@ -856,9 +949,14 @@
                 alert('보스 이름, 배점, 출현 요일과 고정 시간 또는 주기를 올바르게 입력하세요.'); return;
             }
             const def = { name, days };
-            if (fixedTime) def.fixedTime = fixedTime; else def.cycleHours = cycleHours;
+            if (fixedTime) def.fixedTime = fixedTime;
+            if (Number.isFinite(cycleHours) && cycleHours > 0) def.cycleHours = cycleHours;
             db.bossListDef[index] = def;
             if (oldName !== name) {
+                if (db.bossSpawnAnchors && db.bossSpawnAnchors[oldName]) {
+                    db.bossSpawnAnchors[name] = db.bossSpawnAnchors[oldName];
+                    delete db.bossSpawnAnchors[oldName];
+                }
                 db.bossScores[name] = score;
                 delete db.bossScores[oldName];
                 Object.keys(db.bossRecords).forEach(user => {
@@ -883,14 +981,15 @@
             if (!name || db.bossListDef.some(b => b.name === name) || !Number.isFinite(score) || score < 0 || days.length === 0 || (!fixedTime && (!Number.isFinite(cycleHours) || cycleHours <= 0))) {
                 alert('중복되지 않는 보스 이름, 배점, 출현 요일과 고정 시간 또는 주기를 입력하세요.'); return;
             }
-            const def = {name, days}; if (fixedTime) def.fixedTime = fixedTime; else def.cycleHours = cycleHours;
+            const def = {name, days}; if (fixedTime) def.fixedTime = fixedTime;
+            if (Number.isFinite(cycleHours) && cycleHours > 0) def.cycleHours = cycleHours;
             db.bossListDef.push(def); db.bossScores[name] = score; saveDB(); renderAdminBossList(); renderBossPreview();
             document.getElementById('new-boss-name').value = ''; document.getElementById('new-boss-fixed-time').value = ''; document.getElementById('new-boss-cycle').value = '';
         }
         function deleteBossDefinition(index) {
             const name = db.bossListDef[index].name;
             if (!confirm(`보스 "${name}"을 삭제할까요?`)) return;
-            db.bossListDef.splice(index,1); delete db.bossScores[name]; saveDB(); renderAdminBossList(); renderBossPreview();
+            db.bossListDef.splice(index,1); delete db.bossScores[name]; if (db.bossSpawnAnchors) delete db.bossSpawnAnchors[name]; saveDB(); renderAdminBossList(); renderBossPreview();
         }
 
         function renderNotice() {
@@ -955,6 +1054,22 @@
             renderItems();
         }
 
+        // 이전 버전의 단일 신청자 데이터를 다중 신청자 목록으로 자동 변환합니다.
+        function normalizeDistributionItem(item) {
+            if (!Array.isArray(item.applicants)) {
+                item.applicants = item.applicant ? [String(item.applicant)] : [];
+            }
+            item.applicants = [...new Set(item.applicants.filter(Boolean).map(String))];
+            if (typeof item.distributed !== 'boolean') item.distributed = false;
+            return item;
+        }
+
+        function escapeDistributionText(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            })[char]);
+        }
+
         function renderItems() {
             const filtered = currentItemCategory === '전체' ? db.items : db.items.filter(i => i.category === currentItemCategory);
             let html = '';
@@ -962,49 +1077,104 @@
                 html = `<div class="text-center py-6 text-xs text-slate-500">등록된 아이템이 없습니다.</div>`;
             } else {
                 filtered.forEach(item => {
-                    const isMyApplicant = item.applicant === db.currentUser;
-                    const isApplied = item.applicant !== null;
+                    normalizeDistributionItem(item);
+                    const isMyApplicant = item.applicants.includes(db.currentUser);
+                    const applicantsHtml = item.applicants.length
+                        ? item.applicants.map(name => `<span class="inline-flex rounded-md bg-slate-700/80 text-slate-200 px-2 py-0.5 mr-1 mb-1">${escapeDistributionText(name)}</span>`).join('')
+                        : '<span class="text-slate-500">신청자 없음</span>';
                     let btnHtml = '';
-                    if (!isApplied) btnHtml = `<button onclick="applyItem(${item.id})" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer">신청</button>`;
-                    else if (isMyApplicant) btnHtml = `<button onclick="cancelItem(${item.id})" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/40 px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer">취소</button>`;
-                    else btnHtml = `<span class="text-xs text-slate-500 font-semibold">신청완료 (${item.applicant})</span>`;
-
+                    if (item.distributed) {
+                        btnHtml = '<span class="inline-block rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-3 py-1 font-bold">분배완료</span>';
+                    } else if (isMyApplicant) {
+                        btnHtml = `<button data-item-action="cancel" data-item-id="${escapeAttribute(item.id)}" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/40 px-3 py-1 rounded-lg font-bold cursor-pointer">신청 취소</button>`;
+                    } else {
+                        btnHtml = `<button data-item-action="apply" data-item-id="${escapeAttribute(item.id)}" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg font-bold cursor-pointer">신청</button>`;
+                    }
+                    const adminBtn = ''; // 상태 변경은 관리자 > 분배 아이템 관리에서만 수행
                     html += `
-                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 flex justify-between items-center text-xs">
-                            <div>
-                                <span class="bg-slate-800 text-amber-400 px-1.5 py-0.5 rounded text-[10px] mr-1">${item.category}</span>
-                                <span class="font-bold text-white">${item.name}</span>
-                                <div class="text-[10px] text-slate-400 mt-0.5">기준가: ${item.price.toLocaleString()} 다이아</div>
+                        <div class="bg-slate-900/60 p-3 rounded-xl border ${item.distributed ? 'border-emerald-500/40' : 'border-slate-700/50'} text-xs space-y-2">
+                            <div class="flex justify-between items-start gap-2">
+                                <div class="min-w-0">
+                                    <span class="bg-slate-800 text-amber-400 px-1.5 py-0.5 rounded text-[10px] mr-1">${escapeDistributionText(item.category)}</span>
+                                    <span class="font-bold text-white break-words">${escapeDistributionText(item.name)}</span>
+                                    <div class="mt-1 font-semibold ${item.distributed ? 'text-emerald-300' : 'text-sky-300'}">${item.distributed ? '분배완료' : '분배 중'}</div>
+                                    <div class="text-[10px] text-slate-400 mt-1">기준가: ${Number(item.price || 0).toLocaleString()} 다이아</div>
+                                </div>
+                                <div class="shrink-0">${btnHtml}</div>
                             </div>
-                            <div>${btnHtml}</div>
-                        </div>
-                    `;
+                            <div class="border-t border-slate-700/60 pt-2">
+                                <div class="flex justify-between items-center mb-1 text-slate-400"><span>신청자 목록</span><span>총 ${item.applicants.length}명</span></div>
+                                <div class="leading-6">${applicantsHtml}</div>
+                            </div>
+                            ${adminBtn ? `<div class="flex justify-end">${adminBtn}</div>` : ''}
+                        </div>`;
                 });
             }
             document.getElementById('item-market-list').innerHTML = html;
             document.getElementById('stat-item-count').innerText = `${db.items.length}개`;
         }
 
+        // 분배 목록이 다시 렌더링되어도 버튼 이벤트를 유지한다.
+        document.addEventListener('click', event => {
+            const button = event.target.closest('button[data-item-action]');
+            if (!button) return;
+            event.preventDefault();
+            const id = button.dataset.itemId;
+            if (button.dataset.itemAction === 'apply') applyItem(id);
+            if (button.dataset.itemAction === 'cancel') cancelItem(id);
+        });
+        document.addEventListener('change', event => {
+            const select = event.target.closest('select[data-item-action="status"]');
+            if (!select) return;
+            const item = db.items.find(i => String(i.id) === String(select.dataset.itemId));
+            if (!item) { alert('아이템을 찾지 못했습니다.'); return; }
+            setItemDistributionStatusByIndex(db.items.indexOf(item), select.value);
+        });
+        function applyItemByIndex(index) { const item = db.items[index]; if (item) applyItem(item.id); }
+        function cancelItemByIndex(index) { const item = db.items[index]; if (item) cancelItem(item.id); }
+        function toggleDistributedByIndex(index) { const item = db.items[index]; if (item) toggleItemDistributed(item.id); }
+        function editAdminItemByIndex(index) { const item = db.items[index]; if (item) editAdminItem(item.id); }
+        function deleteAdminItemByIndex(index) { const item = db.items[index]; if (item) deleteAdminItem(item.id); }
+
         function applyItem(itemId) {
-            const item = db.items.find(i => i.id === itemId);
-            if (!item) return;
+            const item = db.items.find(i => String(i.id) === String(itemId));
+            if (!item || !db.currentUser) return;
+            normalizeDistributionItem(item);
+            if (item.distributed) { alert('이미 분배완료된 아이템입니다.'); return; }
+            if (item.applicants.includes(db.currentUser)) { alert('이미 신청한 아이템입니다.'); return; }
             if (confirm(`[${item.name}] 아이템을 본인 명의(${db.currentUser})로 신청하시겠습니까?`)) {
-                item.applicant = db.currentUser;
-                saveDB();
-                renderItems();
-                alert("신청이 완료되었습니다.");
+                item.applicants.push(db.currentUser);
+                item.applicant = item.applicants[0] || null; // 구버전 호환
+                saveDB(); renderItems();
+                alert('신청이 완료되었습니다.');
             }
         }
 
         function cancelItem(itemId) {
-            const item = db.items.find(i => i.id === itemId);
+            const item = db.items.find(i => String(i.id) === String(itemId));
             if (!item) return;
+            normalizeDistributionItem(item);
+            if (item.distributed) { alert('분배완료된 아이템은 신청을 취소할 수 없습니다.'); return; }
+            if (!item.applicants.includes(db.currentUser)) return;
             if (confirm(`[${item.name}] 신청을 취소하시겠습니까?`)) {
-                item.applicant = null;
-                saveDB();
-                renderItems();
-                alert("신청이 취소되었습니다.");
+                item.applicants = item.applicants.filter(name => name !== db.currentUser);
+                item.applicant = item.applicants[0] || null;
+                saveDB(); renderItems();
+                alert('신청이 취소되었습니다.');
             }
+        }
+
+        function toggleItemDistributed(itemId) {
+            if (!isCurrentAdmin()) { alert('관리자만 분배 상태를 변경할 수 있습니다.'); return; }
+            const item = db.items.find(i => String(i.id) === String(itemId));
+            if (!item) return;
+            normalizeDistributionItem(item);
+            const nextState = !item.distributed;
+            if (!confirm(`[${item.name}] 아이템을 ${nextState ? '분배완료' : '분배완료 취소'} 처리하시겠습니까?`)) return;
+            item.distributed = nextState;
+            saveDB(); renderItems();
+            const adminList = document.getElementById('admin-item-list');
+            if (adminList && !document.getElementById('item-manage-modal').classList.contains('hidden')) renderAdminItemList();
         }
 
         const daysOfWeek = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];
@@ -1021,53 +1191,82 @@
         }
         function closeBossModal() { document.getElementById('boss-reg-modal').classList.add('hidden'); }
 
+        // 스케줄의 실제 출현 회차별로 참여 기록을 만든다. 각 회차는 요일+보스+시각으로 식별한다.
+        function getBossOccurrencesForDay(boss, dayDate) {
+            const dayStart = new Date(dayDate); dayStart.setHours(0,0,0,0);
+            const dayEnd = new Date(dayStart); dayEnd.setDate(dayEnd.getDate()+1);
+            const dayShort = ['일','월','화','수','목','금','토'][dayStart.getDay()];
+            if (!(boss.days || []).includes(dayShort)) return [];
+            const cycleHours = Number(boss.cycleHours);
+            const cycleMs = cycleHours * 3600000;
+            const fixed = String(boss.fixedTime || '').trim();
+            const anchorValue = Number((db.bossSpawnAnchors || {})[boss.name]);
+            let anchor;
+            if (fixed && /^([01]\d|2[0-3]):[0-5]\d$/.test(fixed)) {
+                // 고정 시간과 주기가 함께 있으면 고정 시간은 '첫 등장 시각'이다.
+                const [h, m] = fixed.split(':').map(Number);
+                anchor = new Date(dayStart); anchor.setHours(h,m,0,0);
+                anchor = anchor.getTime();
+            } else if (Number.isFinite(anchorValue) && anchorValue > 0) {
+                anchor = anchorValue;
+            } else {
+                return [];
+            }
+            const times = [];
+            if (Number.isFinite(cycleMs) && cycleMs > 0) {
+                // 01:24 + 8시간 = 01:24, 09:24, 17:24
+                const first = Math.ceil((dayStart.getTime() - anchor) / cycleMs);
+                for (let n = first; n < first + 100; n++) {
+                    const t = anchor + n * cycleMs;
+                    if (t >= dayEnd.getTime()) break;
+                    if (t < dayStart.getTime()) continue;
+                    times.push(t);
+                }
+            } else if (fixed) {
+                times.push(anchor);
+            }
+            return [...new Set(times)].sort((a,b)=>a-b).map(time => {
+                const d = new Date(time);
+                return {time, label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
+            });
+        }
         function loadUserBossRecords() {
             const targetUser = document.getElementById('modal-target-user').value;
             if (!db.bossRecords[targetUser]) db.bossRecords[targetUser] = {};
-
-            let containerHtml = '';
-            let totalScore = 0;
-            let maxPossibleScore = 0;
-
-            daysOfWeek.forEach(dayFull => {
-                const dayKey = dayShorts[dayFull];
-                const bossesOnThisDay = db.bossListDef.filter(b => b.days.includes(dayKey));
-                let dayScore = 0, dayMaxScore = 0, checkboxesHtml = '';
-
-                bossesOnThisDay.forEach((boss, idx) => {
-                    const uniqueKey = `${dayKey}_${boss.name}_${idx}`;
-                    const isChecked = db.bossRecords[targetUser][uniqueKey] === true;
-                    const bScore = db.bossScores[boss.name] || 1;
-                    dayMaxScore += bScore;
-                    maxPossibleScore += bScore;
-                    if (isChecked) { dayScore += bScore; totalScore += bScore; }
-
-                    checkboxesHtml += `
-                        <label class="flex items-center space-x-2 bg-slate-900/80 p-2 rounded-lg border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition">
-                            <input type="checkbox" data-user="${targetUser}" data-key="${uniqueKey}" data-score="${bScore}" ${isChecked ? 'checked' : ''} onchange="onBossCheckChange(this)" class="w-4 h-4 text-amber-500 rounded bg-slate-800 border-slate-600">
-                            <span class="text-xs text-white font-medium">${boss.name}</span>
-                            <span class="text-[10px] text-amber-400 ml-auto">+${bScore}점</span>
-                        </label>
-                    `;
+            const records = db.bossRecords[targetUser];
+            const base = new Date(); base.setHours(0,0,0,0);
+            // 이번 주 월요일부터 일요일까지, 날짜별 출현 회차를 표시
+            const monday = new Date(base); monday.setDate(base.getDate() - (base.getDay()+6)%7);
+            let containerHtml = '', totalScore = 0, maxPossibleScore = 0;
+            for (let offset=0; offset<7; offset++) {
+                const date = new Date(monday); date.setDate(monday.getDate()+offset);
+                const dayKey = ['일','월','화','수','목','금','토'][date.getDay()];
+                const dayFull = daysOfWeek[offset];
+                const dayStamp = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+                let dayScore=0, dayMaxScore=0;
+                const rows=[];
+                db.bossListDef.forEach((boss, idx) => {
+                    const occurrences = getBossOccurrencesForDay(boss,date);
+                    const score = Number(db.bossScores[boss.name] ?? 1);
+                    occurrences.forEach((slot) => {
+                        const key = `slot_${dayStamp}_${boss.name}_${slot.label}`;
+                        // 기존 단일 체크 기록은 최초 회차에만 승계
+                        const legacyKey = `${dayKey}_${boss.name}_${idx}`;
+                        const checked = records[key] === true || (records[key] === undefined && slot === occurrences[0] && records[legacyKey] === true);
+                        dayMaxScore+=score; maxPossibleScore+=score;
+                        if (checked) {dayScore+=score;totalScore+=score;}
+                        rows.push({time:slot.time,html:`<label class="flex items-center gap-2 bg-slate-900/80 p-2 rounded-lg border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition"><input type="checkbox" data-user="${escapeAttribute(targetUser)}" data-key="${escapeAttribute(key)}" data-legacy="${escapeAttribute(legacyKey)}" ${checked?'checked':''} onchange="onBossCheckChange(this)" class="w-4 h-4 accent-amber-500"><span class="text-xs text-white font-medium">${escapeHtml(boss.name)}</span><span class="text-xs text-sky-300">${slot.label}</span><span class="text-[10px] text-amber-400 ml-auto">+${score}점</span></label>`});
+                    });
+                    if (!occurrences.length && !boss.fixedTime && (boss.days||[]).includes(dayKey) && !(Number((db.bossSpawnAnchors||{})[boss.name])>0)) {
+                        rows.push({time:Infinity,html:`<div class="text-xs text-slate-500 p-2">${escapeHtml(boss.name)} · 출현 기준 시간 미설정 (스케줄 관리에서 설정)</div>`});
+                    }
                 });
-
-                containerHtml += `
-                    <div class="bg-slate-900/60 border border-slate-700 rounded-xl overflow-hidden">
-                        <div onclick="toggleAccordionDay(this)" class="flex justify-between items-center p-3.5 bg-slate-800/80 cursor-pointer hover:bg-slate-750 transition">
-                            <span class="font-bold text-sm text-white flex items-center"><i class="fa-solid fa-calendar-day mr-2 text-amber-400"></i> ${dayFull}</span>
-                            <span class="text-xs font-bold text-amber-400">${dayScore}점 / ${dayMaxScore}점</span>
-                        </div>
-                        <div class="accordion-body p-3 grid grid-cols-2 sm:grid-cols-3 gap-2 border-t border-slate-700/50">
-                            ${checkboxesHtml}
-                        </div>
-                    </div>
-                `;
-            });
-
-            document.getElementById('accordion-days-container').innerHTML = containerHtml;
-            const rate = maxPossibleScore > 0 ? ((totalScore / maxPossibleScore) * 100).toFixed(1) : '0.0';
-            document.getElementById('modal-participation-rate').innerText = `${rate}%`;
-            document.getElementById('modal-expected-score').innerText = `${totalScore}점`;
+                rows.sort((a,b)=>a.time-b.time);
+                containerHtml += `<div class="bg-slate-900/60 border border-slate-700 rounded-xl overflow-hidden"><div onclick="toggleAccordionDay(this)" class="flex justify-between items-center p-3.5 bg-slate-800/80 cursor-pointer"><span class="font-bold text-sm text-white">${dayFull} <span class="text-slate-400 text-xs">(${dayStamp})</span></span><span class="text-xs font-bold text-amber-400">${dayScore}점 / ${dayMaxScore}점</span></div><div class="accordion-body p-3 grid grid-cols-1 sm:grid-cols-2 gap-2 border-t border-slate-700/50">${rows.map(r=>r.html).join('')||'<span class="text-slate-500 text-xs">출현 일정 없음</span>'}</div></div>`;
+            }
+            document.getElementById('accordion-days-container').innerHTML=containerHtml;
+            document.getElementById('modal-participation-rate').innerText=(maxPossibleScore?100*totalScore/maxPossibleScore:0).toFixed(1)+'%';
+            document.getElementById('modal-expected-score').innerText=totalScore+'점';
         }
 
         function toggleAccordionDay(headerEl) {
@@ -1090,6 +1289,8 @@
             const key = checkbox.getAttribute('data-key');
             if (!db.bossRecords[user]) db.bossRecords[user] = {};
             db.bossRecords[user][key] = checkbox.checked;
+            const legacy = checkbox.getAttribute('data-legacy');
+            if (legacy && Object.prototype.hasOwnProperty.call(db.bossRecords[user], legacy)) delete db.bossRecords[user][legacy];
             saveDB();
             loadUserBossRecords();
         }
@@ -1100,22 +1301,108 @@
             renderBossPreview();
         }
 
-        function renderBossPreview() {
-            let html = '';
-            db.bossListDef.forEach(b => {
-                const score = db.bossScores[b.name] || 1;
-                html += `
-                    <div class="flex justify-between items-center text-xs bg-slate-900/40 p-2.5 rounded-lg border border-slate-700/40">
-                        <div>
-                            <span class="font-bold text-white">${b.name}</span>
-                            <span class="text-slate-400 ml-1">(${b.fixedTime ? '고정 ' + b.fixedTime : b.cycleHours + '시간 주기'})</span>
-                        </div>
-                        <span class="text-amber-400 font-bold">${score}점</span>
-                    </div>
-                `;
-            });
-            document.getElementById('next-boss-preview').innerHTML = html;
+        // 보스 출현 카운트다운: 고정형은 요일/시간, 주기형은 관리자가 입력한 기준 시각으로 계산
+        function bossNextTime(boss, nowMs) {
+            const validDays = (boss.days && boss.days.length) ? boss.days : ['월','화','수','목','금','토','일'];
+            const dayNames = ['일','월','화','수','목','금','토'];
+            const cycleMs = Number(boss.cycleHours) * 3600000;
+            if (Number.isFinite(cycleMs) && cycleMs > 0) {
+                let anchorMs = Number((db.bossSpawnAnchors || {})[boss.name]);
+                if (!(Number.isFinite(anchorMs) && anchorMs > 0) && boss.fixedTime) {
+                    const [hh, mm] = boss.fixedTime.split(':').map(Number);
+                    if (Number.isFinite(hh) && Number.isFinite(mm)) {
+                        const anchor = new Date(nowMs); anchor.setHours(hh, mm, 0, 0);
+                        anchorMs = anchor.getTime();
+                    }
+                }
+                if (!(Number.isFinite(anchorMs) && anchorMs > 0)) return null;
+                let nextMs = anchorMs > nowMs ? anchorMs : anchorMs + (Math.floor((nowMs - anchorMs) / cycleMs) + 1) * cycleMs;
+                for (let i = 0; i < 1000; i++) {
+                    if (validDays.includes(dayNames[new Date(nextMs).getDay()])) return nextMs;
+                    nextMs += cycleMs;
+                }
+                return null;
+            }
+            if (boss.fixedTime) {
+                const [hh, mm] = boss.fixedTime.split(':').map(Number);
+                if (!Number.isFinite(hh) || !Number.isFinite(mm)) return null;
+                for (let offset = 0; offset <= 7; offset++) {
+                    const d = new Date(nowMs); d.setHours(0,0,0,0); d.setDate(d.getDate()+offset);
+                    if (!validDays.includes(dayNames[d.getDay()])) continue;
+                    d.setHours(hh,mm,0,0);
+                    if (d.getTime() > nowMs) return d.getTime();
+                }
+            }
+            return null;
         }
+
+        function formatBossCountdown(ms) {
+            const seconds = Math.max(0, Math.ceil(ms / 1000));
+            const days = Math.floor(seconds / 86400);
+            const hours = Math.floor(seconds % 86400 / 3600);
+            const minutes = Math.floor(seconds % 3600 / 60);
+            const secs = seconds % 60;
+            return (days ? `${days}일 ` : '') + (hours ? `${hours}시간 ` : '') + `${minutes}분 ${String(secs).padStart(2, '0')}초 전`;
+        }
+
+        function bossDateLabel(timestamp) {
+            return new Date(timestamp).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
+        }
+
+        function renderBossPreview() {
+            const list = document.getElementById('next-boss-preview');
+            if (!list) return;
+            const nowMs = Date.now();
+            const admin = isCurrentAdmin();
+            // 오늘 요일에 등록된 보스만 표시하며, 다른 요일의 출현은 보여주지 않는다.
+            const today = ['일','월','화','수','목','금','토'][new Date(nowMs).getDay()];
+            const todayStart = new Date(nowMs);
+            todayStart.setHours(0, 0, 0, 0);
+            const todayEnd = new Date(todayStart);
+            todayEnd.setDate(todayEnd.getDate() + 1);
+            const sorted = db.bossListDef
+                .filter(b => (b.days && b.days.length ? b.days : ['월','화','수','목','금','토','일']).includes(today))
+                .map(b => ({ boss: b, next: bossNextTime(b, nowMs) }))
+                .filter(item => item.next === null || item.next < todayEnd.getTime())
+                .sort((a, b) => (a.next ?? Infinity) - (b.next ?? Infinity));
+            list.innerHTML = sorted.map(({boss, next}) => {
+                const name = escapeHtml(boss.name);
+                const nameArg = encodeURIComponent(boss.name);
+                const score = Number(db.bossScores[boss.name] ?? 0);
+                const rule = Number(boss.cycleHours) > 0 ? `${Number(boss.cycleHours)}시간 주기${boss.fixedTime ? ` · 기준 ${escapeHtml(boss.fixedTime)}` : ''}` : `고정 ${escapeHtml(boss.fixedTime || '미설정')}`;
+                const countdown = next === null ? '출현 기준 시간 미설정' : formatBossCountdown(next - nowMs);
+                const nextText = next === null ? '관리자가 기준 시각을 입력해야 합니다' : bossDateLabel(next);
+                const adminButton = admin && Number(boss.cycleHours) > 0 ? `<button type="button" onclick="setBossNextSpawn(decodeURIComponent('${nameArg}'))" class="text-xs px-2 py-1 rounded bg-amber-500 text-slate-950 font-bold">다음 출현 시각 설정</button>` : '';
+                return `<div class="bg-slate-900/70 border border-slate-700/60 rounded-xl p-3 space-y-2">
+                    <div class="flex items-center justify-between gap-2"><div class="font-bold text-white">${name} <span class="text-xs text-slate-400 font-normal">${rule} · ${score}점</span></div>${adminButton}</div>
+                    <div class="font-bold text-lg ${next === null ? 'text-slate-400' : 'text-amber-400'}">${countdown}</div>
+                    <div class="text-xs text-slate-400">${nextText}</div>
+                </div>`;
+            }).join('') || '<p class="text-slate-400 text-sm">오늘 남은 보스 일정이 없습니다.</p>';
+        }
+
+        function setBossNextSpawn(name) {
+            if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
+            const boss = db.bossListDef.find(b => b.name === name);
+            if (!boss || !(Number(boss.cycleHours) > 0)) return;
+            const sample = new Date(Date.now() + 3600000);
+            const pad = v => String(v).padStart(2, '0');
+            const defaultTime = `${sample.getFullYear()}-${pad(sample.getMonth()+1)}-${pad(sample.getDate())}T${pad(sample.getHours())}:${pad(sample.getMinutes())}`;
+            const answer = prompt(`${name}의 다음 출현 시각을 입력하세요.\n형식: YYYY-MM-DDTHH:MM (현재 PC의 현지 시각)`, defaultTime);
+            if (answer === null) return;
+            if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(answer)) { alert('예: 2026-11-16T21:00 형식으로 입력하세요.'); return; }
+            const timestamp = new Date(answer).getTime();
+            if (!Number.isFinite(timestamp)) { alert('올바른 날짜와 시간을 입력하세요.'); return; }
+            if (!db.bossSpawnAnchors) db.bossSpawnAnchors = {};
+            db.bossSpawnAnchors[name] = timestamp;
+            saveDB(); renderBossPreview();
+        }
+
+        // 매초 자동 갱신. 화면이 숨겨져 있어도 다음 출현 시각은 현재 시간 기준으로 다시 계산.
+        setInterval(() => {
+            const pane = document.getElementById('content-boss-sched-2');
+            if (pane && !pane.classList.contains('hidden') && db.currentUser) renderBossPreview();
+        }, 1000);
 
         function openUserManageModal() {
             let html = '';
@@ -1126,7 +1413,7 @@
                             <span class="font-bold text-white text-sm">${u.id}</span>
                             <span class="text-slate-400 ml-2">[${u.class} / 전력: ${u.power.toLocaleString()}]</span>
                             <div class="flex flex-wrap gap-1 mt-2">
-                                <input id="manage-class-${escapeAttribute(u.id)}" value="${escapeAttribute(u.class)}" placeholder="클래스" class="w-20 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white">
+                                <select id="manage-class-${escapeAttribute(u.id)}" class="w-28 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white">${['레인저','소서리스','파이터','어쌔신'].map(c => `<option value="${c}" ${u.class === c ? 'selected' : ''}>${c}</option>`).join('')}</select>
                                 <input id="manage-power-${escapeAttribute(u.id)}" type="number" value="${Number(u.power)||0}" placeholder="전투력" class="w-24 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white">
                                 <input id="manage-pw-${escapeAttribute(u.id)}" type="password" placeholder="비밀번호 변경(선택)" class="w-32 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white">
                                 <button onclick="saveUserDetails('${escapeAttribute(u.id)}')" class="bg-amber-500 text-slate-950 font-bold px-2 py-1 rounded text-xs">정보 저장</button>
@@ -1176,47 +1463,77 @@
         function renderAdminItemList() {
             let html = '';
             db.items.forEach(item => {
+                normalizeDistributionItem(item);
+                const names = item.applicants.map(escapeDistributionText).join(', ') || '없음';
                 html += `
                     <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700 flex justify-between items-center text-xs">
                         <div>
                             <span class="text-amber-400">[${item.category}]</span>
                             <span class="font-bold text-white ml-1">${item.name}</span>
-                            <span class="text-slate-400 ml-2">(${item.price.toLocaleString()}다이아)</span>
+                            <span class="text-slate-400 ml-2">(${Number(item.price || 0).toLocaleString()}다이아)</span>
+                            <div class="mt-1 text-slate-400">신청자 ${item.applicants.length}명: ${names}</div>
+                            <div class="mt-1 ${item.distributed ? 'text-emerald-400' : 'text-sky-400'}">${item.distributed ? '분배완료' : '분배 중'}</div>
                         </div>
-                        <div class="flex gap-2"><button onclick="editAdminItem(${item.id})" class="text-amber-400 hover:text-amber-300 cursor-pointer" title="수정"><i class="fa-solid fa-pen"></i></button><button onclick="deleteAdminItem(${item.id})" class="text-red-400 hover:text-red-300 cursor-pointer" title="삭제"><i class="fa-solid fa-trash"></i></button></div>
+                        <div class="flex flex-wrap gap-2 items-center"><select aria-label="분배 상태" data-item-action="status" data-item-id="${escapeAttribute(item.id)}" class="bg-slate-950 border border-slate-600 text-white rounded-lg px-2 py-1 cursor-pointer"><option value="progress" ${!item.distributed ? 'selected' : ''}>분배 중</option><option value="done" ${item.distributed ? 'selected' : ''}>분배완료</option></select><button type="button" onclick="editAdminItemByIndex(${db.items.indexOf(item)})" class="text-amber-400 hover:text-amber-300 cursor-pointer" title="수정"><i class="fa-solid fa-pen"></i></button><button type="button" onclick="deleteAdminItemByIndex(${db.items.indexOf(item)})" class="text-red-400 hover:text-red-300 cursor-pointer" title="삭제"><i class="fa-solid fa-trash"></i></button></div>
                     </div>
                 `;
             });
             document.getElementById('admin-item-list').innerHTML = html;
+        }
+        function setItemDistributionStatusByIndex(index, status) {
+            if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); renderAdminItemList(); return; }
+            const item = db.items[index];
+            if (!item) { alert('아이템을 찾을 수 없습니다.'); renderAdminItemList(); return; }
+            const next = status === 'done';
+            if (item.distributed === next) return;
+            if (!confirm(`[${item.name}] 상태를 ${next ? '분배완료' : '분배 중'}(으)로 변경할까요?`)) { renderAdminItemList(); return; }
+            item.distributed = next;
+            saveDB();
+            renderAdminItemList();
+            renderItems();
         }
         function addNewItem() {
             const name = document.getElementById('new-item-name').value.trim();
             const category = document.getElementById('new-item-cat').value;
             const price = parseInt(document.getElementById('new-item-price').value) || 0;
             if (!name) { alert("아이템 이름을 입력하세요."); return; }
-            const newId = db.items.length > 0 ? Math.max(...db.items.map(i => i.id)) + 1 : 1;
-            db.items.push({ id: newId, name, category, price, applicant: null });
+            const newId = String(Date.now()) + '-' + Math.random().toString(36).slice(2, 8);
+            db.items.push({ id: newId, name, category, price, applicants: [], distributed: false });
             saveDB();
             document.getElementById('new-item-name').value = '';
             document.getElementById('new-item-price').value = '';
-            renderAdminItemList();
+            renderAdminItemList(); renderItems();
         }
         function editAdminItem(itemId) {
-            const item = db.items.find(i => i.id === itemId); if (!item) return;
+            const item = db.items.find(i => String(i.id) === String(itemId)); if (!item) return;
             const name = prompt('아이템 이름 수정', item.name); if (name === null) return;
             const category = prompt('카테고리 입력 (장비 / 스킬북 / 편린)', item.category); if (category === null) return;
             const priceText = prompt('기준가(다이아) 수정', item.price); if (priceText === null) return;
             const price = Number(priceText);
             if (!name.trim() || !['장비','스킬북','편린'].includes(category.trim()) || !Number.isFinite(price) || price < 0) { alert('아이템 이름, 카테고리, 기준가를 올바르게 입력하세요.'); return; }
+            const statusText = prompt('분배 상태를 입력하세요 (분배 중 / 분배완료)', item.distributed ? '분배완료' : '분배 중');
+            if (statusText === null) return;
+            const status = statusText.trim().replace(/\s+/g, '');
+            if (!['분배중', '분배완료'].includes(status)) { alert('분배 중 또는 분배완료를 입력하세요.'); return; }
             item.name = name.trim(); item.category = category.trim(); item.price = price;
+            item.distributed = status === '분배완료';
             saveDB(); renderAdminItemList(); renderItems();
         }
         function deleteAdminItem(itemId) {
             db.items = db.items.filter(i => i.id !== itemId);
             saveDB();
-            renderAdminItemList();
+            renderAdminItemList(); renderItems();
         }
 
+        function addBossFromScoreModal() {
+            if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
+            const name=document.getElementById('score-new-boss-name').value.trim();
+            const score=Number(document.getElementById('score-new-boss-value').value);
+            if (!name || db.bossListDef.some(b=>b.name===name) || !Number.isFinite(score) || score<0) { alert('보스 이름 중복 여부와 배점을 확인하세요.'); return; }
+            db.bossListDef.push({name, days:['월','화','수','목','금','토','일'], cycleHours:24});
+            db.bossScores[name]=score;
+            saveDB(); openBossScoreEditModal(); renderBossPreview();
+        }
         function openBossScoreEditModal() {
             let html = '';
             for (const [bossName, score] of Object.entries(db.bossScores)) {

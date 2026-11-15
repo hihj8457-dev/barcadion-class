@@ -128,7 +128,127 @@ body{background:#070b16!important;color:#f3f4fa}#app-container{max-width:1500px!
  #class-home .class-boss{padding:12px 5px!important}
 }
 </style>
-</head>
+<style id="class-v15-polish">
+#class-home .class-home-top{grid-template-columns:minmax(0,1.62fr) minmax(0,1fr)!important;gap:12px!important;margin-bottom:12px!important}
+#class-home .class-home-top>.class-card{height:248px!important;min-height:0!important;padding:14px 16px!important;overflow:hidden}
+#class-home .class-announcements{display:grid!important;grid-template-columns:1fr 1fr;gap:0!important;min-width:0}
+#class-home .class-notice-half,#class-home .class-patch-half{min-width:0;display:flex;flex-direction:column;overflow:hidden}
+#class-home .class-notice-half{padding-right:13px;border-right:1px solid #555878}
+#class-home .class-patch-half{padding-left:13px}
+#class-home .class-mini-heading{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:34px;margin-bottom:9px}
+#class-home .class-mini-heading h2{margin:0!important;font-size:clamp(14px,1.35vw,20px)!important;white-space:nowrap}
+#class-home .class-mini-heading button{padding:6px 8px;font-size:11px;white-space:nowrap}
+#class-home #class-notice-slot{flex:1;overflow-y:auto;min-height:0}
+#class-home #class-notice-slot #notice-text-view{min-height:0!important;max-height:170px!important;font-size:14px!important;line-height:1.6!important;padding:8px!important}
+#class-home .class-patch-list{overflow-y:auto;min-height:0;flex:1;scrollbar-width:thin}
+#class-home .class-patch-entry{display:flex;align-items:center;gap:7px;padding:9px 7px;border-bottom:1px solid #343953;font-size:13px;background:linear-gradient(90deg,#111a31,#0b1225);border-radius:7px;margin-bottom:5px}
+#class-home .class-patch-entry a{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e6e9fa}
+#class-home .class-patch-arrow{color:#aab8ed}.class-patch-edit{font-size:11px;color:#c7b3fa;border:1px solid #5d527b;border-radius:6px;padding:3px 5px}
+#class-home .class-patch-empty{color:#94a3b8;font-size:13px;padding:12px 5px}
+#class-home .class-boss-card{margin-bottom:12px!important;border-color:#8b65c8!important;box-shadow:0 0 0 1px #a475ff24,0 0 18px #7a37d52b,0 10px 24px #0006!important;background:linear-gradient(155deg,#10172d,#090f20)!important}
+#class-home .class-boss-card .class-actions h2{font-size:23px!important}
+#class-home .class-boss{position:relative;overflow:hidden;min-height:116px;border:1px solid #767ca9!important;border-radius:15px!important;background:linear-gradient(150deg,#202a48 0%,#10182e 53%,#1c1636 100%)!important;box-shadow:inset 0 1px 1px #e3e6ff33,0 5px 14px #0007!important;display:flex;flex-direction:column;justify-content:center}
+#class-home .class-boss::after{content:'❧';position:absolute;left:12px;bottom:3px;font-size:48px;color:#a07dff16;pointer-events:none}
+#class-home .class-boss:first-child{border:2px solid #d090ff!important;background:linear-gradient(145deg,#52267c,#251441 58%,#431c6c)!important;box-shadow:0 0 15px #b048ffb3,inset 0 0 22px #9e50ff55!important}
+#class-home .class-boss strong{font-size:19px!important;margin-bottom:6px!important;position:relative;z-index:1}
+#class-home .class-boss span{font-size:clamp(18px,2.2vw,30px)!important;color:#fff!important;position:relative;z-index:1;text-shadow:0 2px 8px #0008}
+#class-home .class-boss-register{background:linear-gradient(110deg,#6624ad,#ae38e7)!important;box-shadow:inset 0 1px 1px #fff5,0 0 12px #ab45e66b!important;border:1px solid #c18bff!important}
+#class-home .class-weekly-card{margin-bottom:0!important;padding:14px 17px!important}
+#class-home .class-weekly-card h2{margin-bottom:9px!important;font-size:20px!important}
+#class-home .class-weekly-card .class-stat{padding:9px 6px!important;background:linear-gradient(145deg,#1d2946,#11172c)!important;border-color:#6b628f!important;box-shadow:inset 0 1px 1px #ffffff18}
+#class-home .class-weekly-card .class-stat .symbol{font-size:23px!important;margin-bottom:1px!important}
+#class-home .class-weekly-card .class-stat .value{font-size:clamp(18px,2vw,28px)!important;margin-top:1px!important}
+@media(max-width:850px){#class-home .class-home-top{grid-template-columns:1fr!important}#class-home .class-home-top>.class-card{height:auto!important;min-height:190px!important}#class-home .class-announcements{min-height:220px!important}#class-home .class-boss{min-height:95px}}
+@media(max-width:480px){#class-home .class-announcements{grid-template-columns:1fr!important;gap:12px!important}#class-home .class-notice-half{border-right:0;border-bottom:1px solid #555878;padding:0 0 10px}#class-home .class-patch-half{padding:0}#class-home .class-announcements{max-height:340px!important;overflow-y:auto!important}#class-home .class-boss-card .class-actions h2{font-size:19px!important}}
+</style>
+
+<style id="class-v16-image-design">
+body{background:radial-gradient(ellipse at 50% -22%,#1b1636 0%,#080c19 48%,#060911 100%)!important}
+#app-container{max-width:1660px!important;padding-top:12px!important}
+#app-container>header{padding:13px 17px!important;border:1px solid #9f9ab9!important;border-radius:22px!important;background:linear-gradient(125deg,#10162a,#080b16 65%)!important;box-shadow:0 0 0 1px #fff1,inset 0 1px #fff3,0 10px 30px #0009!important}
+#app-container>header>div:first-child{gap:12px!important}
+#site-title{font-size:32px!important;letter-spacing:2px!important;font-family:Georgia,'Noto Serif KR',serif!important;text-shadow:0 1px 8px #ffffff40}
+#site-subtitle{letter-spacing:5px!important;color:#d8d9f6!important;font-size:10px!important}
+#app-container>header>div:last-child{gap:9px!important;flex-wrap:wrap;justify-content:flex-end}
+#class-profile-crest{width:47px;height:53px;display:flex;align-items:center;justify-content:center;flex:none}
+#class-profile-crest img{max-width:100%;max-height:100%;object-fit:contain;filter:brightness(1.35) drop-shadow(0 0 6px #b4a9ff65)}
+#class-profile-crest img[src=""]{display:none}
+#class-profile-wrap{display:flex;align-items:center;gap:12px;padding-right:16px;border-right:1px solid #6b6d86;min-height:52px}
+#class-profile-wrap #user-display-name{font-size:19px!important;color:#fff!important;line-height:1.2;white-space:nowrap}
+#class-profile-wrap #user-display-power{display:block;font-size:14px!important;color:#f4f2ff!important;white-space:nowrap;line-height:1.5}
+#class-profile-wrap .class-power-number{font-weight:800;color:#d77cff;font-size:17px;text-shadow:0 0 8px #ab40e04d}
+#class-profile-wrap #user-badge{display:none!important}
+#app-container>header button[onclick*="openMyProfileModal"],#app-container>header button[onclick*="logout"],#class-admin-link{background:linear-gradient(180deg,#283450,#11172b 72%,#1d213a)!important;border:1px solid #a4a6c7!important;border-radius:15px!important;padding:11px 15px!important;color:#fff!important;box-shadow:inset 0 1px #ffffff38,0 2px 7px #0008!important;font-weight:700!important;white-space:nowrap}
+.class-nav{gap:9px!important;margin-bottom:12px!important}
+.class-nav button{background:linear-gradient(180deg,#17223b,#0b1225)!important;border:1px solid #6f789e!important;border-radius:15px!important;color:#f6f6ff!important;font-size:19px!important;font-weight:800!important;box-shadow:inset 0 1px #ffffff22,0 3px 9px #0007!important;min-height:66px}
+.class-nav button.active{background:linear-gradient(180deg,#5f268c,#361059 60%,#60218b)!important;border:1px solid #dc91ff!important;box-shadow:0 0 15px #a847f7a0,inset 0 0 16px #c36dff50!important}
+#class-home .class-card{border:1px solid #9189b6!important;border-radius:20px!important;background:linear-gradient(150deg,#111a31,#0a1021 80%)!important;box-shadow:inset 0 1px #ffffff21,0 4px 16px #0007!important}
+#class-home .class-card h2{font-size:20px!important;color:#f6f6ff!important;font-weight:800!important}
+#class-home .class-home-top{grid-template-columns:minmax(0,1.62fr) minmax(0,1fr)!important}
+#class-home .class-home-top>.class-card{height:258px!important}
+#class-home .class-boss-card{border-color:#b47aff!important;box-shadow:0 0 15px #9a42ff30,inset 0 1px #fff3!important}
+#class-home .class-boss{border:1px solid #969fc8!important;border-radius:18px!important;box-shadow:inset 0 1px #ffffff36,0 3px 10px #0008!important;background:linear-gradient(155deg,#222e50,#0e152b 65%,#271a42)!important}
+#class-home .class-boss:first-child{background:linear-gradient(145deg,#542078,#210f3f 60%,#512275)!important;border:2px solid #d48aff!important;box-shadow:0 0 15px #c34bff9e,inset 0 0 25px #ad50ff45!important}
+#class-home .class-boss::after{content:'❧';font-size:54px;opacity:.5}
+#class-home .class-boss-register{font-size:17px!important;padding:10px 19px!important;border-radius:13px!important}
+#class-home .class-stat{border-radius:16px!important;box-shadow:inset 0 1px #fff3,0 4px 8px #0006!important}
+#class-home .class-patch-entry{font-size:14px!important}
+@media(max-width:1000px){#app-container>header{gap:12px!important}#app-container>header>div:last-child{justify-content:center!important}#class-profile-wrap{padding-right:9px}#class-home .class-home-top{grid-template-columns:1fr!important}#class-home .class-home-top>.class-card{height:auto!important;min-height:220px!important}}
+@media(max-width:600px){#app-container>header{padding:10px!important}#class-profile-wrap #user-display-name{font-size:16px!important}#class-profile-wrap #user-display-power{font-size:12px!important}#class-profile-crest{width:34px;height:43px}#app-container>header button[onclick*="openMyProfileModal"],#app-container>header button[onclick*="logout"],#class-admin-link{padding:8px 9px!important;font-size:12px!important}.class-nav button{font-size:13px!important;min-height:51px}#class-home .class-home-top>.class-card{min-height:0!important}}
+</style>
+<style id="class-v17-reference-finish">
+body{background:#060915!important;color:#f7f7ff!important}
+#app-container{max-width:1690px!important;padding:10px 22px 18px!important}
+#app-container>header{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0 0 12px!important;border-radius:0!important;min-height:92px;align-items:center!important}
+#app-container>header>div:first-child{min-width:265px;gap:0!important;position:relative;justify-content:center;flex-direction:column;align-items:center}
+#app-container>header>div:first-child>div:first-child{display:none!important}
+#app-container>header>div:first-child>div:last-child{text-align:center;position:relative}
+#site-title{font-family:Georgia,'Noto Serif KR',serif!important;font-size:clamp(27px,2.8vw,44px)!important;line-height:1.05!important;letter-spacing:3px!important;font-weight:900!important;text-shadow:0 0 13px #d5cbff4a!important}
+#site-title:before{content:'♛';display:block;font-family:Georgia,serif;font-size:25px;line-height:25px;color:#fff}
+#site-subtitle{font-size:12px!important;letter-spacing:6px!important;color:#eee9ff!important;margin-top:2px!important}
+#app-container>header>div:last-child{background:linear-gradient(145deg,#10172b,#050913 70%)!important;border:1px solid #d4d0e7!important;border-radius:19px!important;padding:10px 12px!important;box-shadow:inset 0 1px 1px #ffffff24,0 0 0 1px #7772a040!important;gap:12px!important;flex-wrap:nowrap!important}
+#class-profile-wrap{padding:0 18px 0 4px!important;gap:13px!important;min-width:205px}
+#class-profile-crest{width:46px!important;height:55px!important}
+#class-profile-wrap #user-display-name{font-size:21px!important;font-weight:850!important}
+#class-profile-wrap #user-display-power{font-size:15px!important}
+#class-profile-wrap .class-power-number{font-size:20px!important;color:#e084ff!important}
+#app-container>header button[onclick*="openMyProfileModal"],#app-container>header button[onclick*="logout"],#class-admin-link{background:linear-gradient(180deg,#303d5a,#141a2f 65%,#11172b)!important;border:1px solid #a8aaca!important;border-radius:17px!important;padding:12px 15px!important;font-size:15px!important;box-shadow:inset 0 2px 2px #ffffff33,0 2px 7px #0008!important}
+#app-container>header button[onclick*="openMyProfileModal"]{font-size:0!important}
+#app-container>header button[onclick*="openMyProfileModal"]:before{content:'👤  마이페이지';font-size:15px}
+.class-nav{gap:12px!important;margin:0 0 18px!important}
+.class-nav button{border-radius:17px!important;min-height:73px!important;font-size:22px!important;border:1px solid #8b9cbb!important;background:linear-gradient(180deg,#17243c 0%,#0a1223 85%)!important;box-shadow:inset 0 1px #fff3!important}
+.class-nav button.active{background:linear-gradient(180deg,#8034bc,#40105f 72%,#6c259a)!important;border:1px solid #ed9bff!important;box-shadow:0 0 19px #b54bffb3,inset 0 1px #ffffff80,inset 0 -5px 12px #a63ae55c!important}
+#class-home .class-home-top{grid-template-columns:minmax(0,1.62fr) minmax(0,1fr)!important;gap:18px!important;margin-bottom:15px!important}
+#class-home .class-card{border:1px solid #b9a5d3!important;border-radius:19px!important;background:linear-gradient(150deg,#121b33,#090e1e 84%)!important;box-shadow:inset 0 1px #fff3,0 0 0 1px #8058b321,0 8px 18px #0006!important}
+#class-home .class-home-top>.class-card{height:270px!important;padding:16px 20px!important}
+#class-home .class-announcements{grid-template-columns:1fr 1fr!important}
+#class-home .class-notice-half{padding-right:17px!important;border-right:1px solid #656282!important}
+#class-home .class-patch-half{padding-left:17px!important}
+#class-home .class-mini-heading h2,#class-home .class-card>h2{font-size:23px!important;font-weight:900!important;color:#fff!important}
+#class-home .class-mini-heading{margin-bottom:10px!important;min-height:42px!important}
+#class-home .class-mini-heading .class-btn{border:1px solid #8b8dac!important;background:linear-gradient(#303851,#131a30)!important;border-radius:13px!important;padding:8px 12px!important;font-size:13px!important}
+#class-home .class-patch-entry{background:linear-gradient(90deg,#141d34,#0c1325)!important;border-bottom:1px solid #404864!important;border-radius:10px!important;margin-bottom:6px!important;padding:10px 8px!important;font-size:15px!important}
+#class-home #class-notice-slot #notice-text-view{font-size:15px!important;line-height:1.5!important;max-height:180px!important}
+#class-home #class-diamond-slot{font-size:15px!important}
+#class-home .class-boss-card{padding:16px 22px 20px!important;margin-bottom:14px!important;border:1px solid #bf9be3!important;background:linear-gradient(150deg,#12172c,#080c1c)!important}
+#class-home .class-boss-card .class-actions h2{font-size:26px!important}
+#class-home .class-boss-register{font-size:20px!important;font-weight:850!important;border-radius:14px!important;padding:11px 21px!important;background:linear-gradient(180deg,#ad45ec,#65169d)!important;border:1px solid #e48aff!important;box-shadow:0 0 12px #b247e57a,inset 0 1px #fff7!important}
+#class-home .class-bosses{gap:14px!important}
+#class-home .class-boss{min-height:136px!important;border:1px solid #9c9ac8!important;border-radius:18px!important;padding:13px 8px!important;background:linear-gradient(145deg,#253152,#0c1429 65%,#2b1a4b)!important;box-shadow:inset 0 2px #ffffff45,0 6px 13px #0009,0 0 7px #a0a0ff4a!important}
+#class-home .class-boss:before{content:'❧';position:absolute;right:15px;bottom:-10px;font-size:72px;color:#a58bff16;transform:rotate(-22deg);pointer-events:none}
+#class-home .class-boss::after{content:'❧'!important;position:absolute;left:15px;bottom:-10px;font-size:72px!important;color:#a58bff16!important;transform:scaleX(-1) rotate(-22deg);pointer-events:none}
+#class-home .class-boss:first-child{background:linear-gradient(140deg,#5e2689,#270e4c 65%,#5b2187)!important;border:2px solid #f1a5ff!important;box-shadow:0 0 16px #d64bffcf,inset 0 0 20px #d458ff4d!important}
+#class-home .class-boss strong{font-size:20px!important;margin-bottom:9px!important}
+#class-home .class-boss span{font-size:clamp(20px,2.35vw,34px)!important;font-weight:900!important}
+#class-home .class-weekly-card{padding:12px 20px 16px!important}
+#class-home .class-weekly-card h2{font-size:23px!important;margin-bottom:9px!important}
+#class-home .class-weekly-card .class-stat{background:linear-gradient(140deg,#1c2947,#10162a)!important;border:1px solid #8c83ae!important;border-radius:17px!important;padding:8px!important;min-height:93px;display:grid;grid-template-columns:70px 1fr;grid-template-rows:1fr 1fr;align-items:center;justify-items:start;column-gap:8px}
+#class-home .class-weekly-card .class-stat .symbol{grid-row:1/3;font-size:39px!important;margin:0!important;justify-self:end}
+#class-home .class-weekly-card .class-stat .caption{font-size:17px!important;font-weight:700;align-self:end}
+#class-home .class-weekly-card .class-stat .value{font-size:clamp(20px,2.2vw,32px)!important;margin:0!important;align-self:start}
+@media(max-width:1100px){#app-container>header{flex-wrap:wrap;gap:10px}#app-container>header>div:last-child{flex-wrap:wrap!important;justify-content:center!important}#class-home .class-home-top{grid-template-columns:1fr!important}#class-home .class-home-top>.class-card{height:auto!important;min-height:240px!important}}
+@media(max-width:700px){#app-container{padding:10px!important}#app-container>header>div:first-child{min-width:0}#app-container>header>div:last-child{gap:7px!important;padding:8px!important}#class-profile-wrap{min-width:0;padding-right:8px!important}#class-profile-wrap #user-display-name{font-size:15px!important}#class-profile-wrap #user-display-power{font-size:12px!important}#class-profile-wrap .class-power-number{font-size:14px!important}#app-container>header button[onclick*="openMyProfileModal"],#app-container>header button[onclick*="logout"],#class-admin-link{padding:8px!important;font-size:11px!important}#app-container>header button[onclick*="openMyProfileModal"]:before{font-size:11px!important}.class-nav{gap:5px!important}.class-nav button{min-height:53px!important;font-size:13px!important}#class-home .class-announcements{grid-template-columns:1fr!important;gap:10px!important}#class-home .class-notice-half{padding:0 0 12px!important;border-right:0!important;border-bottom:1px solid #656282}#class-home .class-patch-half{padding:0!important}#class-home .class-home-top>.class-card{height:auto!important}#class-home .class-bosses{grid-template-columns:repeat(2,minmax(0,1fr))!important}#class-home .class-weekly-card .class-stat{grid-template-columns:1fr!important;grid-template-rows:auto!important;justify-items:center!important;min-height:90px}#class-home .class-weekly-card .class-stat .symbol{grid-row:auto!important;justify-self:center!important;font-size:24px!important}#class-home .class-weekly-card .class-stat .caption{font-size:12px!important}#class-home .class-weekly-card .class-stat .value{font-size:16px!important}}
+</style></head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
 
     
@@ -2221,13 +2341,53 @@ function refreshHome(){
  const participating=new Set();let kills=new Set();Object.entries(db.bossRecords||{}).forEach(([user,records])=>{Object.entries(records||{}).forEach(([key,checked])=>{if(checked!==true)return;if(key.startsWith('slot_')){const d=key.slice(5,15);if(d>=start&&d<finish){participating.add(user);kills.add(key)}}else if(/^[월화수목금토일]_/.test(key)){participating.add(user)}})});
  $('class-participants').textContent=participating.size.toLocaleString('ko-KR')+'명';$('class-kills').textContent=kills.size.toLocaleString('ko-KR')+'회';const amount=diamondCalculation(week).distributed;$('class-diamonds').textContent=Number(amount||0).toLocaleString('ko-KR');
  $('class-admin-link').style.display=isCurrentAdmin()?'inline-flex':'none';
+ renderClassPatchNotes();
  }catch(e){console.warn('Dashboard refresh:',e)}
 }
+function renderClassPatchNotes(){
+ const target=$('class-patch-list');if(!target)return;
+ const entries=Array.isArray(window.__sharedData?.patchNotes)?window.__sharedData.patchNotes:[];
+ const canEdit=typeof isCurrentAdmin==='function'&&isCurrentAdmin();
+ const add=$('class-patch-add');if(add)add.style.display=canEdit?'inline-flex':'none';
+ target.replaceChildren();
+ if(!entries.length){const empty=document.createElement('div');empty.className='class-patch-empty';empty.textContent='등록된 패치노트가 없습니다.';target.append(empty);return;}
+ entries.slice(0,12).forEach((item,index)=>{
+  if(!item||typeof item.url!=='string'||!/^https?:\/\//i.test(item.url))return;
+  const line=document.createElement('div');line.className='class-patch-entry';
+  const a=document.createElement('a');a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='🔗 '+String(item.title||'패치노트');line.append(a);
+  const ext=document.createElement('span');ext.textContent='↗';ext.className='class-patch-arrow';line.append(ext);
+  if(canEdit){const edit=document.createElement('button');edit.type='button';edit.textContent='수정';edit.className='class-patch-edit';edit.onclick=()=>classEditPatchNote(index);line.append(edit);}
+  target.append(line);
+ });
+}
+async function classSavePatchNotes(entries){
+ if(!isCurrentAdmin()){alert('운영진 이상 권한이 필요합니다.');return;}
+ try{await store.doc('guildData/main').update({patchNotes:entries});window.__sharedData=window.__sharedData||{};window.__sharedData.patchNotes=entries;renderClassPatchNotes();}
+ catch(e){console.error(e);alert('패치노트 저장 실패: '+(e?.message||e));}
+}
+window.classAddPatchNote=async function(){
+ if(!isCurrentAdmin())return;
+ const title=prompt('패치노트 제목을 입력하세요.');if(title===null||!title.trim())return;
+ const url=prompt('패치노트 링크 (https://...)');if(url===null)return;
+ if(!/^https?:\/\/[^\s]+$/i.test(url.trim())){alert('http:// 또는 https:// 주소를 입력하세요.');return;}
+ const old=Array.isArray(window.__sharedData?.patchNotes)?window.__sharedData.patchNotes:[];
+ await classSavePatchNotes([{title:title.trim().slice(0,100),url:url.trim()},...old].slice(0,30));
+};
+window.classEditPatchNote=async function(index){
+ if(!isCurrentAdmin())return;
+ const old=Array.isArray(window.__sharedData?.patchNotes)?window.__sharedData.patchNotes:[];
+ const item=old[index];if(!item)return;
+ const title=prompt('제목 수정 (삭제하려면 빈칸 입력)',item.title||'');if(title===null)return;
+ if(!title.trim()){if(confirm('이 패치노트 링크를 삭제할까요?'))await classSavePatchNotes(old.filter((_,i)=>i!==index));return;}
+ const url=prompt('링크 수정',item.url||'');if(url===null)return;
+ if(!/^https?:\/\/[^\s]+$/i.test(url.trim())){alert('올바른 URL을 입력하세요.');return;}
+ await classSavePatchNotes(old.map((x,i)=>i===index?{title:title.trim().slice(0,100),url:url.trim()}:x));
+};
 function init(){const app=$('app-container'),grid=$('dashboard-grid');if(!app||!grid||$('class-nav'))return;const panels=Array.from(grid.children);if(panels.length<4)return;
  const title=$('site-title');if(title)title.textContent='클래스';const subtitle=$('site-subtitle');if(subtitle)subtitle.textContent='CLASS';
  const header=app.querySelector('header');const profile=header.querySelector('button[onclick*="openMyProfileModal"]');if(profile)profile.textContent='마이페이지';const logout=header.querySelector('button[onclick*="logout"]');const admin=document.createElement('button');admin.id='class-admin-link';admin.className='class-admin-button';admin.textContent='⚙ 관리자';admin.style.display='none';admin.onclick=()=>page('admin');if(logout)logout.before(admin);
  const nav=document.createElement('nav');nav.id='class-nav';nav.className='class-nav';nav.innerHTML='<button type="button" data-target="home" class="active">⌂ 홈</button><button type="button" data-target="members">♟ 길드원</button><button type="button" data-target="boss">⚔ 보스 관리</button><button type="button" data-target="items">▣ 아이템/분배</button>';header.after(nav);nav.querySelectorAll('button').forEach(b=>b.onclick=()=>page(b.dataset.target));
- const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div class="class-home-top"><div class="class-card"><h2>📢 공지사항</h2><div id="class-notice-slot"></div></div><div class="class-card"><h2>💎 주간 다이아 분배</h2><div id="class-diamond-slot"></div></div></div><div class="class-card class-weekly-card"><h2>▥ 이번 주 현황</h2><div class="class-stats"><div class="class-stat"><div class="symbol">👥</div><div class="caption">참여 인원</div><div class="value" style="color:#52ddcc" id="class-participants">-</div></div><div class="class-stat"><div class="symbol">⚔️</div><div class="caption">보스 처치</div><div class="value" style="color:#d9a5ff" id="class-kills">-</div></div><div class="class-stat"><div class="symbol">💎</div><div class="caption">분배 예정 다이아</div><div class="value" style="color:#b8a1ff" id="class-diamonds">-</div></div></div></div><div class="class-card class-boss-card"><div class="class-actions"><h2 style="margin:0">◷ 보스 타이머</h2><button class="class-btn class-boss-register" id="class-all-bosses">보스 참여 등록</button></div><div class="class-bosses" id="class-boss-list"></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div class="class-panel-slot" id="class-admin-slot"></div></section>`;
+ const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div class="class-home-top"><div class="class-card class-announcements"><div class="class-notice-half"><div class="class-mini-heading"><h2>📢 공지사항</h2></div><div id="class-notice-slot"></div></div><div class="class-patch-half"><div class="class-mini-heading"><h2>📄 패치노트</h2><button id="class-patch-add" type="button" class="class-btn" style="display:none" onclick="classAddPatchNote()">＋ 링크 등록</button></div><div id="class-patch-list" class="class-patch-list"><div class="text-slate-400">등록된 패치노트가 없습니다.</div></div></div></div><div class="class-card"><h2>💎 주간 다이아 분배</h2><div id="class-diamond-slot"></div></div></div><div class="class-card class-boss-card"><div class="class-actions"><h2 style="margin:0">◷ 보스 타이머</h2><button class="class-btn class-boss-register" id="class-all-bosses">보스 참여 등록</button></div><div class="class-bosses" id="class-boss-list"></div></div><div class="class-card class-weekly-card"><h2>▥ 이번 주 현황</h2><div class="class-stats"><div class="class-stat"><div class="symbol">👥</div><div class="caption">참여 인원</div><div class="value" style="color:#52ddcc" id="class-participants">-</div></div><div class="class-stat"><div class="symbol">⚔️</div><div class="caption">보스 처치</div><div class="value" style="color:#d9a5ff" id="class-kills">-</div></div><div class="class-stat"><div class="symbol">💎</div><div class="caption">분배 예정 다이아</div><div class="value" style="color:#b8a1ff" id="class-diamonds">-</div></div></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div class="class-panel-slot" id="class-admin-slot"></div></section>`;
  $('class-all-bosses').onclick=()=>openBossModal();$('class-admin-back').onclick=()=>page('home');
  $('class-member-slot').append(panels[0]);$('class-boss-slot').append(panels[1]);$('class-item-slot').append(panels[2]);$('class-admin-slot').append(panels[3]);
  const notice=$('content-notice-1');if(notice){$('class-notice-slot').append(notice);notice.classList.remove('hidden')};const diamond=$('diamond-summary-panel');if(diamond){$('class-diamond-slot').append(diamond);diamond.classList.remove('hidden')};
@@ -2238,6 +2398,34 @@ function init(){const app=$('app-container'),grid=$('dashboard-grid');if(!app||!
  refreshHome();setInterval(refreshHome,1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshHome()});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
+<script id="class-v16-profile">
+(function(){
+ function init(){
+  const header=document.querySelector('#app-container>header');
+  const name=document.getElementById('user-display-name');
+  const power=document.getElementById('user-display-power');
+  if(!header||!name||!power)return;
+  const info=name.parentElement.parentElement;
+  if(!info||document.getElementById('class-profile-wrap'))return;
+  const wrap=document.createElement('div');wrap.id='class-profile-wrap';
+  const crest=document.createElement('span');crest.id='class-profile-crest';crest.setAttribute('aria-hidden','true');
+  const icon=document.createElement('img');icon.alt='';crest.append(icon);
+  info.parentNode.insertBefore(wrap,info);wrap.append(crest,info);
+  const update=()=>{
+    const raw=power.textContent||'';
+    const match=raw.match(/전투력\s*:?\s*([\d,]+)/);
+    const cls=raw.match(/클래스\s*:\s*([^|]+)/);
+    const value=match?match[1]:'0';
+    if(power.dataset.classV16Value!==value){power.dataset.classV16Value=value;power.innerHTML='전투력 <span class="class-power-number">'+value+'</span>';}
+    const cname=cls?cls[1].trim():(power.dataset.classV16Name||'');
+    if(cname){power.dataset.classV16Name=cname;try{if(typeof guildClassIcons!=='undefined'&&guildClassIcons[cname]&&icon.src!==guildClassIcons[cname])icon.src=guildClassIcons[cname]}catch(e){}}
+  };
+  const observer=new MutationObserver(update);observer.observe(power,{childList:true,characterData:true,subtree:true});update();
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
 </body>

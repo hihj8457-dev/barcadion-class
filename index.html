@@ -98,7 +98,7 @@
     <!-- 로그인 모달 -->
     <div id="auth-modal" style="position: fixed; inset: 0; background-color: rgba(2, 6, 23, 0.95); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 16px;">
         <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 28px; width: 100%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
-            <h2 id="auth-title" style="font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 20px; color: #fbbf24;">바르카디온3 클래스 로그인</h2>
+            <h2 id="auth-title" style="font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 20px; color: #fbbf24;">클래스 보스 매니저 로그인</h2>
             
             <div id="auth-error" style="display: none; background-color: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; font-size: 13px; padding: 10px; border-radius: 8px; margin-bottom: 14px;"></div>
             
@@ -237,7 +237,6 @@
                     <div id="content-boss-sched-2" class="hidden space-y-3">
                         <div class="text-xs text-slate-400 flex justify-between items-center">
                             <span>실시간 보스 출현 카운트다운 · 남은 시간순</span>
-                            <button onclick="openBossScoreEditModal()" class="text-amber-400 hover:underline admin-only hidden cursor-pointer">[배점 수정]</button>
                         </div>
                         <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 max-h-[210px] overflow-y-auto space-y-2" id="next-boss-preview"></div>
                     </div>
@@ -271,6 +270,10 @@
                             <button onclick="filterItemCategory('장비')" class="item-cat-btn px-2 py-1 text-xs rounded bg-slate-700 text-slate-300 cursor-pointer">장비</button>
                             <button onclick="filterItemCategory('스킬북')" class="item-cat-btn px-2 py-1 text-xs rounded bg-slate-700 text-slate-300 cursor-pointer">스킬북</button>
                             <button onclick="filterItemCategory('편린')" class="item-cat-btn px-2 py-1 text-xs rounded bg-slate-700 text-slate-300 cursor-pointer">편린</button>
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="search" placeholder="아이템 이름 검색" oninput="setItemSearch(this.value)" class="min-w-0 flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white" />
+                            <select onchange="setItemStatusFilter(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white"><option>전체</option><option>분배 중</option><option>분배완료</option></select>
                         </div>
                         <div class="max-h-[175px] overflow-y-auto space-y-2 pr-1" id="item-market-list"></div>
                         <div id="item-pagination" class="flex flex-wrap justify-center gap-1 pt-2"></div>
@@ -311,25 +314,22 @@
                             </div>
                         </div>
                         <div id="admin-control-panel" class="hidden space-y-2 pt-2 border-t border-slate-700">
-                            <p class="text-xs font-bold text-amber-400">관리자 전용 제어</p><button type="button" onclick="initializeCloudDefaults()" class="w-full bg-emerald-700 text-white py-2 rounded-xl text-xs">최초 기본 데이터 등록 (한 번만)</button>
+                            <p class="text-xs font-bold text-amber-400">관리자 전용 제어</p>
                             <button type="button" onclick="openWeeklyArchiveModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold">주간 보스 참여 내역 보관함</button>
                             <button onclick="openUserManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
-                                <i class="fa-solid fa-users-gear mr-1"></i> 길드원 직급 및 권한 관리
+                                <i class="fa-solid fa-users-gear mr-1"></i> 길드원 관리
                             </button>
                             <button onclick="openItemManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
                                 <i class="fa-solid fa-box-archive mr-1"></i> 분배 아이템 등록/삭제
-                            </button>
-                            <button onclick="openBossScoreEditModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
-                                <i class="fa-solid fa-star mr-1"></i> 보스 배점 수정
-                            </button>
-                            <button onclick="openSiteSettingsModal()" class="w-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
-                                <i class="fa-solid fa-sliders mr-1"></i> 홈페이지 전체 설정 / 화면 높이
                             </button>
                             <button onclick="openTierManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
                                 <i class="fa-solid fa-tags mr-1"></i> 분배 기준 추가 / 수정
                             </button>
                             <button onclick="openBossManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
                                 <i class="fa-solid fa-dragon mr-1"></i> 보스 관리
+                            </button>
+                            <button onclick="openSiteSettingsModal()" class="w-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
+                                <i class="fa-solid fa-sliders mr-1"></i> 홈페이지 설정
                             </button>
                         </div>
                     </div>
@@ -390,7 +390,7 @@
     <div id="user-manage-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
             <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
-                <h3 class="text-xl font-bold text-amber-400">길드원 직급 및 권한 관리</h3>
+                <h3 class="text-xl font-bold text-amber-400">길드원 관리</h3>
                 <button onclick="closeUserManageModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-5 overflow-y-auto space-y-3 flex-1" id="user-manage-list"></div>
@@ -504,11 +504,11 @@
     <div id="boss-manage-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
             <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
-                <h3 class="text-xl font-bold text-amber-400">보스 관리</h3>
+                <h3 class="text-xl font-bold text-amber-400">보스 관리 · 배점 설정</h3>
                 <button onclick="closeBossManageModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-5 overflow-y-auto space-y-3 flex-1">
-                <p class="text-xs text-slate-400">주기가 설정되면 입력한 시간은 첫 등장 기준 시각입니다. 예: 01:24 / 8시간 → 01:24, 09:24, 17:24. 변경 후 하단의 일괄 저장을 누르세요.</p>
+                <p class="text-xs text-slate-400">주기형 보스는 스케줄 화면의 [컷] 버튼을 누른 시각부터 설정된 시간 후 다음 등장으로 계산합니다. 아래에서 보스 배점·요일·주기도 함께 수정할 수 있습니다.</p>
                 <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 space-y-2">
                     <h4 class="text-sm font-bold text-amber-300">새 보스 추가</h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -741,7 +741,7 @@
         }
         function toggleAuthMode() {
           isRegisterMode=!isRegisterMode;
-          document.getElementById('auth-title').innerText=isRegisterMode?'바르카디온3 클래스 회원가입':'바르카디온3 클래스 로그인';
+          document.getElementById('auth-title').innerText=isRegisterMode?'클래스 보스 매니저 회원가입':'클래스 보스 매니저 로그인';
           document.getElementById('auth-submit-btn').innerText=isRegisterMode?'회원가입':'로그인';
           document.getElementById('auth-toggle-btn').innerText=isRegisterMode?'이미 계정이 있으신가요? 로그인':'계정이 없으신가요? 회원가입';
           document.getElementById('register-fields').style.display=isRegisterMode?'flex':'none';
@@ -1245,8 +1245,22 @@
             })[char]);
         }
 
+        function itemRarity(name) {
+            const m = String(name||'').match(/\[(고급|희귀|영웅|전설)\]/);
+            return m ? m[1] : (String(name||'').match(/^(고급|희귀|영웅|전설)(?:\s|$)/)?.[1] || '');
+        }
+        function itemRarityClass(name) {
+            return ({'고급':'text-emerald-300','희귀':'text-sky-300','영웅':'text-rose-300','전설':'text-yellow-300'})[itemRarity(name)] || 'text-slate-100';
+        }
+        function itemDisplayName(name) { return String(name||'').replace(/^\[(고급|희귀|영웅|전설)\]\s*/, ''); }
+        let itemSearchText = '';
+        let itemStatusFilter = '전체';
+        function setItemStatusFilter(value) {itemStatusFilter=value;itemPage=1;renderItems();}
+        function setItemSearch(value) {itemSearchText=String(value||'').trim().toLowerCase();itemPage=1;renderItems();}
         function renderItems() {
             const filtered = (currentItemCategory === '전체' ? db.items : db.items.filter(i => i.category === currentItemCategory))
+                .filter(i => itemStatusFilter === '전체' || (itemStatusFilter === '분배 중' ? !i.distributed : !!i.distributed))
+                .filter(i => !itemSearchText || String(i.name||'').toLowerCase().includes(itemSearchText))
                 .slice().sort((a,b) => Number(!!a.distributed) - Number(!!b.distributed));
             const perPage = getItemsPerPage();
             const pages = Math.max(1, Math.ceil(filtered.length / perPage));
@@ -1276,16 +1290,16 @@
                             <div class="flex justify-between items-start gap-2">
                                 <div class="min-w-0">
                                     <span class="bg-slate-800 text-amber-400 px-1.5 py-0.5 rounded text-[10px] mr-1">${escapeDistributionText(item.category)}</span>
-                                    <span class="font-bold text-white break-words">${escapeDistributionText(item.name)}</span>
+                                    <span class="font-bold break-words ${itemRarityClass(item.name)}">${escapeDistributionText(itemDisplayName(item.name))}</span>
                                     <div class="mt-1 font-semibold ${item.distributed ? 'text-emerald-300' : 'text-sky-300'}">${item.distributed ? '분배완료' : '분배 중'}</div>
                                     <div class="text-[10px] text-slate-400 mt-1">기준가: ${Number(item.price || 0).toLocaleString()} 다이아</div>
                                 </div>
                                 <div class="shrink-0">${btnHtml}</div>
                             </div>
-                            <div class="border-t border-slate-700/60 pt-2">
-                                <div class="flex justify-between items-center mb-1 text-slate-400"><span>신청자 목록</span><span>총 ${item.applicants.length}명</span></div>
-                                <div class="leading-6">${applicantsHtml}</div>
-                            </div>
+                            <details class="border-t border-slate-700/60 pt-2">
+                                <summary class="cursor-pointer text-slate-400">신청자 ${item.applicants.length}명 · 펼쳐보기</summary>
+                                <div class="leading-6 mt-2">${applicantsHtml}</div>
+                            </details>
                             ${adminBtn ? `<div class="flex justify-end">${adminBtn}</div>` : ''}
                         </div>`;
                 });
@@ -1574,7 +1588,7 @@
                 const rule = Number(boss.cycleHours) > 0 ? `${Number(boss.cycleHours)}시간 주기${boss.fixedTime ? ` · 기준 ${escapeHtml(boss.fixedTime)}` : ''}` : `고정 ${escapeHtml(boss.fixedTime || '미설정')}`;
                 const countdown = next === null ? '출현 기준 시간 미설정' : formatBossCountdown(next - nowMs);
                 const nextText = next === null ? '관리자가 기준 시각을 입력해야 합니다' : bossDateLabel(next);
-                const adminButton = admin && Number(boss.cycleHours) > 0 ? `<button type="button" onclick="setBossNextSpawn(decodeURIComponent('${nameArg}'))" class="text-xs px-2 py-1 rounded bg-amber-500 text-slate-950 font-bold">다음 출현 시각 설정</button>` : '';
+                const adminButton = admin && Number(boss.cycleHours) > 0 ? `<button type="button" onclick="markBossCut(decodeURIComponent('${nameArg}'))" class="text-xs px-3 py-1 rounded bg-rose-500 text-white font-bold">컷</button>` : '';
                 return `<div class="bg-slate-900/70 border border-slate-700/60 rounded-xl p-3 space-y-2">
                     <div class="flex items-center justify-between gap-2"><div class="font-bold text-white">${name} <span class="text-xs text-slate-400 font-normal">${rule} · ${score}점</span></div>${adminButton}</div>
                     <div class="font-bold text-lg ${next === null ? 'text-slate-400' : 'text-amber-400'}">${countdown}</div>
@@ -1583,6 +1597,17 @@
             }).join('') || '<p class="text-slate-400 text-sm">오늘 남은 보스 일정이 없습니다.</p>';
         }
 
+        function markBossCut(name) {
+            if (!isCurrentAdmin()) return alert('보스 컷 기록은 관리자만 수정할 수 있습니다.');
+            const boss = db.bossListDef.find(b => b.name === name);
+            if (!boss || !(Number(boss.cycleHours)>0)) return;
+            const cutTime = Date.now();
+            const next = new Date(cutTime + Number(boss.cycleHours)*3600000);
+            if (!confirm(`${name} 컷을 지금 시각으로 기록할까요?\n다음 출현 예상: ${next.toLocaleString('ko-KR')}`)) return;
+            db.bossSpawnAnchors = db.bossSpawnAnchors || {};
+            db.bossSpawnAnchors[name] = cutTime;
+            saveDB(); renderBossPreview();
+        }
         function setBossNextSpawn(name) {
             if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
             const boss = db.bossListDef.find(b => b.name === name);
@@ -1608,14 +1633,43 @@
         }
         function currentWeekKey() { return localDateKey(getWeekMonday(new Date())); }
         function weekLabel(key) {
-            const d = new Date(`${key}T12:00:00`);
-            if (isNaN(d.getTime())) return key;
-            // 주차는 월요일 시작, 해당 주의 목요일이 속한 달 기준으로 표시
-            const thursday = new Date(d); thursday.setDate(d.getDate()+3);
-            const first = new Date(thursday.getFullYear(),thursday.getMonth(),1);
+            const monday = new Date(`${key}T12:00:00`);
+            if (isNaN(monday.getTime())) return key;
+            const sunday = new Date(monday); sunday.setDate(sunday.getDate()+6);
+            const first = new Date(monday.getFullYear(), monday.getMonth(), 1);
             const firstMonday = getWeekMonday(first);
-            const ordinal = Math.floor((d-firstMonday)/604800000)+1;
-            return `${thursday.getMonth()+1}월 ${ordinal}주차 내역`;
+            const weekNo = Math.floor((monday.getTime()-firstMonday.getTime())/604800000)+1;
+            return `${monday.getMonth()+1}월 ${weekNo}주차 (${localDateKey(monday)} ~ ${localDateKey(sunday)})`;
+        }
+        function editArchiveLabel(index) {
+            if(!isCurrentAdmin())return;
+            const a=db.weeklyArchives[index];if(!a)return;
+            const label=prompt('보관함에 표시할 주차 이름을 입력하세요.',a.label||weekLabel(a.weekKey));
+            if(label===null)return;
+            if(!label.trim())return alert('이름을 입력하세요.');
+            a.label=label.trim().slice(0,100);saveDB();renderWeeklyArchives();
+        }
+        function weeklyDailyScores(weekKey) {
+            const monday=new Date(`${weekKey}T12:00:00`);
+            const result={};
+            if(isNaN(monday.getTime()))return result;
+            for(const u of db.users)result[u.id]=[0,0,0,0,0,0,0];
+            for(let offset=0;offset<7;offset++){
+                const day=new Date(monday);day.setDate(monday.getDate()+offset);
+                const dateKey=localDateKey(day);
+                const short=['일','월','화','수','목','금','토'][day.getDay()];
+                db.bossListDef.forEach((boss,index)=>{
+                    getBossOccurrencesForDay(boss,day).forEach((slot,slotIndex)=>{
+                        const key=`slot_${dateKey}_${boss.name}_${slot.label}`;
+                        const oldKey=`${short}_${boss.name}_${index}`;
+                        for(const [user,records] of Object.entries(db.bossRecords||{})){
+                            const checked=records?.[key]===true || (records?.[key]===undefined && slotIndex===0 && records?.[oldKey]===true);
+                            if(checked){if(!result[user])result[user]=[0,0,0,0,0,0,0];result[user][offset]+=Number(db.bossScores[boss.name]||0);}
+                        }
+                    });
+                });
+            }
+            return result;
         }
         function weeklyScores(weekKey) {
             const monday = new Date(`${weekKey}T12:00:00`);
@@ -1661,7 +1715,7 @@
                 const selected = Object.fromEntries(Object.entries(entries || {}).filter(([key]) => key.startsWith('slot_') && key.slice(5,15)>=start && key.slice(5,15)<end));
                 if (Object.keys(selected).length) records[user] = selected;
             }
-            db.weeklyArchives.push({weekKey, label:weekLabel(weekKey), archivedAt:new Date().toISOString(), scores, records, diamonds:diamondCalculation(weekKey,scores)});
+            db.weeklyArchives.push({weekKey, label:weekLabel(weekKey), archivedAt:new Date().toISOString(), scores, dailyScores:weeklyDailyScores(weekKey), records, diamonds:diamondCalculation(weekKey,scores)});
             db.weeklyArchives.sort((a,b)=>b.weekKey.localeCompare(a.weekKey));
         }
         function ensureWeeklyRollover() {
@@ -1709,20 +1763,32 @@
             if (!confirm('현재 주차 기록을 보관하시겠습니까? 이번 주 기록은 삭제되지 않으며 보관 시점의 스냅샷이 저장됩니다.')) return;
             archiveWeek(currentWeekKey()); saveDB(); renderWeeklyArchives();
         }
+        function archiveDailyFallback(a,name) {
+            if(a.dailyScores?.[name])return a.dailyScores[name];
+            // 기존 보관함은 과거 보스 배점 설정이 보존되지 않았을 수 있으므로
+            // 일별 점수 재계산 대신 알 수 없는 일자는 '-'로 표시한다.
+            return null;
+        }
         function renderWeeklyArchives() {
-            const el = document.getElementById('weekly-archive-list');
-            if (!isCurrentAdmin()) { el.innerHTML = ''; return; }
-            el.innerHTML = db.weeklyArchives.map(a=>{
-                const scores = Object.entries(a.scores || {}).sort((x,y)=>y[1]-x[1]);
-                const d = a.diamonds || {};
-                return `<details class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">[${escapeHtml(a.label || weekLabel(a.weekKey))}]</summary>
+            const el=document.getElementById('weekly-archive-list');
+            if(!isCurrentAdmin()){el.innerHTML='';return;}
+            el.innerHTML=db.weeklyArchives.map((a,index)=>{
+                const scores=Object.entries(a.scores||{}).sort((x,y)=>y[1]-x[1]);
+                const d=a.diamonds||{};
+                const rows=scores.map(([name,score])=>{
+                    const days=archiveDailyFallback(a,name);
+                    const dayText=(days||Array(7).fill('-')).map((v,i)=>`<span class="whitespace-nowrap">${['월','화','수','목','금','토','일'][i]} ${v==='-'?'기록 없음':Number(v||0).toLocaleString()+'점'}</span>`).join(' <span class="text-slate-600">·</span> ');
+                    return `<div class="border-t border-slate-700/50 py-2"><div class="font-semibold text-white mb-1">${escapeHtml(name)}</div><div class="text-slate-300 leading-6">${dayText} <span class="text-amber-300 font-bold">· 총 합 ${Number(score).toLocaleString()}점 · ${(Math.floor(Number(score))*Number(d.unit||0)).toLocaleString()} 다이아</span></div></div>`;
+                }).join('');
+                return `<details class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(a.label||weekLabel(a.weekKey))}</summary>
                     <div class="mt-3 text-xs text-slate-300 space-y-2">
+                        <div class="flex flex-wrap gap-2 items-center"><span>기록 기간: ${escapeHtml(a.weekKey||'')}</span><button onclick="editArchiveLabel(${index})" class="bg-slate-700 text-amber-300 rounded px-2 py-1">주차 이름 수정</button></div>
                         <p>보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR'))}</p>
-                        <p>총 다이아 ${Number(d.total||0).toLocaleString()} · 총 분배 금액 ${Number(d.distributed||0).toLocaleString()} · 1점당 ${Number(d.unit||0).toLocaleString()} 다이아</p>
-                        <div class="space-y-1">${scores.map(([name,score])=>`<div class="flex justify-between"><span>${escapeHtml(name)}</span><span>${Number(score).toLocaleString()}점 · ${Math.floor(Number(score))*Number(d.unit||0)} 다이아</span></div>`).join('') || '참여 내역 없음'}</div>
-                        <details><summary class="cursor-pointer">상세 체크 기록</summary><pre class="whitespace-pre-wrap break-all text-[10px]">${escapeHtml(JSON.stringify(a.records || {},null,2))}</pre></details>
+                        <p>총 다이아 ${Number(d.total||0).toLocaleString()} · 1점당 ${Number(d.unit||0).toLocaleString()} 다이아</p>
+                        <div class="space-y-1">${rows||'참여 내역 없음'}</div>
+                        ${!a.dailyScores?'<p class="text-amber-300">이전 버전에서 저장한 기록은 일별 점수 스냅샷이 없어 총점만 정확히 표시됩니다.</p>':''}
                     </div></details>`;
-            }).join('') || '<p class="text-xs text-slate-400">보관된 주차 내역이 없습니다.</p>';
+            }).join('')||'<p class="text-xs text-slate-400">보관된 주차 내역이 없습니다.</p>';
         }
 
         // 매초 자동 갱신. 화면이 숨겨져 있어도 다음 출현 시각은 현재 시간 기준으로 다시 계산.

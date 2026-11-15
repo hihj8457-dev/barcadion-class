@@ -36,6 +36,7 @@
             margin-top: 14px;
         }
         .btn-link:hover { color: #fbbf24 !important; }
+        .dashboard-panel { min-height: var(--dashboard-panel-min-height, 560px); }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
@@ -106,8 +107,8 @@
                     <i class="fa-solid fa-shield-halved text-amber-400 text-2xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">바르카디온3 클래스</h1>
-                    <p class="text-xs text-slate-400">혈맹 보스 매니저 및 분배 시스템</p>
+                    <h1 id="site-title" class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">바르카디온3 클래스</h1>
+                    <p id="site-subtitle" class="text-xs text-slate-400">혈맹 보스 매니저 및 분배 시스템</p>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
@@ -125,19 +126,19 @@
         </header>
 
         <!-- 4개 메인 프레임 그리드 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div id="dashboard-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
             <!-- [프레임 1] 공지사항 & 길드원 -->
-            <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
+            <div class="dashboard-panel bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
-                        <h2 class="text-lg font-bold text-amber-400 flex items-center">
+                        <h2 id="panel-title-1" class="text-lg font-bold text-amber-400 flex items-center">
                             <i class="fa-solid fa-bullhorn mr-2"></i> 1. 공지사항 & 길드원
                         </h2>
                     </div>
                     <div class="flex space-x-2 mb-4">
-                        <button onclick="switchTab('notice', '1')" id="btn-tab-notice-1" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer">공지사항</button>
-                        <button onclick="switchTab('member', '1')" id="btn-tab-member-1" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer">길드원 명단</button>
+                        <button onclick="switchTab('notice', '1')" id="btn-tab-notice-1" data-default-label="공지사항" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer">공지사항</button>
+                        <button onclick="switchTab('member', '1')" id="btn-tab-member-1" data-default-label="길드원 명단" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer">길드원 명단</button>
                     </div>
                     
                     <div id="content-notice-1" class="space-y-3">
@@ -159,16 +160,16 @@
             </div>
 
             <!-- [프레임 2] 보스 관리 -->
-            <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
+            <div class="dashboard-panel bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
-                        <h2 class="text-lg font-bold text-amber-400 flex items-center">
+                        <h2 id="panel-title-2" class="text-lg font-bold text-amber-400 flex items-center">
                             <i class="fa-solid fa-dragon mr-2"></i> 2. 보스 관리
                         </h2>
                     </div>
                     <div class="flex space-x-2 mb-4">
-                        <button onclick="switchTab('boss-reg', '2')" id="btn-tab-boss-reg-2" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer">참여 등록</button>
-                        <button onclick="switchTab('boss-sched', '2')" id="btn-tab-boss-sched-2" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer">스케줄 보기</button>
+                        <button onclick="switchTab('boss-reg', '2')" id="btn-tab-boss-reg-2" data-default-label="참여 등록" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer">참여 등록</button>
+                        <button onclick="switchTab('boss-sched', '2')" id="btn-tab-boss-sched-2" data-default-label="스케줄 보기" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer">스케줄 보기</button>
                     </div>
 
                     <div id="content-boss-reg-2" class="space-y-4">
@@ -180,8 +181,7 @@
                         </div>
                         <div class="text-xs text-slate-400 bg-slate-900/40 p-3 rounded-xl space-y-1">
                             <p class="font-semibold text-amber-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> 기본 보스 배점</p>
-                            <p>40~60보스: 1점 | 70: 3점 | 75: 6점 | 80: 10점</p>
-                            <p>85: 15점 | 90: 20점 | 툴칸: 10점 | 라세리엔: 5점 | 발락: 30점</p>
+                            <p id="boss-guide-text" style="white-space: pre-line;"></p>
                         </div>
                     </div>
 
@@ -196,16 +196,16 @@
             </div>
 
             <!-- [프레임 3] 분배 관리 -->
-            <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
+            <div class="dashboard-panel bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
-                        <h2 class="text-lg font-bold text-amber-400 flex items-center">
+                        <h2 id="panel-title-3" class="text-lg font-bold text-amber-400 flex items-center">
                             <i class="fa-solid fa-coins mr-2"></i> 3. 분배 관리
                         </h2>
                     </div>
                     <div class="flex space-x-2 mb-4">
-                        <button onclick="switchTab('dist-기준', '3')" id="btn-tab-dist-기준-3" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer">분배 기준</button>
-                        <button onclick="switchTab('dist-신청', '3')" id="btn-tab-dist-신청-3" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer">아이템 신청</button>
+                        <button onclick="switchTab('dist-기준', '3')" id="btn-tab-dist-기준-3" data-default-label="분배 기준" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer">분배 기준</button>
+                        <button onclick="switchTab('dist-신청', '3')" id="btn-tab-dist-신청-3" data-default-label="아이템 신청" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer">아이템 신청</button>
                     </div>
 
                     <div id="content-dist-기준-3" class="space-y-2">
@@ -228,10 +228,10 @@
             </div>
 
             <!-- [프레임 4] 길드 현황 & 관리자 설정 -->
-            <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
+            <div class="dashboard-panel bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
-                        <h2 class="text-lg font-bold text-amber-400 flex items-center">
+                        <h2 id="panel-title-4" class="text-lg font-bold text-amber-400 flex items-center">
                             <i class="fa-solid fa-gears mr-2"></i> 4. 길드 현황 & 설정
                         </h2>
                     </div>
@@ -261,6 +261,15 @@
                             </button>
                             <button onclick="openBossScoreEditModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
                                 <i class="fa-solid fa-star mr-1"></i> 보스 배점 수정
+                            </button>
+                            <button onclick="openSiteSettingsModal()" class="w-full bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
+                                <i class="fa-solid fa-sliders mr-1"></i> 홈페이지 전체 설정 / 화면 높이
+                            </button>
+                            <button onclick="openTierManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
+                                <i class="fa-solid fa-tags mr-1"></i> 분배 티어 기준 관리
+                            </button>
+                            <button onclick="openBossManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
+                                <i class="fa-solid fa-dragon mr-1"></i> 보스 이름 / 시간 / 요일 관리
                             </button>
                         </div>
                     </div>
@@ -351,12 +360,108 @@
         </div>
     </div>
 
+
+    <!-- 홈페이지 설정 모달 (관리자) -->
+    <div id="site-settings-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
+                <h3 class="text-xl font-bold text-amber-400">홈페이지 전체 설정</h3>
+                <button onclick="closeSiteSettingsModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 overflow-y-auto space-y-4 flex-1">
+                <p class="text-xs text-slate-400">아래 항목은 관리자 계정에서 수정할 수 있습니다. 화면 높이는 4개 메인 패널에 적용됩니다. 현재 데이터 저장은 브라우저별 localStorage 방식이라 다른 사용자 기기와 자동 공유되지는 않습니다.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <label class="text-xs text-slate-300">홈페이지 제목<input id="setting-site-title" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
+                    <label class="text-xs text-slate-300">홈페이지 부제목<input id="setting-site-subtitle" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
+                    <label class="text-xs text-slate-300">1번 패널 제목<input id="setting-panel-1" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
+                    <label class="text-xs text-slate-300">2번 패널 제목<input id="setting-panel-2" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
+                    <label class="text-xs text-slate-300">3번 패널 제목<input id="setting-panel-3" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
+                    <label class="text-xs text-slate-300">4번 패널 제목<input id="setting-panel-4" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
+                </div>
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-2">
+                    <label class="text-sm font-bold text-amber-300" for="setting-panel-height">메인 패널 최소 높이: <span id="setting-panel-height-value">560</span>px</label>
+                    <input id="setting-panel-height" type="range" min="350" max="1000" step="10" value="560" class="w-full" oninput="document.getElementById('setting-panel-height-value').innerText=this.value">
+                    <p class="text-xs text-slate-400">값을 높이면 4개 패널이 세로로 더 길어집니다. 350~1000px 조절 가능.</p>
+                </div>
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-3">
+                    <h4 class="text-sm font-bold text-amber-300">메인 탭 이름</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="text-xs text-slate-300">공지사항 탭<input id="setting-tab-notice" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
+                        <label class="text-xs text-slate-300">길드원 탭<input id="setting-tab-members" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
+                        <label class="text-xs text-slate-300">보스 참여 탭<input id="setting-tab-boss-reg" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
+                        <label class="text-xs text-slate-300">보스 스케줄 탭<input id="setting-tab-boss-sched" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
+                        <label class="text-xs text-slate-300">분배 기준 탭<input id="setting-tab-dist-standard" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
+                        <label class="text-xs text-slate-300">아이템 신청 탭<input id="setting-tab-dist-apply" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></label>
+                    </div>
+                </div>
+                <label class="block text-xs text-slate-300">보스 참여 안내 문구<textarea id="setting-boss-guide" rows="3" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"></textarea></label>
+            </div>
+            <div class="p-4 border-t border-slate-700 bg-slate-900/50 flex justify-end gap-2">
+                <button onclick="resetSiteSettings()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl text-sm">기본값 복원</button>
+                <button onclick="saveSiteSettings()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-6 py-2 rounded-xl">설정 저장</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 분배 티어 관리 모달 -->
+    <div id="tier-manage-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-lg max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
+                <h3 class="text-xl font-bold text-amber-400">분배 티어 기준 관리</h3>
+                <button onclick="closeTierManageModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 overflow-y-auto space-y-3 flex-1">
+                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 space-y-2">
+                    <input id="new-tier-name" placeholder="티어 이름" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                    <input id="new-tier-price" type="number" placeholder="기준가 (다이아)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                    <button onclick="addTier()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-lg text-sm">티어 추가</button>
+                </div>
+                <div id="admin-tier-list" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="boss-manage-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
+                <h3 class="text-xl font-bold text-amber-400">보스 이름 / 시간 / 요일 관리</h3>
+                <button onclick="closeBossManageModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-5 overflow-y-auto space-y-3 flex-1">
+                <p class="text-xs text-slate-400">보스명, 고정 출현 시간 또는 주기, 출현 요일, 배점을 관리자 권한으로 수정할 수 있습니다.</p>
+                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 space-y-2">
+                    <h4 class="text-sm font-bold text-amber-300">새 보스 추가</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <input id="new-boss-name" placeholder="보스 이름" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                        <input id="new-boss-score" type="number" placeholder="배점" value="1" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                        <input id="new-boss-fixed-time" type="time" placeholder="고정 시간 (선택)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                        <input id="new-boss-cycle" type="number" placeholder="주기 시간 (고정시간 없을 때)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                    </div>
+                    <div class="flex flex-wrap gap-2 text-xs text-slate-300" id="new-boss-days">
+                        <label><input type="checkbox" value="월" checked> 월</label><label><input type="checkbox" value="화" checked> 화</label><label><input type="checkbox" value="수" checked> 수</label><label><input type="checkbox" value="목" checked> 목</label><label><input type="checkbox" value="금" checked> 금</label><label><input type="checkbox" value="토" checked> 토</label><label><input type="checkbox" value="일" checked> 일</label>
+                    </div>
+                    <button onclick="addBossDefinition()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-lg text-sm">보스 추가</button>
+                </div>
+                <div id="admin-boss-list" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const DEFAULT_DB = {
             users: [
                 { id: 'admin', pw: '1234', role: '마스터', class: '군주', power: 999999 }
             ],
             currentUser: null,
+            settings: {
+                siteTitle: '바르카디온3 클래스',
+                siteSubtitle: '혈맹 보스 매니저 및 분배 시스템',
+                panelTitles: ['1. 공지사항 & 길드원', '2. 보스 관리', '3. 분배 관리', '4. 길드 현황 & 설정'],
+                panelHeight: 560,
+                tabLabels: { notice: '공지사항', members: '길드원 명단', bossReg: '참여 등록', bossSched: '스케줄 보기', distStandard: '분배 기준', distApply: '아이템 신청' },
+                bossGuide: '40~60보스: 1점 | 70: 3점 | 75: 6점 | 80: 10점\n85: 15점 | 90: 20점 | 툴칸: 10점 | 라세리엔: 5점 | 발락: 30점'
+            },
             notice: "안녕하세요 바르카디온3 클래스 혈맹원 여러분.\n1. 보스 참여는 매주 성실히 체크해주세요.\n2. 분배 신청은 본인 명의로만 가능합니다.",
             tiers: [
                 { name: '영웅 5티어', price: 5000 },
@@ -404,6 +509,10 @@
             db = JSON.parse(JSON.stringify(DEFAULT_DB));
         }
 
+        if (!db.settings) db.settings = JSON.parse(JSON.stringify(DEFAULT_DB.settings));
+        else db.settings = { ...DEFAULT_DB.settings, ...db.settings,
+            panelTitles: db.settings.panelTitles || DEFAULT_DB.settings.panelTitles,
+            tabLabels: { ...DEFAULT_DB.settings.tabLabels, ...(db.settings.tabLabels || {}) } };
         let isRegisterMode = false;
 
         function saveDB() {
@@ -540,6 +649,7 @@
             renderTiers();
             renderItems();
             renderBossPreview();
+            applySiteSettings();
         }
 
         function switchTab(tabName, frameNum) {
@@ -580,6 +690,207 @@
                     document.getElementById('content-dist-기준-3').classList.add('hidden');
                 }
             }
+        }
+
+
+        function applySiteSettings() {
+            const s = db.settings || DEFAULT_DB.settings;
+            document.getElementById('site-title').innerText = s.siteTitle || DEFAULT_DB.settings.siteTitle;
+            document.getElementById('site-subtitle').innerText = s.siteSubtitle || DEFAULT_DB.settings.siteSubtitle;
+            (s.panelTitles || DEFAULT_DB.settings.panelTitles).forEach((title, index) => {
+                const el = document.getElementById(`panel-title-${index + 1}`);
+                if (el) {
+                    const icon = el.querySelector('i');
+                    el.innerHTML = (icon ? icon.outerHTML : '') + ' ' + escapeHtml(title);
+                }
+            });
+            const labels = s.tabLabels || DEFAULT_DB.settings.tabLabels;
+            const labelMap = {
+                'btn-tab-notice-1': labels.notice, 'btn-tab-member-1': labels.members,
+                'btn-tab-boss-reg-2': labels.bossReg, 'btn-tab-boss-sched-2': labels.bossSched,
+                'btn-tab-dist-기준-3': labels.distStandard, 'btn-tab-dist-신청-3': labels.distApply
+            };
+            Object.entries(labelMap).forEach(([id, label]) => {
+                const el = document.getElementById(id);
+                if (el && label) el.innerText = label;
+            });
+            document.documentElement.style.setProperty('--dashboard-panel-min-height', `${Number(s.panelHeight) || 560}px`);
+            const guide = document.getElementById('boss-guide-text');
+            if (guide) guide.innerText = s.bossGuide || '';
+        }
+
+        function openSiteSettingsModal() {
+            if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
+            const s = db.settings || DEFAULT_DB.settings;
+            document.getElementById('setting-site-title').value = s.siteTitle || '';
+            document.getElementById('setting-site-subtitle').value = s.siteSubtitle || '';
+            (s.panelTitles || []).forEach((v, i) => { const el = document.getElementById(`setting-panel-${i+1}`); if (el) el.value = v; });
+            document.getElementById('setting-panel-height').value = s.panelHeight || 560;
+            document.getElementById('setting-panel-height-value').innerText = s.panelHeight || 560;
+            const t = s.tabLabels || {};
+            document.getElementById('setting-tab-notice').value = t.notice || '';
+            document.getElementById('setting-tab-members').value = t.members || '';
+            document.getElementById('setting-tab-boss-reg').value = t.bossReg || '';
+            document.getElementById('setting-tab-boss-sched').value = t.bossSched || '';
+            document.getElementById('setting-tab-dist-standard').value = t.distStandard || '';
+            document.getElementById('setting-tab-dist-apply').value = t.distApply || '';
+            document.getElementById('setting-boss-guide').value = s.bossGuide || '';
+            document.getElementById('site-settings-modal').classList.remove('hidden');
+        }
+        function closeSiteSettingsModal() { document.getElementById('site-settings-modal').classList.add('hidden'); }
+        function isCurrentAdmin() {
+            const u = db.users.find(user => user.id === db.currentUser);
+            return !!u && (u.role === '마스터' || u.role === '운영진');
+        }
+        function saveSiteSettings() {
+            if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
+            db.settings = {
+                siteTitle: document.getElementById('setting-site-title').value.trim() || DEFAULT_DB.settings.siteTitle,
+                siteSubtitle: document.getElementById('setting-site-subtitle').value.trim(),
+                panelTitles: [1,2,3,4].map(i => document.getElementById(`setting-panel-${i}`).value.trim() || DEFAULT_DB.settings.panelTitles[i-1]),
+                panelHeight: Number(document.getElementById('setting-panel-height').value) || 560,
+                tabLabels: {
+                    notice: document.getElementById('setting-tab-notice').value.trim() || DEFAULT_DB.settings.tabLabels.notice,
+                    members: document.getElementById('setting-tab-members').value.trim() || DEFAULT_DB.settings.tabLabels.members,
+                    bossReg: document.getElementById('setting-tab-boss-reg').value.trim() || DEFAULT_DB.settings.tabLabels.bossReg,
+                    bossSched: document.getElementById('setting-tab-boss-sched').value.trim() || DEFAULT_DB.settings.tabLabels.bossSched,
+                    distStandard: document.getElementById('setting-tab-dist-standard').value.trim() || DEFAULT_DB.settings.tabLabels.distStandard,
+                    distApply: document.getElementById('setting-tab-dist-apply').value.trim() || DEFAULT_DB.settings.tabLabels.distApply
+                },
+                bossGuide: document.getElementById('setting-boss-guide').value
+            };
+            saveDB(); applySiteSettings(); closeSiteSettingsModal(); alert('홈페이지 설정이 저장되었습니다.');
+        }
+        function resetSiteSettings() {
+            if (!confirm('홈페이지 설정을 기본값으로 복원할까요?')) return;
+            db.settings = JSON.parse(JSON.stringify(DEFAULT_DB.settings));
+            saveDB(); openSiteSettingsModal(); applySiteSettings();
+        }
+
+        function openTierManageModal() {
+            if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
+            renderAdminTierList();
+            document.getElementById('tier-manage-modal').classList.remove('hidden');
+        }
+        function closeTierManageModal() { document.getElementById('tier-manage-modal').classList.add('hidden'); renderTiers(); }
+        function renderAdminTierList() {
+            let html = '';
+            db.tiers.forEach((tier, index) => {
+                html += `<div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 grid grid-cols-1 sm:grid-cols-[1fr_120px_auto] gap-2 items-center">
+                    <input id="tier-name-${index}" value="${escapeAttribute(tier.name)}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
+                    <input id="tier-price-${index}" type="number" value="${Number(tier.price)||0}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
+                    <div class="flex gap-1"><button onclick="saveTier(${index})" class="bg-amber-500 text-slate-950 font-bold px-3 py-2 rounded text-xs">저장</button><button onclick="deleteTier(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
+                </div>`;
+            });
+            document.getElementById('admin-tier-list').innerHTML = html || '<p class="text-slate-400 text-sm">티어가 없습니다.</p>';
+        }
+        function addTier() {
+            const name = document.getElementById('new-tier-name').value.trim();
+            const price = Number(document.getElementById('new-tier-price').value);
+            if (!name || !Number.isFinite(price) || price < 0) { alert('티어 이름과 올바른 기준가를 입력하세요.'); return; }
+            db.tiers.push({name, price}); saveDB(); document.getElementById('new-tier-name').value=''; document.getElementById('new-tier-price').value='';
+            renderAdminTierList();
+        }
+        function saveTier(index) {
+            const name = document.getElementById(`tier-name-${index}`).value.trim();
+            const price = Number(document.getElementById(`tier-price-${index}`).value);
+            if (!name || !Number.isFinite(price) || price < 0) { alert('티어 이름과 올바른 기준가를 입력하세요.'); return; }
+            db.tiers[index] = {name, price}; saveDB(); renderAdminTierList(); renderTiers();
+        }
+        function deleteTier(index) {
+            if (!confirm(`티어 "${db.tiers[index].name}"을 삭제할까요?`)) return;
+            db.tiers.splice(index,1); saveDB(); renderAdminTierList(); renderTiers();
+        }
+        function escapeAttribute(value) {
+            return String(value ?? '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+        }
+
+
+        function openBossManageModal() {
+            if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
+            renderAdminBossList();
+            document.getElementById('boss-manage-modal').classList.remove('hidden');
+        }
+        function closeBossManageModal() {
+            document.getElementById('boss-manage-modal').classList.add('hidden');
+            renderBossPreview();
+        }
+        function renderAdminBossList() {
+            let html = '';
+            db.bossListDef.forEach((boss, index) => {
+                const score = Number(db.bossScores[boss.name] || 1);
+                const days = ['월','화','수','목','금','토','일'];
+                const checkedDays = boss.days || [];
+                html += `<div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 space-y-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                        <input id="boss-name-${index}" value="${escapeAttribute(boss.name)}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white" aria-label="보스 이름">
+                        <input id="boss-score-${index}" type="number" value="${score}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white" aria-label="배점">
+                        <input id="boss-time-${index}" type="time" value="${escapeAttribute(boss.fixedTime || '')}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white" aria-label="고정 출현 시간">
+                        <input id="boss-cycle-${index}" type="number" value="${Number(boss.cycleHours)||''}" placeholder="주기 시간" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white" aria-label="주기 시간">
+                    </div>
+                    <div class="flex flex-wrap gap-2 text-xs text-slate-300">${days.map(day => `<label><input id="boss-day-${index}-${day}" type="checkbox" value="${day}" ${checkedDays.includes(day)?'checked':''}> ${day}</label>`).join('')}</div>
+                    <div class="flex justify-end gap-2"><button onclick="saveBossDefinition(${index})" class="bg-amber-500 text-slate-950 font-bold px-3 py-2 rounded text-xs">저장</button><button onclick="deleteBossDefinition(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
+                </div>`;
+            });
+            document.getElementById('admin-boss-list').innerHTML = html || '<p class="text-slate-400 text-sm">등록된 보스가 없습니다.</p>';
+        }
+        function getBossDaysFromForm(prefix, index) {
+            const days = ['월','화','수','목','금','토','일'];
+            return days.filter(day => {
+                const id = prefix === 'new' ? null : `boss-day-${index}-${day}`;
+                const el = prefix === 'new' ? document.querySelector(`#new-boss-days input[value="${day}"]`) : document.getElementById(id);
+                return el && el.checked;
+            });
+        }
+        function saveBossDefinition(index) {
+            const oldName = db.bossListDef[index].name;
+            const name = document.getElementById(`boss-name-${index}`).value.trim();
+            const score = Number(document.getElementById(`boss-score-${index}`).value);
+            const fixedTime = document.getElementById(`boss-time-${index}`).value;
+            const cycleHours = Number(document.getElementById(`boss-cycle-${index}`).value);
+            const days = getBossDaysFromForm('edit', index);
+            if (!name || !Number.isFinite(score) || score < 0 || days.length === 0 || (!fixedTime && (!Number.isFinite(cycleHours) || cycleHours <= 0))) {
+                alert('보스 이름, 배점, 출현 요일과 고정 시간 또는 주기를 올바르게 입력하세요.'); return;
+            }
+            const def = { name, days };
+            if (fixedTime) def.fixedTime = fixedTime; else def.cycleHours = cycleHours;
+            db.bossListDef[index] = def;
+            if (oldName !== name) {
+                db.bossScores[name] = score;
+                delete db.bossScores[oldName];
+                Object.keys(db.bossRecords).forEach(user => {
+                    const records = db.bossRecords[user] || {};
+                    Object.keys(records).forEach(key => {
+                        if (key.includes(`_${oldName}_`)) {
+                            const renamedKey = key.replace(`_${oldName}_`, `_${name}_`);
+                            records[renamedKey] = records[key];
+                            if (renamedKey !== key) delete records[key];
+                        }
+                    });
+                });
+            } else db.bossScores[name] = score;
+            saveDB(); renderAdminBossList(); renderBossPreview();
+        }
+        function addBossDefinition() {
+            const name = document.getElementById('new-boss-name').value.trim();
+            const score = Number(document.getElementById('new-boss-score').value);
+            const fixedTime = document.getElementById('new-boss-fixed-time').value;
+            const cycleHours = Number(document.getElementById('new-boss-cycle').value);
+            const days = getBossDaysFromForm('new', 0);
+            if (!name || db.bossListDef.some(b => b.name === name) || !Number.isFinite(score) || score < 0 || days.length === 0 || (!fixedTime && (!Number.isFinite(cycleHours) || cycleHours <= 0))) {
+                alert('중복되지 않는 보스 이름, 배점, 출현 요일과 고정 시간 또는 주기를 입력하세요.'); return;
+            }
+            const def = {name, days}; if (fixedTime) def.fixedTime = fixedTime; else def.cycleHours = cycleHours;
+            db.bossListDef.push(def); db.bossScores[name] = score; saveDB(); renderAdminBossList(); renderBossPreview();
+            document.getElementById('new-boss-name').value = ''; document.getElementById('new-boss-fixed-time').value = ''; document.getElementById('new-boss-cycle').value = '';
+        }
+        function deleteBossDefinition(index) {
+            const name = db.bossListDef[index].name;
+            if (!confirm(`보스 "${name}"을 삭제할까요?`)) return;
+            db.bossListDef.splice(index,1); delete db.bossScores[name]; saveDB(); renderAdminBossList(); renderBossPreview();
         }
 
         function renderNotice() {
@@ -814,6 +1125,12 @@
                         <div>
                             <span class="font-bold text-white text-sm">${u.id}</span>
                             <span class="text-slate-400 ml-2">[${u.class} / 전력: ${u.power.toLocaleString()}]</span>
+                            <div class="flex flex-wrap gap-1 mt-2">
+                                <input id="manage-class-${escapeAttribute(u.id)}" value="${escapeAttribute(u.class)}" placeholder="클래스" class="w-20 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white">
+                                <input id="manage-power-${escapeAttribute(u.id)}" type="number" value="${Number(u.power)||0}" placeholder="전투력" class="w-24 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white">
+                                <input id="manage-pw-${escapeAttribute(u.id)}" type="password" placeholder="비밀번호 변경(선택)" class="w-32 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white">
+                                <button onclick="saveUserDetails('${escapeAttribute(u.id)}')" class="bg-amber-500 text-slate-950 font-bold px-2 py-1 rounded text-xs">정보 저장</button>
+                            </div>
                         </div>
                         <div class="flex items-center space-x-2">
                             <select onchange="changeUserRole('${u.id}', this.value)" class="bg-slate-900 border border-slate-700 text-white rounded p-1 text-xs">
@@ -830,6 +1147,17 @@
             document.getElementById('user-manage-modal').classList.remove('hidden');
         }
         function closeUserManageModal() { document.getElementById('user-manage-modal').classList.add('hidden'); renderMembers(); }
+        function saveUserDetails(userId) {
+            if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
+            const user = db.users.find(u => u.id === userId); if (!user) return;
+            const className = document.getElementById(`manage-class-${userId}`).value.trim();
+            const power = Number(document.getElementById(`manage-power-${userId}`).value);
+            const newPw = document.getElementById(`manage-pw-${userId}`).value;
+            if (!className || !Number.isFinite(power) || power < 0) { alert('클래스와 올바른 전투력을 입력하세요.'); return; }
+            user.class = className; user.power = power; if (newPw) user.pw = newPw;
+            saveDB(); openUserManageModal(); renderMembers();
+            alert(`${userId}님의 정보를 저장했습니다.`);
+        }
         function changeUserRole(userId, newRole) {
             const user = db.users.find(u => u.id === userId);
             if (user) { user.role = newRole; saveDB(); }
@@ -855,7 +1183,7 @@
                             <span class="font-bold text-white ml-1">${item.name}</span>
                             <span class="text-slate-400 ml-2">(${item.price.toLocaleString()}다이아)</span>
                         </div>
-                        <button onclick="deleteAdminItem(${item.id})" class="text-red-400 hover:text-red-300 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                        <div class="flex gap-2"><button onclick="editAdminItem(${item.id})" class="text-amber-400 hover:text-amber-300 cursor-pointer" title="수정"><i class="fa-solid fa-pen"></i></button><button onclick="deleteAdminItem(${item.id})" class="text-red-400 hover:text-red-300 cursor-pointer" title="삭제"><i class="fa-solid fa-trash"></i></button></div>
                     </div>
                 `;
             });
@@ -872,6 +1200,16 @@
             document.getElementById('new-item-name').value = '';
             document.getElementById('new-item-price').value = '';
             renderAdminItemList();
+        }
+        function editAdminItem(itemId) {
+            const item = db.items.find(i => i.id === itemId); if (!item) return;
+            const name = prompt('아이템 이름 수정', item.name); if (name === null) return;
+            const category = prompt('카테고리 입력 (장비 / 스킬북 / 편린)', item.category); if (category === null) return;
+            const priceText = prompt('기준가(다이아) 수정', item.price); if (priceText === null) return;
+            const price = Number(priceText);
+            if (!name.trim() || !['장비','스킬북','편린'].includes(category.trim()) || !Number.isFinite(price) || price < 0) { alert('아이템 이름, 카테고리, 기준가를 올바르게 입력하세요.'); return; }
+            item.name = name.trim(); item.category = category.trim(); item.price = price;
+            saveDB(); renderAdminItemList(); renderItems();
         }
         function deleteAdminItem(itemId) {
             db.items = db.items.filter(i => i.id !== itemId);

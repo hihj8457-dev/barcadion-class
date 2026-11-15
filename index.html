@@ -9,15 +9,14 @@
     <title>바르카디온3 클래스 - 보스 & 분배 매니저</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    <style>        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
         body { font-family: 'Pretendard', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; }
-        /* 버튼이 절대 사라지지 않도록 명시적 스타일 지정 */
+         
         .btn-primary {
-            display: block !important;
+            display: block  ;
             width: 100%;
-            background-color: #f59e0b !important;
-            color: #0f172a !important;
+            background-color: #f59e0b  ;
+            color: #0f172a  ;
             font-weight: 800;
             padding: 14px;
             border-radius: 12px;
@@ -27,19 +26,19 @@
             margin-top: 16px;
             text-align: center;
         }
-        .btn-primary:hover { background-color: #d97706 !important; }
+        .btn-primary:hover { background-color: #d97706  ; }
         .btn-link {
-            display: inline-block !important;
+            display: inline-block  ;
             background: none;
             border: none;
-            color: #94a3b8 !important;
+            color: #94a3b8  ;
             text-decoration: underline;
             cursor: pointer;
             font-size: 14px;
             margin-top: 14px;
         }
-        .btn-link:hover { color: #fbbf24 !important; }
-        /* 메인 프레임의 설정 높이를 실제 내부 레이아웃에도 적용 */
+        .btn-link:hover { color: #fbbf24  ; }
+         
         .dashboard-panel {
             min-height: var(--dashboard-panel-min-height, 800px);
             display: flex;
@@ -51,7 +50,7 @@
             display: flex;
             flex-direction: column;
         }
-        /* 공통 탭 콘텐츠: 패널 안에서 남는 높이를 차지 */
+         
         #content-notice-1:not(.hidden),
         #content-member-1:not(.hidden),
         #content-boss-reg-2:not(.hidden),
@@ -63,7 +62,7 @@
             display: flex;
             flex-direction: column;
         }
-        /* 공지/명단/스케줄/티어/아이템 목록의 고정 max-height 해제 후 가변 확장 */
+         
         #notice-text-view,
         #member-list-view,
         #next-boss-preview,
@@ -71,7 +70,7 @@
         #item-market-list {
             flex: 1 1 auto;
             min-height: 0;
-            max-height: none !important;
+            max-height: none  ;
             overflow-y: auto;
         }
         #content-notice-1 #notice-text-view { min-height: 180px; }
@@ -79,17 +78,17 @@
         #content-boss-sched-2 #next-boss-preview,
         #content-dist-기준-3 #tier-list-view,
         #content-dist-신청-3 #item-market-list { min-height: 180px; }
-        /* 보스 참여 등록 탭은 정보 블록이 패널 높이를 무리하게 밀지 않도록 */
+         
         #content-boss-reg-2 { justify-content: flex-start; }
     
-        /* 직업 엠블럼: 투명 배경 + 밝은 실버 하이라이트 */
+         
         .guild-class-icon { width: 26px; height: 30px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 26px; }
         .guild-class-icon img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; filter: brightness(1.25) contrast(1.13) drop-shadow(0 0 3px rgba(147,197,253,.65)); }
 </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
 
-    <!-- 개인 회원정보 수정 -->
+    
     <div id="my-profile-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md p-5 space-y-4">
             <div class="flex justify-between items-center"><h3 class="font-bold text-lg text-amber-400">내 회원정보 수정</h3><button onclick="closeMyProfileModal()" class="text-slate-300 text-xl">×</button></div>
@@ -99,7 +98,7 @@
             <button onclick="saveMyProfile()" class="w-full bg-amber-500 text-slate-950 font-bold py-3 rounded-xl">변경사항 저장</button>
         </div>
     </div>
-    <!-- 로그인 모달 -->
+    
     <div id="auth-modal" style="position: fixed; inset: 0; background-color: rgba(2, 6, 23, 0.95); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 16px;">
         <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 28px; width: 100%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
             <h2 id="auth-title" style="font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 20px; color: #fbbf24;">클래스 보스 매니저 로그인</h2>
@@ -118,7 +117,7 @@
 
                 <p id="auth-login-hint" style="font-size:11px;color:#94a3b8">기존 웹 관리자 계정은 등록한 이메일로 로그인할 수 있습니다.</p>
                 <div id="register-nickname-wrap" style="display:none"><label style="font-size:13px;color:#cbd5e1">게임 닉네임</label><input id="reg-nickname" maxlength="30" placeholder="게임 닉네임" style="width:100%;background:#0f172a;border:1px solid #334155;border-radius:10px;padding:12px;color:white"></div>
-                <!-- 회원가입 추가 필드 -->
+                
                 <div id="register-fields" style="display: none; flex-direction: column; gap: 12px;">
                     <div>
                         <label style="display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px;">직업 (클래스)</label>
@@ -135,13 +134,13 @@
                     </div>
                 </div>
                 
-                <!-- 자동 로그인 -->
+                
                 <div id="auto-login-box" style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
                     <input type="checkbox" id="auto-login-check" checked style="width: 16px; height: 16px; cursor: pointer;">
                     <label for="auto-login-check" style="font-size: 13px; color: #cbd5e1; cursor: pointer;">자동 로그인 유지</label>
                 </div>
 
-                <!-- 로그인 / 회원가입 실행 버튼 -->
+                
                 <button type="button" id="auth-submit-btn" onclick="handleAuthAction()" class="btn-primary">로그인</button>
             </div>
 
@@ -151,9 +150,9 @@
         </div>
     </div>
 
-    <!-- 메인 앱 컨테이너 -->
+    
     <div id="app-container" class="hidden max-w-7xl mx-auto px-4 py-6">
-        <!-- 상단 헤더 -->
+        
         <header class="flex flex-col md:flex-row justify-between items-center bg-slate-800/80 backdrop-blur border border-slate-700 rounded-2xl p-5 mb-8 shadow-xl">
             <div class="flex items-center space-x-3 mb-4 md:mb-0">
                 <div class="bg-amber-500/20 p-3 rounded-xl border border-amber-500/50">
@@ -179,10 +178,10 @@
             </div>
         </header>
 
-        <!-- 4개 메인 프레임 그리드 -->
+        
         <div id="dashboard-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
-            <!-- [프레임 1] 공지사항 & 길드원 -->
+            
             <div class="dashboard-panel bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
@@ -213,7 +212,7 @@
                 </div>
             </div>
 
-            <!-- [프레임 2] 보스 관리 -->
+            
             <div class="dashboard-panel bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
@@ -247,7 +246,7 @@
                 </div>
             </div>
 
-            <!-- [프레임 3] 분배 관리 -->
+            
             <div class="dashboard-panel bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
@@ -285,7 +284,7 @@
                 </div>
             </div>
 
-            <!-- [프레임 4] 길드 현황 & 관리자 설정 -->
+            
             <div class="dashboard-panel bg-slate-800/90 border border-slate-700/80 rounded-2xl p-5 shadow-xl flex flex-col justify-between">
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
@@ -343,7 +342,7 @@
         </div>
     </div>
 
-    <!-- 관리자 전용 주간 보관함 -->
+    
     <div id="weekly-archive-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
             <div class="flex justify-between items-center p-5 border-b border-slate-700"><h3 class="text-xl font-bold text-amber-400">주간 보스 참여 내역 보관함</h3><button type="button" onclick="closeWeeklyArchiveModal()" class="text-slate-300 text-xl">✕</button></div>
@@ -354,7 +353,7 @@
             </div>
         </div>
     </div>
-    <!-- 모달 창들 -->
+    
     <div id="boss-reg-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
             <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
@@ -461,7 +460,7 @@
     </div>
 
 
-    <!-- 홈페이지 설정 모달 (관리자) -->
+    
     <div id="site-settings-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
             <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
@@ -503,7 +502,7 @@
         </div>
     </div>
 
-    <!-- 분배 티어 관리 모달 -->
+    
     <div id="tier-manage-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-lg max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
             <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
@@ -552,8 +551,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-    <script>
-        const DEFAULT_DB = {
+    <script>        const DEFAULT_DB = {
             users: [],
             currentUser: null,
             settings: {
@@ -626,7 +624,7 @@
             ]
         };
 
-        // Firebase Authentication + Cloud Firestore (GitHub Pages에서 CDN compat SDK 사용)
+         
         const FIREBASE_CONFIG = {
           apiKey: "AIzaSyDttsNfHyl602vtx3AGTFW03jUoWEhS7pI",
           authDomain: "barcadion-class.firebaseapp.com",
@@ -686,7 +684,7 @@
           cloudUnsubs.push(store.doc('guildPrivate/archives').onSnapshot(s=>{window.__archiveData=s.exists?s.data():{};buildCloudView();},e=>{window.__archiveData={};}));
           cloudUnsubs.push(store.collection('applications').onSnapshot(s=>{applicationDocs=new Map(s.docs.map(d=>[d.id,d.data().active===true]));buildCloudView();},e=>console.error(e)));
         }
-        // 같은 계정/브라우저에서 발생한 보스 기록 저장을 순서대로 실행한다.
+         
         const bossWriteQueues = new Map();
         const pendingSaves = new Set();
         function queueBossWrite(uid, task) {
@@ -731,18 +729,18 @@
             const uid=after.users.find(u=>u.id===name)?.uid || before.users.find(u=>u.id===name)?.uid;
             if(!uid)continue;
             if(uid!==cloudUser.uid && !cloudManager())throw new Error('다른 길드원의 보스 기록은 변경할 수 없습니다.');
-            // 전체 entries 덮어쓰기를 금지한다. 변경된 슬롯만 필드 단위로 병합한다.
+             
             const oldEntries=oldRec[name]||{}, newEntries=newRec[name]||{};
             const changed=Object.keys(newEntries).filter(key=>stable(oldEntries[key])!==stable(newEntries[key]));
             const removed=Object.keys(oldEntries).filter(key=>!Object.prototype.hasOwnProperty.call(newEntries,key));
             if(changed.length || removed.length) ops.push(queueBossWrite(uid, async()=>{
               const ref=store.doc('bossRecords/'+uid);
-              // 단일 슬롯별 병합은 다른 슬롯의 동시 변경을 덮어쓰지 않는다.
+               
               for(const key of changed) {
                 await ref.set({entries:{[key]:newEntries[key]}},{merge:true});
               }
               for(const key of removed) {
-                // 문서가 삭제된 경우의 불필요한 오류를 피한다.
+                 
                 const field=new firebase.firestore.FieldPath('entries',key);
                 await ref.update(field,firebase.firestore.FieldValue.delete());
               }
@@ -803,12 +801,12 @@
           document.getElementById('auth-error').style.display='none';
           document.getElementById('auth-login-hint').style.display=isRegisterMode?'none':'block';
         }
-        // 닉네임과 독립된 고정 로그인 ID. Firebase Auth에는 내부용 주소로 변환하여 전달합니다.
-        // 이 주소는 실제 수신 가능한 이메일이 아니므로 비밀번호 이메일 재설정은 지원하지 않습니다.
+         
+         
         const LOGIN_DOMAIN = 'barcadion-class.firebaseapp.com';
         function loginEmail(loginId, registration=false) {
           const id=loginId.trim().toLowerCase();
-          if (!registration && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(id)) return id; // 기존 웹 관리자 이메일
+          if (!registration && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(id)) return id;  
           if (!/^[a-z0-9_]{4,20}$/.test(id)) throw new Error('로그인 아이디는 영문 소문자, 숫자, 밑줄(_) 4~20자로 입력하세요.');
           return 'bc_'+id+'@'+LOGIN_DOMAIN;
         }
@@ -1132,7 +1130,7 @@
                 if (cycleHours > 0) def.cycleHours = cycleHours;
                 updated.push(def);
                 if (previous[i].name !== name) renames.push([previous[i].name, name]);
-                // 업데이트/점검 후 주기 또는 기준 시간을 수정하면 이전 컷 기준은 폐기한다.
+                 
                 if (Number(previous[i].cycleHours || 0) !== Number(cycleHours) || (previous[i].fixedTime || '') !== fixedTime) {
                     if (db.bossSpawnAnchors) delete db.bossSpawnAnchors[previous[i].name];
                 }
@@ -1236,7 +1234,7 @@
                 ? `<span class="guild-class-icon shrink-0" title="${escapeAttribute(name)}"><img src="${src}" alt="${escapeAttribute(name)}" loading="lazy"></span>`
                 : `<span class="text-[10px] text-slate-400 shrink-0" title="${escapeAttribute(name)}">${escapeHtml(name)}</span>`;
         }
-        // 닉네임을 절대 생략하지 않고, 공간이 부족한 경우에만 글꼴을 한 단계 줄인다.
+         
         function fitGuildMemberNames() {
             document.querySelectorAll('#member-list-view .guild-member-name').forEach(el => {
                 el.style.fontSize = '';
@@ -1245,7 +1243,7 @@
                 if (el.scrollWidth > el.clientWidth + 1) {
                     el.style.fontSize = '10px';
                 }
-                // 축소 후에도 공간이 모자라면 생략(...) 대신 닉네임만 줄바꿈한다.
+                 
                 if (el.scrollWidth > el.clientWidth + 1) {
                     el.style.whiteSpace = 'normal';
                     el.style.overflowWrap = 'anywhere';
@@ -1304,7 +1302,7 @@
         let currentItemCategory = '전체';
         let itemPage = 1;
         function getItemsPerPage() {
-            // 메인 패널의 실제 설정 높이에 맞춰 최대한 많은 아이템을 한 페이지에 표시.
+             
             const panel = document.getElementById('item-market-list')?.closest('.dashboard-panel');
             const height = panel ? panel.getBoundingClientRect().height : (Number(db.settings?.panelHeight) || 800);
             return Math.max(6, Math.min(30, Math.floor((height - 210) / 100)));
@@ -1320,7 +1318,7 @@
             renderItems();
         }
 
-        // 이전 버전의 단일 신청자 데이터를 다중 신청자 목록으로 자동 변환합니다.
+         
         function normalizeDistributionItem(item) {
             if (!Array.isArray(item.applicants)) {
                 item.applicants = item.applicant ? [String(item.applicant)] : [];
@@ -1376,7 +1374,7 @@
                     } else {
                         btnHtml = `<button data-item-action="apply" data-item-id="${escapeAttribute(item.id)}" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg font-bold cursor-pointer">신청</button>`;
                     }
-                    const adminBtn = ''; // 상태 변경은 관리자 > 분배 아이템 관리에서만 수행
+                    const adminBtn = '';  
                     html += `
                         <div class="bg-slate-900/60 p-3 rounded-xl border ${item.distributed ? 'border-emerald-500/40' : 'border-slate-700/50'} text-xs space-y-2">
                             <div class="flex justify-between items-start gap-2">
@@ -1403,7 +1401,7 @@
             document.getElementById('stat-item-count').innerText = `${db.items.length}개`;
         }
 
-        // 분배 목록이 다시 렌더링되어도 버튼 이벤트를 유지한다.
+         
         document.addEventListener('click', event => {
             const button = event.target.closest('button[data-item-action]');
             if (!button) return;
@@ -1443,7 +1441,7 @@
             if (item.applicants.includes(db.currentUser)) { alert('이미 신청한 아이템입니다.'); return; }
             if (confirm(`[${item.name}] 아이템을 본인 명의(${db.currentUser})로 신청하시겠습니까?`)) {
                 item.applicants.push(db.currentUser);
-                item.applicant = item.applicants[0] || null; // 구버전 호환
+                item.applicant = item.applicants[0] || null;  
                 saveDB(); renderItems();
                 alert('신청이 완료되었습니다.');
             }
@@ -1488,7 +1486,7 @@
         }
         function closeBossModal() { document.getElementById('boss-reg-modal').classList.add('hidden'); }
 
-        // 스케줄의 실제 출현 회차별로 참여 기록을 만든다. 각 회차는 요일+보스+시각으로 식별한다.
+         
         function getBossOccurrencesForDay(boss, dayDate) {
             const dayStart = new Date(dayDate); dayStart.setHours(0,0,0,0);
             const dayEnd = new Date(dayStart); dayEnd.setDate(dayEnd.getDate()+1);
@@ -1500,7 +1498,7 @@
             const anchorValue = Number((db.bossSpawnAnchors || {})[boss.name]);
             let anchor;
             if (fixed && /^([01]\d|2[0-3]):[0-5]\d$/.test(fixed)) {
-                // 고정 시간과 주기가 함께 있으면 고정 시간은 '첫 등장 시각'이다.
+                 
                 const [h, m] = fixed.split(':').map(Number);
                 anchor = new Date(dayStart); anchor.setHours(h,m,0,0);
                 anchor = anchor.getTime();
@@ -1511,7 +1509,7 @@
             }
             const times = [];
             if (Number.isFinite(cycleMs) && cycleMs > 0) {
-                // 01:24 + 8시간 = 01:24, 09:24, 17:24
+                 
                 const first = Math.ceil((dayStart.getTime() - anchor) / cycleMs);
                 for (let n = first; n < first + 100; n++) {
                     const t = anchor + n * cycleMs;
@@ -1538,7 +1536,7 @@
             if (!db.bossRecords[targetUser]) db.bossRecords[targetUser] = {};
             const records = db.bossRecords[targetUser];
             const base = new Date(); base.setHours(0,0,0,0);
-            // 이번 주 월요일부터 일요일까지, 날짜별 출현 회차를 표시
+             
             const monday = new Date(base); monday.setDate(base.getDate() - (base.getDay()+6)%7);
             let containerHtml = '', totalScore = 0, maxPossibleScore = 0;
             for (let offset=0; offset<7; offset++) {
@@ -1553,7 +1551,7 @@
                     const score = Number(db.bossScores[boss.name] ?? 1);
                     occurrences.forEach((slot) => {
                         const key = `slot_${dayStamp}_${boss.name}_${slot.label}`;
-                        // 기존 단일 체크 기록은 최초 회차에만 승계
+                         
                         const legacyKey = `${dayKey}_${boss.name}_${idx}`;
                         const checked = records[key] === true || (records[key] === undefined && slot === occurrences[0] && records[legacyKey] === true);
                         dayMaxScore+=score; maxPossibleScore+=score;
@@ -1572,7 +1570,7 @@
             document.getElementById('modal-participation-rate').innerText = `${totalScore.toLocaleString()}점 ${participationRate.toFixed(1)}%`;
             const unitDiamond = diamondCalculation(currentWeekKey()).unit;
             document.getElementById('modal-expected-score').innerText = `${Math.floor(totalScore) * unitDiamond}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 다이아';
-            // 최초 열 때만 전체 접기. 체크 변경 후에는 펼친 요일을 유지한다.
+             
             toggleAllAccordion(false);
             if (preserveOpenDays) {
                 const bodies = document.querySelectorAll('#accordion-days-container .accordion-body');
@@ -1624,7 +1622,7 @@
             }
         }
 
-        // 보스 출현 카운트다운: 고정형은 요일/시간, 주기형은 관리자가 입력한 기준 시각으로 계산
+         
         function bossNextTime(boss, nowMs) {
             const validDays = (boss.days && boss.days.length) ? boss.days : ['월','화','수','목','금','토','일'];
             const dayNames = ['일','월','화','수','목','금','토'];
@@ -1677,7 +1675,7 @@
             if (!list) return;
             const nowMs = Date.now();
             const admin = isCurrentAdmin();
-            // 오늘 요일에 등록된 보스만 표시하며, 다른 요일의 출현은 보여주지 않는다.
+             
             const today = ['일','월','화','수','목','금','토'][new Date(nowMs).getDay()];
             const todayStart = new Date(nowMs);
             todayStart.setHours(0, 0, 0, 0);
@@ -1732,7 +1730,7 @@
             saveDB(); renderBossPreview();
         }
 
-        // 주차 및 분배 데이터 관리. 기존 참여 기록은 유지하고 주차별로 스냅샷을 보관한다.
+         
         function localDateKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
         function getWeekMonday(date) {
             const d = new Date(date); d.setHours(0,0,0,0);
@@ -1887,8 +1885,8 @@
         function archiveDailyFallback(a,name) {
             const stored=a.dailyScores?.[name];
             if(Array.isArray(stored) && stored.length===7 && stored.some(v=>Number(v)>0))return stored;
-            // 보관 시점에 저장된 날짜별 slot 키로 기존 일별 점수 복구.
-            // 이전 버전에서 0점 배열만 저장되었더라도 기록이 있으면 우선 복구한다.
+             
+             
             const entries=a.records?.[name]||{};
             const byDay=Array(7).fill(0);
             let found=false;
@@ -1907,7 +1905,7 @@
                 found=true;
             }
             if(found)return byDay;
-            // 기록이 없는 요일은 0점으로 표시합니다.
+             
             if(Array.isArray(stored) && stored.length===7 && Number(a.scores?.[name]||0)===0)return stored;
             return Array(7).fill(0);
         }
@@ -1933,7 +1931,7 @@
             }).join('')||'<p class="text-xs text-slate-400">보관된 주차 내역이 없습니다.</p>';
         }
 
-        // 매초 자동 갱신. 화면이 숨겨져 있어도 다음 출현 시각은 현재 시간 기준으로 다시 계산.
+         
         setInterval(() => {
             const pane = document.getElementById('content-boss-sched-2');
             if (pane && !pane.classList.contains('hidden') && db.currentUser) renderBossPreview();
@@ -1974,8 +1972,8 @@
             document.getElementById('user-manage-modal').classList.remove('hidden');
         }
         function closeUserManageModal() { document.getElementById('user-manage-modal').classList.add('hidden'); renderMembers(); }
-        // 비가입 명단을 정식 가입 회원에 연결합니다. 회원의 UID/로그인 정보/참여 기록은 그대로 유지합니다.
-        // 닉네임만으로 본인 여부를 확정할 수 없으므로 관리자 확인 후 명단 중복 항목만 삭제합니다.
+         
+         
         async function linkGuestToMember(guestId) {
             if (!isCurrentAdmin() || !cloudUser) return alert('운영진 이상만 연결할 수 있습니다.');
             const guest = guestDocs.get(guestId);
@@ -1999,7 +1997,7 @@
                     tx.delete(guestRef);
                 });
                 alert('정식 회원 연결 완료! 가입 계정은 그대로 유지하고 중복 비가입 명단만 정리했습니다.');
-                // 실시간 구독이 목록을 갱신합니다.
+                 
             } catch (e) { alert('회원 연결 실패: ' + errorText(e)); }
         }
 
@@ -2161,6 +2159,7 @@
           for(const i of DEFAULT_DB.items)await store.doc('items/'+String(i.id)).set({name:i.name,category:i.category,price:i.price,distributed:false});
           alert('기본 데이터 등록 완료');
         }
-    </script>
+    
+</script>
 </body>
 </html>

@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>바르카디온3 클래스 - 보스 & 분배 매니저</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -82,6 +85,16 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
 
+    <!-- 개인 회원정보 수정 -->
+    <div id="my-profile-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-md p-5 space-y-4">
+            <div class="flex justify-between items-center"><h3 class="font-bold text-lg text-amber-400">내 회원정보 수정</h3><button onclick="closeMyProfileModal()" class="text-slate-300 text-xl">×</button></div>
+            <label class="block text-sm">닉네임<input id="my-profile-id" maxlength="30" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white"></label>
+            <label class="block text-sm">전투력<input id="my-profile-power" type="number" min="0" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white"></label>
+            <label class="block text-sm">클래스<select id="my-profile-class" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white"><option>레인저</option><option>소서리스</option><option>파이터</option><option>어쌔신</option></select></label>
+            <button onclick="saveMyProfile()" class="w-full bg-amber-500 text-slate-950 font-bold py-3 rounded-xl">변경사항 저장</button>
+        </div>
+    </div>
     <!-- 로그인 모달 -->
     <div id="auth-modal" style="position: fixed; inset: 0; background-color: rgba(2, 6, 23, 0.95); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 16px;">
         <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 28px; width: 100%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
@@ -153,6 +166,7 @@
                     </div>
                     <span id="user-display-power" class="text-xs text-slate-400"></span>
                 </div>
+                <button onclick="openMyProfileModal()" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 px-3 py-2 rounded-xl text-sm font-semibold cursor-pointer">내 정보 수정</button>
                 <button onclick="logout()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-xl text-sm font-semibold transition cursor-pointer">
                     <i class="fa-solid fa-right-from-bracket mr-1"></i> 로그아웃
                 </button>
@@ -185,7 +199,7 @@
 
                     <div id="content-member-1" class="hidden space-y-2">
                         <div class="text-xs text-slate-400 flex justify-between items-center mb-1">
-                            <span>직급/전투력순 정렬</span>
+                            <span>전투력 높은 순 · 이번 주 참여 점수</span>
                             <span id="total-member-count">0명</span>
                         </div>
                         <div class="max-h-[210px] overflow-y-auto space-y-1.5 pr-1" id="member-list-view"></div>
@@ -243,8 +257,9 @@
 
                     <div id="content-dist-기준-3" class="space-y-2">
                         <div class="flex justify-between items-center text-xs text-slate-400">
-                            <span>티어별 분배 기준가</span>
+                            <span>장비 · 스킬북 · 권능 · 기타 분배 기준</span>
                         </div>
+                        <div id="tier-category-tabs" class="grid grid-cols-4 gap-1 mb-2"></div>
                         <div class="max-h-[210px] overflow-y-auto space-y-1.5 pr-1" id="tier-list-view"></div>
                     </div>
 
@@ -256,6 +271,7 @@
                             <button onclick="filterItemCategory('편린')" class="item-cat-btn px-2 py-1 text-xs rounded bg-slate-700 text-slate-300 cursor-pointer">편린</button>
                         </div>
                         <div class="max-h-[175px] overflow-y-auto space-y-2 pr-1" id="item-market-list"></div>
+                        <div id="item-pagination" class="flex flex-wrap justify-center gap-1 pt-2"></div>
                     </div>
                 </div>
             </div>
@@ -284,8 +300,17 @@
                             </div>
                         </div>
 
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 space-y-2" id="diamond-summary-panel">
+                            <div class="flex justify-between items-center"><span class="text-sm font-bold text-amber-400">주간 다이아 분배</span><span id="diamond-week-label" class="text-[10px] text-slate-400"></span></div>
+                            <div id="diamond-summary-content" class="space-y-1 text-xs text-slate-300"></div>
+                            <div id="diamond-admin-edit" class="hidden border-t border-slate-700 pt-2">
+                                <label class="text-xs text-slate-300">길드 총 다이아 <input id="diamond-total-input" type="number" min="0" step="1" class="mt-1 w-full bg-slate-950 border border-slate-600 rounded-lg p-2 text-white" placeholder="총 다이아 입력"></label>
+                                <button type="button" onclick="saveGuildDiamonds()" class="mt-2 w-full bg-amber-500 text-slate-950 font-bold rounded-lg p-2 text-xs">총 다이아 저장</button>
+                            </div>
+                        </div>
                         <div id="admin-control-panel" class="hidden space-y-2 pt-2 border-t border-slate-700">
                             <p class="text-xs font-bold text-amber-400">관리자 전용 제어</p>
+                            <button type="button" onclick="openWeeklyArchiveModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold">주간 보스 참여 내역 보관함</button>
                             <button onclick="openUserManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
                                 <i class="fa-solid fa-users-gear mr-1"></i> 길드원 직급 및 권한 관리
                             </button>
@@ -299,7 +324,7 @@
                                 <i class="fa-solid fa-sliders mr-1"></i> 홈페이지 전체 설정 / 화면 높이
                             </button>
                             <button onclick="openTierManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
-                                <i class="fa-solid fa-tags mr-1"></i> 분배 티어 기준 관리
+                                <i class="fa-solid fa-tags mr-1"></i> 분배 기준 추가 / 수정
                             </button>
                             <button onclick="openBossManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
                                 <i class="fa-solid fa-dragon mr-1"></i> 보스 관리
@@ -312,6 +337,17 @@
         </div>
     </div>
 
+    <!-- 관리자 전용 주간 보관함 -->
+    <div id="weekly-archive-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+            <div class="flex justify-between items-center p-5 border-b border-slate-700"><h3 class="text-xl font-bold text-amber-400">주간 보스 참여 내역 보관함</h3><button type="button" onclick="closeWeeklyArchiveModal()" class="text-slate-300 text-xl">✕</button></div>
+            <div class="p-5 overflow-y-auto space-y-3 flex-1">
+                <p class="text-xs text-slate-400">매주 월요일 새 주차로 전환되며 지난 주의 참여 기록과 분배 계산을 보관합니다. 보관 내역은 관리자만 열람할 수 있습니다.</p>
+                <button type="button" onclick="archiveCurrentWeekManually()" class="bg-amber-500 text-slate-950 font-bold text-sm px-4 py-2 rounded-lg">현재 주차 내역 보관</button>
+                <div id="weekly-archive-list" class="space-y-3"></div>
+            </div>
+        </div>
+    </div>
     <!-- 모달 창들 -->
     <div id="boss-reg-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
@@ -322,17 +358,18 @@
             <div class="p-5 overflow-y-auto space-y-4 flex-1">
                 <div class="grid grid-cols-2 gap-3 bg-slate-900/80 p-4 rounded-xl border border-slate-700">
                     <div class="text-center">
-                        <span class="text-xs text-slate-400 block mb-1">주간 총합 대비 참여율</span>
+                        <span class="text-xs text-slate-400 block mb-1">주간 참여율</span>
                         <span id="modal-participation-rate" class="text-lg font-extrabold text-amber-400">0.0%</span>
                     </div>
                     <div class="text-center border-l border-slate-700">
-                        <span class="text-xs text-slate-400 block mb-1">예상 획득 점수</span>
-                        <span id="modal-expected-score" class="text-lg font-extrabold text-white">0점</span>
+                        <span class="text-xs text-slate-400 block mb-1">예상 분배 다이아</span>
+                        <span id="modal-expected-score" class="text-lg font-extrabold text-white">0 다이아</span>
                     </div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-300 mb-1">참여 닉네임</label>
-                    <select id="modal-target-user" onchange="loadUserBossRecords()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 font-bold"></select>
+                    <div id="modal-target-user" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white font-bold" aria-label="로그인한 참여 닉네임"></div>
+                    <p class="text-xs text-slate-400 mt-1">본인 계정의 참여 기록만 등록할 수 있습니다.</p>
                 </div>
                 <div class="flex space-x-2">
                     <button onclick="toggleAllAccordion(true)" class="bg-slate-700 hover:bg-slate-600 text-xs px-3 py-1.5 rounded-lg text-slate-200 cursor-pointer">전체 펼치기</button>
@@ -447,14 +484,14 @@
     <div id="tier-manage-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-lg max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
             <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
-                <h3 class="text-xl font-bold text-amber-400">분배 티어 기준 관리</h3>
+                <h3 class="text-xl font-bold text-amber-400">분배 기준 추가 / 수정</h3>
                 <button onclick="closeTierManageModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-5 overflow-y-auto space-y-3 flex-1">
                 <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 space-y-2">
-                    <input id="new-tier-name" placeholder="티어 이름" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                    <select id="new-tier-category" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"><option>장비</option><option>스킬북</option><option>권능</option><option>기타</option></select>\n                    <input id="new-tier-name" placeholder="아이템/분배 기준 이름" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
                     <input id="new-tier-price" type="number" placeholder="기준가 (다이아)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
-                    <button onclick="addTier()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-lg text-sm">티어 추가</button>
+                    <input id="new-tier-note" placeholder="분배 방식 / 비고 (선택)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">\n                    <button onclick="addTier()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-lg text-sm">티어 추가</button>
                 </div>
                 <div id="admin-tier-list" class="space-y-2"></div>
             </div>
@@ -492,7 +529,7 @@
     <script>
         const DEFAULT_DB = {
             users: [
-                { id: '원투뜨리', pw: 'gpwns4215', role: '마스터', class: '레인저', power: 411121 }
+                { id: '원투뜨리', pw: '123123', role: '웹 관리자', class: '레인저', power: 411121 }
             ],
             currentUser: null,
             settings: {
@@ -505,12 +542,35 @@
             },
             notice: "안녕하세요 바르카디온3 클래스 길드원 여러분.\n1. 보스 참여는 매주 성실히 체크해주세요.\n2. 분배 신청은 본인 명의로만 가능합니다.",
             tiers: [
-                { name: '영웅 5티어', price: 5000 },
-                { name: '영웅 4티어', price: 4000 },
-                { name: '영웅 3티어', price: 3000 },
-                { name: '영웅 2티어', price: 2000 },
-                { name: '영웅 1티어', price: 1000 },
-                { name: '전설 편린', price: 2500 }
+                {"category": "장비", "name": "전설 0티어 무기", "price": 150000, "note": ""},
+                {"category": "장비", "name": "전설 0티어 방어구", "price": 70000, "note": ""},
+                {"category": "장비", "name": "전설 1티어 무기", "price": 80000, "note": ""},
+                {"category": "장비", "name": "전설 1티어 방어구", "price": 50000, "note": ""},
+                {"category": "장비", "name": "영웅 0티어 무기", "price": 55000, "note": ""},
+                {"category": "장비", "name": "영웅 0티어 방어구", "price": 25000, "note": ""},
+                {"category": "장비", "name": "영웅 0티어 장신구", "price": 30000, "note": ""},
+                {"category": "장비", "name": "영웅 1티어 무기", "price": 40000, "note": ""},
+                {"category": "장비", "name": "영웅 1티어 방어구", "price": 20000, "note": ""},
+                {"category": "장비", "name": "영웅 2티어 무기", "price": 25000, "note": ""},
+                {"category": "장비", "name": "영웅 2티어 방어구", "price": 15000, "note": ""},
+                {"category": "장비", "name": "영웅 3티어 무기", "price": 15000, "note": ""},
+                {"category": "장비", "name": "영웅 3티어 방어구", "price": 10000, "note": ""},
+                {"category": "장비", "name": "영웅 5티어 무기", "price": 5000, "note": ""},
+                {"category": "장비", "name": "영웅 5티어 방어구", "price": 5000, "note": ""},
+                {"category": "스킬북", "name": "전설 스킬북", "price": 50000, "note": ""},
+                {"category": "스킬북", "name": "영웅 스킬북", "price": 10000, "note": ""},
+                {"category": "스킬북", "name": "희귀 스킬북", "price": 3000, "note": ""},
+                {"category": "스킬북", "name": "고급 스킬북", "price": 10, "note": "투력 순차"},
+                {"category": "권능", "name": "영웅 권능", "price": 4000, "note": ""},
+                {"category": "권능", "name": "희귀 권능", "price": 300, "note": "경매 시작가"},
+                {"category": "기타", "name": "찢어진 전설 레시피", "price": null, "note": "미정"},
+                {"category": "기타", "name": "전설 마정석", "price": null, "note": "10개 모일 때마다 투력 순차 무료분배"},
+                {"category": "기타", "name": "찢어진 영웅 무기 도안", "price": 2000, "note": ""},
+                {"category": "기타", "name": "찢어진 영웅 방어구 도안", "price": 1000, "note": ""},
+                {"category": "기타", "name": "찢어진 희귀 무기 도안", "price": 100, "note": ""},
+                {"category": "기타", "name": "찢어진 희귀 방어구 도안", "price": 50, "note": ""},
+                {"category": "기타", "name": "엘룬, 솔라리온", "price": null, "note": "10개 단위로 시세의 절반 가격"},
+                {"category": "기타", "name": "보스 수집품", "price": null, "note": "투력 순차 분배"}
             ],
             bossScores: {
                 '40보스': 1, '50보스': 1, '60보스': 1,
@@ -533,6 +593,9 @@
                 { name: '툴칸', fixedTime: '21:00', days: ['일'] }
             ],
             bossRecords: {},
+            weeklyArchives: [],
+            activeWeekKey: null,
+            guildDiamondsByWeek: {},
             items: [
                 { id: 1, name: '영웅 5티어 장갑', category: '장비', price: 5000, applicants: [], distributed: false },
                 { id: 2, name: '전설 스킬북 [앱솔루트]', category: '스킬북', price: 20000, applicants: [], distributed: false }
@@ -550,7 +613,26 @@
             db = JSON.parse(JSON.stringify(DEFAULT_DB));
         }
 
+        // 이전 버전의 최초 계정만 '웹 관리자'로 승격 (기존 저장 데이터 보존)
+        const initialWebAdminId = DEFAULT_DB.users[0].id;
+        const initialWebAdmin = db.users.find(u => u.id === initialWebAdminId);
+        if (initialWebAdmin && initialWebAdmin.role !== '웹 관리자') { initialWebAdmin.role = '웹 관리자'; try { localStorage.setItem('barcadion_db_v3', JSON.stringify(db)); } catch (e) { console.warn('관리자 등급 마이그레이션 저장 실패',e); } }
+        // 이전 기본 티어 6종만 사용 중인 브라우저는 새 분배 기준으로 전환한다.
+        const oldDefaultTierNames = ['영웅 5티어','영웅 4티어','영웅 3티어','영웅 2티어','영웅 1티어','전설 편린'];
+        if (!Array.isArray(db.tiers) || (db.tiers.length === 6 && db.tiers.every((t,i) => t.name === oldDefaultTierNames[i]))) {
+            db.tiers = JSON.parse(JSON.stringify(DEFAULT_DB.tiers));
+            try { localStorage.setItem('barcadion_db_v3', JSON.stringify(db)); } catch(e) { console.warn(e); }
+        }
+        db.tiers.forEach(t => { if (!t.category) t.category = '기타'; if (t.note == null) t.note = ''; });
         if (!Array.isArray(db.items)) db.items = JSON.parse(JSON.stringify(DEFAULT_DB.items));
+        // 스키마 업데이트: 기존 길드원/신청/참여 기록을 삭제하지 않고 새 필드만 보충
+        const APP_SCHEMA_VERSION = 4;
+        if (!db.bossRecords || typeof db.bossRecords !== 'object') db.bossRecords = {};
+        if (!Array.isArray(db.weeklyArchives)) db.weeklyArchives = [];
+        if (!db.guildDiamondsByWeek || typeof db.guildDiamondsByWeek !== 'object') db.guildDiamondsByWeek = {};
+        if (!Array.isArray(db.bossListDef)) db.bossListDef = JSON.parse(JSON.stringify(DEFAULT_DB.bossListDef));
+        if (!db.bossScores) db.bossScores = JSON.parse(JSON.stringify(DEFAULT_DB.bossScores));
+        db.schemaVersion = APP_SCHEMA_VERSION;
         db.items.forEach(item => { if (item && item.id != null) item.id = String(item.id); });
         if (!db.settings) db.settings = JSON.parse(JSON.stringify(DEFAULT_DB.settings));
         else db.settings = { ...DEFAULT_DB.settings, ...db.settings,
@@ -567,9 +649,10 @@
 
         window.onload = function() {
             const savedUser = localStorage.getItem('barcadion_logged_user_v3');
-            if (savedUser && db.users.find(u => u.id === savedUser)) {
+            if (savedUser && db.users.find(u => u.id === savedUser && u.approved !== false)) {
                 db.currentUser = savedUser;
             }
+            ensureWeeklyRollover();
             checkLoginState();
         };
 
@@ -577,6 +660,7 @@
             const authModal = document.getElementById('auth-modal');
             const appContainer = document.getElementById('app-container');
 
+            if (db.currentUser && !db.users.some(u=>u.id===db.currentUser && u.approved!==false)) db.currentUser=null;
             if (db.currentUser) {
                 authModal.style.display = 'none';
                 appContainer.classList.remove('hidden');
@@ -631,9 +715,9 @@
                 }
                 const newCls = document.getElementById('reg-class').value;
                 const newPower = parseInt(document.getElementById('reg-power').value) || 0;
-                db.users.push({ id, pw, role: '길드원', class: newCls, power: newPower });
+                db.users.push({ id, pw, role: '길드원', class: newCls, power: newPower, approved: false });
                 saveDB();
-                alert("회원가입이 완료되었습니다! 방금 가입한 아이디로 로그인해주세요.");
+                alert("가입 신청이 접수되었습니다. 웹 관리자의 승인을 받은 후 로그인할 수 있습니다. (이 브라우저에만 신청이 저장됩니다.)");
                 toggleAuthMode();
             } else {
                 const user = db.users.find(u => u.id === id && u.pw === pw);
@@ -641,6 +725,10 @@
                     errorBox.innerText = "아이디 또는 비밀번호가 일치하지 않습니다.";
                     errorBox.style.display = 'block';
                     return;
+                }
+                if (user.approved === false) {
+                    errorBox.innerText = '웹 관리자 가입 승인 대기 중입니다.';
+                    errorBox.style.display = 'block'; return;
                 }
                 db.currentUser = user.id;
                 
@@ -654,6 +742,51 @@
                 saveDB();
                 checkLoginState();
             }
+        }
+
+        function openMyProfileModal() {
+            const u = db.users.find(u=>u.id===db.currentUser);
+            if (!u) return;
+            document.getElementById('my-profile-id').value=u.id;
+            document.getElementById('my-profile-power').value=u.power;
+            document.getElementById('my-profile-class').value=u.class;
+            document.getElementById('my-profile-modal').classList.remove('hidden');
+        }
+        function closeMyProfileModal() { document.getElementById('my-profile-modal').classList.add('hidden'); }
+        function saveMyProfile() {
+            const u=db.users.find(u=>u.id===db.currentUser);
+            if (!u) return;
+            const oldId=u.id;
+            const newId=document.getElementById('my-profile-id').value.trim();
+            const powerRaw=document.getElementById('my-profile-power').value.trim();
+            const power=Number(powerRaw);
+            const cls=document.getElementById('my-profile-class').value;
+            if (!newId || newId.length>30 || !powerRaw || !Number.isSafeInteger(power) || power<0) {alert('닉네임과 올바른 전투력을 입력하세요.');return;}
+            if (newId!==oldId && db.users.some(x=>x.id===newId)) {alert('이미 사용 중인 닉네임입니다.');return;}
+            if (newId!==oldId && !confirm('닉네임을 변경하면 기존 참여 기록과 아이템 신청자 이름도 변경됩니다. 계속할까요?')) return;
+            if (newId!==oldId) {
+                // 기존 기록, 주간 보관함, 신청 내역의 계정 참조를 일괄 이전
+                if (db.bossRecords && Object.prototype.hasOwnProperty.call(db.bossRecords,oldId)) {
+                    db.bossRecords[newId]=db.bossRecords[oldId]; delete db.bossRecords[oldId];
+                }
+                (db.items||[]).forEach(item=>{
+                    if (Array.isArray(item.applicants)) item.applicants=item.applicants.map(x=>x===oldId?newId:x);
+                    if(item.applicant===oldId)item.applicant=newId;
+                });
+                (db.weeklyArchives||[]).forEach(a=>{
+                    ['records','scores'].forEach(k=>{
+                        if(a[k] && !Array.isArray(a[k]) && Object.prototype.hasOwnProperty.call(a[k],oldId)) {
+                            a[k][newId]=a[k][oldId]; delete a[k][oldId];
+                        }
+                    });
+                });
+                u.id=newId;
+                db.currentUser=newId;
+                if(localStorage.getItem('barcadion_logged_user_v3')===oldId) localStorage.setItem('barcadion_logged_user_v3',newId);
+            }
+            u.power=power; u.class=cls;
+            saveDB(); closeMyProfileModal(); initApp();
+            alert('회원정보가 변경되었습니다.');
         }
 
         function logout() {
@@ -670,14 +803,15 @@
             document.getElementById('user-display-name').innerText = currentUserObj.id;
             const badge = document.getElementById('user-badge');
             badge.innerText = currentUserObj.role;
-            if (currentUserObj.role === '마스터') badge.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-red-500/20 text-red-400 border border-red-500/40";
+            if (currentUserObj.role === '웹 관리자') badge.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-purple-500/20 text-purple-300 border border-purple-500/40";
+            else if (currentUserObj.role === '마스터') badge.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-red-500/20 text-red-400 border border-red-500/40";
             else if (currentUserObj.role === '운영진') badge.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/40";
             else badge.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-slate-700 text-slate-300";
 
             document.getElementById('user-display-power').innerText = `전투력: ${currentUserObj.power.toLocaleString()} | 클래스: ${currentUserObj.class}`;
             document.getElementById('stat-my-id').innerText = currentUserObj.id;
 
-            const isAdmin = (currentUserObj.role === '마스터' || currentUserObj.role === '운영진');
+            const isAdmin = (['웹 관리자','마스터','운영진'].includes(currentUserObj.role));
             document.querySelectorAll('.admin-only').forEach(el => {
                 if (isAdmin) el.classList.remove('hidden');
                 else el.classList.add('hidden');
@@ -696,6 +830,7 @@
             renderItems();
             renderBossPreview();
             applySiteSettings();
+            renderDiamondSummary();
         }
 
         function switchTab(tabName, frameNum) {
@@ -786,7 +921,7 @@
         function closeSiteSettingsModal() { document.getElementById('site-settings-modal').classList.add('hidden'); }
         function isCurrentAdmin() {
             const u = db.users.find(user => user.id === db.currentUser);
-            return !!u && (u.role === '마스터' || u.role === '운영진');
+            return !!u && (['웹 관리자','마스터','운영진'].includes(u.role));
         }
         function saveSiteSettings() {
             if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
@@ -820,31 +955,40 @@
         }
         function closeTierManageModal() { document.getElementById('tier-manage-modal').classList.add('hidden'); renderTiers(); }
         function renderAdminTierList() {
-            let html = '';
-            db.tiers.forEach((tier, index) => {
-                html += `<div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 grid grid-cols-1 sm:grid-cols-[1fr_120px_auto] gap-2 items-center">
-                    <input id="tier-name-${index}" value="${escapeAttribute(tier.name)}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
-                    <input id="tier-price-${index}" type="number" value="${Number(tier.price)||0}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
-                    <div class="flex gap-1"><button onclick="saveTier(${index})" class="bg-amber-500 text-slate-950 font-bold px-3 py-2 rounded text-xs">저장</button><button onclick="deleteTier(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
-                </div>`;
-            });
-            document.getElementById('admin-tier-list').innerHTML = html || '<p class="text-slate-400 text-sm">티어가 없습니다.</p>';
+            document.getElementById('admin-tier-list').innerHTML = db.tiers.map((tier,index) => `
+                <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 space-y-2">
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="tier-category-${index}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">${['장비','스킬북','권능','기타'].map(c=>`<option ${tier.category===c?'selected':''}>${c}</option>`).join('')}</select>
+                        <input id="tier-name-${index}" value="${escapeAttribute(tier.name)}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input id="tier-price-${index}" type="number" min="0" placeholder="미정은 비워두기" value="${tier.price == null ? '' : Number(tier.price)}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
+                        <input id="tier-note-${index}" placeholder="분배 방식/비고" value="${escapeAttribute(tier.note||'')}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
+                    </div>
+                    <div class="flex justify-end gap-2"><button onclick="saveTier(${index})" class="bg-amber-500 text-slate-950 font-bold px-3 py-2 rounded text-xs">수정 저장</button><button onclick="deleteTier(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
+                </div>`).join('') || '<p class="text-slate-400 text-sm">등록된 기준이 없습니다.</p>';
         }
         function addTier() {
             const name = document.getElementById('new-tier-name').value.trim();
-            const price = Number(document.getElementById('new-tier-price').value);
-            if (!name || !Number.isFinite(price) || price < 0) { alert('티어 이름과 올바른 기준가를 입력하세요.'); return; }
-            db.tiers.push({name, price}); saveDB(); document.getElementById('new-tier-name').value=''; document.getElementById('new-tier-price').value='';
-            renderAdminTierList();
+            const raw = document.getElementById('new-tier-price').value.trim();
+            const price = raw === '' ? null : Number(raw);
+            if (!name || (price !== null && (!Number.isFinite(price) || price < 0))) { alert('이름과 올바른 기준가를 입력하세요.'); return; }
+            const category = document.getElementById('new-tier-category').value;
+            const note = document.getElementById('new-tier-note').value.trim();
+            db.tiers.push({name,price,category,note}); saveDB();
+            ['new-tier-name','new-tier-price','new-tier-note'].forEach(id=>document.getElementById(id).value='');
+            renderAdminTierList(); renderTiers();
         }
         function saveTier(index) {
             const name = document.getElementById(`tier-name-${index}`).value.trim();
-            const price = Number(document.getElementById(`tier-price-${index}`).value);
-            if (!name || !Number.isFinite(price) || price < 0) { alert('티어 이름과 올바른 기준가를 입력하세요.'); return; }
-            db.tiers[index] = {name, price}; saveDB(); renderAdminTierList(); renderTiers();
+            const raw = document.getElementById(`tier-price-${index}`).value.trim();
+            const price = raw === '' ? null : Number(raw);
+            if (!name || (price !== null && (!Number.isFinite(price) || price < 0))) { alert('이름과 올바른 기준가를 입력하세요.'); return; }
+            db.tiers[index] = {name,price,category:document.getElementById(`tier-category-${index}`).value,note:document.getElementById(`tier-note-${index}`).value.trim()};
+            saveDB(); renderAdminTierList(); renderTiers();
         }
         function deleteTier(index) {
-            if (!confirm(`티어 "${db.tiers[index].name}"을 삭제할까요?`)) return;
+            if (!confirm(`"${db.tiers[index].name}" 기준을 삭제할까요?`)) return;
             db.tiers.splice(index,1); saveDB(); renderAdminTierList(); renderTiers();
         }
         function escapeAttribute(value) {
@@ -1003,15 +1147,13 @@
         }
 
         function renderMembers() {
-            const roleOrder = { '마스터': 1, '운영진': 2, '길드원': 3 };
-            const sorted = [...db.users].sort((a, b) => {
-                if (roleOrder[a.role] !== roleOrder[b.role]) return roleOrder[a.role] - roleOrder[b.role];
-                return b.power - a.power;
-            });
+            const sorted = db.users.filter(u=>u.approved !== false).slice().sort((a,b)=>Number(b.power||0)-Number(a.power||0));
+            const memberWeeklyScores = weeklyScores(currentWeekKey());
 
             let html = '';
             sorted.forEach(u => {
                 let badgeColor = "bg-slate-700 text-slate-300";
+                if (u.role === '웹 관리자') badgeColor = "bg-purple-500/20 text-purple-300";
                 if (u.role === '마스터') badgeColor = "bg-red-500/20 text-red-400";
                 if (u.role === '운영진') badgeColor = "bg-amber-500/20 text-amber-400";
                 html += `
@@ -1021,7 +1163,7 @@
                             <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold ${badgeColor}">${u.role}</span>
                             <span class="text-slate-400 ml-1.5">[${u.class}]</span>
                         </div>
-                        <div class="text-amber-400 font-bold">${u.power.toLocaleString()} <span class="text-[10px] text-slate-500">전투력</span></div>
+                        <div class="text-right"><div class="text-amber-400 font-bold">${Number(u.power||0).toLocaleString()} <span class="text-[10px] text-slate-500">전투력</span></div><div class="text-sky-300 mt-1">주간 ${Number(memberWeeklyScores[u.id]||0).toLocaleString()}점</div></div>
                     </div>
                 `;
             });
@@ -1030,22 +1172,36 @@
             document.getElementById('stat-member-count').innerText = `${sorted.length}명`;
         }
 
+        let activeTierCategory = '장비';
+        function selectTierCategory(category) {
+            activeTierCategory = category;
+            renderTiers();
+        }
         function renderTiers() {
-            let html = '';
-            db.tiers.forEach(t => {
-                html += `
-                    <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50 flex justify-between items-center text-xs">
-                        <span class="font-bold text-white">${t.name}</span>
-                        <span class="text-amber-400 font-bold">${t.price.toLocaleString()} 다이아</span>
-                    </div>
-                `;
-            });
-            document.getElementById('tier-list-view').innerHTML = html;
+            const groups = ['장비','스킬북','권능','기타'];
+            document.getElementById('tier-category-tabs').innerHTML = groups.map(category =>
+                `<button type="button" onclick="selectTierCategory('${category}')" class="py-2 rounded-lg text-xs font-bold cursor-pointer ${activeTierCategory===category ? 'bg-amber-500 text-slate-950' : 'bg-slate-700 text-slate-300'}">${category}</button>`
+            ).join('');
+            const rows = db.tiers.filter(t=>t.category===activeTierCategory);
+            document.getElementById('tier-list-view').innerHTML = rows.map(t=>
+                `<div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50 text-xs">
+                    <div class="flex justify-between gap-2"><span class="font-bold text-white">${escapeHtml(t.name)}</span><span class="text-amber-400 font-bold shrink-0">${t.price == null ? '미정 / 별도 기준' : Number(t.price).toLocaleString()+' 다이아'}</span></div>
+                    ${t.note ? `<div class="text-slate-400 mt-1">${escapeHtml(t.note)}</div>` : ''}
+                </div>`).join('') || '<p class="text-slate-400 text-xs py-3">등록된 분배 기준이 없습니다.</p>';
         }
 
         let currentItemCategory = '전체';
+        let itemPage = 1;
+        function getItemsPerPage() {
+            // 메인 패널의 실제 설정 높이에 맞춰 최대한 많은 아이템을 한 페이지에 표시.
+            const panel = document.getElementById('item-market-list')?.closest('.dashboard-panel');
+            const height = panel ? panel.getBoundingClientRect().height : (Number(db.settings?.panelHeight) || 800);
+            return Math.max(6, Math.min(30, Math.floor((height - 210) / 100)));
+        }
+        function goToItemPage(page) { itemPage = page; renderItems(); }
         function filterItemCategory(cat) {
             currentItemCategory = cat;
+            itemPage = 1;
             document.querySelectorAll('.item-cat-btn').forEach(btn => {
                 if (btn.innerText === cat) btn.className = "item-cat-btn px-2 py-1 text-xs rounded bg-amber-500 text-slate-950 font-bold cursor-pointer";
                 else btn.className = "item-cat-btn px-2 py-1 text-xs rounded bg-slate-700 text-slate-300 cursor-pointer";
@@ -1070,12 +1226,17 @@
         }
 
         function renderItems() {
-            const filtered = currentItemCategory === '전체' ? db.items : db.items.filter(i => i.category === currentItemCategory);
+            const filtered = (currentItemCategory === '전체' ? db.items : db.items.filter(i => i.category === currentItemCategory))
+                .slice().sort((a,b) => Number(!!a.distributed) - Number(!!b.distributed));
+            const perPage = getItemsPerPage();
+            const pages = Math.max(1, Math.ceil(filtered.length / perPage));
+            itemPage = Math.max(1, Math.min(itemPage, pages));
+            const visibleItems = filtered.slice((itemPage-1)*perPage, itemPage*perPage);
             let html = '';
             if (filtered.length === 0) {
                 html = `<div class="text-center py-6 text-xs text-slate-500">등록된 아이템이 없습니다.</div>`;
             } else {
-                filtered.forEach(item => {
+                visibleItems.forEach(item => {
                     normalizeDistributionItem(item);
                     const isMyApplicant = item.applicants.includes(db.currentUser);
                     const applicantsHtml = item.applicants.length
@@ -1110,6 +1271,8 @@
                 });
             }
             document.getElementById('item-market-list').innerHTML = html;
+            const pagination = document.getElementById('item-pagination');
+            pagination.innerHTML = pages <= 1 ? '' : Array.from({length:pages},(_,i) => `<button type="button" onclick="goToItemPage(${i+1})" class="px-3 py-1 rounded text-xs font-bold ${itemPage===i+1?'bg-amber-500 text-slate-950':'bg-slate-700 text-slate-200'}">${i+1}</button>`).join('');
             document.getElementById('stat-item-count').innerText = `${db.items.length}개`;
         }
 
@@ -1180,11 +1343,9 @@
         const dayShorts = { '월요일': '월', '화요일': '화', '수요일': '수', '목요일': '목', '금요일': '금', '토요일': '토', '일요일': '일' };
 
         function openBossModal() {
-            let selectHtml = '';
-            db.users.forEach(u => {
-                selectHtml += `<option value="${u.id}" ${u.id === db.currentUser ? 'selected' : ''}>${u.id} (${u.role})</option>`;
-            });
-            document.getElementById('modal-target-user').innerHTML = selectHtml;
+            if (!db.currentUser) return;
+            const user = db.users.find(u => u.id === db.currentUser);
+            document.getElementById('modal-target-user').textContent = db.currentUser;
             document.getElementById('boss-reg-modal').classList.remove('hidden');
             loadUserBossRecords();
         }
@@ -1229,8 +1390,14 @@
                 return {time, label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
             });
         }
-        function loadUserBossRecords() {
-            const targetUser = document.getElementById('modal-target-user').value;
+        function loadUserBossRecords(preserveOpenDays = false) {
+            const openDays = preserveOpenDays
+                ? Array.from(document.querySelectorAll('#accordion-days-container .accordion-body'))
+                    .map((body, index) => body.style.display !== 'none' ? index : -1)
+                    .filter(index => index >= 0)
+                : [];
+            const targetUser = db.currentUser;
+            if (!targetUser) return;
             if (!db.bossRecords[targetUser]) db.bossRecords[targetUser] = {};
             const records = db.bossRecords[targetUser];
             const base = new Date(); base.setHours(0,0,0,0);
@@ -1264,8 +1431,16 @@
                 containerHtml += `<div class="bg-slate-900/60 border border-slate-700 rounded-xl overflow-hidden"><div onclick="toggleAccordionDay(this)" class="flex justify-between items-center p-3.5 bg-slate-800/80 cursor-pointer"><span class="font-bold text-sm text-white">${dayFull} <span class="text-slate-400 text-xs">(${dayStamp})</span></span><span class="text-xs font-bold text-amber-400">${dayScore}점 / ${dayMaxScore}점</span></div><div class="accordion-body p-3 grid grid-cols-1 sm:grid-cols-2 gap-2 border-t border-slate-700/50">${rows.map(r=>r.html).join('')||'<span class="text-slate-500 text-xs">출현 일정 없음</span>'}</div></div>`;
             }
             document.getElementById('accordion-days-container').innerHTML=containerHtml;
-            document.getElementById('modal-participation-rate').innerText=(maxPossibleScore?100*totalScore/maxPossibleScore:0).toFixed(1)+'%';
-            document.getElementById('modal-expected-score').innerText=totalScore+'점';
+            const participationRate = maxPossibleScore ? 100 * totalScore / maxPossibleScore : 0;
+            document.getElementById('modal-participation-rate').innerText = `${totalScore.toLocaleString()}점 ${participationRate.toFixed(1)}%`;
+            const unitDiamond = diamondCalculation(currentWeekKey()).unit;
+            document.getElementById('modal-expected-score').innerText = `${Math.floor(totalScore) * unitDiamond}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 다이아';
+            // 최초 열 때만 전체 접기. 체크 변경 후에는 펼친 요일을 유지한다.
+            toggleAllAccordion(false);
+            if (preserveOpenDays) {
+                const bodies = document.querySelectorAll('#accordion-days-container .accordion-body');
+                openDays.forEach(index => { if (bodies[index]) bodies[index].style.display = 'grid'; });
+            }
         }
 
         function toggleAccordionDay(headerEl) {
@@ -1276,22 +1451,30 @@
             document.querySelectorAll('.accordion-body').forEach(b => b.style.display = isOpen ? 'grid' : 'none');
         }
         function clearAllBossCheck() {
-            const targetUser = document.getElementById('modal-target-user').value;
-            if (confirm(`${targetUser}님의 모든 보스 참여 체크를 초기화하시겠습니까?`)) {
-                db.bossRecords[targetUser] = {};
+            const targetUser = db.currentUser;
+            if (!targetUser) return;
+            if (confirm(`${targetUser}님의 이번 주 보스 참여 체크를 초기화하시겠습니까?`)) {
+                const monday = getWeekMonday(new Date());
+                const sunday = new Date(monday); sunday.setDate(monday.getDate()+7);
+                const start = localDateKey(monday), end = localDateKey(sunday);
+                for (const key of Object.keys(db.bossRecords[targetUser] || {})) {
+                    if (key.startsWith('slot_') && key.slice(5,15) >= start && key.slice(5,15) < end) delete db.bossRecords[targetUser][key];
+                }
                 saveDB();
                 loadUserBossRecords();
             }
         }
         function onBossCheckChange(checkbox) {
-            const user = checkbox.getAttribute('data-user');
+            const user = db.currentUser;
+            if (!user || checkbox.getAttribute('data-user') !== user) { alert('본인 기록만 수정할 수 있습니다.'); loadUserBossRecords(); return; }
             const key = checkbox.getAttribute('data-key');
             if (!db.bossRecords[user]) db.bossRecords[user] = {};
             db.bossRecords[user][key] = checkbox.checked;
             const legacy = checkbox.getAttribute('data-legacy');
             if (legacy && Object.prototype.hasOwnProperty.call(db.bossRecords[user], legacy)) delete db.bossRecords[user][legacy];
             saveDB();
-            loadUserBossRecords();
+            loadUserBossRecords(true);
+            renderDiamondSummary();
         }
         function saveBossRecords() {
             saveDB();
@@ -1397,15 +1580,156 @@
             saveDB(); renderBossPreview();
         }
 
+        // 주차 및 분배 데이터 관리. 기존 참여 기록은 유지하고 주차별로 스냅샷을 보관한다.
+        function localDateKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+        function getWeekMonday(date) {
+            const d = new Date(date); d.setHours(0,0,0,0);
+            d.setDate(d.getDate() - (d.getDay()+6)%7); return d;
+        }
+        function currentWeekKey() { return localDateKey(getWeekMonday(new Date())); }
+        function weekLabel(key) {
+            const d = new Date(`${key}T12:00:00`);
+            if (isNaN(d.getTime())) return key;
+            // 주차는 월요일 시작, 해당 주의 목요일이 속한 달 기준으로 표시
+            const thursday = new Date(d); thursday.setDate(d.getDate()+3);
+            const first = new Date(thursday.getFullYear(),thursday.getMonth(),1);
+            const firstMonday = getWeekMonday(first);
+            const ordinal = Math.floor((d-firstMonday)/604800000)+1;
+            return `${thursday.getMonth()+1}월 ${ordinal}주차 내역`;
+        }
+        function weeklyScores(weekKey) {
+            const monday = new Date(`${weekKey}T12:00:00`);
+            if (isNaN(monday.getTime())) return {};
+            const totals = {};
+            db.users.forEach(u => { totals[u.id] = 0; });
+            for (let offset=0; offset<7; offset++) {
+                const day = new Date(monday); day.setDate(monday.getDate()+offset);
+                const dateKey = localDateKey(day);
+                const dayShort = ['일','월','화','수','목','금','토'][day.getDay()];
+                db.bossListDef.forEach((boss,index) => {
+                    const slots = getBossOccurrencesForDay(boss,day);
+                    slots.forEach((slot,slotIndex) => {
+                        const key = `slot_${dateKey}_${boss.name}_${slot.label}`;
+                        const oldKey = `${dayShort}_${boss.name}_${index}`;
+                        for (const [user, records] of Object.entries(db.bossRecords)) {
+                            const checked = records?.[key] === true || (records?.[key] === undefined && slotIndex === 0 && records?.[oldKey] === true);
+                            if (checked) totals[user] = (totals[user] || 0) + Number(db.bossScores[boss.name] || 0);
+                        }
+                    });
+                });
+            }
+            return totals;
+        }
+        function diamondCalculation(weekKey, scores = weeklyScores(weekKey)) {
+            const total = Math.max(0,Math.floor(Number(db.guildDiamondsByWeek[weekKey]) || 0));
+            const truncated = Math.floor(total/100)*100;
+            const expense = Math.floor(total*.15);
+            const reserve = Math.floor(total*.05);
+            const points = Object.values(scores).reduce((sum,v) => sum+Math.max(0,Math.floor(Number(v)||0)),0);
+            const unit = points ? Math.floor(total*.8/points) : 0;
+            const distributed = Object.values(scores).reduce((sum,v)=>sum+unit*Math.max(0,Math.floor(Number(v)||0)),0);
+            return {total,truncated,expense,reserve,points,unit,distributed};
+        }
+        function archiveWeek(weekKey) {
+            if (!weekKey || db.weeklyArchives.some(a=>a.weekKey===weekKey)) return;
+            const scores = weeklyScores(weekKey);
+            const records = {};
+            const start = weekKey;
+            const next = new Date(`${weekKey}T12:00:00`); next.setDate(next.getDate()+7);
+            const end = localDateKey(next);
+            for (const [user, entries] of Object.entries(db.bossRecords)) {
+                const selected = Object.fromEntries(Object.entries(entries || {}).filter(([key]) => key.startsWith('slot_') && key.slice(5,15)>=start && key.slice(5,15)<end));
+                if (Object.keys(selected).length) records[user] = selected;
+            }
+            db.weeklyArchives.push({weekKey, label:weekLabel(weekKey), archivedAt:new Date().toISOString(), scores, records, diamonds:diamondCalculation(weekKey,scores)});
+            db.weeklyArchives.sort((a,b)=>b.weekKey.localeCompare(a.weekKey));
+        }
+        function ensureWeeklyRollover() {
+            const nowKey = currentWeekKey();
+            if (!db.activeWeekKey) { db.activeWeekKey = nowKey; saveDB(); return; }
+            if (db.activeWeekKey !== nowKey) {
+                if (db.activeWeekKey < nowKey) archiveWeek(db.activeWeekKey);
+                db.activeWeekKey = nowKey;
+                saveDB();
+            }
+        }
+        function renderDiamondSummary() {
+            const container = document.getElementById('diamond-summary-content');
+            if (!container) return;
+            ensureWeeklyRollover();
+            const key = currentWeekKey(), d = diamondCalculation(key);
+            document.getElementById('diamond-week-label').textContent = weekLabel(key);
+            const fields = [
+                ['길드 총 다이아',d.total],['백 단위 절사 다이아',d.truncated],['총무비 (15%)',d.expense],
+                ['길드 여유 자금 (5%)',d.reserve],['길드원 총 참여 점수',d.points],
+                ['1점당 다이아 (80% 기준)',d.unit],['총 분배 금액',d.distributed]
+            ];
+            container.innerHTML = fields.map(([label,value])=>`<div class="flex justify-between gap-2"><span>${label}</span><strong class="text-amber-300">${Number(value).toLocaleString()}${label.includes('점수')?'점':' 다이아'}</strong></div>`).join('');
+            const edit = document.getElementById('diamond-admin-edit');
+            edit.classList.toggle('hidden',!isCurrentAdmin());
+            if (isCurrentAdmin()) document.getElementById('diamond-total-input').value = d.total;
+        }
+        function saveGuildDiamonds() {
+            if (!isCurrentAdmin()) return alert('관리자만 설정할 수 있습니다.');
+            const input = document.getElementById('diamond-total-input');
+            const amount = Number(input.value);
+            if (!Number.isSafeInteger(amount) || amount<0) return alert('0 이상의 정수 다이아를 입력하세요.');
+            db.guildDiamondsByWeek[currentWeekKey()] = amount;
+            saveDB(); renderDiamondSummary();
+            alert('이번 주 길드 다이아가 저장되었습니다.');
+        }
+        function openWeeklyArchiveModal() {
+            if (!isCurrentAdmin()) return alert('관리자 권한이 필요합니다.');
+            ensureWeeklyRollover(); renderWeeklyArchives();
+            document.getElementById('weekly-archive-modal').classList.remove('hidden');
+        }
+        function closeWeeklyArchiveModal() { document.getElementById('weekly-archive-modal').classList.add('hidden'); }
+        function archiveCurrentWeekManually() {
+            if (!isCurrentAdmin()) return;
+            if (!confirm('현재 주차 기록을 보관하시겠습니까? 이번 주 기록은 삭제되지 않으며 보관 시점의 스냅샷이 저장됩니다.')) return;
+            archiveWeek(currentWeekKey()); saveDB(); renderWeeklyArchives();
+        }
+        function renderWeeklyArchives() {
+            const el = document.getElementById('weekly-archive-list');
+            if (!isCurrentAdmin()) { el.innerHTML = ''; return; }
+            el.innerHTML = db.weeklyArchives.map(a=>{
+                const scores = Object.entries(a.scores || {}).sort((x,y)=>y[1]-x[1]);
+                const d = a.diamonds || {};
+                return `<details class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">[${escapeHtml(a.label || weekLabel(a.weekKey))}]</summary>
+                    <div class="mt-3 text-xs text-slate-300 space-y-2">
+                        <p>보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR'))}</p>
+                        <p>총 다이아 ${Number(d.total||0).toLocaleString()} · 총 분배 금액 ${Number(d.distributed||0).toLocaleString()} · 1점당 ${Number(d.unit||0).toLocaleString()} 다이아</p>
+                        <div class="space-y-1">${scores.map(([name,score])=>`<div class="flex justify-between"><span>${escapeHtml(name)}</span><span>${Number(score).toLocaleString()}점 · ${Math.floor(Number(score))*Number(d.unit||0)} 다이아</span></div>`).join('') || '참여 내역 없음'}</div>
+                        <details><summary class="cursor-pointer">상세 체크 기록</summary><pre class="whitespace-pre-wrap break-all text-[10px]">${escapeHtml(JSON.stringify(a.records || {},null,2))}</pre></details>
+                    </div></details>`;
+            }).join('') || '<p class="text-xs text-slate-400">보관된 주차 내역이 없습니다.</p>';
+        }
+
         // 매초 자동 갱신. 화면이 숨겨져 있어도 다음 출현 시각은 현재 시간 기준으로 다시 계산.
         setInterval(() => {
             const pane = document.getElementById('content-boss-sched-2');
             if (pane && !pane.classList.contains('hidden') && db.currentUser) renderBossPreview();
+            if (db.currentUser && db.activeWeekKey !== currentWeekKey()) { ensureWeeklyRollover(); renderDiamondSummary(); }
         }, 1000);
 
+        function approveSignup(userId) {
+            if (!isWebAdministrator()) { alert('가입 승인은 웹 관리자만 할 수 있습니다.'); return; }
+            const u=db.users.find(x=>x.id===userId);
+            if (!u) return;
+            u.approved=true; saveDB(); openUserManageModal(); renderMembers();
+        }
+        function isWebAdministrator() {
+            return db.users.some(u=>u.id===db.currentUser && u.role==='웹 관리자');
+        }
         function openUserManageModal() {
+            if (!isCurrentAdmin()) return;
             let html = '';
-            db.users.forEach(u => {
+            if (isWebAdministrator()) {
+                const pending=db.users.filter(u=>u.approved===false);
+                html += `<div class="text-amber-400 font-bold mb-2">가입 승인 대기 (${pending.length}명)</div>`;
+                html += pending.map(u=>`<div class="bg-slate-900/70 border border-amber-500/40 rounded-xl p-3 mb-2 flex items-center justify-between gap-2"><span class="text-sm">${escapeHtml(u.id)} · ${escapeHtml(u.class)} · ${Number(u.power||0).toLocaleString()}</span><div class="flex gap-2"><button onclick="approveSignup(decodeURIComponent('${encodeURIComponent(u.id)}'))" class="bg-emerald-600 text-white px-3 py-1 rounded">승인</button><button onclick="deleteUser(decodeURIComponent('${encodeURIComponent(u.id)}'))" class="bg-red-700 text-white px-3 py-1 rounded">거절</button></div></div>`).join('');
+            }
+            db.users.filter(u=>u.approved!==false).forEach(u => {
                 html += `
                     <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 flex justify-between items-center text-xs">
                         <div>
@@ -1419,11 +1743,11 @@
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <select onchange="changeUserRole('${u.id}', this.value)" class="bg-slate-900 border border-slate-700 text-white rounded p-1 text-xs">
+                            ${u.role === '웹 관리자' ? '<span class="text-purple-300 font-bold">웹 관리자</span>' : `<select onchange="changeUserRole('${u.id}', this.value)" class="bg-slate-900 border border-slate-700 text-white rounded p-1 text-xs">
                                 <option value="마스터" ${u.role === '마스터' ? 'selected' : ''}>마스터</option>
                                 <option value="운영진" ${u.role === '운영진' ? 'selected' : ''}>운영진</option>
                                 <option value="길드원" ${u.role === '길드원' ? 'selected' : ''}>길드원</option>
-                            </select>
+                            </select>`}
                             <button onclick="deleteUser('${u.id}')" class="text-red-400 hover:text-red-300 px-2 py-1 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
@@ -1445,13 +1769,17 @@
             alert(`${userId}님의 정보를 저장했습니다.`);
         }
         function changeUserRole(userId, newRole) {
+            if (!isCurrentAdmin() || db.users.find(u=>u.id===userId)?.role === '웹 관리자' || !['마스터','운영진','길드원'].includes(newRole)) return;
             const user = db.users.find(u => u.id === userId);
             if (user) { user.role = newRole; saveDB(); }
         }
         function deleteUser(userId) {
-            if (userId === 'admin') { alert("기본 관리자 계정은 삭제할 수 없습니다."); return; }
+            if (!isCurrentAdmin()) return;
+            if (db.users.find(u=>u.id===userId)?.approved===false && !isWebAdministrator()) return;
+            if (db.users.find(u=>u.id===userId)?.role === '웹 관리자') { alert("웹 관리자 계정은 삭제할 수 없습니다."); return; }
             if (confirm(`${userId} 계정을 삭제하시겠습니까?`)) {
                 db.users = db.users.filter(u => u.id !== userId);
+                if (db.currentUser===userId) db.currentUser=null;
                 saveDB();
                 openUserManageModal();
             }

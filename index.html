@@ -260,6 +260,17 @@ body{background:#060915!important;color:#f7f7ff!important}
 .boss-reg-points{color:#fbbf24;font-size:11px;white-space:nowrap}
 @media(max-width:600px){.boss-reg-group{gap:8px;padding:9px 8px}.boss-reg-name{min-width:65px;font-size:12px}.boss-reg-slots{gap:8px 10px}.boss-reg-slot{font-size:12px;gap:4px}.boss-reg-points{display:none}}
 </style>
+
+<style id="class-v21-final-adjustments">
+/* Header power value: override the later purple declaration in v17/v20 */
+#class-profile-wrap .class-power-number,
+#class-profile-wrap #user-display-power .class-power-number { color:#f4f2ff !important; text-shadow:none !important; }
+#tier-list-view { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px 12px !important; align-content:start; }
+#tier-list-view .tier-price-card { min-width:0; }
+#tier-list-view .tier-price-line { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+#tier-list-view .tier-price-line span:last-child { white-space:nowrap; margin-left:auto; }
+@media(max-width:760px){ #tier-list-view { grid-template-columns:1fr !important; } }
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
 
@@ -439,6 +450,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                             <span>장비 · 스킬북 · 권능 · 기타 분배 기준</span>
                         </div>
                         <div id="tier-category-tabs" class="grid grid-cols-4 gap-1 mb-2"></div>
+                        <div id="tier-equipment-tabs" class="hidden grid grid-cols-4 gap-1 mb-3"></div>
                         <div class="max-h-[210px] overflow-y-auto space-y-1.5 pr-1" id="tier-list-view"></div>
                     </div>
 
@@ -1464,21 +1476,38 @@ body{background:#060915!important;color:#f7f7ff!important}
         }
 
         let activeTierCategory = '장비';
+        let activeEquipmentType = '전체';
         function selectTierCategory(category) {
             activeTierCategory = category;
+            activeEquipmentType = '전체';
+            renderTiers();
+        }
+        function selectEquipmentType(type) {
+            activeEquipmentType = type;
             renderTiers();
         }
         function renderTiers() {
             const groups = ['장비','스킬북','권능','기타'];
             document.getElementById('tier-category-tabs').innerHTML = groups.map(category =>
-                `<button type="button" onclick="selectTierCategory('${category}')" class="py-2 rounded-lg text-xs font-bold cursor-pointer ${activeTierCategory===category ? 'bg-amber-500 text-slate-950' : 'bg-slate-700 text-slate-300'}">${category}</button>`
+                `<button type="button" onclick="selectTierCategory('${category}')" class="py-2 rounded-lg text-sm font-bold cursor-pointer ${activeTierCategory===category ? 'bg-amber-500 text-slate-950' : 'bg-slate-700 text-slate-300'}">${category}</button>`
             ).join('');
-            const rows = db.tiers.filter(t=>t.category===activeTierCategory);
-            document.getElementById('tier-list-view').innerHTML = rows.map(t=>
-                `<div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/50 text-xs">
-                    <div class="flex justify-between gap-2"><span class="font-bold text-white">${escapeHtml(t.name)}</span><span class="text-amber-400 font-bold shrink-0">${t.price == null ? '미정 / 별도 기준' : Number(t.price).toLocaleString()+' 다이아'}</span></div>
-                    ${t.note ? `<div class="text-slate-400 mt-1">${escapeHtml(t.note)}</div>` : ''}
-                </div>`).join('') || '<p class="text-slate-400 text-xs py-3">등록된 분배 기준이 없습니다.</p>';
+            const equipmentTabs = document.getElementById('tier-equipment-tabs');
+            if (equipmentTabs) {
+                equipmentTabs.classList.toggle('hidden', activeTierCategory !== '장비');
+                if (activeTierCategory === '장비') {
+                    equipmentTabs.innerHTML = ['전체','무기','방어구','장신구'].map(type =>
+                        `<button type="button" onclick="selectEquipmentType('${type}')" class="py-2 rounded-lg text-sm font-bold cursor-pointer ${activeEquipmentType===type ? 'bg-violet-600 text-white' : 'bg-slate-800 border border-slate-600 text-slate-200'}">${type}</button>`
+                    ).join('');
+                }
+            }
+            const rows = db.tiers.filter(t => t.category === activeTierCategory && (
+                activeTierCategory !== '장비' || activeEquipmentType === '전체' || String(t.name||'').includes(activeEquipmentType)
+            ));
+            document.getElementById('tier-list-view').innerHTML = rows.map(t =>
+                `<div class="tier-price-card bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 text-sm">
+                    <div class="tier-price-line"><span class="font-bold text-white">${escapeHtml(t.name)}</span><span class="text-amber-400 font-bold">${t.price == null ? '미정 / 별도 기준' : Number(t.price).toLocaleString()+' 다이아'}</span></div>
+                    ${t.note ? `<div class="text-slate-400 mt-1 text-xs">${escapeHtml(t.note)}</div>` : ''}
+                </div>`).join('') || '<p class="text-slate-400 text-sm py-3">등록된 분배 기준이 없습니다.</p>';
         }
 
         let currentItemCategory = '전체';

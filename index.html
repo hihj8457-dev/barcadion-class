@@ -6,7 +6,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>바르카디온3 클래스 - 보스 & 분배 매니저</title>
+    <title>바르카디온 클래스 길드- 보스 매니저</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -306,7 +306,7 @@
                         </div>
 
                         <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 space-y-2" id="diamond-summary-panel">
-                            <div class="flex justify-between items-center"><span class="text-sm font-bold text-amber-400">주간 다이아 분배</span><span id="diamond-week-label" class="text-[10px] text-slate-400"></span></div>
+                            <div class="space-y-1"><div class="text-sm font-bold text-amber-400">주간 다이아 분배</div><div id="diamond-week-label" class="text-xs text-slate-400 break-words leading-relaxed"></div></div>
                             <div id="diamond-summary-content" class="space-y-1 text-xs text-slate-300"></div>
                             <div id="diamond-admin-edit" class="hidden border-t border-slate-700 pt-2">
                                 <label class="text-xs text-slate-300">길드 총 다이아 <input id="diamond-total-input" type="number" min="0" step="1" class="mt-1 w-full bg-slate-950 border border-slate-600 rounded-lg p-2 text-white" placeholder="총 다이아 입력"></label>
@@ -407,6 +407,11 @@
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-3">
                     <h4 class="text-sm font-bold text-white">신규 아이템 추가 <span class="text-sky-400 text-xs">(등록 시 분배 중)</span></h4>
                     <input type="text" id="new-item-name" placeholder="아이템 이름" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                    <label class="block text-xs text-slate-300">아이템 등급
+                        <select id="new-item-grade" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
+                            <option value="">등급 없음</option><option value="고급">고급 (초록)</option><option value="희귀">희귀 (파랑)</option><option value="영웅">영웅 (빨강)</option><option value="전설">전설 (노랑)</option>
+                        </select>
+                    </label>
                     <div class="grid grid-cols-2 gap-2">
                         <select id="new-item-cat" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
                             <option value="장비">장비</option>
@@ -702,7 +707,7 @@
           const newItems=new Map((after.items||[]).map(i=>[String(i.id),i]));
           for(const [id,item] of newItems){
             const old=oldItems.get(id);
-            const base=x=>({name:x.name,category:x.category,price:Number(x.price)||0,distributed:!!x.distributed});
+            const base=x=>({name:x.name,category:x.category,grade:x.grade||itemRarity(x.name)||"",price:Number(x.price)||0,distributed:!!x.distributed});
             if(!old||stable(base(old))!==stable(base(item))){if(!cloudManager())throw new Error('아이템 수정은 관리자만 가능합니다.');ops.push(store.doc('items/'+id).set(base(item)));}
             const oldApplicants=new Set(old?.applicants||[]),newApplicants=new Set(item.applicants||[]);
             for(const nick of new Set([...oldApplicants,...newApplicants])){
@@ -1042,7 +1047,7 @@
                         <input id="boss-cycle-${index}" type="number" value="${Number(boss.cycleHours)||''}" placeholder="주기 시간" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white" aria-label="주기 시간">
                     </div>
                     <div class="flex flex-wrap gap-2 text-xs text-slate-300">${days.map(day => `<label><input id="boss-day-${index}-${day}" type="checkbox" value="${day}" ${checkedDays.includes(day)?'checked':''}> ${day}</label>`).join('')}</div>
-                    <div class="flex justify-end gap-2"><button type="button" onclick="deleteBossDefinition(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
+                    <div class="flex justify-end gap-2">${Number(boss.cycleHours)>0 ? `<button type="button" onclick="setBossNextSpawn(decodeURIComponent('${encodeURIComponent(boss.name)}'))" class="bg-blue-600 text-white px-3 py-2 rounded text-xs">다음 출현 시간 재설정</button>` : ''}<button type="button" onclick="deleteBossDefinition(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
                 </div>`;
             });
             document.getElementById('admin-boss-list').innerHTML = html || '<p class="text-slate-400 text-sm">오늘 남은 보스 일정이 없습니다.</p>';
@@ -1079,6 +1084,10 @@
                 if (cycleHours > 0) def.cycleHours = cycleHours;
                 updated.push(def);
                 if (previous[i].name !== name) renames.push([previous[i].name, name]);
+                // 업데이트/점검 후 주기 또는 기준 시간을 수정하면 이전 컷 기준은 폐기한다.
+                if (Number(previous[i].cycleHours || 0) !== Number(cycleHours) || (previous[i].fixedTime || '') !== fixedTime) {
+                    if (db.bossSpawnAnchors) delete db.bossSpawnAnchors[previous[i].name];
+                }
                 scores[name] = score;
             }
             for (const [oldName, newName] of renames) {
@@ -1249,8 +1258,9 @@
             const m = String(name||'').match(/\[(고급|희귀|영웅|전설)\]/);
             return m ? m[1] : (String(name||'').match(/^(고급|희귀|영웅|전설)(?:\s|$)/)?.[1] || '');
         }
-        function itemRarityClass(name) {
-            return ({'고급':'text-emerald-300','희귀':'text-sky-300','영웅':'text-rose-300','전설':'text-yellow-300'})[itemRarity(name)] || 'text-slate-100';
+        function itemRarityClass(item) {
+            const grade = typeof item === 'object' ? (item.grade || itemRarity(item.name)) : itemRarity(item);
+            return ({'고급':'text-emerald-300','희귀':'text-sky-300','영웅':'text-rose-300','전설':'text-yellow-300'})[grade] || 'text-slate-100';
         }
         function itemDisplayName(name) { return String(name||'').replace(/^\[(고급|희귀|영웅|전설)\]\s*/, ''); }
         let itemSearchText = '';
@@ -1290,7 +1300,8 @@
                             <div class="flex justify-between items-start gap-2">
                                 <div class="min-w-0">
                                     <span class="bg-slate-800 text-amber-400 px-1.5 py-0.5 rounded text-[10px] mr-1">${escapeDistributionText(item.category)}</span>
-                                    <span class="font-bold break-words ${itemRarityClass(item.name)}">${escapeDistributionText(itemDisplayName(item.name))}</span>
+                                    ${item.grade || itemRarity(item.name) ? `<span class="text-[10px] ${itemRarityClass(item)} mr-1">[${escapeDistributionText(item.grade || itemRarity(item.name))}]</span>` : ''}
+                                    <span class="font-bold break-words ${itemRarityClass(item)}">${escapeDistributionText(itemDisplayName(item.name))}</span>
                                     <div class="mt-1 font-semibold ${item.distributed ? 'text-emerald-300' : 'text-sky-300'}">${item.distributed ? '분배완료' : '분배 중'}</div>
                                     <div class="text-[10px] text-slate-400 mt-1">기준가: ${Number(item.price || 0).toLocaleString()} 다이아</div>
                                 </div>
@@ -1320,6 +1331,16 @@
             if (button.dataset.itemAction === 'cancel') cancelItem(id);
         });
         document.addEventListener('change', event => {
+            const gradeSelect = event.target.closest('select[data-item-action="grade"]');
+            if (gradeSelect) {
+                if (!isCurrentAdmin()) return alert('관리자 권한이 필요합니다.');
+                const item = db.items.find(i => String(i.id) === String(gradeSelect.dataset.itemId));
+                if (!item) return;
+                item.grade = gradeSelect.value;
+                item.name = itemDisplayName(item.name);
+                saveDB(); renderAdminItemList(); renderItems();
+                return;
+            }
             const select = event.target.closest('select[data-item-action="status"]');
             if (!select) return;
             const item = db.items.find(i => String(i.id) === String(select.dataset.itemId));
@@ -1585,10 +1606,10 @@
                 const name = escapeHtml(boss.name);
                 const nameArg = encodeURIComponent(boss.name);
                 const score = Number(db.bossScores[boss.name] ?? 0);
-                const rule = Number(boss.cycleHours) > 0 ? `${Number(boss.cycleHours)}시간 주기${boss.fixedTime ? ` · 기준 ${escapeHtml(boss.fixedTime)}` : ''}` : `고정 ${escapeHtml(boss.fixedTime || '미설정')}`;
+                const rule = Number(boss.cycleHours) > 0 ? `${Number(boss.cycleHours)}시간 주기` : `고정 ${escapeHtml(boss.fixedTime || '미설정')}`;
                 const countdown = next === null ? '출현 기준 시간 미설정' : formatBossCountdown(next - nowMs);
                 const nextText = next === null ? '관리자가 기준 시각을 입력해야 합니다' : bossDateLabel(next);
-                const adminButton = admin && Number(boss.cycleHours) > 0 ? `<button type="button" onclick="markBossCut(decodeURIComponent('${nameArg}'))" class="text-xs px-3 py-1 rounded bg-rose-500 text-white font-bold">컷</button>` : '';
+                const adminButton = admin && Number(boss.cycleHours) > 0 ? `<div class="flex flex-wrap gap-1 justify-end"><button type="button" onclick="setBossNextSpawn(decodeURIComponent('${nameArg}'))" class="text-xs px-2 py-1 rounded bg-blue-600 text-white font-bold">시간 재설정</button><button type="button" onclick="markBossCut(decodeURIComponent('${nameArg}'))" class="text-xs px-2 py-1 rounded bg-rose-500 text-white font-bold">컷</button></div>` : '';
                 return `<div class="bg-slate-900/70 border border-slate-700/60 rounded-xl p-3 space-y-2">
                     <div class="flex items-center justify-between gap-2"><div class="font-bold text-white">${name} <span class="text-xs text-slate-400 font-normal">${rule} · ${score}점</span></div>${adminButton}</div>
                     <div class="font-bold text-lg ${next === null ? 'text-slate-400' : 'text-amber-400'}">${countdown}</div>
@@ -1615,7 +1636,7 @@
             const sample = new Date(Date.now() + 3600000);
             const pad = v => String(v).padStart(2, '0');
             const defaultTime = `${sample.getFullYear()}-${pad(sample.getMonth()+1)}-${pad(sample.getDate())}T${pad(sample.getHours())}:${pad(sample.getMinutes())}`;
-            const answer = prompt(`${name}의 다음 출현 시각을 입력하세요.\n형식: YYYY-MM-DDTHH:MM (현재 PC의 현지 시각)`, defaultTime);
+            const answer = prompt(`${name}의 업데이트/점검 후 다음 출현 시각을 입력하세요.\n기존 컷/보스 시간 기준을 덮어씁니다.\n형식: YYYY-MM-DDTHH:MM`, defaultTime);
             if (answer === null) return;
             if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(answer)) { alert('예: 2026-11-16T21:00 형식으로 입력하세요.'); return; }
             const timestamp = new Date(answer).getTime();
@@ -1763,10 +1784,39 @@
             if (!confirm('현재 주차 기록을 보관하시겠습니까? 이번 주 기록은 삭제되지 않으며 보관 시점의 스냅샷이 저장됩니다.')) return;
             archiveWeek(currentWeekKey()); saveDB(); renderWeeklyArchives();
         }
+        function deleteWeeklyArchive(index) {
+            if (!isCurrentAdmin()) return alert('관리자만 삭제할 수 있습니다.');
+            const archive=db.weeklyArchives[index];
+            if (!archive) return;
+            if (!confirm(`「${archive.label||weekLabel(archive.weekKey)}」 보관 내역을 영구 삭제할까요?\n이 작업은 되돌릴 수 없으며 실제 보스 참여 기록은 삭제하지 않습니다.`)) return;
+            db.weeklyArchives.splice(index,1);
+            saveDB();renderWeeklyArchives();
+        }
         function archiveDailyFallback(a,name) {
-            if(a.dailyScores?.[name])return a.dailyScores[name];
-            // 기존 보관함은 과거 보스 배점 설정이 보존되지 않았을 수 있으므로
-            // 일별 점수 재계산 대신 알 수 없는 일자는 '-'로 표시한다.
+            const stored=a.dailyScores?.[name];
+            if(Array.isArray(stored) && stored.length===7 && stored.some(v=>Number(v)>0))return stored;
+            // 보관 시점에 저장된 날짜별 slot 키로 기존 일별 점수 복구.
+            // 이전 버전에서 0점 배열만 저장되었더라도 기록이 있으면 우선 복구한다.
+            const entries=a.records?.[name]||{};
+            const byDay=Array(7).fill(0);
+            let found=false;
+            const start=new Date(`${a.weekKey}T12:00:00`);
+            if(!Number.isNaN(start.getTime()))for(const [key,checked] of Object.entries(entries)) {
+                if(checked!==true || !key.startsWith('slot_'))continue;
+                const date=key.slice(5,15);
+                const d=new Date(`${date}T12:00:00`);
+                const offset=Math.round((d-start)/86400000);
+                if(offset<0||offset>6)continue;
+                const rest=key.slice(16);
+                const bossNames=Object.keys(db.bossScores||{}).sort((x,y)=>y.length-x.length);
+                const boss=bossNames.find(n=>rest.startsWith(n+'_'));
+                if(!boss)continue;
+                byDay[offset]+=Number(db.bossScores[boss]||0);
+                found=true;
+            }
+            if(found)return byDay;
+            // 기록이 없는 주차의 0점 배열은 신뢰할 수 없으므로 미확인 처리.
+            if(Array.isArray(stored) && stored.length===7 && Number(a.scores?.[name]||0)===0)return stored;
             return null;
         }
         function renderWeeklyArchives() {
@@ -1777,12 +1827,12 @@
                 const d=a.diamonds||{};
                 const rows=scores.map(([name,score])=>{
                     const days=archiveDailyFallback(a,name);
-                    const dayText=(days||Array(7).fill('-')).map((v,i)=>`<span class="whitespace-nowrap">${['월','화','수','목','금','토','일'][i]} ${v==='-'?'기록 없음':Number(v||0).toLocaleString()+'점'}</span>`).join(' <span class="text-slate-600">·</span> ');
+                    const dayText=(days||Array(7).fill('-')).map((v,i)=>`<span class="whitespace-nowrap">${['월','화','수','목','금','토','일'][i]} ${v==='-'?'확인 불가':Number(v||0).toLocaleString()+'점'}</span>`).join(' <span class="text-slate-600">·</span> ');
                     return `<div class="border-t border-slate-700/50 py-2"><div class="font-semibold text-white mb-1">${escapeHtml(name)}</div><div class="text-slate-300 leading-6">${dayText} <span class="text-amber-300 font-bold">· 총 합 ${Number(score).toLocaleString()}점 · ${(Math.floor(Number(score))*Number(d.unit||0)).toLocaleString()} 다이아</span></div></div>`;
                 }).join('');
                 return `<details class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(a.label||weekLabel(a.weekKey))}</summary>
                     <div class="mt-3 text-xs text-slate-300 space-y-2">
-                        <div class="flex flex-wrap gap-2 items-center"><span>기록 기간: ${escapeHtml(a.weekKey||'')}</span><button onclick="editArchiveLabel(${index})" class="bg-slate-700 text-amber-300 rounded px-2 py-1">주차 이름 수정</button></div>
+                        <div class="flex flex-wrap gap-2 items-center"><span>기록 기간: ${escapeHtml(a.weekKey||'')}</span><button onclick="editArchiveLabel(${index})" class="bg-slate-700 text-amber-300 rounded px-2 py-1">주차 이름 수정</button><button onclick="deleteWeeklyArchive(${index})" class="bg-red-900/60 text-red-200 rounded px-2 py-1">내역 삭제</button></div>
                         <p>보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR'))}</p>
                         <p>총 다이아 ${Number(d.total||0).toLocaleString()} · 1점당 ${Number(d.unit||0).toLocaleString()} 다이아</p>
                         <div class="space-y-1">${rows||'참여 내역 없음'}</div>
@@ -1872,6 +1922,7 @@
                             <span class="text-amber-400">[${item.category}]</span>
                             <span class="font-bold text-white ml-1">${item.name}</span>
                             <span class="text-slate-400 ml-2">(${Number(item.price || 0).toLocaleString()}다이아)</span>
+                            <div class="mt-1 text-slate-400">등급: <select aria-label="아이템 등급" data-item-action="grade" data-item-id="${escapeAttribute(item.id)}" class="bg-slate-950 border border-slate-600 text-white rounded px-1 py-1">${['','고급','희귀','영웅','전설'].map(g=>`<option value="${g}" ${(item.grade || itemRarity(item.name) || '')===g?'selected':''}>${g||'없음'}</option>`).join('')}</select></div>
                             <div class="mt-1 text-slate-400">신청자 ${item.applicants.length}명: ${names}</div>
                             <div class="mt-1 ${item.distributed ? 'text-emerald-400' : 'text-sky-400'}">${item.distributed ? '분배완료' : '분배 중'}</div>
                         </div>
@@ -1896,12 +1947,14 @@
         function addNewItem() {
             const name = document.getElementById('new-item-name').value.trim();
             const category = document.getElementById('new-item-cat').value;
+            const grade = document.getElementById('new-item-grade').value;
             const price = parseInt(document.getElementById('new-item-price').value) || 0;
             if (!name) { alert("아이템 이름을 입력하세요."); return; }
             const newId = String(Date.now()) + '-' + Math.random().toString(36).slice(2, 8);
-            db.items.push({ id: newId, name, category, price, applicants: [], distributed: false });
+            db.items.push({ id: newId, name: itemDisplayName(name), category, grade, price, applicants: [], distributed: false });
             saveDB();
             document.getElementById('new-item-name').value = '';
+            document.getElementById('new-item-grade').value = '';
             document.getElementById('new-item-price').value = '';
             renderAdminItemList(); renderItems();
         }
@@ -1909,6 +1962,10 @@
             const item = db.items.find(i => String(i.id) === String(itemId)); if (!item) return;
             const name = prompt('아이템 이름 수정', item.name); if (name === null) return;
             const category = prompt('카테고리 입력 (장비 / 스킬북 / 편린)', item.category); if (category === null) return;
+            const gradeText = prompt('등급 선택: 고급 / 희귀 / 영웅 / 전설 / 없음', item.grade || itemRarity(item.name) || '없음');
+            if (gradeText === null) return;
+            const grade = gradeText.trim() === '없음' ? '' : gradeText.trim();
+            if (grade && !['고급','희귀','영웅','전설'].includes(grade)) return alert('등급은 고급, 희귀, 영웅, 전설, 없음 중에서 선택하세요.');
             const priceText = prompt('기준가(다이아) 수정', item.price); if (priceText === null) return;
             const price = Number(priceText);
             if (!name.trim() || !['장비','스킬북','편린'].includes(category.trim()) || !Number.isFinite(price) || price < 0) { alert('아이템 이름, 카테고리, 기준가를 올바르게 입력하세요.'); return; }
@@ -1916,7 +1973,7 @@
             if (statusText === null) return;
             const status = statusText.trim().replace(/\s+/g, '');
             if (!['분배중', '분배완료'].includes(status)) { alert('분배 중 또는 분배완료를 입력하세요.'); return; }
-            item.name = name.trim(); item.category = category.trim(); item.price = price;
+            item.name = itemDisplayName(name.trim()); item.category = category.trim(); item.grade = grade; item.price = price;
             item.distributed = status === '분배완료';
             saveDB(); renderAdminItemList(); renderItems();
         }

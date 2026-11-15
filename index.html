@@ -450,7 +450,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                             <span>장비 · 스킬북 · 권능 · 기타 분배 기준</span>
                         </div>
                         <div id="tier-category-tabs" class="grid grid-cols-4 gap-1 mb-2"></div>
-                        <div id="tier-equipment-tabs" class="hidden grid grid-cols-4 gap-1 mb-3"></div>
+                        <div id="tier-equipment-tabs" class="hidden flex flex-wrap gap-1 mb-3"></div>
                         <div class="max-h-[210px] overflow-y-auto space-y-1.5 pr-1" id="tier-list-view"></div>
                     </div>
 
@@ -1476,10 +1476,10 @@ body{background:#060915!important;color:#f7f7ff!important}
         }
 
         let activeTierCategory = '장비';
-        let activeEquipmentType = '전체';
+        let activeEquipmentType = '무기';
         function selectTierCategory(category) {
             activeTierCategory = category;
-            activeEquipmentType = '전체';
+            activeEquipmentType = '무기';
             renderTiers();
         }
         function selectEquipmentType(type) {
@@ -1495,13 +1495,13 @@ body{background:#060915!important;color:#f7f7ff!important}
             if (equipmentTabs) {
                 equipmentTabs.classList.toggle('hidden', activeTierCategory !== '장비');
                 if (activeTierCategory === '장비') {
-                    equipmentTabs.innerHTML = ['전체','무기','방어구','장신구'].map(type =>
-                        `<button type="button" onclick="selectEquipmentType('${type}')" class="py-2 rounded-lg text-sm font-bold cursor-pointer ${activeEquipmentType===type ? 'bg-violet-600 text-white' : 'bg-slate-800 border border-slate-600 text-slate-200'}">${type}</button>`
+                    equipmentTabs.innerHTML = ['무기','방어구','장신구'].map(type =>
+                        `<button type="button" onclick="selectEquipmentType('${type}')" class="px-2 py-1 text-xs rounded cursor-pointer ${activeEquipmentType===type ? 'bg-amber-500 text-slate-950 font-bold' : 'bg-slate-700 text-slate-300'}">${type}</button>`
                     ).join('');
                 }
             }
             const rows = db.tiers.filter(t => t.category === activeTierCategory && (
-                activeTierCategory !== '장비' || activeEquipmentType === '전체' || String(t.name||'').includes(activeEquipmentType)
+                activeTierCategory !== '장비' || String(t.name||'').includes(activeEquipmentType)
             ));
             document.getElementById('tier-list-view').innerHTML = rows.map(t =>
                 `<div class="tier-price-card bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 text-sm">

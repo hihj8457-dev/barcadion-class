@@ -248,7 +248,19 @@ body{background:#060915!important;color:#f7f7ff!important}
 #class-home .class-weekly-card .class-stat .value{font-size:clamp(20px,2.2vw,32px)!important;margin:0!important;align-self:start}
 @media(max-width:1100px){#app-container>header{flex-wrap:wrap;gap:10px}#app-container>header>div:last-child{flex-wrap:wrap!important;justify-content:center!important}#class-home .class-home-top{grid-template-columns:1fr!important}#class-home .class-home-top>.class-card{height:auto!important;min-height:240px!important}}
 @media(max-width:700px){#app-container{padding:10px!important}#app-container>header>div:first-child{min-width:0}#app-container>header>div:last-child{gap:7px!important;padding:8px!important}#class-profile-wrap{min-width:0;padding-right:8px!important}#class-profile-wrap #user-display-name{font-size:15px!important}#class-profile-wrap #user-display-power{font-size:12px!important}#class-profile-wrap .class-power-number{font-size:14px!important}#app-container>header button[onclick*="openMyProfileModal"],#app-container>header button[onclick*="logout"],#class-admin-link{padding:8px!important;font-size:11px!important}#app-container>header button[onclick*="openMyProfileModal"]:before{font-size:11px!important}.class-nav{gap:5px!important}.class-nav button{min-height:53px!important;font-size:13px!important}#class-home .class-announcements{grid-template-columns:1fr!important;gap:10px!important}#class-home .class-notice-half{padding:0 0 12px!important;border-right:0!important;border-bottom:1px solid #656282}#class-home .class-patch-half{padding:0!important}#class-home .class-home-top>.class-card{height:auto!important}#class-home .class-bosses{grid-template-columns:repeat(2,minmax(0,1fr))!important}#class-home .class-weekly-card .class-stat{grid-template-columns:1fr!important;grid-template-rows:auto!important;justify-items:center!important;min-height:90px}#class-home .class-weekly-card .class-stat .symbol{grid-row:auto!important;justify-self:center!important;font-size:24px!important}#class-home .class-weekly-card .class-stat .caption{font-size:12px!important}#class-home .class-weekly-card .class-stat .value{font-size:16px!important}}
-</style></head>
+</style>
+<style id="boss-register-v18">
+#site-title:before{content:''!important;display:block!important;width:43px!important;height:28px!important;margin:0 auto 2px!important;background:center/contain no-repeat url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 62'%3E%3Cpath fill='%23f8f5ff' stroke='%23d4c6ff' stroke-width='2' d='M8 18 27 35 39 9 50 31 62 9 74 35 92 18 84 51 16 51Z'/%3E%3Cpath fill='%23d8c5ff' d='M16 54h68v6H16z'/%3E%3Ccircle fill='%23ffffff' cx='8' cy='14' r='5'/%3E%3Ccircle fill='%23ffffff' cx='39' cy='7' r='5'/%3E%3Ccircle fill='%23ffffff' cx='62' cy='7' r='5'/%3E%3Ccircle fill='%23ffffff' cx='92' cy='14' r='5'/%3E%3C/svg%3E")!important}
+#accordion-days-container .accordion-body{display:block}
+.boss-reg-group{display:flex;align-items:center;gap:12px;padding:10px 12px;margin-bottom:7px;border:1px solid #35415b;border-radius:10px;background:#10192b;min-height:48px}
+.boss-reg-name{font-weight:800;color:#f5f7ff;min-width:86px;font-size:14px;flex-shrink:0}
+.boss-reg-slots{display:flex;flex-wrap:wrap;gap:9px 18px;flex:1;align-items:center}
+.boss-reg-slot{display:inline-flex;align-items:center;gap:7px;color:#86d6ff;font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer}
+.boss-reg-slot input{width:17px;height:17px;accent-color:#aa75ff;cursor:pointer}
+.boss-reg-points{color:#fbbf24;font-size:11px;white-space:nowrap}
+@media(max-width:600px){.boss-reg-group{gap:8px;padding:9px 8px}.boss-reg-name{min-width:65px;font-size:12px}.boss-reg-slots{gap:8px 10px}.boss-reg-slot{font-size:12px;gap:4px}.boss-reg-points{display:none}}
+</style>
+</head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
 
     
@@ -1042,7 +1054,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             else if (currentUserObj.role === '운영진') badge.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/40";
             else badge.className = "text-xs px-2 py-0.5 rounded-full font-semibold bg-slate-700 text-slate-300";
 
-            document.getElementById('user-display-power').innerText = `전투력: ${currentUserObj.power.toLocaleString()} | 클래스: ${currentUserObj.class}`;
+            document.getElementById('user-display-power').innerText = `전투력: ${currentUserObj.power.toLocaleString()} | ${currentUserObj.class}`;
             document.getElementById('stat-my-id').innerText = currentUserObj.id;
 
             const isAdmin = (['웹 관리자','마스터','운영진'].includes(currentUserObj.role));
@@ -1722,14 +1734,25 @@ body{background:#060915!important;color:#f7f7ff!important}
                         const checked = records[key] === true || (records[key] === undefined && slot === occurrences[0] && records[legacyKey] === true);
                         dayMaxScore+=score; maxPossibleScore+=score;
                         if (checked) {dayScore+=score;totalScore+=score;}
-                        rows.push({time:slot.time,html:`<label class="flex items-center gap-2 bg-slate-900/80 p-2 rounded-lg border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition"><input type="checkbox" data-user="${escapeAttribute(targetUser)}" data-key="${escapeAttribute(key)}" data-legacy="${escapeAttribute(legacyKey)}" ${checked?'checked':''} onchange="onBossCheckChange(this)" class="w-4 h-4 accent-amber-500"><span class="text-xs text-white font-medium">${escapeHtml(boss.name)}</span><span class="text-xs text-sky-300">${slot.label}</span><span class="text-[10px] text-amber-400 ml-auto">+${score}점</span></label>`});
+                        rows.push({bossName:boss.name,time:slot.time,label:slot.label,key,legacyKey,checked,score,html:`<label class="flex items-center gap-2 bg-slate-900/80 p-2 rounded-lg border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition"><input type="checkbox" data-user="${escapeAttribute(targetUser)}" data-key="${escapeAttribute(key)}" data-legacy="${escapeAttribute(legacyKey)}" ${checked?'checked':''} onchange="onBossCheckChange(this)" class="w-4 h-4 accent-amber-500"><span class="text-xs text-white font-medium">${escapeHtml(boss.name)}</span><span class="text-xs text-sky-300">${slot.label}</span><span class="text-[10px] text-amber-400 ml-auto">+${score}점</span></label>`});
                     });
                     if (!occurrences.length && !boss.fixedTime && (boss.days||[]).includes(dayKey) && !(Number((db.bossSpawnAnchors||{})[boss.name])>0)) {
-                        rows.push({time:Infinity,html:`<div class="text-xs text-slate-500 p-2">${escapeHtml(boss.name)} · 출현 기준 시간 미설정 (스케줄 관리에서 설정)</div>`});
+                        rows.push({bossName:boss.name,time:Infinity,html:`<div class="text-xs text-slate-500 p-2">${escapeHtml(boss.name)} · 출현 기준 시간 미설정 (스케줄 관리에서 설정)</div>`});
                     }
                 });
-                rows.sort((a,b)=>a.time-b.time);
-                containerHtml += `<div class="bg-slate-900/60 border border-slate-700 rounded-xl overflow-hidden"><div onclick="toggleAccordionDay(this)" class="flex justify-between items-center p-3.5 bg-slate-800/80 cursor-pointer"><span class="font-bold text-sm text-white">${dayFull} <span class="text-slate-400 text-xs">(${dayStamp})</span></span><span class="text-xs font-bold text-amber-400">${dayScore}점 / ${dayMaxScore}점</span></div><div class="accordion-body p-3 grid grid-cols-1 sm:grid-cols-2 gap-2 border-t border-slate-700/50">${rows.map(r=>r.html).join('')||'<span class="text-slate-500 text-xs">출현 일정 없음</span>'}</div></div>`;
+                const grouped = new Map();
+                rows.forEach(row => {
+                    const name = row.bossName || '';
+                    if (!grouped.has(name)) grouped.set(name, []);
+                    grouped.get(name).push(row);
+                });
+                const groupedHtml = Array.from(grouped.entries()).map(([name, slots]) => {
+                    const valid = slots.filter(slot => slot.label);
+                    if (!valid.length) return `<div class="boss-reg-group boss-reg-unset">${slots.map(slot => slot.html).join('')}</div>`;
+                    valid.sort((a,b)=>a.time-b.time);
+                    return `<div class="boss-reg-group"><div class="boss-reg-name">${escapeHtml(name)}</div><div class="boss-reg-slots">${valid.map(slot => `<label class="boss-reg-slot"><span>${slot.label}</span><input type="checkbox" data-user="${escapeAttribute(targetUser)}" data-key="${escapeAttribute(slot.key)}" data-legacy="${escapeAttribute(slot.legacyKey)}" ${slot.checked?'checked':''} onchange="onBossCheckChange(this)" aria-label="${escapeAttribute(name)} ${slot.label} 참여" /></label>`).join('')}</div><span class="boss-reg-points">+${valid[0].score}점/회</span></div>`;
+                }).join('');
+                containerHtml += `<div class="bg-slate-900/60 border border-slate-700 rounded-xl overflow-hidden"><div onclick="toggleAccordionDay(this)" class="flex justify-between items-center p-3.5 bg-slate-800/80 cursor-pointer"><span class="font-bold text-sm text-white">${dayFull} <span class="text-slate-400 text-xs">(${dayStamp})</span></span><span class="text-xs font-bold text-amber-400">${dayScore}점 / ${dayMaxScore}점</span></div><div class="accordion-body p-3 border-t border-slate-700/50">${groupedHtml||'<span class="text-slate-500 text-xs">출현 일정 없음</span>'}</div></div>`;
             }
             document.getElementById('accordion-days-container').innerHTML=containerHtml;
             const participationRate = maxPossibleScore ? 100 * totalScore / maxPossibleScore : 0;
@@ -1740,16 +1763,16 @@ body{background:#060915!important;color:#f7f7ff!important}
             toggleAllAccordion(false);
             if (preserveOpenDays) {
                 const bodies = document.querySelectorAll('#accordion-days-container .accordion-body');
-                openDays.forEach(index => { if (bodies[index]) bodies[index].style.display = 'grid'; });
+                openDays.forEach(index => { if (bodies[index]) bodies[index].style.display = 'block'; });
             }
         }
 
         function toggleAccordionDay(headerEl) {
             const body = headerEl.nextElementSibling;
-            body.style.display = (body.style.display === 'none') ? 'grid' : 'none';
+            body.style.display = (body.style.display === 'none') ? 'block' : 'none';
         }
         function toggleAllAccordion(isOpen) {
-            document.querySelectorAll('.accordion-body').forEach(b => b.style.display = isOpen ? 'grid' : 'none');
+            document.querySelectorAll('.accordion-body').forEach(b => b.style.display = isOpen ? 'block' : 'none');
         }
         function clearAllBossCheck() {
             const targetUser = db.currentUser;

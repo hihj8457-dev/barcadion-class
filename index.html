@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V46_HOME_RATIO">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V47_WAR_INCREMENT">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -2974,7 +2974,7 @@ function refreshHome(){
  renderClassHomeRatios();
  const week=currentWeekKey(),monday=new Date(week+'T00:00:00'),sunday=new Date(monday);sunday.setDate(sunday.getDate()+7);const start=localDateKey(monday),finish=localDateKey(sunday);
  const participating=new Set();let kills=new Set();Object.entries(db.bossRecords||{}).forEach(([user,records])=>{Object.entries(records||{}).forEach(([key,checked])=>{if(checked!==true)return;if(key.startsWith('slot_')){const d=key.slice(5,15);if(d>=start&&d<finish){participating.add(user);kills.add(key)}}else if(/^[월화수목금토일]_/.test(key)){participating.add(user)}})});
- $('class-participants').textContent=participating.size.toLocaleString('ko-KR')+'명';$('class-kills').textContent=kills.size.toLocaleString('ko-KR')+'회';const amount=diamondCalculation(week).distributed;$('class-diamonds').textContent=Number(amount||0).toLocaleString('ko-KR');
+
  $('class-admin-link').style.display=isCurrentAdmin()?'inline-flex':'none';
  renderClassPatchNotes();
  }catch(e){console.warn('Dashboard refresh:',e)}
@@ -3022,7 +3022,7 @@ function init(){const app=$('app-container'),grid=$('dashboard-grid');if(!app||!
  const title=$('site-title');if(title)title.textContent='클래스';const subtitle=$('site-subtitle');if(subtitle)subtitle.textContent='CLASS';
  const header=app.querySelector('header');const profile=header.querySelector('button[onclick*="openMyProfileModal"]');if(profile)profile.textContent='마이페이지';const logout=header.querySelector('button[onclick*="logout"]');const admin=document.createElement('button');admin.id='class-admin-link';admin.className='class-admin-button';admin.textContent='⚙ 관리자';admin.style.display='none';admin.onclick=()=>page('admin');if(logout)logout.before(admin);
  const nav=document.createElement('nav');nav.id='class-nav';nav.className='class-nav';nav.innerHTML='<button type="button" data-target="home" class="active">⌂ 홈</button><button type="button" data-target="members">♟ 길드원</button><button type="button" data-target="boss">⚔ 보스</button><button type="button" data-target="war">⚔ 쟁</button><button type="button" data-target="siege">♜ 공성전</button><button type="button" data-target="items">▣ 분배 아이템</button>';header.after(nav);nav.querySelectorAll('button').forEach(b=>b.onclick=()=>page(b.dataset.target));
- const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div class="class-home-top"><div class="class-card class-announcements"><div class="class-notice-half"><div class="class-mini-heading"><h2>📢 공지사항</h2></div><div id="class-notice-slot"></div></div><div class="class-patch-half"><div class="class-mini-heading"><h2>📄 패치노트</h2><button id="class-patch-add" type="button" class="class-btn" style="display:none" onclick="classAddPatchNote()">＋ 링크 등록</button></div><div id="class-patch-list" class="class-patch-list"><div class="text-slate-400">등록된 패치노트가 없습니다.</div></div></div></div></div><div class="class-card class-boss-card"><div class="class-actions"><h2 style="margin:0">◷ 보스 타이머</h2><button class="class-btn class-boss-register" id="class-all-bosses">보스 참여 등록</button></div><div class="class-bosses" id="class-boss-list"></div></div><div class="class-card class-weekly-card"><h2>▥ 이번 주 현황</h2><div id="class-home-ratio-chart" class="class-v46-ratio-chart"></div><div class="class-stats"><div class="class-stat"><div class="symbol">👥</div><div class="caption">참여 인원</div><div class="value" style="color:#52ddcc" id="class-participants">-</div></div><div class="class-stat"><div class="symbol">⚔️</div><div class="caption">보스 처치</div><div class="value" style="color:#d9a5ff" id="class-kills">-</div></div><div class="class-stat"><div class="symbol">💎</div><div class="caption">분배 예정 다이아</div><div class="value" style="color:#b8a1ff" id="class-diamonds">-</div></div></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="war"><div class="class-card"><h2>⚔ 쟁 참여 관리</h2><div id="class-war-system"></div></div></section><section class="class-page" data-page="siege"><div class="class-card"><h2>♜ 공성전 (임시)</h2><div id="class-siege-system"></div></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div class="class-panel-slot" id="class-admin-slot"></div><div class="class-card" style="margin-top:16px"><h2>💎 길드 자금 분배율 설정</h2><div id="class-ratio-system"></div></div></section>`;
+ const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div class="class-home-top"><div class="class-card class-announcements"><div class="class-notice-half"><div class="class-mini-heading"><h2>📢 공지사항</h2></div><div id="class-notice-slot"></div></div><div class="class-patch-half"><div class="class-mini-heading"><h2>📄 패치노트</h2><button id="class-patch-add" type="button" class="class-btn" style="display:none" onclick="classAddPatchNote()">＋ 링크 등록</button></div><div id="class-patch-list" class="class-patch-list"><div class="text-slate-400">등록된 패치노트가 없습니다.</div></div></div></div></div><div class="class-card class-boss-card"><div class="class-actions"><h2 style="margin:0">◷ 보스 타이머</h2><button class="class-btn class-boss-register" id="class-all-bosses">보스 참여 등록</button></div><div class="class-bosses" id="class-boss-list"></div></div><div class="class-card class-weekly-card"><h2>💎 다이아 자금 현황</h2><div id="class-home-ratio-chart" class="class-v46-ratio-chart"></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="war"><div class="class-card"><h2>⚔ 쟁 참여 관리</h2><div id="class-war-system"></div></div></section><section class="class-page" data-page="siege"><div class="class-card"><h2>♜ 공성전 (임시)</h2><div id="class-siege-system"></div></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div class="class-panel-slot" id="class-admin-slot"></div><div class="class-card" style="margin-top:16px"><h2>💎 길드 자금 분배율 설정</h2><div id="class-ratio-system"></div></div></section>`;
  $('class-all-bosses').onclick=()=>openBossModal();$('class-admin-back').onclick=()=>page('home');
  $('class-member-slot').append(panels[0]);$('class-boss-slot').append(panels[1]);$('class-item-slot').append(panels[2]);$('class-admin-slot').append(panels[3]);
  const notice=$('content-notice-1');if(notice){$('class-notice-slot').append(notice);notice.classList.remove('hidden')};const diamond=$('diamond-summary-panel');if(diamond){$('class-diamond-slot').append(diamond);diamond.classList.remove('hidden')};
@@ -3167,12 +3167,15 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  function weekTitle(){return esc(weekLabel(week()));}
  function renderWar(){
   const el=$('class-war-system');if(!el||typeof db==='undefined')return;
-  const editable=manager();
-  const total=users().reduce((a,u)=>a+score(u),0);
-  el.innerHTML=`<p class="class-v45-muted">이번 주 ${weekTitle()} · 길드 자금 중 쟁 분배 ${num(calc().warPool)} 다이아 · 총 쟁 점수 ${num(total)}점</p>
-  <div class="class-v45-panel"><table class="class-v45-table"><thead><tr><th>길드원</th><th>쟁 참여 점수</th><th>예상 분배 다이아</th></tr></thead><tbody>
-  ${users().map(u=>`<tr><td>${esc(u.id)}</td><td>${editable?`<input class="class-v45-input" type="number" min="0" step="1" data-war-uid="${esc(u.uid)}" value="${score(u)}">`:num(score(u))+'점'}</td><td>💎 ${num(warShare(u))}</td></tr>`).join('')}</tbody></table>
-  ${editable?'<div style="text-align:right;margin-top:12px"><button class="class-v45-btn" onclick="classV45SaveWar()">이번 주 쟁 점수 저장</button></div>':''}</div>`;
+  const editable=manager(), w=weekData(), total=users().reduce((a,u)=>a+score(u),0);
+  const history=Array.isArray(w.warHistory)?w.warHistory:[];
+  el.innerHTML=`<p class="class-v45-muted">이번 주 ${weekTitle()} · 쟁 분배 ${num(calc().warPool)} 다이아 · 누적 쟁 점수 ${num(total)}점</p>
+  <div class="class-v45-panel"><p class="class-v45-muted">쟁이 발생할 때마다 <b>이번 쟁 추가 점수</b>를 입력하고 저장하세요. 기존 누적 점수에 더해집니다. 0점은 변경되지 않습니다.</p>
+  <table class="class-v45-table"><thead><tr><th>길드원</th><th>누적 점수</th><th>이번 쟁 추가 점수</th><th>예상 분배 다이아</th></tr></thead><tbody>
+  ${users().map(u=>`<tr><td>${esc(u.id)}</td><td>${num(score(u))}점</td><td>${editable?`<input class="class-v45-input" type="number" min="0" step="1" data-war-uid="${esc(u.uid)}" value="0">`:'-'} </td><td>💎 ${num(warShare(u))}</td></tr>`).join('')}</tbody></table>
+  ${editable?'<div style="text-align:right;margin-top:12px"><button class="class-v45-btn" onclick="classV45SaveWar()">이번 쟁 점수 누적 저장</button></div>':''}</div>
+  <div class="class-v45-panel"><strong>쟁 점수 등록 내역</strong>
+  ${history.length?`<div style="max-height:220px;overflow:auto;margin-top:10px">${history.slice(-30).reverse().map(h=>`<div class="class-v45-muted" style="padding:7px 0;border-bottom:1px solid #343d59">${esc(h.at||'')} · ${esc(h.by||'관리자')} · ${esc((h.entries||[]).map(e=>e.name+' +'+e.points+'점').join(', '))}</div>`).join('')}</div>`:'<p class="class-v45-muted" style="margin-top:8px">아직 등록된 내역이 없습니다.</p>'}</div>`;
  }
  function renderSiege(){
   const el=$('class-siege-system');if(!el||typeof db==='undefined')return;
@@ -3205,6 +3208,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  async function persist(next,button){
   if(!manager())return alert('관리자·마스터·운영진만 수정할 수 있습니다.');
   if(!cloudReady)return alert('서버 연결을 확인하세요.');
+  if(button?.disabled)return false;
   if(button)button.disabled=true;
   try{
    // Firestore transaction prevents lost updates between multiple managers.
@@ -3217,14 +3221,37 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     tx.set(ref,{participationSystem:updated},{merge:true});
    });
    alert('서버에 저장했습니다.');
-  }catch(e){console.error(e);alert('저장 실패: '+(e.message||e));}
+   if(typeof window.classV45Refresh==='function')window.classV45Refresh();
+   return true;
+  }catch(e){console.error(e);alert('저장 실패: '+(e.message||e));return false;}
   finally{if(button)button.disabled=false;}
  }
  window.classV45SaveWar=async function(){
   const inputs=[...document.querySelectorAll('[data-war-uid]')];
-  const points={};
-  for(const el of inputs){const n=Number(el.value);if(!Number.isSafeInteger(n)||n<0)return alert('쟁 점수는 0 이상의 정수로 입력하세요.');points[el.dataset.warUid]=n;}
-  await persist(x=>{x.weeks=x.weeks||{};x.weeks[week()]=x.weeks[week()]||{};x.weeks[week()].war=points;},document.activeElement);
+  const increments={};
+  for(const el of inputs){
+    if(!/^\\d+$/.test(el.value.trim()))return alert('쟁 점수는 0 이상의 정수로 입력하세요.');
+    const n=Number(el.value);
+    if(!Number.isSafeInteger(n)||n<0)return alert('쟁 점수는 0 이상의 정수로 입력하세요.');
+    if(n>0)increments[el.dataset.warUid]=n;
+  }
+  if(!Object.keys(increments).length)return alert('추가할 쟁 점수를 입력하세요.');
+  const entries=Object.entries(increments).map(([uid,points])=>({uid,name:users().find(u=>u.uid===uid)?.id||uid,points}));
+  if(!confirm(`이번 쟁 점수 ${entries.reduce((n,e)=>n+e.points,0)}점을 누적 추가할까요?\\n기존 점수는 유지됩니다.`))return;
+  const targetWeek=week();
+  const btn=document.activeElement;
+  await persist(x=>{
+    x.weeks=x.weeks||{};
+    const w=x.weeks[targetWeek]||(x.weeks[targetWeek]={});
+    w.war=w.war||{};
+    for(const [uid,delta] of Object.entries(increments)){
+      const current=Number(w.war[uid])||0;
+      if(!Number.isSafeInteger(current+delta))throw Error('누적 점수 범위를 초과했습니다.');
+      w.war[uid]=current+delta;
+    }
+    w.warHistory=Array.isArray(w.warHistory)?w.warHistory:[];
+    w.warHistory.push({at:new Date().toLocaleString('ko-KR'),by:cloudUser?.email||'관리자',entries});
+  },btn);
  };
  window.classV45SaveSiege=async function(){
   const n=Number($('class-v45-siege-diamonds')?.value);

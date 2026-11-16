@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V68_UPDATE_MONITOR_FIX">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V69_AUDIT_FIX">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3361,7 +3361,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
   const changes={};
   for(const field of fields){
     const value=field.value.trim();
-    if(!/^\\d+$/.test(value)||!Number.isSafeInteger(Number(value)))return alert('누적 점수는 0 이상의 정수로 입력하세요.');
+    if(!/^\d+$/.test(value)||!Number.isSafeInteger(Number(value)))return alert('누적 점수는 0 이상의 정수로 입력하세요.');
     const uid=field.dataset.warTotal;
     const user=users().find(u=>memberKey(u)===uid);
     if(user&&Number(value)!==score(user))changes[uid]=Number(value);
@@ -3402,7 +3402,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
   }
   if(!Object.keys(increments).length)return alert('추가할 쟁 점수를 입력하세요.');
   const entries=Object.entries(increments).map(([uid,points])=>({uid,name:users().find(u=>memberKey(u)===uid)?.id||uid,points}));
-  if(!confirm(`이번 쟁 점수 ${entries.reduce((n,e)=>n+e.points,0)}점을 누적 추가할까요?\\n기존 점수는 유지됩니다.`))return;
+  if(!confirm(`이번 쟁 점수 ${entries.reduce((n,e)=>n+e.points,0)}점을 누적 추가할까요?\n기존 점수는 유지됩니다.`))return;
   const targetWeek=week();
   const btn=document.activeElement;
   await persist(x=>{

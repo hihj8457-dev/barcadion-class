@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V48_WAR_INPUT_LOGO">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V49_WAR_INPUT_LOGO">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -2567,7 +2567,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             const bossDistributed=Object.values(scores).reduce((sum,v)=>sum+unit*Math.max(0,Number(v)||0),0);
             const warPoints=db.participationSystem?.weeks?.[weekKey]?.war||{};
             const warTotal=Object.values(warPoints).reduce((sum,v)=>sum+Math.max(0,Number(v)||0),0);
-            const warDistributed=warTotal?db.users.filter(u=>u.uid).reduce((sum,u)=>sum+Math.floor(warPool*Math.max(0,Number(warPoints[u.uid])||0)/warTotal),0):0;
+            const warDistributed=warTotal?db.users.filter(u=>u.uid||u.isGuest).reduce((sum,u)=>sum+Math.floor(warPool*Math.max(0,Number(warPoints[u.uid||('guest:'+String(u.guestId||u.id))])||0)/warTotal),0):0;
             return {total,truncated:Math.floor(total/100)*100,expense,reserve,points,unit,
                 bossPool,warPool,bossDistributed,warDistributed,distributed:bossDistributed+warDistributed+expense};
         }
@@ -3148,14 +3148,15 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  const system=()=>db.participationSystem||(db.participationSystem={ratios:{reserve:5,operations:20,war:55,boss:20},weeks:{}});
  const week=()=>currentWeekKey();
  const weekData=()=>{const x=system();return x.weeks[week()]||(x.weeks[week()]={war:{},siege:{diamonds:0,participants:{}}});};
- const users=()=>db.users.filter(u=>u.uid).slice().sort((a,b)=>Number(b.power||0)-Number(a.power||0));
- const score=(u)=>Math.max(0,Number(weekData().war?.[u.uid])||0);
+ const memberKey=u=>u.uid||('guest:'+String(u.guestId||u.id));
+ const users=()=>db.users.filter(u=>u.uid||u.isGuest).slice().sort((a,b)=>Number(b.power||0)-Number(a.power||0));
+ const score=(u)=>Math.max(0,Number(weekData().war?.[memberKey(u)])||0);
  const weight=(u,list)=>{const max=Math.max(1,...list.map(x=>Number(x.power)||0));return 1+0.8*Math.pow(Math.max(0,Number(u.power)||0)/max,2);};
- const siegeList=()=>users().filter(u=>weekData().siege?.participants?.[u.uid]===true);
+ const siegeList=()=>users().filter(u=>weekData().siege?.participants?.[memberKey(u)]===true);
  const siegeShares=()=>{
    const list=siegeList(),weights=list.map(u=>weight(u,list)),total=weights.reduce((a,b)=>a+b,0);
    const pool=Math.max(0,Math.floor(Number(weekData().siege?.diamonds)||0));
-   return Object.fromEntries(list.map((u,i)=>[u.uid,{weight:weights[i],amount:total?Math.floor(pool*weights[i]/total):0}]));
+   return Object.fromEntries(list.map((u,i)=>[memberKey(u),{weight:weights[i],amount:total?Math.floor(pool*weights[i]/total):0}]));
  };
  const calc=()=>diamondCalculation(week());
  const warShare=u=>{
@@ -3172,7 +3173,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   el.innerHTML=`<p class="class-v45-muted">이번 주 ${weekTitle()} · 쟁 분배 ${num(calc().warPool)} 다이아 · 누적 쟁 점수 ${num(total)}점</p>
   <div class="class-v45-panel"><p class="class-v45-muted">쟁이 발생할 때마다 <b>이번 쟁 추가 점수</b>를 입력하고 저장하세요. 기존 누적 점수에 더해집니다. 0점은 변경되지 않습니다.</p>
   <table class="class-v45-table"><thead><tr><th>길드원</th><th>누적 점수</th><th>이번 쟁 추가 점수</th><th>예상 분배 다이아</th></tr></thead><tbody>
-  ${users().map(u=>`<tr><td>${esc(u.id)}</td><td>${num(score(u))}점</td><td>${editable?`<input class="class-v45-input" type="number" min="0" step="1" data-war-uid="${esc(u.uid)}" value="0">`:'-'} </td><td>💎 ${num(warShare(u))}</td></tr>`).join('')}</tbody></table>
+  ${users().map(u=>`<tr><td>${esc(u.id)}${u.isGuest?' (미가입)':''}</td><td>${num(score(u))}점</td><td>${editable?`<input class="class-v45-input" type="number" min="0" step="1" data-war-uid="${esc(memberKey(u))}" value="0">`:'-'} </td><td>💎 ${num(warShare(u))}</td></tr>`).join('')}</tbody></table>
   ${editable?'<div style="text-align:right;margin-top:12px"><button class="class-v45-btn" onclick="classV45SaveWar()">이번 쟁 점수 누적 저장</button></div>':''}</div>
   <div class="class-v45-panel"><strong>쟁 점수 등록 내역</strong>
   ${history.length?`<div style="max-height:220px;overflow:auto;margin-top:10px">${history.slice(-30).reverse().map(h=>`<div class="class-v45-muted" style="padding:7px 0;border-bottom:1px solid #343d59">${esc(h.at||'')} · ${esc(h.by||'관리자')} · ${esc((h.entries||[]).map(e=>e.name+' +'+e.points+'점').join(', '))}</div>`).join('')}</div>`:'<p class="class-v45-muted" style="margin-top:8px">아직 등록된 내역이 없습니다.</p>'}</div>`;
@@ -3184,7 +3185,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   <div class="class-v45-panel"><label>서버 지급 공성전 다이아 <input id="class-v45-siege-diamonds" type="number" min="0" step="1" class="class-v45-input" value="${Math.max(0,Number(w.siege?.diamonds)||0)}" ${editable?'':'disabled'}></label>
   <p class="class-v45-muted" style="margin-top:8px">전투력 기준 자동 가중치: 1.00 ~ 1.80배 (최고 투력 기준). 참여자로 선택한 인원만 예상 분배합니다.</p>
   <table class="class-v45-table"><thead><tr><th>참여</th><th>길드원</th><th>전투력</th><th>가중치</th><th>예상 다이아</th></tr></thead><tbody>
-  ${users().map(u=>`<tr><td><input type="checkbox" data-siege-uid="${esc(u.uid)}" ${w.siege?.participants?.[u.uid]?'checked':''} ${editable?'':'disabled'}></td><td>${esc(u.id)}</td><td>${num(u.power)}</td><td>${shares[u.uid]?.weight.toFixed(2)||'-'}</td><td>💎 ${num(shares[u.uid]?.amount||0)}</td></tr>`).join('')}</tbody></table>
+  ${users().map(u=>`<tr><td><input type="checkbox" data-siege-uid="${esc(memberKey(u))}" ${w.siege?.participants?.[u.uid]?'checked':''} ${editable?'':'disabled'}></td><td>${esc(u.id)}${u.isGuest?' (미가입)':''}</td><td>${num(u.power)}</td><td>${shares[memberKey(u)]?.weight.toFixed(2)||'-'}</td><td>💎 ${num(shares[memberKey(u)]?.amount||0)}</td></tr>`).join('')}</tbody></table>
   ${editable?'<div style="text-align:right;margin-top:12px"><button class="class-v45-btn" onclick="classV45SaveSiege()">공성전 설정 저장</button></div>':''}</div>`;
  }
  function renderRatios(){
@@ -3197,8 +3198,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  }
  function renderProfile(){
   const el=$('class-profile-weekly');if(!el||typeof db==='undefined')return;
-  const u=users().find(x=>x.uid===cloudUser?.uid);if(!u)return;
-  const ss=siegeShares()[u.uid];
+  const u=users().find(x=>x.uid&&x.uid===cloudUser?.uid);if(!u)return;
+  const ss=siegeShares()[memberKey(u)];
   el.innerHTML=`<strong style="color:#d8b4fe">이번 주 참여·분배 요약 (${weekTitle()})</strong>
   <div style="margin-top:8px">⚔ 보스 참여 점수: ${num(weeklyScores(week())[u.id]||0)}점 / 💎 ${num(bossShare(u))}</div>
   <div>⚔ 쟁 참여 점수: ${num(score(u))}점 / 💎 ${num(warShare(u))}</div>
@@ -3236,7 +3237,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     if(n>0)increments[el.dataset.warUid]=n;
   }
   if(!Object.keys(increments).length)return alert('추가할 쟁 점수를 입력하세요.');
-  const entries=Object.entries(increments).map(([uid,points])=>({uid,name:users().find(u=>u.uid===uid)?.id||uid,points}));
+  const entries=Object.entries(increments).map(([uid,points])=>({uid,name:users().find(u=>memberKey(u)===uid)?.id||uid,points}));
   if(!confirm(`이번 쟁 점수 ${entries.reduce((n,e)=>n+e.points,0)}점을 누적 추가할까요?\\n기존 점수는 유지됩니다.`))return;
   const targetWeek=week();
   const btn=document.activeElement;

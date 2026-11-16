@@ -3296,7 +3296,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
   const editable=manager(),w=weekData(),shares=siegeShares();
   el.innerHTML=`<p class="class-v45-muted">길드 자금과 별개인 서버 지급 공성전 다이아를 입력합니다.</p>
   <div class="class-v45-panel"><label>서버 지급 공성전 다이아 <input id="class-v45-siege-diamonds" type="number" min="0" step="1" class="class-v45-input" value="${Math.max(0,Number(w.siege?.diamonds)||0)}" ${editable?'':'disabled'}></label>
-  <p class="class-v45-muted" style="margin-top:8px">전투력 가중치: 참여자 중 최저 전투력 1배, 최고 전투력 8배를 기준으로 중간 전투력은 제곱 곡선으로 계산합니다. 참여자들의 전투력이 모두 같으면 전원 1배이며, 선택한 참여자에게만 예상 분배합니다.</p>
+  <p class="class-v45-muted" style="margin-top:8px">전투력을 기준으로 제곱 곡선을 적용하여 차등 분배합니다.</p>
   ${editable?`<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin:8px 0"><button type="button" class="class-v45-btn" style="padding:4px 8px;font-size:11px;line-height:1.3;min-height:0;width:auto;flex:none" onclick="classV51SetAllSiege(true)">전체 체크</button><button type="button" class="class-v45-btn" style="padding:4px 8px;font-size:11px;line-height:1.3;min-height:0;width:auto;flex:none" onclick="classV51SetAllSiege(false)">전체 해제</button><span class="class-v45-muted" id="class-v51-siege-selected"></span></div>`:''}
   <table class="class-v45-table"><thead><tr><th>참여</th><th>길드원</th><th>전투력</th><th>가중치</th><th>예상 다이아</th></tr></thead><tbody>
   ${users().map(u=>`<tr><td><input type="checkbox" data-siege-uid="${esc(memberKey(u))}" ${w.siege?.participants?.[memberKey(u)]===true?'checked':''} ${editable?'':'disabled'}></td><td>${esc(u.id)}${u.isGuest?' (미가입)':''}</td><td>${num(u.power)}</td><td>${shares[memberKey(u)]?.weight.toFixed(2)||'-'}</td><td>💎 ${num(shares[memberKey(u)]?.amount||0)}</td></tr>`).join('')}</tbody></table>

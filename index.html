@@ -445,6 +445,10 @@ body{background:#060915!important;color:#f7f7ff!important}
                     </div>
 
                     <div id="content-boss-sched-2" class="hidden space-y-3">
+                        <div class="bg-slate-900/70 border border-purple-500/40 rounded-xl p-3 space-y-2">
+                            <div class="flex justify-between items-center gap-2"><strong class="text-sm text-purple-200">서버 점검 예약 · 주기형 보스 초기화</strong><button type="button" onclick="openMaintenanceEditor()" class="admin-only hidden text-xs px-3 py-1.5 rounded-lg bg-purple-800 border border-purple-400">점검 관리</button></div>
+                            <div id="maintenance-schedule-list" class="text-xs text-slate-300">등록된 점검 없음</div>
+                        </div>
                         <div class="text-xs text-slate-400 flex justify-between items-center">
                             <span>실시간 보스 출현 카운트다운 · 남은 시간순</span>
                         </div>
@@ -731,6 +735,16 @@ body{background:#060915!important;color:#f7f7ff!important}
     </div>
 
 
+    <div id="maintenance-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[65] p-4 hidden">
+      <div class="bg-slate-800 border border-purple-500/50 rounded-2xl w-full max-w-lg p-5 space-y-4">
+        <div class="flex justify-between"><h3 class="font-bold text-lg text-purple-200">서버 점검 예약</h3><button onclick="closeMaintenanceEditor()" aria-label="닫기">✕</button></div>
+        <p class="text-xs text-slate-300">점검 종료 시 주기형 보스만 동시에 등장합니다. 등록 즉시 미래 일정에 반영되며, 고정 시간 보스는 변경되지 않습니다.</p>
+        <label class="block text-sm">점검 시작<input id="maintenance-start" type="datetime-local" class="mt-1 w-full bg-slate-900 border border-slate-600 rounded-lg p-2"></label>
+        <label class="block text-sm">점검 종료<input id="maintenance-end" type="datetime-local" class="mt-1 w-full bg-slate-900 border border-slate-600 rounded-lg p-2"></label>
+        <button type="button" onclick="addMaintenanceSchedule()" class="w-full rounded-lg bg-purple-700 p-3 font-bold">점검 일정 등록</button>
+        <div id="maintenance-editor-list" class="max-h-56 overflow-y-auto space-y-2"></div>
+      </div>
+    </div>
     <div id="boss-manage-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
             <div class="flex justify-between items-center p-5 border-b border-slate-700 bg-slate-900/50">
@@ -849,6 +863,8 @@ body{background:#060915!important;color:#f7f7ff!important}
         const ADMIN_UID = 'j33OjGYk9XXj5xiL8BG6iTsV3uw2';
         let db = JSON.parse(JSON.stringify(DEFAULT_DB));
         db.bossSpawnAnchors = {};
+        db.bossSpawnEvents = {};
+        db.bossMaintenance = [];
         let isRegisterMode = false;
         let cloudReady = false, sharedDataLoaded = false, cloudUnsubs = [], cloudUser = null, lastSnapshot = null;
         let profileDocs = new Map(), recordDocs = new Map(), itemDocs = new Map(), applicationDocs = new Map(), guestDocs = new Map();
@@ -868,7 +884,7 @@ body{background:#060915!important;color:#f7f7ff!important}
           const next = clone(DEFAULT_DB);
           next.users = [...profileDocs].map(([uid,d])=>localProfile(d.nickname||uid,uid,d)).concat([...guestDocs].map(([gid,d])=>({id:d.nickname,guestId:gid,isGuest:true,role:'길드원',class:d.class||'레인저',power:Number(d.power)||0}))); 
           next.currentUser = own.nickname;
-          ['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','guildDiamondsByWeek','activeWeekKey'].forEach(k=>{
+          ['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','guildDiamondsByWeek','activeWeekKey'].forEach(k=>{
             if(shared[k]!==undefined) next[k]=clone(shared[k]);
           });
           next.bossRecords={};
@@ -935,7 +951,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             if(!cloudAdmin() || uid===ADMIN_UID) throw new Error('탈퇴 처리는 웹 관리자만 할 수 있습니다.');
             ops.push(store.doc('users/'+uid).delete());
           }
-          const sharedKeys=['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','guildDiamondsByWeek','activeWeekKey'];
+          const sharedKeys=['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','guildDiamondsByWeek','activeWeekKey'];
           if(stable(before.weeklyArchives)!==stable(after.weeklyArchives)){if(!cloudManager())throw new Error('보관함은 관리자만 수정할 수 있습니다.');ops.push(store.doc('guildPrivate/archives').set({weeklyArchives:clone(after.weeklyArchives)}));}
           const delta={};
           sharedKeys.forEach(k=>{if(stable(before[k])!==stable(after[k]))delta[k]=clone(after[k]??null);});
@@ -1463,7 +1479,7 @@ body{background:#060915!important;color:#f7f7ff!important}
         function deleteBossDefinition(index) {
             const name = db.bossListDef[index].name;
             if (!confirm(`보스 "${name}"을 삭제할까요?`)) return;
-            db.bossListDef.splice(index,1); delete db.bossScores[name]; if (db.bossSpawnAnchors) delete db.bossSpawnAnchors[name]; saveDB(); renderAdminBossList(); renderBossPreview();
+            db.bossListDef.splice(index,1); delete db.bossScores[name]; if (db.bossSpawnAnchors) delete db.bossSpawnAnchors[name]; if(db.bossSpawnEvents)delete db.bossSpawnEvents[name]; saveDB(); renderAdminBossList(); renderBossPreview();
         }
 
         function renderNotice() {
@@ -1764,43 +1780,79 @@ body{background:#060915!important;color:#f7f7ff!important}
         function closeBossModal() { document.getElementById('boss-reg-modal').classList.add('hidden'); }
 
          
-        function getBossOccurrencesForDay(boss, dayDate) {
-            const dayStart = new Date(dayDate); dayStart.setHours(0,0,0,0);
-            const dayEnd = new Date(dayStart); dayEnd.setDate(dayEnd.getDate()+1);
-            const dayShort = ['일','월','화','수','목','금','토'][dayStart.getDay()];
-            if (!(boss.days || []).includes(dayShort)) return [];
-            const cycleHours = Number(boss.cycleHours);
-            const cycleMs = cycleHours * 3600000;
-            const fixed = String(boss.fixedTime || '').trim();
-            const anchorValue = Number((db.bossSpawnAnchors || {})[boss.name]);
-            let anchor;
-            if (fixed && /^([01]\d|2[0-3]):[0-5]\d$/.test(fixed)) {
-                 
-                const [h, m] = fixed.split(':').map(Number);
-                anchor = new Date(dayStart); anchor.setHours(h,m,0,0);
-                anchor = anchor.getTime();
-            } else if (Number.isFinite(anchorValue) && anchorValue > 0) {
-                anchor = anchorValue;
-            } else {
-                return [];
+        // A scheduled maintenance is a hard reset only for periodic bosses.
+        // Cut events retain previous occurrences, while changing subsequent intervals.
+        function bossMaintenanceWindows() {
+            return (db.bossMaintenance || []).filter(w => Number(w.end) > Number(w.start))
+                .map(w => ({...w, start:Number(w.start), end:Number(w.end)}))
+                .sort((a,b) => a.start-b.start);
+        }
+        function periodicBossEvents(boss) {
+            const events = (db.bossSpawnEvents || {})[boss.name] || [];
+            return events.filter(e => Number.isFinite(Number(e.time)))
+                .map(e => ({time:Number(e.time), type:e.type || 'cut'})).sort((a,b)=>a.time-b.time);
+        }
+        function bossPeriodicTimes(boss, fromMs, toMs) {
+            const cycleMs = Number(boss.cycleHours)*3600000;
+            if (!(cycleMs > 0) || toMs <= fromMs) return [];
+            const dayNames=['일','월','화','수','목','금','토'];
+            const validDays=(boss.days && boss.days.length) ? boss.days : ['월','화','수','목','금','토','일'];
+            let anchor=Number((db.bossSpawnAnchors||{})[boss.name]);
+            const fixed=String(boss.fixedTime||'');
+            if (!(anchor>0) && /^([01]\d|2[0-3]):[0-5]\d$/.test(fixed)) {
+                const [h,m]=fixed.split(':').map(Number);
+                const d=new Date(fromMs);d.setHours(h,m,0,0);anchor=d.getTime();
             }
-            const times = [];
-            if (Number.isFinite(cycleMs) && cycleMs > 0) {
-                 
-                const first = Math.ceil((dayStart.getTime() - anchor) / cycleMs);
-                for (let n = first; n < first + 100; n++) {
-                    const t = anchor + n * cycleMs;
-                    if (t >= dayEnd.getTime()) break;
-                    if (t < dayStart.getTime()) continue;
-                    times.push(t);
+            const windows=bossMaintenanceWindows();
+            const events=periodicBossEvents(boss);
+            // Maintenance is effective from its scheduled start even before it happens.
+            // Events after a maintenance reset override that reset for the same boss.
+            const changes=[...events.map(e=>({time:e.time,type:'cut'})),...windows.map(w=>({time:w.end,type:'reset',start:w.start}))]
+                .sort((a,b)=>a.time-b.time || (a.type==='reset'?-1:1));
+            const out=[];
+            const add=(time)=>{if(time>=fromMs && time<toMs && validDays.includes(dayNames[new Date(time).getDay()]) && !windows.some(w=>time>=w.start && time<w.end))out.push(time);};
+            let segmentStart=fromMs;
+            let currentAnchor=anchor>0?anchor:null;
+            const generate=(until)=>{
+                if(currentAnchor===null)return;
+                let n=Math.max(0,Math.ceil((segmentStart-currentAnchor)/cycleMs));
+                for(let i=0;i<5000;i++,n++){
+                    const t=currentAnchor+n*cycleMs;
+                    if(t>=until || t>=toMs)break;
+                    if(t>=segmentStart && t>=fromMs)add(t);
                 }
-            } else if (fixed) {
-                times.push(anchor);
+            };
+            for(const change of changes){
+                if(change.time<=fromMs){
+                    if(change.type==='reset'){currentAnchor=change.time;}
+                    else currentAnchor=change.time;
+                    continue;
+                }
+                if(change.time>=toMs)break;
+                // A future maintenance start cancels pending cycles through its end.
+                generate(change.time);
+                segmentStart=change.time;
+                currentAnchor=change.time;
+                if(change.type==='reset')add(change.time);
             }
-            return [...new Set(times)].sort((a,b)=>a-b).map(time => {
-                const d = new Date(time);
-                return {time, label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
-            });
+            generate(toMs);
+            return [...new Set(out)].sort((a,b)=>a-b);
+        }
+        function getBossOccurrencesForDay(boss, dayDate) {
+            const dayStart=new Date(dayDate);dayStart.setHours(0,0,0,0);
+            const dayEnd=new Date(dayStart);dayEnd.setDate(dayEnd.getDate()+1);
+            const dayShort=['일','월','화','수','목','금','토'][dayStart.getDay()];
+            if (!(boss.days||[]).includes(dayShort))return [];
+            let times=[];
+            if(Number(boss.cycleHours)>0){
+                times=bossPeriodicTimes(boss,dayStart.getTime(),dayEnd.getTime());
+            }else if(boss.fixedTime){
+                const [h,m]=boss.fixedTime.split(':').map(Number);
+                if(Number.isFinite(h)&&Number.isFinite(m)){
+                    const d=new Date(dayStart);d.setHours(h,m,0,0);times=[d.getTime()];
+                }
+            }
+            return times.map(time=>{const d=new Date(time);return {time,label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};});
         }
         function loadUserBossRecords(preserveOpenDays = false) {
             const openDays = preserveOpenDays
@@ -1912,35 +1964,17 @@ body{background:#060915!important;color:#f7f7ff!important}
 
          
         function bossNextTime(boss, nowMs) {
-            const validDays = (boss.days && boss.days.length) ? boss.days : ['월','화','수','목','금','토','일'];
-            const dayNames = ['일','월','화','수','목','금','토'];
-            const cycleMs = Number(boss.cycleHours) * 3600000;
-            if (Number.isFinite(cycleMs) && cycleMs > 0) {
-                let anchorMs = Number((db.bossSpawnAnchors || {})[boss.name]);
-                if (!(Number.isFinite(anchorMs) && anchorMs > 0) && boss.fixedTime) {
-                    const [hh, mm] = boss.fixedTime.split(':').map(Number);
-                    if (Number.isFinite(hh) && Number.isFinite(mm)) {
-                        const anchor = new Date(nowMs); anchor.setHours(hh, mm, 0, 0);
-                        anchorMs = anchor.getTime();
-                    }
-                }
-                if (!(Number.isFinite(anchorMs) && anchorMs > 0)) return null;
-                let nextMs = anchorMs > nowMs ? anchorMs : anchorMs + (Math.floor((nowMs - anchorMs) / cycleMs) + 1) * cycleMs;
-                for (let i = 0; i < 1000; i++) {
-                    if (validDays.includes(dayNames[new Date(nextMs).getDay()])) return nextMs;
-                    nextMs += cycleMs;
-                }
-                return null;
+            if(Number(boss.cycleHours)>0){
+                const times=bossPeriodicTimes(boss,nowMs+1,nowMs+15*86400000);
+                return times.length?times[0]:null;
             }
-            if (boss.fixedTime) {
-                const [hh, mm] = boss.fixedTime.split(':').map(Number);
-                if (!Number.isFinite(hh) || !Number.isFinite(mm)) return null;
-                for (let offset = 0; offset <= 7; offset++) {
-                    const d = new Date(nowMs); d.setHours(0,0,0,0); d.setDate(d.getDate()+offset);
-                    if (!validDays.includes(dayNames[d.getDay()])) continue;
-                    d.setHours(hh,mm,0,0);
-                    if (d.getTime() > nowMs) return d.getTime();
-                }
+            const days=['일','월','화','수','목','금','토'];
+            if(!boss.fixedTime)return null;
+            const [h,m]=boss.fixedTime.split(':').map(Number);
+            if(!Number.isFinite(h)||!Number.isFinite(m))return null;
+            for(let i=0;i<14;i++){
+                const d=new Date(nowMs);d.setHours(h,m,0,0);d.setDate(d.getDate()+i);
+                if(d.getTime()>nowMs && (boss.days||[]).includes(days[d.getDay()]))return d.getTime();
             }
             return null;
         }
@@ -1959,6 +1993,7 @@ body{background:#060915!important;color:#f7f7ff!important}
         }
 
         function renderBossPreview() {
+            renderMaintenanceSchedules();
             const list = document.getElementById('next-boss-preview');
             if (!list) return;
             const nowMs = Date.now();
@@ -1998,7 +2033,9 @@ body{background:#060915!important;color:#f7f7ff!important}
             const next = new Date(cutTime + Number(boss.cycleHours)*3600000);
             if (!confirm(`${name} 컷을 지금 시각으로 기록할까요?\n다음 출현 예상: ${next.toLocaleString('ko-KR')}`)) return;
             db.bossSpawnAnchors = db.bossSpawnAnchors || {};
-            db.bossSpawnAnchors[name] = cutTime;
+            if (!(Number(db.bossSpawnAnchors[name])>0)) db.bossSpawnAnchors[name]=cutTime;
+            db.bossSpawnEvents=db.bossSpawnEvents||{};
+            db.bossSpawnEvents[name]=[...(db.bossSpawnEvents[name]||[]),{time:cutTime,type:'cut'}];
             saveDB(); renderBossPreview();
         }
         function setBossNextSpawn(name) {
@@ -2014,11 +2051,41 @@ body{background:#060915!important;color:#f7f7ff!important}
             const timestamp = new Date(answer).getTime();
             if (!Number.isFinite(timestamp)) { alert('올바른 날짜와 시간을 입력하세요.'); return; }
             if (!db.bossSpawnAnchors) db.bossSpawnAnchors = {};
-            db.bossSpawnAnchors[name] = timestamp;
+            if (!(Number(db.bossSpawnAnchors[name])>0)) db.bossSpawnAnchors[name]=timestamp;
+            db.bossSpawnEvents=db.bossSpawnEvents||{};
+            db.bossSpawnEvents[name]=[...(db.bossSpawnEvents[name]||[]),{time:timestamp,type:'cut'}];
             saveDB(); renderBossPreview();
         }
 
          
+        function maintenanceDateText(ms){return new Date(ms).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});}
+        function renderMaintenanceSchedules(){
+            const windows=bossMaintenanceWindows();
+            const el=document.getElementById('maintenance-schedule-list');
+            if(el)el.innerHTML=windows.length?windows.map(w=>`<div class="py-1">${maintenanceDateText(w.start)} ~ ${maintenanceDateText(w.end)} · 종료 시 주기형 보스 초기화</div>`).join(''):'등록된 점검 없음';
+            const edit=document.getElementById('maintenance-editor-list');
+            if(edit)edit.innerHTML=windows.map(w=>`<div class="flex justify-between items-center gap-2 border-b border-slate-600 py-2"><span class="text-xs">${maintenanceDateText(w.start)} ~ ${maintenanceDateText(w.end)}</span><button class="text-red-300 text-xs border border-red-500 rounded px-2 py-1" onclick="deleteMaintenanceSchedule('${escapeAttribute(w.id)}')">삭제</button></div>`).join('')||'<p class="text-xs text-slate-400">등록된 점검 없음</p>';
+        }
+        function openMaintenanceEditor(){if(!isCurrentAdmin())return alert('관리자 전용입니다.');renderMaintenanceSchedules();document.getElementById('maintenance-modal').classList.remove('hidden');}
+        function closeMaintenanceEditor(){document.getElementById('maintenance-modal').classList.add('hidden');}
+        function addMaintenanceSchedule(){
+            if(!isCurrentAdmin())return;
+            const start=new Date(document.getElementById('maintenance-start').value).getTime();
+            const end=new Date(document.getElementById('maintenance-end').value).getTime();
+            if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start)return alert('올바른 점검 시작/종료 시간을 입력하세요.');
+            if(bossMaintenanceWindows().some(w=>start<w.end&&end>w.start))return alert('기존 점검 시간과 겹칩니다.');
+            db.bossMaintenance=db.bossMaintenance||[];
+            db.bossMaintenance.push({id:'m'+Date.now(),start,end});
+            saveDB();renderMaintenanceSchedules();renderBossPreview();
+            const modal=document.getElementById('boss-reg-modal');if(modal&&!modal.classList.contains('hidden'))loadUserBossRecords(true);
+        }
+        function deleteMaintenanceSchedule(id){
+            if(!isCurrentAdmin()||!confirm('이 점검 예약을 삭제할까요?'))return;
+            db.bossMaintenance=(db.bossMaintenance||[]).filter(w=>w.id!==id);
+            saveDB();renderMaintenanceSchedules();renderBossPreview();
+            const modal=document.getElementById('boss-reg-modal');if(modal&&!modal.classList.contains('hidden'))loadUserBossRecords(true);
+        }
+
         function localDateKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
         function getWeekMonday(date) {
             const d = new Date(date); d.setHours(0,0,0,0);

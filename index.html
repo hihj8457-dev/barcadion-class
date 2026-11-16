@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V55_LOAD_OPTIMIZED">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V56_HOME_TIMER_FIX">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -550,7 +550,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                         </div>
                         <div id="admin-control-panel" class="hidden space-y-2 pt-2 border-t border-slate-700">
                             <p class="text-xs font-bold text-amber-400">관리자 전용 제어</p>
-                            <button type="button" onclick="openWeeklyArchiveModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold">주간 보스 참여 내역 보관함</button>
+                            <button type="button" onclick="openWeeklyArchiveModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold">통합 참여 내역 보관함</button>
                             <button onclick="openUserManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
                                 <i class="fa-solid fa-users-gear mr-1"></i> 길드원 관리
                             </button>
@@ -577,10 +577,10 @@ body{background:#060915!important;color:#f7f7ff!important}
     
     <div id="weekly-archive-modal" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 hidden">
         <div class="bg-slate-800 border border-slate-700 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-            <div class="flex justify-between items-center p-5 border-b border-slate-700"><h3 class="text-xl font-bold text-amber-400">주간 보스 참여 내역 보관함</h3><button type="button" onclick="closeWeeklyArchiveModal()" class="text-slate-300 text-xl">✕</button></div>
+            <div class="flex justify-between items-center p-5 border-b border-slate-700"><h3 class="text-xl font-bold text-amber-400">통합 참여 내역 보관함</h3><button type="button" onclick="closeWeeklyArchiveModal()" class="text-slate-300 text-xl">✕</button></div>
             <div class="p-5 overflow-y-auto space-y-3 flex-1">
-                <p class="text-xs text-slate-400">매주 월요일 새 주차로 전환되며 지난 주의 참여 기록과 분배 계산을 보관합니다. 보관 내역은 관리자만 열람할 수 있습니다.</p>
-                <button type="button" onclick="archiveCurrentWeekManually()" class="bg-amber-500 text-slate-950 font-bold text-sm px-4 py-2 rounded-lg">현재 주차 내역 보관</button>
+                <p class="text-xs text-slate-400">보스·쟁·공성전 참여 기록을 주차별로 각각 보관합니다. 보관 당시의 참여 및 예상 분배 금액을 기록합니다. 보관 내역은 관리자만 열람할 수 있습니다.</p>
+                <div class="flex flex-wrap gap-2"><button type="button" onclick="archiveCurrentWeekManually()" class="bg-amber-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-lg">보스 참여 기록 보관</button><button type="button" onclick="archiveClassParticipation('war')" class="bg-violet-600 text-white font-bold text-xs px-3 py-2 rounded-lg">쟁 참여 기록 보관</button><button type="button" onclick="archiveClassParticipation('siege')" class="bg-violet-600 text-white font-bold text-xs px-3 py-2 rounded-lg">공성전 기록 보관</button></div>
                 <div id="weekly-archive-list" class="space-y-3"></div>
             </div>
         </div>
@@ -961,8 +961,8 @@ body{background:#060915!important;color:#f7f7ff!important}
         // Coalesce them to prevent repeated full DOM rebuilds during login.
         let cloudViewTimer=null;
         function scheduleCloudView(){
-          if(cloudViewTimer!==null)clearTimeout(cloudViewTimer);
-          cloudViewTimer=setTimeout(()=>{cloudViewTimer=null;buildCloudView();},55);
+          if(cloudViewTimer!==null)return;
+          cloudViewTimer=setTimeout(()=>{cloudViewTimer=null;buildCloudView();},35);
         }
         function subscribeCloud() {
           detachCloud();
@@ -2623,11 +2623,50 @@ body{background:#060915!important;color:#f7f7ff!important}
             if (!confirm('현재 주차 기록을 보관하시겠습니까? 이번 주 기록은 삭제되지 않으며 보관 시점의 스냅샷이 저장됩니다.')) return;
             archiveWeek(currentWeekKey()); saveDB(); renderWeeklyArchives();
         }
+        function archiveClassParticipation(type) {
+            if (!isCurrentAdmin() || !cloudReady) return alert('관리자 권한과 서버 연결을 확인하세요.');
+            if (!['war','siege'].includes(type)) return;
+            const wk=currentWeekKey();
+            const data=db.participationSystem?.weeks?.[wk]||{};
+            const members=(db.users||[]).filter(u=>u.uid||u.isGuest);
+            const key=u=>u.uid||('guest:'+String(u.guestId||u.id));
+            const entries=[];
+            let pool=0;
+            if(type==='war') {
+                const scores=members.map(u=>({u,score:Math.max(0,Number(data.war?.[key(u)])||0)}));
+                const total=scores.reduce((a,x)=>a+x.score,0);
+                pool=Math.max(0,Number(diamondCalculation(wk).warPool)||0);
+                for(const {u,score} of scores) if(score>0)entries.push({key:key(u),name:u.id,power:Number(u.power)||0,score,amount:total?Math.floor(pool*score/total):0});
+            } else {
+                const selected=members.filter(u=>data.siege?.participants?.[key(u)]===true);
+                pool=Math.max(0,Math.floor(Number(data.siege?.diamonds)||0));
+                const powers=selected.map(u=>Math.max(0,Number(u.power)||0));
+                const min=powers.length?Math.min(...powers):0,max=powers.length?Math.max(...powers):0;
+                const weights=selected.map(u=>max<=min?1:1+7*Math.pow(Math.max(0,Math.min(1,((Number(u.power)||0)-min)/(max-min))),2));
+                const total=weights.reduce((a,b)=>a+b,0);
+                selected.forEach((u,i)=>entries.push({key:key(u),name:u.id,power:Number(u.power)||0,weight:weights[i],amount:total?Math.floor(pool*weights[i]/total):0}));
+            }
+            const label=weekLabel(wk)+' '+(type==='war'?'쟁 참여 기록':'공성전 기록');
+            if(!confirm('「'+label+'」을(를) 보관할까요? 현재 참여 내역은 삭제되지 않습니다.'))return;
+            db.weeklyArchives=db.weeklyArchives||[];
+            db.weeklyArchives.push({type,weekKey:wk,label,archivedAt:new Date().toISOString(),pool,entries,distributionCompleted:{}});
+            saveDB();renderWeeklyArchives();
+        }
+        function toggleParticipationArchiveDistribution(index,encodedKey,checked) {
+            if(!isCurrentAdmin()||!cloudReady)return alert('관리자 권한과 서버 연결을 확인하세요.');
+            const a=db.weeklyArchives?.[index];if(!a||!['war','siege'].includes(a.type))return;
+            const key=decodeURIComponent(encodedKey);
+            if(!a.entries?.some(e=>e.key===key&&e.amount>0))return;
+            a.distributionCompleted=a.distributionCompleted||{};
+            a.distributionCompleted[key]=!!checked;
+            const result=saveDB();renderWeeklyArchives();
+            if(result?.catch)result.catch(()=>renderWeeklyArchives());
+        }
         function deleteWeeklyArchive(index) {
             if (!isCurrentAdmin()) return alert('관리자만 삭제할 수 있습니다.');
             const archive=db.weeklyArchives[index];
             if (!archive) return;
-            if (!confirm(`「${archive.label||weekLabel(archive.weekKey)}」 보관 내역을 영구 삭제할까요?\n이 작업은 되돌릴 수 없으며 실제 보스 참여 기록은 삭제하지 않습니다.`)) return;
+            if (!confirm(`「${archive.label||weekLabel(archive.weekKey)}」 보관 내역을 영구 삭제할까요?\n이 작업은 되돌릴 수 없으며 원본 참여 기록은 삭제하지 않습니다.`)) return;
             db.weeklyArchives.splice(index,1);
             saveDB();renderWeeklyArchives();
         }
@@ -2677,6 +2716,17 @@ body{background:#060915!important;color:#f7f7ff!important}
             if(!isCurrentAdmin()){el.innerHTML='';return;}
             const opened=[...el.querySelectorAll('details[data-archive-week]')].filter(e=>e.open).map(e=>e.dataset.archiveWeek);
             el.innerHTML=db.weeklyArchives.map((a,index)=>{
+                if(a.type==='war'||a.type==='siege'){
+                    const entries=(a.entries||[]).slice().sort((x,y)=>(y.amount||0)-(x.amount||0));
+                    const eligible=entries.filter(e=>Number(e.amount)>0);
+                    const completed=eligible.filter(e=>a.distributionCompleted?.[e.key]===true).length;
+                    const rows=entries.map(e=>{
+                        const checked=a.distributionCompleted?.[e.key]===true;
+                        const box=Number(e.amount)>0?`<label class="inline-flex items-center gap-2 text-sm ${checked?'text-emerald-300':'text-slate-200'}"><input type="checkbox" ${checked?'checked':''} onchange="toggleParticipationArchiveDistribution(${index},'${encodeURIComponent(e.key)}',this.checked)">분배 완료</label>`:'';
+                        return `<div class="flex flex-wrap justify-between gap-2 border-t border-slate-700/50 py-2"><span>${escapeHtml(e.name)} · ${a.type==='war'?Number(e.score||0).toLocaleString()+'점':Number(e.weight||1).toFixed(2)+'배'} · 💎 ${Number(e.amount||0).toLocaleString()}</span>${box}</div>`;
+                    }).join('');
+                    return `<details data-archive-week="${escapeAttribute(a.weekKey||'')}-${a.type}-${index}" class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(a.label||weekLabel(a.weekKey)+' '+(a.type==='war'?'쟁 참여 기록':'공성전 기록'))}</summary><div class="mt-3 text-xs text-slate-300 space-y-2"><div class="flex justify-between flex-wrap gap-2"><span>보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR'))}</span><button onclick="deleteWeeklyArchive(${index})" class="bg-red-900/60 text-red-200 rounded px-2 py-1">내역 삭제</button></div><p>총 분배 다이아 💎 ${Number(a.pool||0).toLocaleString()} · 분배 완료 ${completed}/${eligible.length}명</p>${rows||'<p>참여 내역 없음</p>'}</div></details>`;
+                }
                 const scores=Object.entries(a.scores||{}).sort((x,y)=>y[1]-x[1]);
                 const d=a.diamonds||{};
                 const eligible=scores.filter(([name,score])=>Math.floor(Math.max(0,Number(score||0)))*Number(d.unit||0)>0);
@@ -2689,7 +2739,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                     const checkbox=amount>0?`<label class="inline-flex items-center gap-2 whitespace-nowrap text-sm font-semibold ${checked?'text-emerald-300':'text-slate-200'}"><input type="checkbox" class="w-4 h-4 accent-emerald-500" ${checked?'checked':''} onchange="toggleArchiveDistribution(${index},'${encodeURIComponent(name)}',this.checked)">분배 완료</label>`:'';
                     return `<div class="border-t border-slate-700/50 py-2"><div class="font-semibold text-white mb-1">${escapeHtml(name)}</div><div class="flex flex-wrap justify-between items-end gap-2"><div class="text-slate-300 leading-6 min-w-0">${dayText} <span class="text-amber-300 font-bold">· 총 합 ${Number(score).toLocaleString()}점 · ${amount.toLocaleString()} 다이아</span></div>${checkbox}</div></div>`;
                 }).join('');
-                return `<details data-archive-week="${escapeAttribute(a.weekKey||'')}" class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(archiveDisplayLabel(a))}</summary>
+                return `<details data-archive-week="${escapeAttribute(a.weekKey||'')}" class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(archiveDisplayLabel(a)+(a.type?"":" 보스 참여 기록"))}</summary>
                     <div class="mt-3 text-xs text-slate-300 space-y-2">
                         <div class="flex flex-wrap gap-2 items-center"><span>기록 기간: ${escapeHtml(a.weekKey||'')}</span><button onclick="editArchiveLabel(${index})" class="bg-slate-700 text-amber-300 rounded px-2 py-1">주차 이름 수정</button><button onclick="deleteWeeklyArchive(${index})" class="bg-red-900/60 text-red-200 rounded px-2 py-1">내역 삭제</button></div>
                         <p>보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR'))}</p>
@@ -2952,9 +3002,9 @@ function renderClassHomeRatios(){
 let classBossTimerCache=[],classBossTimerLast=0;
 function updateClassBossTimer(){
  const box=$('class-boss-list');
- if(!box||typeof db==='undefined'||!db||!$('class-home')?.classList.contains('active'))return;
+ if(!box||typeof db==='undefined'||!db)return;
  const now=Date.now();
- if(!classBossTimerCache.length||now-classBossTimerLast>30000){
+ if(!classBossTimerLast||now-classBossTimerLast>30000){
   const byName=new Map();
   (db.bossListDef||[]).forEach(b=>{
    const next=bossNextTime(b,now);
@@ -2974,7 +3024,7 @@ function updateClassBossTimer(){
 function refreshHome(){
  if(!$('class-home')||typeof db==='undefined'||!db)return;
  try{
- classBossTimerCache=[];updateClassBossTimer();
+ classBossTimerLast=0;updateClassBossTimer();
  renderClassHomeRatios();
  $('class-admin-link').style.display=isCurrentAdmin()?'inline-flex':'none';
  renderClassPatchNotes();
@@ -3144,7 +3194,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
  const $=id=>document.getElementById(id);
  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const num=v=>Number(v||0).toLocaleString('ko-KR');
- const roles=['웹 관리자','마스터','운영진'];
+ const roles=['마스터','운영진'];
  const manager=()=>typeof isCurrentAdmin==='function'&&isCurrentAdmin();
  const system=()=>db.participationSystem||(db.participationSystem={ratios:{reserve:5,operations:20,war:55,boss:20},weeks:{}});
  const week=()=>currentWeekKey();
@@ -3195,7 +3245,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   const el=$('class-ratio-system');if(!el||typeof db==='undefined')return;
   const r=system().ratios;
   const fields=[['reserve','길드 여유 자금'],['operations','운영진 분배'],['war','쟁 참여'],['boss','보스 참여']];
-  el.innerHTML=`<p class="class-v45-muted">길드 자금만 적용합니다. 공성전 서버 다이아는 제외됩니다. 운영진 몫은 웹 관리자·마스터·운영진에게 균등 분배한 예상액입니다.</p>
+  el.innerHTML=`<p class="class-v45-muted">길드 자금만 적용합니다. 공성전 서버 다이아는 제외됩니다. 운영진 몫은 마스터·운영진에게 균등 분배한 예상액입니다.</p>
   <div class="class-v45-grid">${fields.map(([k,label])=>`<label class="class-v45-panel">${label}<div><input class="class-v45-input" data-ratio="${k}" type="number" min="0" max="100" step="1" value="${Number(r[k])}" ${manager()?'':'disabled'}> %</div></label>`).join('')}</div>
   ${manager()?'<button class="class-v45-btn" onclick="classV45SaveRatios()">분배율 저장 (합계 100%)</button>':''}`;
  }

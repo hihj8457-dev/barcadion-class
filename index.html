@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+    <meta name="class-build-id" content="CLASS_BUILD_20261116_V26_UPDATE_CHECK">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -882,7 +883,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             ensureWeeklyRollover();checkLoginState();
             if(typeof refreshHome==='function') refreshHome();
             const bossModal=document.getElementById('boss-reg-modal');
-            if(bossModal && !bossModal.classList.contains('hidden')) loadUserBossRecords();
+            if(bossModal && !bossModal.classList.contains('hidden')) loadUserBossRecords(true);
             const archiveModal=document.getElementById('weekly-archive-modal');
             if(archiveModal && !archiveModal.classList.contains('hidden')) renderWeeklyArchives();
           } catch(e){console.error(e);}
@@ -2573,6 +2574,44 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   if(current)window.updateClassProfile(current);
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+<script id="class-update-monitor">
+(function(){
+  const CURRENT_BUILD = 'CLASS_BUILD_20261116_V26_UPDATE_CHECK';
+  let updateFound = false;
+  let checking = false;
+  function banner(){
+    if(document.getElementById('class-update-banner')) return;
+    const el=document.createElement('div');
+    el.id='class-update-banner';
+    el.setAttribute('role','status');
+    el.style.cssText='position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:99999;background:#17223c;color:#fff;border:1px solid #bb8aff;border-radius:14px;box-shadow:0 8px 30px #000a;padding:13px 16px;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;max-width:calc(100vw - 24px);width:max-content;font:600 14px Pretendard,sans-serif';
+    const label=document.createElement('span');label.textContent='CLASS 홈페이지 새 버전이 배포되었습니다.';
+    const btn=document.createElement('button');btn.type='button';btn.textContent='새 버전 적용';btn.style.cssText='background:#a855f7;color:white;border:0;border-radius:9px;padding:9px 13px;cursor:pointer;font-weight:800';
+    btn.addEventListener('click',()=>{const url=new URL(location.href);url.searchParams.set('class_update',Date.now().toString());location.replace(url.toString());});
+    el.append(label,btn);document.body.appendChild(el);
+  }
+  async function check(){
+    if(checking||updateFound||document.visibilityState==='hidden')return;
+    checking=true;
+    try{
+      const url=new URL('/index.html',location.origin);
+      url.searchParams.set('_class_version_check',String(Date.now()));
+      const response=await fetch(url.toString(),{cache:'no-store',credentials:'same-origin'});
+      if(!response.ok)return;
+      const html=await response.text();
+      const match=html.match(/<meta\s+name=["']class-build-id["']\s+content=["']([^"']+)["']/i);
+      // Old deployments without a version marker are ignored to avoid false positives.
+      if(match && match[1]!==CURRENT_BUILD){updateFound=true;banner();}
+    }catch(e){console.debug('업데이트 확인 실패',e);}
+    finally{checking=false;}
+  }
+  setInterval(check,60000);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')check();});
+  window.addEventListener('focus',check);
+  // Give Cloudflare deployment a moment to settle before the first check.
+  setTimeout(check,12000);
 })();
 </script>
 </body>

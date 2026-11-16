@@ -285,6 +285,23 @@ body{background:#060915!important;color:#f7f7ff!important}
         </div>
     </div>
     
+    <!-- 관리자 전용: 보스 배점 안내문 수정 -->
+    <div id="boss-guide-editor-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-[80] p-4" role="dialog" aria-modal="true" aria-labelledby="boss-guide-editor-title">
+        <div class="bg-slate-800 border border-purple-500/50 rounded-2xl w-full max-w-xl p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between gap-3">
+                <h3 id="boss-guide-editor-title" class="font-bold text-lg text-amber-400">기본 보스 배점 수정</h3>
+                <button type="button" onclick="closeBossGuideEditor()" class="text-slate-300 hover:text-white text-xl" aria-label="닫기">×</button>
+            </div>
+            <p class="text-xs text-slate-300">기존 내용을 수정하거나 새 보스와 배점을 줄 단위로 추가하세요. 이 안내문은 모든 길드원에게 표시됩니다.</p>
+            <textarea id="boss-guide-editor-input" rows="14" class="w-full bg-slate-950 border border-slate-600 rounded-xl p-3 text-white text-sm leading-7 resize-y" placeholder="예: 신규보스 : 12점"></textarea>
+            <p class="text-xs text-slate-400">안내문만 수정됩니다. 실제 참여 점수 계산에 새 보스를 반영하려면 관리자 보스 설정에서도 보스를 추가해야 합니다.</p>
+            <div class="flex gap-2 justify-end">
+                <button type="button" onclick="closeBossGuideEditor()" class="rounded-lg px-4 py-2 bg-slate-700 text-white font-bold">취소</button>
+                <button type="button" id="boss-guide-editor-save" onclick="saveBossGuideEditor()" class="rounded-lg px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold">저장</button>
+            </div>
+        </div>
+    </div>
+
     <div id="auth-modal" style="position: fixed; inset: 0; background-color: rgba(2, 6, 23, 0.95); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 16px;">
         <div style="background-color: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 28px; width: 100%; max-width: 400px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
             <h2 id="auth-title" style="font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 20px; color: #fbbf24;">클래스 보스 매니저 로그인</h2>
@@ -418,7 +435,10 @@ body{background:#060915!important;color:#f7f7ff!important}
                             </button>
                         </div>
                         <div class="text-xs text-slate-400 bg-slate-900/40 p-3 rounded-xl space-y-1">
-                            <p class="font-semibold text-amber-400 mb-1"><i class="fa-solid fa-circle-info mr-1"></i> 기본 보스 배점</p>
+                            <div class="flex items-center justify-between gap-2 mb-1">
+                                <p class="font-semibold text-amber-400"><i class="fa-solid fa-circle-info mr-1"></i> 기본 보스 배점</p>
+                                <button type="button" onclick="openBossGuideEditor()" class="admin-only hidden text-xs font-bold text-purple-100 bg-purple-800/70 hover:bg-purple-700 border border-purple-400/60 rounded-lg px-3 py-1.5"><i class="fa-solid fa-pen mr-1"></i>수정</button>
+                            </div>
                             <p id="boss-guide-text" style="white-space: pre-line;"></p>
                         </div>
                     </div>
@@ -1166,6 +1186,44 @@ body{background:#060915!important;color:#f7f7ff!important}
             document.documentElement.style.setProperty('--dashboard-panel-min-height', `${Number(s.panelHeight) || 800}px`);
             const guide = document.getElementById('boss-guide-text');
             if (guide) { guide.style.whiteSpace = 'pre-line'; guide.innerText = s.bossGuide || ''; }
+        }
+
+        function openBossGuideEditor() {
+            if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
+            const editor = document.getElementById('boss-guide-editor-input');
+            editor.value = String((db.settings || DEFAULT_DB.settings).bossGuide || '');
+            const modal = document.getElementById('boss-guide-editor-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            editor.focus();
+        }
+        function closeBossGuideEditor() {
+            const modal = document.getElementById('boss-guide-editor-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        async function saveBossGuideEditor() {
+            if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
+            const value = document.getElementById('boss-guide-editor-input').value.trim();
+            if (!value) { alert('배점 안내 내용을 입력해 주세요.'); return; }
+            const button = document.getElementById('boss-guide-editor-save');
+            const previous = db.settings.bossGuide;
+            button.disabled = true;
+            button.textContent = '저장 중...';
+            db.settings.bossGuide = value;
+            applySiteSettings();
+            try {
+                await saveDB();
+                closeBossGuideEditor();
+                alert('보스 배점 안내가 저장되었습니다.');
+            } catch (error) {
+                db.settings.bossGuide = previous;
+                applySiteSettings();
+                alert('저장에 실패했습니다. 다시 시도해 주세요.');
+            } finally {
+                button.disabled = false;
+                button.textContent = '저장';
+            }
         }
 
         function openSiteSettingsModal() {

@@ -1867,7 +1867,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             normalizeDistributionItem(item);
             if (item.distributed) { alert('이미 분배완료된 아이템입니다.'); return; }
             if (item.applicants.includes(db.currentUser)) { alert('이미 신청한 아이템입니다.'); return; }
-            if (confirm(`[${item.name}] 아이템을 본인 명의(${db.currentUser})로 신청하시겠습니까?`)) {
+            if (confirm(`[${item.name}] 아이템을 (${db.currentUser})아이디로 신청하시겠습니까?`)) {
                 item.applicants.push(db.currentUser);
                 item.applicant = item.applicants[0] || null;  
                 saveDB(); renderItems();

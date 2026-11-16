@@ -283,7 +283,8 @@ body{background:#060915!important;color:#f7f7ff!important}
             <label class="block text-sm">닉네임<input id="my-profile-id" maxlength="30" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white"></label>
             <label class="block text-sm">전투력<input id="my-profile-power" type="number" min="0" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white"></label>
             <label class="block text-sm">클래스<select id="my-profile-class" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white"><option>레인저</option><option>소서리스</option><option>파이터</option><option>어쌔신</option></select></label>
-<div id="class-profile-weekly" class="class-v45-profile-summary"></div>\n            <button onclick="saveMyProfile()" class="w-full bg-amber-500 text-slate-950 font-bold py-3 rounded-xl">변경사항 저장</button>
+<div id="class-profile-weekly" class="class-v45-profile-summary"></div>
+            <button onclick="saveMyProfile()" class="w-full bg-amber-500 text-slate-950 font-bold py-3 rounded-xl">변경사항 저장</button>
             <button type="button" onclick="openPasswordChange(false)" class="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-3 rounded-xl">🔒 내 비밀번호 변경</button>
         </div>
     </div>
@@ -3278,13 +3279,18 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
  }
  function renderProfile(){
   const el=$('class-profile-weekly');if(!el||typeof db==='undefined')return;
-  const u=users().find(x=>x.uid&&x.uid===cloudUser?.uid);if(!u)return;
+  const u=users().find(x=>x.uid&&x.uid===cloudUser?.uid);if(!u){el.innerHTML='';return;}
   const ss=siegeShares()[memberKey(u)];
+  const bossAmount=bossShare(u),warAmount=warShare(u),siegeAmount=ss?.amount||0;
+  const isStaff=roles.includes(u.role);
+  const staffAmount=isStaff?opsShare(u):0;
+  const total=bossAmount+warAmount+siegeAmount+staffAmount;
   el.innerHTML=`<strong style="color:#d8b4fe">이번 주 참여·분배 요약 (${weekTitle()})</strong>
-  <div style="margin-top:8px">⚔ 보스 참여 점수: ${num(weeklyScores(week())[u.id]||0)}점 / 💎 ${num(bossShare(u))}</div>
-  <div>⚔ 쟁 참여 점수: ${num(score(u))}점 / 💎 ${num(warShare(u))}</div>
-  <div>♜ 공성전: ${ss?ss.weight.toFixed(2)+'배':'미참여'} / 서버 다이아 예상 💎 ${num(ss?.amount||0)}</div>
-  <div>♛ 운영진 배분 예상: 💎 ${num(opsShare(u))}</div>`;
+  <div style="margin-top:8px">보스 참여 점수: ${num(weeklyScores(week())[u.id]||0)}점 💎 ${num(bossAmount)}</div>
+  <div>쟁 참여 점수: ${num(score(u))}점 💎 ${num(warAmount)}</div>
+  <div>공성전: ${ss?'참여':'불참'} 💎 ${num(siegeAmount)}</div>
+  ${isStaff?`<div>운영진 배분: 💎 ${num(staffAmount)}</div>`:''}
+  <div style="margin-top:9px;padding-top:9px;border-top:1px solid #51456c;font-weight:800;color:#f8d38a">금주 총 합 분배금: 💎 ${num(total)}</div>`;
  }
  async function persist(next,button){
   if(!manager())return alert('관리자·마스터·운영진만 수정할 수 있습니다.');

@@ -3020,7 +3020,7 @@ function updateClassBossTimer(){
   });
   classBossTimerCache=[...byName.values()].sort((a,b)=>a.next-b.next).slice(0,4);
   classBossTimerLast=now;
-  box.innerHTML=classBossTimerCache.map((b,i)=>`<div class="class-boss"><strong>⚔ ${escapeHtml(b.name)}</strong><span class="class-boss-countdown" style="color:${i===0?'#e2b9ff':'#f6f5ff'}"></span><small style="display:block;color:#aeb8d7;font-size:12px;margin-top:6px">${bossDateLabel(b.next)}</small></div>`).join('')||'<div class="text-slate-400">예정된 보스 일정이 없습니다.</div>';
+  box.innerHTML=classBossTimerCache.map((b,i)=>`<div class="class-boss"><strong>⚔ ${escapeHtml(b.name)}</strong><span class="class-boss-countdown" data-target="${b.next}" style="color:${i===0?'#e2b9ff':'#f6f5ff'}"></span><small style="display:block;color:#aeb8d7;font-size:12px;margin-top:6px">${bossDateLabel(b.next)}</small></div>`).join('')||'<div class="text-slate-400">예정된 보스 일정이 없습니다.</div>';
  }
  box.querySelectorAll('.class-boss-countdown').forEach((node,i)=>{
   const b=classBossTimerCache[i];
@@ -3030,7 +3030,7 @@ function updateClassBossTimer(){
 function refreshHome(){
  if(!$('class-home')||typeof db==='undefined'||!db)return;
  try{
- classBossTimerLast=0;updateClassBossTimer();
+ updateClassBossTimer();
  renderClassHomeRatios();
  $('class-admin-link').style.display=isCurrentAdmin()?'inline-flex':'none';
  renderClassPatchNotes();
@@ -3088,9 +3088,29 @@ function init(){const app=$('app-container'),grid=$('dashboard-grid');if(!app||!
  const tabs=$('btn-tab-notice-1')?.parentElement;if(tabs)tabs.style.display='none';
  const memberPanel=$('class-member-slot').querySelector('.dashboard-panel');if(memberPanel){const h=memberPanel.querySelector('#panel-title-1');if(h)h.textContent='길드원 명단'}
  const obs=new MutationObserver(()=>{if(title&&title.textContent!=='클래스')title.textContent='클래스';if(subtitle&&subtitle.textContent!=='CLASS')subtitle.textContent='CLASS'});obs.observe(title,{childList:true,characterData:true,subtree:true});
- refreshHome();setTimeout(refreshHome,100);setInterval(()=>{try{updateClassBossTimer()}catch(e){console.warn('보스 타이머 갱신 오류',e)}},1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClassBossTimer()});
+ refreshHome();setTimeout(refreshHome,100);
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+function bootDashboard(){
+ try{init()}catch(e){console.warn('대시보드 초기화 대기',e)}
+ if(!$('class-boss-list')){
+  let attempts=0;
+  const retry=setInterval(()=>{try{init()}catch(e){console.warn('대시보드 재시도',e)}if($('class-boss-list')||++attempts>=40)clearInterval(retry)},250);
+ }
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootDashboard);else bootDashboard();
+// 카운트다운은 화면 전환 및 Firebase 갱신과 무관하게 독립적으로 실행한다.
+setInterval(()=>{
+ try{
+  const nodes=document.querySelectorAll('#class-boss-list .class-boss-countdown[data-target]');
+  const now=Date.now();
+  nodes.forEach(el=>{
+   const target=Number(el.dataset.target);
+   if(Number.isFinite(target))el.textContent=formatBossCountdown(target-now);
+  });
+  if($('class-boss-list')&&(!classBossTimerLast||now-classBossTimerLast>30000))updateClassBossTimer();
+ }catch(e){console.warn('카운트다운 갱신',e)}
+},1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClassBossTimer()});
 })();
 </script>
 

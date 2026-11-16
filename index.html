@@ -3252,10 +3252,10 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
   el.innerHTML=`<p class="class-v45-muted">이번 주 ${weekTitle()} · 쟁 분배 ${num(calc().warPool)} 다이아 · 누적 쟁 점수 ${num(total)}점</p>
   <div class="class-v45-panel"><p class="class-v45-muted">쟁이 발생할 때마다 <b>이번 쟁 추가 점수</b>를 입력하고 저장하세요. 기존 누적 점수에 더해집니다. 0점은 변경되지 않습니다.</p>
   <table class="class-v45-table"><thead><tr><th>길드원</th><th>누적 점수</th><th>이번 쟁 추가 점수</th><th>예상 분배 다이아</th></tr></thead><tbody>
-  ${users().map(u=>`<tr><td>${esc(u.id)}${u.isGuest?' (미가입)':''}</td><td>${num(score(u))}점</td><td>${editable?`<input class="class-v45-input" type="number" min="0" step="1" data-war-uid="${esc(memberKey(u))}" value="0">`:'-'} </td><td>💎 ${num(warShare(u))}</td></tr>`).join('')}</tbody></table>
-  ${editable?'<div style="text-align:right;margin-top:12px"><button class="class-v45-btn" onclick="classV45SaveWar()">이번 쟁 점수 누적 저장</button></div>':''}</div>
+  ${users().map(u=>`<tr><td>${esc(u.id)}${u.isGuest?' (미가입)':''}</td><td>${editable?`<input class="class-v45-input" style="width:95px;max-width:100%" type="number" min="0" step="1" data-war-total="${esc(memberKey(u))}" value="${score(u)}" aria-label="${esc(u.id)} 누적 점수 수정">`:`${num(score(u))}점`}</td><td>${editable?`<input class="class-v45-input" type="number" min="0" step="1" data-war-uid="${esc(memberKey(u))}" value="0">`:'-'} </td><td>💎 ${num(warShare(u))}</td></tr>`).join('')}</tbody></table>
+  ${editable?'<div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px"><button class="class-v45-btn" style="background:#475569" onclick="classV62CorrectWar()">누적 점수 수정 저장</button><button class="class-v45-btn" onclick="classV45SaveWar()">이번 쟁 점수 누적 저장</button></div>':''}</div>
   <div class="class-v45-panel"><strong>쟁 점수 등록 내역</strong>
-  ${history.length?`<div style="max-height:220px;overflow:auto;margin-top:10px">${history.slice(-30).reverse().map(h=>`<div class="class-v45-muted" style="padding:7px 0;border-bottom:1px solid #343d59">${esc(h.at||'')} · ${esc(h.by||'관리자')} · ${esc((h.entries||[]).map(e=>e.name+' +'+e.points+'점').join(', '))}</div>`).join('')}</div>`:'<p class="class-v45-muted" style="margin-top:8px">아직 등록된 내역이 없습니다.</p>'}</div>`;
+  ${history.length?`<div style="max-height:220px;overflow:auto;margin-top:10px">${history.slice(-30).reverse().map(h=>`<div class="class-v45-muted" style="padding:7px 0;border-bottom:1px solid #343d59">${esc(h.at||'')} · ${esc(h.by||'관리자')} · ${esc((h.entries||[]).map(e=>h.type==='correction'?e.name+' '+e.from+'→'+e.to+'점 (정정)':e.name+' +'+e.points+'점').join(', '))}</div>`).join('')}</div>`:'<p class="class-v45-muted" style="margin-top:8px">아직 등록된 내역이 없습니다.</p>'}</div>`;
  }
  function renderSiege(){
   const el=$('class-siege-system');if(!el||typeof db==='undefined')return;
@@ -3312,6 +3312,42 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
   }catch(e){console.error(e);alert('저장 실패: '+(e.message||e));return false;}
   finally{if(button)button.disabled=false;}
  }
+ window.classV62CorrectWar=async function(){
+  if(!manager())return alert('관리자·마스터·운영진만 수정할 수 있습니다.');
+  const fields=[...document.querySelectorAll('#class-war-system [data-war-total]')];
+  const changes={};
+  for(const field of fields){
+    const value=field.value.trim();
+    if(!/^\\d+$/.test(value)||!Number.isSafeInteger(Number(value)))return alert('누적 점수는 0 이상의 정수로 입력하세요.');
+    const uid=field.dataset.warTotal;
+    const user=users().find(u=>memberKey(u)===uid);
+    if(user&&Number(value)!==score(user))changes[uid]=Number(value);
+  }
+  const ids=Object.keys(changes);
+  if(!ids.length)return alert('수정된 누적 점수가 없습니다.');
+  const details=ids.map(uid=>{
+    const u=users().find(x=>memberKey(x)===uid);
+    return `${u?.id||uid}: ${u?score(u):0}점 → ${changes[uid]}점`;
+  });
+  if(!confirm(`누적 점수를 아래와 같이 정정할까요?\\n\\n${details.join('\\n')}\\n\\n이번 쟁 추가 점수는 별도로 저장됩니다.`))return;
+  const targetWeek=week();
+  await persist(x=>{
+    x.weeks=x.weeks||{};
+    const w=x.weeks[targetWeek]||(x.weeks[targetWeek]={});
+    w.war=w.war||{};
+    const entries=[];
+    for(const [uid,to] of Object.entries(changes)){
+      const from=Math.max(0,Number(w.war[uid])||0);
+      if(from===to)continue;
+      w.war[uid]=to;
+      entries.push({uid,name:users().find(u=>memberKey(u)===uid)?.id||uid,from,to});
+    }
+    if(entries.length){
+      w.warHistory=Array.isArray(w.warHistory)?w.warHistory:[];
+      w.warHistory.push({at:new Date().toLocaleString('ko-KR'),by:cloudUser?.email||'관리자',type:'correction',entries});
+    }
+  },document.activeElement);
+ };
  window.classV45SaveWar=async function(){
   const inputs=[...document.querySelectorAll('[data-war-uid]')];
   const increments={};

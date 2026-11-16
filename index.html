@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V63_WAR_HISTORY_NICKNAME">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V68_UPDATE_MONITOR_FIX">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3187,7 +3187,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
       if(match && currentVersion){
         const deployedVersion = Number(match[1].match(/_V(\d+)(?:_|$)/i)?.[1] || 0);
         // Only notify for a genuinely newer deployed version. Never flag an older cached deployment.
-        if(deployedVersion > currentVersion){updateFound=true;banner();}
+        if(deployedVersion > currentVersion || (deployedVersion === currentVersion && match[1] !== CURRENT_BUILD)){updateFound=true;banner();}
       }
     }catch(e){console.debug('업데이트 확인 실패',e);}
     finally{checking=false;}

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261116_V44_STABLE_SLOTS">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V46_HOME_RATIO">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -283,7 +283,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             <label class="block text-sm">닉네임<input id="my-profile-id" maxlength="30" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white"></label>
             <label class="block text-sm">전투력<input id="my-profile-power" type="number" min="0" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white"></label>
             <label class="block text-sm">클래스<select id="my-profile-class" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white"><option>레인저</option><option>소서리스</option><option>파이터</option><option>어쌔신</option></select></label>
-            <button onclick="saveMyProfile()" class="w-full bg-amber-500 text-slate-950 font-bold py-3 rounded-xl">변경사항 저장</button>
+<div id="class-profile-weekly" class="class-v45-profile-summary"></div>\n            <button onclick="saveMyProfile()" class="w-full bg-amber-500 text-slate-950 font-bold py-3 rounded-xl">변경사항 저장</button>
             <button type="button" onclick="openPasswordChange(false)" class="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-3 rounded-xl">🔒 내 비밀번호 변경</button>
         </div>
     </div>
@@ -893,6 +893,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             weeklyArchives: [],
             activeWeekKey: null,
             guildDiamondsByWeek: {},
+            participationSystem: {ratios:{reserve:5,operations:20,war:55,boss:20},weeks:{}},
             items: [
                 { id: 1, name: '영웅 5티어 장갑', category: '장비', price: 5000, applicants: [], distributed: false },
                 { id: 2, name: '전설 스킬북 [앱솔루트]', category: '스킬북', price: 20000, applicants: [], distributed: false }
@@ -937,7 +938,7 @@ body{background:#060915!important;color:#f7f7ff!important}
           const next = clone(DEFAULT_DB);
           next.users = [...profileDocs].map(([uid,d])=>localProfile(d.nickname||uid,uid,d)).concat([...guestDocs].map(([gid,d])=>({id:d.nickname,guestId:gid,isGuest:true,role:'길드원',class:d.class||'레인저',power:Number(d.power)||0}))); 
           next.currentUser = own.nickname;
-          ['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','bossSlotAutoAnchors','guildDiamondsByWeek','activeWeekKey'].forEach(k=>{
+          ['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','bossSlotAutoAnchors','guildDiamondsByWeek','participationSystem','activeWeekKey'].forEach(k=>{
             if(shared[k]!==undefined) next[k]=clone(shared[k]);
           });
           next.bossRecords={};
@@ -952,6 +953,7 @@ body{background:#060915!important;color:#f7f7ff!important}
           try {
             ensureWeeklyRollover();checkLoginState();
             if(typeof refreshHome==='function') refreshHome();
+            if(typeof window.classV45Refresh==='function')window.classV45Refresh();
             const bossModal=document.getElementById('boss-reg-modal');
             if(bossModal && !bossModal.classList.contains('hidden')) loadUserBossRecords(true);
             const slotsPane=document.getElementById('boss-manage-slots-pane');
@@ -1010,7 +1012,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             if(!cloudMaster() || uid===ADMIN_UID || (!cloudAdmin() && ['웹 관리자','마스터'].includes(u.role))) throw new Error('마스터는 운영진·길드원 계정만 추방할 수 있습니다.');
             ops.push(store.doc('users/'+uid).delete());
           }
-          const sharedKeys=['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','bossSlotAutoAnchors','guildDiamondsByWeek','activeWeekKey'];
+          const sharedKeys=['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','bossSlotAutoAnchors','guildDiamondsByWeek','participationSystem','activeWeekKey'];
           if(stable(before.weeklyArchives)!==stable(after.weeklyArchives)){if(!cloudManager())throw new Error('보관함은 관리자만 수정할 수 있습니다.');ops.push(store.doc('guildPrivate/archives').set({weeklyArchives:clone(after.weeklyArchives)}));}
           const delta={};
           sharedKeys.forEach(k=>{if(stable(before[k])!==stable(after[k]))delta[k]=clone(after[k]??null);});
@@ -2554,14 +2556,20 @@ body{background:#060915!important;color:#f7f7ff!important}
             return totals;
         }
         function diamondCalculation(weekKey, scores = weeklyScores(weekKey)) {
-            const total = Math.max(0,Math.floor(Number(db.guildDiamondsByWeek[weekKey]) || 0));
-            const truncated = Math.floor(total/100)*100;
-            const expense = Math.floor(total*.15);
-            const reserve = Math.floor(total*.05);
-            const points = Object.values(scores).reduce((sum,v) => sum+Math.max(0,Math.floor(Number(v)||0)),0);
-            const unit = points ? Math.floor(total*.8/points) : 0;
-            const distributed = Object.values(scores).reduce((sum,v)=>sum+unit*Math.max(0,Math.floor(Number(v)||0)),0);
-            return {total,truncated,expense,reserve,points,unit,distributed};
+            const total=Math.max(0,Math.floor(Number(db.guildDiamondsByWeek[weekKey])||0));
+            const ratios=db.participationSystem?.ratios||{reserve:5,operations:20,war:55,boss:20};
+            const reserve=Math.floor(total*ratios.reserve/100);
+            const expense=Math.floor(total*ratios.operations/100);
+            const bossPool=Math.floor(total*ratios.boss/100);
+            const warPool=Math.floor(total*ratios.war/100);
+            const points=Object.values(scores).reduce((sum,v)=>sum+Math.max(0,Number(v)||0),0);
+            const unit=points?Math.floor(bossPool/points):0;
+            const bossDistributed=Object.values(scores).reduce((sum,v)=>sum+unit*Math.max(0,Number(v)||0),0);
+            const warPoints=db.participationSystem?.weeks?.[weekKey]?.war||{};
+            const warTotal=Object.values(warPoints).reduce((sum,v)=>sum+Math.max(0,Number(v)||0),0);
+            const warDistributed=warTotal?db.users.filter(u=>u.uid).reduce((sum,u)=>sum+Math.floor(warPool*Math.max(0,Number(warPoints[u.uid])||0)/warTotal),0):0;
+            return {total,truncated:Math.floor(total/100)*100,expense,reserve,points,unit,
+                bossPool,warPool,bossDistributed,warDistributed,distributed:bossDistributed+warDistributed+expense};
         }
         function archiveWeek(weekKey) {
             if (!weekKey || db.weeklyArchives.some(a=>a.weekKey===weekKey)) return;
@@ -2593,9 +2601,9 @@ body{background:#060915!important;color:#f7f7ff!important}
             const key = currentWeekKey(), d = diamondCalculation(key);
             document.getElementById('diamond-week-label').textContent = weekLabel(key);
             const fields = [
-                ['길드 총 다이아',d.total],['백 단위 절사 다이아',d.truncated],['총무비 (15%)',d.expense],
-                ['길드 여유 자금 (5%)',d.reserve],['길드원 총 참여 점수',d.points],
-                ['1점당 다이아 (80% 기준)',d.unit],['총 분배 금액',d.distributed]
+                ['길드 총 다이아',d.total],['백 단위 절사 다이아',d.truncated],['운영진 분배 ('+(db.participationSystem?.ratios?.operations??20)+'%)',d.expense],
+                ['길드 여유 자금 ('+(db.participationSystem?.ratios?.reserve??5)+'%)',d.reserve],['길드원 총 참여 점수',d.points],
+                ['보스 배정 다이아',d.bossPool],['쟁 배정 다이아',d.warPool],['보스 1점당 다이아',d.unit],['총 배정·분배 금액',d.distributed]
             ];
             container.innerHTML = fields.map(([label,value])=>`<div class="flex justify-between gap-2"><span>${label}</span><strong class="text-amber-300">${Number(value).toLocaleString()}${label.includes('점수')?'점':' 다이아'}</strong></div>`).join('');
             const edit = document.getElementById('diamond-admin-edit');
@@ -2937,7 +2945,17 @@ body{background:#060915!important;color:#f7f7ff!important}
 <script id="class-dashboard-script">
 (function(){
 const $=id=>document.getElementById(id);
-function page(name){document.querySelectorAll('.class-page').forEach(x=>x.classList.toggle('active',x.dataset.page===name));document.querySelectorAll('.class-nav button').forEach(x=>x.classList.toggle('active',x.dataset.target===name));window.scrollTo({top:0,behavior:'instant'});if(name==='home')refreshHome();}
+function page(name){document.querySelectorAll('.class-page').forEach(x=>x.classList.toggle('active',x.dataset.page===name));document.querySelectorAll('.class-nav button').forEach(x=>x.classList.toggle('active',x.dataset.target===name));window.scrollTo({top:0,behavior:'instant'});if(name==='home')refreshHome();if(typeof window.classV45Refresh==='function')window.classV45Refresh();}
+function renderClassHomeRatios(){
+ const el=document.getElementById('class-home-ratio-chart');if(!el||typeof db==='undefined')return;
+ const r=db.participationSystem?.ratios||{reserve:5,operations:20,war:55,boss:20};
+ const parts=[['길드 여유 자금',r.reserve??5,'#64748b'],['운영진 분배',r.operations??20,'#a855f7'],['쟁 참여도',r.war??55,'#3b82f6'],['보스 참여도',r.boss??20,'#f59e0b']];
+ const valid=parts.every(p=>Number.isFinite(Number(p[1]))&&Number(p[1])>=0)&&parts.reduce((n,p)=>n+Number(p[1]),0)===100;
+ const bar=parts.map(p=>'<span style="width:'+Number(p[1])+'%;background:'+p[2]+';height:100%;display:block"></span>').join('');
+ el.innerHTML='<div class="class-v46-ratio-header"><strong>💎 길드 자금 분배 비율</strong><span>합계 '+parts.reduce((n,p)=>n+Number(p[1]),0)+'%</span></div>'+
+ (valid?'<div class="class-v46-ratio-bar" aria-label="길드 자금 분배 비율">'+bar+'</div>':'<p style="color:#fbbf24">분배 비율 합계를 확인해 주세요.</p>')+
+ '<div class="class-v46-ratio-legend">'+parts.map(p=>'<div class="class-v46-ratio-item"><i style="background:'+p[2]+'"></i><span>'+p[0]+'</span><strong>'+Number(p[1])+'%</strong></div>').join('')+'</div>';
+}
 function refreshHome(){
  if(!$('class-home')||typeof db==='undefined'||!db)return;
  try{
@@ -2953,6 +2971,7 @@ function refreshHome(){
  const upcoming=[...byName.values()].sort((a,b)=>a.next-b.next);
  const box=$('class-boss-list');
  box.innerHTML=upcoming.slice(0,4).map((b,i)=>`<div class="class-boss"><strong>⚔ ${escapeHtml(b.name)}</strong><span style="color:${i===0?'#e2b9ff':'#f6f5ff'}">${formatBossCountdown(b.next-Date.now()).replace(/ 전$/,'')}</span><small style="display:block;color:#aeb8d7;font-size:12px;margin-top:6px">${bossDateLabel(b.next)}</small></div>`).join('')||'<div class="text-slate-400">예정된 보스 일정이 없습니다.</div>';
+ renderClassHomeRatios();
  const week=currentWeekKey(),monday=new Date(week+'T00:00:00'),sunday=new Date(monday);sunday.setDate(sunday.getDate()+7);const start=localDateKey(monday),finish=localDateKey(sunday);
  const participating=new Set();let kills=new Set();Object.entries(db.bossRecords||{}).forEach(([user,records])=>{Object.entries(records||{}).forEach(([key,checked])=>{if(checked!==true)return;if(key.startsWith('slot_')){const d=key.slice(5,15);if(d>=start&&d<finish){participating.add(user);kills.add(key)}}else if(/^[월화수목금토일]_/.test(key)){participating.add(user)}})});
  $('class-participants').textContent=participating.size.toLocaleString('ko-KR')+'명';$('class-kills').textContent=kills.size.toLocaleString('ko-KR')+'회';const amount=diamondCalculation(week).distributed;$('class-diamonds').textContent=Number(amount||0).toLocaleString('ko-KR');
@@ -3002,8 +3021,8 @@ window.classEditPatchNote=async function(index){
 function init(){const app=$('app-container'),grid=$('dashboard-grid');if(!app||!grid||$('class-nav'))return;const panels=Array.from(grid.children);if(panels.length<4)return;
  const title=$('site-title');if(title)title.textContent='클래스';const subtitle=$('site-subtitle');if(subtitle)subtitle.textContent='CLASS';
  const header=app.querySelector('header');const profile=header.querySelector('button[onclick*="openMyProfileModal"]');if(profile)profile.textContent='마이페이지';const logout=header.querySelector('button[onclick*="logout"]');const admin=document.createElement('button');admin.id='class-admin-link';admin.className='class-admin-button';admin.textContent='⚙ 관리자';admin.style.display='none';admin.onclick=()=>page('admin');if(logout)logout.before(admin);
- const nav=document.createElement('nav');nav.id='class-nav';nav.className='class-nav';nav.innerHTML='<button type="button" data-target="home" class="active">⌂ 홈</button><button type="button" data-target="members">♟ 길드원</button><button type="button" data-target="boss">⚔ 보스 관리</button><button type="button" data-target="items">▣ 아이템/분배</button>';header.after(nav);nav.querySelectorAll('button').forEach(b=>b.onclick=()=>page(b.dataset.target));
- const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div class="class-home-top"><div class="class-card class-announcements"><div class="class-notice-half"><div class="class-mini-heading"><h2>📢 공지사항</h2></div><div id="class-notice-slot"></div></div><div class="class-patch-half"><div class="class-mini-heading"><h2>📄 패치노트</h2><button id="class-patch-add" type="button" class="class-btn" style="display:none" onclick="classAddPatchNote()">＋ 링크 등록</button></div><div id="class-patch-list" class="class-patch-list"><div class="text-slate-400">등록된 패치노트가 없습니다.</div></div></div></div><div class="class-card"><h2>💎 주간 다이아 분배</h2><div id="class-diamond-slot"></div></div></div><div class="class-card class-boss-card"><div class="class-actions"><h2 style="margin:0">◷ 보스 타이머</h2><button class="class-btn class-boss-register" id="class-all-bosses">보스 참여 등록</button></div><div class="class-bosses" id="class-boss-list"></div></div><div class="class-card class-weekly-card"><h2>▥ 이번 주 현황</h2><div class="class-stats"><div class="class-stat"><div class="symbol">👥</div><div class="caption">참여 인원</div><div class="value" style="color:#52ddcc" id="class-participants">-</div></div><div class="class-stat"><div class="symbol">⚔️</div><div class="caption">보스 처치</div><div class="value" style="color:#d9a5ff" id="class-kills">-</div></div><div class="class-stat"><div class="symbol">💎</div><div class="caption">분배 예정 다이아</div><div class="value" style="color:#b8a1ff" id="class-diamonds">-</div></div></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div class="class-panel-slot" id="class-admin-slot"></div></section>`;
+ const nav=document.createElement('nav');nav.id='class-nav';nav.className='class-nav';nav.innerHTML='<button type="button" data-target="home" class="active">⌂ 홈</button><button type="button" data-target="members">♟ 길드원</button><button type="button" data-target="boss">⚔ 보스</button><button type="button" data-target="war">⚔ 쟁</button><button type="button" data-target="siege">♜ 공성전</button><button type="button" data-target="items">▣ 분배 아이템</button>';header.after(nav);nav.querySelectorAll('button').forEach(b=>b.onclick=()=>page(b.dataset.target));
+ const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div class="class-home-top"><div class="class-card class-announcements"><div class="class-notice-half"><div class="class-mini-heading"><h2>📢 공지사항</h2></div><div id="class-notice-slot"></div></div><div class="class-patch-half"><div class="class-mini-heading"><h2>📄 패치노트</h2><button id="class-patch-add" type="button" class="class-btn" style="display:none" onclick="classAddPatchNote()">＋ 링크 등록</button></div><div id="class-patch-list" class="class-patch-list"><div class="text-slate-400">등록된 패치노트가 없습니다.</div></div></div></div></div><div class="class-card class-boss-card"><div class="class-actions"><h2 style="margin:0">◷ 보스 타이머</h2><button class="class-btn class-boss-register" id="class-all-bosses">보스 참여 등록</button></div><div class="class-bosses" id="class-boss-list"></div></div><div class="class-card class-weekly-card"><h2>▥ 이번 주 현황</h2><div id="class-home-ratio-chart" class="class-v46-ratio-chart"></div><div class="class-stats"><div class="class-stat"><div class="symbol">👥</div><div class="caption">참여 인원</div><div class="value" style="color:#52ddcc" id="class-participants">-</div></div><div class="class-stat"><div class="symbol">⚔️</div><div class="caption">보스 처치</div><div class="value" style="color:#d9a5ff" id="class-kills">-</div></div><div class="class-stat"><div class="symbol">💎</div><div class="caption">분배 예정 다이아</div><div class="value" style="color:#b8a1ff" id="class-diamonds">-</div></div></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="war"><div class="class-card"><h2>⚔ 쟁 참여 관리</h2><div id="class-war-system"></div></div></section><section class="class-page" data-page="siege"><div class="class-card"><h2>♜ 공성전 (임시)</h2><div id="class-siege-system"></div></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div class="class-panel-slot" id="class-admin-slot"></div><div class="class-card" style="margin-top:16px"><h2>💎 길드 자금 분배율 설정</h2><div id="class-ratio-system"></div></div></section>`;
  $('class-all-bosses').onclick=()=>openBossModal();$('class-admin-back').onclick=()=>page('home');
  $('class-member-slot').append(panels[0]);$('class-boss-slot').append(panels[1]);$('class-item-slot').append(panels[2]);$('class-admin-slot').append(panels[3]);
  const notice=$('content-notice-1');if(notice){$('class-notice-slot').append(notice);notice.classList.remove('hidden')};const diamond=$('diamond-summary-panel');if(diamond){$('class-diamond-slot').append(diamond);diamond.classList.remove('hidden')};
@@ -3093,5 +3112,149 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   setTimeout(check,12000);
 })();
 </script>
+
+<style id="class-v45-style">
+.class-nav{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+.class-v45-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.class-v45-panel{background:#111b31;border:1px solid #555a80;border-radius:13px;padding:15px;margin:12px 0}
+.class-v45-table{width:100%;border-collapse:collapse;font-size:14px}
+.class-v45-table th,.class-v45-table td{padding:10px;border-bottom:1px solid #343d59;text-align:left}
+.class-v45-input{background:#0b1224;border:1px solid #66708c;color:#fff;padding:9px;border-radius:8px;width:100%;max-width:190px}
+.class-v45-btn{background:linear-gradient(120deg,#7131b3,#52247c);border:1px solid #bd8cff;border-radius:9px;padding:10px 17px;font-weight:800;color:white;cursor:pointer}
+.class-v45-muted{color:#aab4ce;font-size:13px}
+.class-v45-profile-summary{border:1px solid #665384;border-radius:12px;padding:12px;background:#121b30;font-size:13px}
+@media(max-width:850px){.class-nav{grid-template-columns:repeat(3,minmax(0,1fr))!important}.class-v45-grid{grid-template-columns:1fr}.class-v45-table th,.class-v45-table td{padding:6px;font-size:12px}}
+</style>
+<style id="class-v46-home-ratios">
+#class-home .class-home-top{grid-template-columns:1fr!important}
+#class-home .class-weekly-card .class-v46-ratio-chart{margin:0 0 15px;padding:14px;border:1px solid #5c537f;border-radius:13px;background:#11192d}
+.class-v46-ratio-header{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:11px;font-size:15px}
+.class-v46-ratio-header span{color:#cbd5e1;font-size:13px}
+.class-v46-ratio-bar{display:flex;width:100%;height:19px;border-radius:20px;overflow:hidden;background:#1e293b}
+.class-v46-ratio-legend{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
+.class-v46-ratio-item{display:flex;gap:6px;align-items:center;font-size:13px;min-width:0}
+.class-v46-ratio-item i{width:11px;height:11px;border-radius:3px;flex:none}
+.class-v46-ratio-item span{color:#d4d9e8;min-width:0}
+.class-v46-ratio-item strong{margin-left:auto}
+@media(max-width:700px){.class-v46-ratio-legend{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<script id="class-v45-participation">
+(function(){
+ const $=id=>document.getElementById(id);
+ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const num=v=>Number(v||0).toLocaleString('ko-KR');
+ const roles=['웹 관리자','마스터','운영진'];
+ const manager=()=>typeof isCurrentAdmin==='function'&&isCurrentAdmin();
+ const system=()=>db.participationSystem||(db.participationSystem={ratios:{reserve:5,operations:20,war:55,boss:20},weeks:{}});
+ const week=()=>currentWeekKey();
+ const weekData=()=>{const x=system();return x.weeks[week()]||(x.weeks[week()]={war:{},siege:{diamonds:0,participants:{}}});};
+ const users=()=>db.users.filter(u=>u.uid).slice().sort((a,b)=>Number(b.power||0)-Number(a.power||0));
+ const score=(u)=>Math.max(0,Number(weekData().war?.[u.uid])||0);
+ const weight=(u,list)=>{const max=Math.max(1,...list.map(x=>Number(x.power)||0));return 1+0.8*Math.pow(Math.max(0,Number(u.power)||0)/max,2);};
+ const siegeList=()=>users().filter(u=>weekData().siege?.participants?.[u.uid]===true);
+ const siegeShares=()=>{
+   const list=siegeList(),weights=list.map(u=>weight(u,list)),total=weights.reduce((a,b)=>a+b,0);
+   const pool=Math.max(0,Math.floor(Number(weekData().siege?.diamonds)||0));
+   return Object.fromEntries(list.map((u,i)=>[u.uid,{weight:weights[i],amount:total?Math.floor(pool*weights[i]/total):0}]));
+ };
+ const calc=()=>diamondCalculation(week());
+ const warShare=u=>{
+   const list=users(),total=list.reduce((n,x)=>n+score(x),0);
+   return total?Math.floor(calc().warPool*score(u)/total):0;
+ };
+ const bossShare=u=>Math.floor(Math.max(0,Number(weeklyScores(week())[u.id])||0))*calc().unit;
+ const opsShare=u=>roles.includes(u.role)?Math.floor(calc().expense/Math.max(1,users().filter(x=>roles.includes(x.role)).length)):0;
+ function weekTitle(){return esc(weekLabel(week()));}
+ function renderWar(){
+  const el=$('class-war-system');if(!el||typeof db==='undefined')return;
+  const editable=manager();
+  const total=users().reduce((a,u)=>a+score(u),0);
+  el.innerHTML=`<p class="class-v45-muted">이번 주 ${weekTitle()} · 길드 자금 중 쟁 분배 ${num(calc().warPool)} 다이아 · 총 쟁 점수 ${num(total)}점</p>
+  <div class="class-v45-panel"><table class="class-v45-table"><thead><tr><th>길드원</th><th>쟁 참여 점수</th><th>예상 분배 다이아</th></tr></thead><tbody>
+  ${users().map(u=>`<tr><td>${esc(u.id)}</td><td>${editable?`<input class="class-v45-input" type="number" min="0" step="1" data-war-uid="${esc(u.uid)}" value="${score(u)}">`:num(score(u))+'점'}</td><td>💎 ${num(warShare(u))}</td></tr>`).join('')}</tbody></table>
+  ${editable?'<div style="text-align:right;margin-top:12px"><button class="class-v45-btn" onclick="classV45SaveWar()">이번 주 쟁 점수 저장</button></div>':''}</div>`;
+ }
+ function renderSiege(){
+  const el=$('class-siege-system');if(!el||typeof db==='undefined')return;
+  const editable=manager(),w=weekData(),shares=siegeShares();
+  el.innerHTML=`<p class="class-v45-muted">공성전은 게임 내 시스템 출시 전 임시 예상 기능입니다. 길드 자금과 별개인 서버 지급 다이아를 입력합니다.</p>
+  <div class="class-v45-panel"><label>서버 지급 공성전 다이아 <input id="class-v45-siege-diamonds" type="number" min="0" step="1" class="class-v45-input" value="${Math.max(0,Number(w.siege?.diamonds)||0)}" ${editable?'':'disabled'}></label>
+  <p class="class-v45-muted" style="margin-top:8px">전투력 기준 자동 가중치: 1.00 ~ 1.80배 (최고 투력 기준). 참여자로 선택한 인원만 예상 분배합니다.</p>
+  <table class="class-v45-table"><thead><tr><th>참여</th><th>길드원</th><th>전투력</th><th>가중치</th><th>예상 다이아</th></tr></thead><tbody>
+  ${users().map(u=>`<tr><td><input type="checkbox" data-siege-uid="${esc(u.uid)}" ${w.siege?.participants?.[u.uid]?'checked':''} ${editable?'':'disabled'}></td><td>${esc(u.id)}</td><td>${num(u.power)}</td><td>${shares[u.uid]?.weight.toFixed(2)||'-'}</td><td>💎 ${num(shares[u.uid]?.amount||0)}</td></tr>`).join('')}</tbody></table>
+  ${editable?'<div style="text-align:right;margin-top:12px"><button class="class-v45-btn" onclick="classV45SaveSiege()">공성전 설정 저장</button></div>':''}</div>`;
+ }
+ function renderRatios(){
+  const el=$('class-ratio-system');if(!el||typeof db==='undefined')return;
+  const r=system().ratios;
+  const fields=[['reserve','길드 여유 자금'],['operations','운영진 분배'],['war','쟁 참여'],['boss','보스 참여']];
+  el.innerHTML=`<p class="class-v45-muted">길드 자금만 적용합니다. 공성전 서버 다이아는 제외됩니다. 운영진 몫은 웹 관리자·마스터·운영진에게 균등 분배한 예상액입니다.</p>
+  <div class="class-v45-grid">${fields.map(([k,label])=>`<label class="class-v45-panel">${label}<div><input class="class-v45-input" data-ratio="${k}" type="number" min="0" max="100" step="1" value="${Number(r[k])}" ${manager()?'':'disabled'}> %</div></label>`).join('')}</div>
+  ${manager()?'<button class="class-v45-btn" onclick="classV45SaveRatios()">분배율 저장 (합계 100%)</button>':''}`;
+ }
+ function renderProfile(){
+  const el=$('class-profile-weekly');if(!el||typeof db==='undefined')return;
+  const u=users().find(x=>x.uid===cloudUser?.uid);if(!u)return;
+  const ss=siegeShares()[u.uid];
+  el.innerHTML=`<strong style="color:#d8b4fe">이번 주 참여·분배 요약 (${weekTitle()})</strong>
+  <div style="margin-top:8px">⚔ 보스 참여 점수: ${num(weeklyScores(week())[u.id]||0)}점 / 💎 ${num(bossShare(u))}</div>
+  <div>⚔ 쟁 참여 점수: ${num(score(u))}점 / 💎 ${num(warShare(u))}</div>
+  <div>♜ 공성전: ${ss?ss.weight.toFixed(2)+'배':'미참여'} / 서버 다이아 예상 💎 ${num(ss?.amount||0)}</div>
+  <div>♛ 운영진 배분 예상: 💎 ${num(opsShare(u))}</div>`;
+ }
+ async function persist(next,button){
+  if(!manager())return alert('관리자·마스터·운영진만 수정할 수 있습니다.');
+  if(!cloudReady)return alert('서버 연결을 확인하세요.');
+  if(button)button.disabled=true;
+  try{
+   // Firestore transaction prevents lost updates between multiple managers.
+   const ref=store.doc('guildData/main');
+   await store.runTransaction(async tx=>{
+    const snap=await tx.get(ref);
+    const remote=snap.data()?.participationSystem||{ratios:{reserve:5,operations:20,war:55,boss:20},weeks:{}};
+    const updated=JSON.parse(JSON.stringify(remote));
+    next(updated);
+    tx.set(ref,{participationSystem:updated},{merge:true});
+   });
+   alert('서버에 저장했습니다.');
+  }catch(e){console.error(e);alert('저장 실패: '+(e.message||e));}
+  finally{if(button)button.disabled=false;}
+ }
+ window.classV45SaveWar=async function(){
+  const inputs=[...document.querySelectorAll('[data-war-uid]')];
+  const points={};
+  for(const el of inputs){const n=Number(el.value);if(!Number.isSafeInteger(n)||n<0)return alert('쟁 점수는 0 이상의 정수로 입력하세요.');points[el.dataset.warUid]=n;}
+  await persist(x=>{x.weeks=x.weeks||{};x.weeks[week()]=x.weeks[week()]||{};x.weeks[week()].war=points;},document.activeElement);
+ };
+ window.classV45SaveSiege=async function(){
+  const n=Number($('class-v45-siege-diamonds')?.value);
+  if(!Number.isSafeInteger(n)||n<0)return alert('공성전 다이아는 0 이상의 정수로 입력하세요.');
+  const participants=Object.fromEntries([...document.querySelectorAll('[data-siege-uid]')].map(el=>[el.dataset.siegeUid,el.checked]));
+  await persist(x=>{x.weeks=x.weeks||{};x.weeks[week()]=x.weeks[week()]||{};x.weeks[week()].siege={diamonds:n,participants};},document.activeElement);
+ };
+ window.classV45SaveRatios=async function(){
+  const r=Object.fromEntries([...document.querySelectorAll('[data-ratio]')].map(el=>[el.dataset.ratio,Number(el.value)]));
+  if(Object.values(r).some(n=>!Number.isSafeInteger(n)||n<0||n>100)||Object.values(r).reduce((a,b)=>a+b,0)!==100)return alert('각 비율은 0~100 정수이며 합계가 100%여야 합니다.');
+  await persist(x=>{x.ratios=r;},document.activeElement);
+ };
+ function refresh(){
+  if(typeof db==='undefined'||!cloudReady)return;
+  renderWar();renderSiege();renderRatios();renderProfile();
+ }
+ // Re-render when Firestore publishes new shared data, not on a timer while editing.
+ const oldBuild=window.classV45Refresh;
+ window.classV45Refresh=refresh;
+ const observe=new MutationObserver(()=>{
+  if(!$('class-war-system'))return;
+  observe.disconnect();
+  refresh();
+ });
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>observe.observe(document.body,{childList:true,subtree:true}));
+ else observe.observe(document.body,{childList:true,subtree:true});
+ const oldOpen=window.openMyProfileModal;
+ window.openMyProfileModal=function(){oldOpen();refresh();};
+})();
+</script>
+
 </body>
 </html>

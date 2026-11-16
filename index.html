@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261116_V28_VERSION_FIX">
+    <meta name="class-build-id" content="CLASS_BUILD_20261116_V29_CUT_STATUS">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1825,14 +1825,14 @@ body{background:#060915!important;color:#f7f7ff!important}
             for(const change of changes){
                 if(change.time<=fromMs){
                     if(change.type==='reset'){currentAnchor=change.time;}
-                    else currentAnchor=change.time;
+                    else currentAnchor=change.time+cycleMs;
                     continue;
                 }
                 if(change.time>=toMs)break;
                 // A future maintenance start cancels pending cycles through its end.
                 generate(change.time);
                 segmentStart=change.time;
-                currentAnchor=change.time;
+                currentAnchor=change.type==='reset' ? change.time : change.time+cycleMs;
                 if(change.type==='reset')add(change.time);
             }
             generate(toMs);
@@ -1963,10 +1963,40 @@ body{background:#060915!important;color:#f7f7ff!important}
         }
 
          
+        // A periodic boss stays "spawned" until an administrator records its cut.
+        // The latest cut or maintenance reset establishes the next scheduled spawn.
+        function periodicBossStatus(boss, nowMs) {
+            const cycleMs = Number(boss.cycleHours) * 3600000;
+            if (!(cycleMs > 0)) return null;
+            const events = periodicBossEvents(boss).filter(e => e.type === 'cut' && e.time <= nowMs);
+            const lastCut = events.length ? events[events.length - 1].time : 0;
+            const windows = bossMaintenanceWindows();
+            const lastReset = windows.filter(w => w.end <= nowMs).at(-1);
+            const resetTime = lastReset ? lastReset.end : 0;
+            const activeAnchor = Math.max(lastCut, resetTime);
+            // After a cut, the next spawn is one full cycle later; after maintenance,
+            // the boss appears immediately at the maintenance end.
+            if (activeAnchor > 0) {
+                const spawn = activeAnchor === resetTime && resetTime > lastCut
+                    ? resetTime : activeAnchor + cycleMs;
+                if (nowMs < spawn) return {time:spawn, spawned:false};
+                // If the spawn has happened, do not silently advance to another cycle.
+                return {time:spawn, spawned:true};
+            }
+            const anchor = Number((db.bossSpawnAnchors || {})[boss.name]);
+            if (!(anchor > 0)) {
+                const next = bossPeriodicTimes(boss, nowMs + 1, nowMs + 15 * 86400000)[0];
+                return next ? {time:next, spawned:false} : null;
+            }
+            // The original anchor represents a scheduled spawn, not a cut.
+            const elapsed = nowMs - anchor;
+            if (elapsed < 0) return {time:anchor, spawned:false};
+            return {time:anchor + Math.floor(elapsed / cycleMs) * cycleMs, spawned:true};
+        }
         function bossNextTime(boss, nowMs) {
-            if(Number(boss.cycleHours)>0){
-                const times=bossPeriodicTimes(boss,nowMs+1,nowMs+15*86400000);
-                return times.length?times[0]:null;
+            if (Number(boss.cycleHours) > 0) {
+                const status = periodicBossStatus(boss, nowMs);
+                return status ? status.time : null;
             }
             const days=['일','월','화','수','목','금','토'];
             if(!boss.fixedTime)return null;
@@ -1988,6 +2018,12 @@ body{background:#060915!important;color:#f7f7ff!important}
             return (days ? `${days}일 ` : '') + (hours ? `${hours}시간 ` : '') + `${minutes}분 ${String(secs).padStart(2, '0')}초 전`;
         }
 
+        function formatBossElapsed(ms) {
+            const sec = Math.max(0, Math.floor(ms / 1000));
+            const d = Math.floor(sec / 86400), h = Math.floor(sec % 86400 / 3600);
+            const m = Math.floor(sec % 3600 / 60), s = sec % 60;
+            return (d ? `${d}일 ` : '') + (h ? `${h}시간 ` : '') + `${m}분 ${String(s).padStart(2,'0')}초 지남`;
+        }
         function bossDateLabel(timestamp) {
             return new Date(timestamp).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
         }
@@ -2007,19 +2043,21 @@ body{background:#060915!important;color:#f7f7ff!important}
             const sorted = db.bossListDef
                 .filter(b => (b.days && b.days.length ? b.days : ['월','화','수','목','금','토','일']).includes(today))
                 .map(b => ({ boss: b, next: bossNextTime(b, nowMs) }))
-                .filter(item => item.next === null || item.next < todayEnd.getTime())
+                .filter(item => Number(item.boss.cycleHours) > 0 || item.next === null || item.next < todayEnd.getTime())
                 .sort((a, b) => (a.next ?? Infinity) - (b.next ?? Infinity));
             list.innerHTML = sorted.map(({boss, next}) => {
                 const name = escapeHtml(boss.name);
                 const nameArg = encodeURIComponent(boss.name);
                 const score = Number(db.bossScores[boss.name] ?? 0);
                 const rule = Number(boss.cycleHours) > 0 ? `${Number(boss.cycleHours)}시간 주기` : `고정 ${escapeHtml(boss.fixedTime || '미설정')}`;
-                const countdown = next === null ? '출현 기준 시간 미설정' : formatBossCountdown(next - nowMs);
+                const status = Number(boss.cycleHours) > 0 ? periodicBossStatus(boss, nowMs) : null;
+                const spawned = !!(status && status.spawned);
+                const countdown = next === null ? '출현 기준 시간 미설정' : spawned ? formatBossElapsed(nowMs - next) : formatBossCountdown(next - nowMs);
                 const nextText = next === null ? '관리자가 기준 시각을 입력해야 합니다' : bossDateLabel(next);
-                const adminButton = admin && Number(boss.cycleHours) > 0 ? `<div class="flex flex-wrap gap-1 justify-end"><button type="button" onclick="setBossNextSpawn(decodeURIComponent('${nameArg}'))" class="text-xs px-2 py-1 rounded bg-blue-600 text-white font-bold">시간 재설정</button><button type="button" onclick="markBossCut(decodeURIComponent('${nameArg}'))" class="text-xs px-2 py-1 rounded bg-rose-500 text-white font-bold">컷</button></div>` : '';
+                const adminButton = admin && Number(boss.cycleHours) > 0 ? `<div class="flex flex-wrap gap-1 justify-end"><button type="button" onclick="setBossNextSpawn(decodeURIComponent('${nameArg}'))" class="text-xs px-2 py-1 rounded bg-blue-600 text-white font-bold">시간 재설정</button><button type="button" onclick="markBossCut(decodeURIComponent('${nameArg}'))" ${spawned ? '' : 'disabled title="보스 등장 후 활성화됩니다"'} class="text-xs px-2 py-1 rounded bg-rose-500 text-white font-bold ${spawned ? '' : 'opacity-40 cursor-not-allowed'}">컷</button></div>` : '';
                 return `<div class="bg-slate-900/70 border border-slate-700/60 rounded-xl p-3 space-y-2">
                     <div class="flex items-center justify-between gap-2"><div class="font-bold text-white">${name} <span class="text-xs text-slate-400 font-normal">${rule} · ${score}점</span></div>${adminButton}</div>
-                    <div class="font-bold text-lg ${next === null ? 'text-slate-400' : 'text-amber-400'}">${countdown}</div>
+                    <div class="font-bold text-lg ${next === null ? 'text-slate-400' : spawned ? 'text-rose-400' : 'text-amber-400'}">${countdown}</div>
                     <div class="text-xs text-slate-400">${nextText}</div>
                 </div>`;
             }).join('') || '<p class="text-slate-400 text-sm">오늘 남은 보스 일정이 없습니다.</p>';
@@ -2030,6 +2068,8 @@ body{background:#060915!important;color:#f7f7ff!important}
             const boss = db.bossListDef.find(b => b.name === name);
             if (!boss || !(Number(boss.cycleHours)>0)) return;
             const cutTime = Date.now();
+            const status = periodicBossStatus(boss, cutTime);
+            if (!status || !status.spawned) return alert('아직 등장하지 않은 보스입니다. 등장 시각 이후에 컷할 수 있습니다.');
             const next = new Date(cutTime + Number(boss.cycleHours)*3600000);
             if (!confirm(`${name} 컷을 지금 시각으로 기록할까요?\n다음 출현 예상: ${next.toLocaleString('ko-KR')}`)) return;
             db.bossSpawnAnchors = db.bossSpawnAnchors || {};
@@ -2645,7 +2685,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <script id="class-update-monitor">
 (function(){
-  const CURRENT_BUILD = 'CLASS_BUILD_20261116_V28_VERSION_FIX';
+  const CURRENT_BUILD = 'CLASS_BUILD_20261116_V29_CUT_STATUS';
   let updateFound = false;
   let checking = false;
   function banner(){

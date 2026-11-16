@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V69_AUDIT_FIX">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V71_WAR_ENTER_REGEX_FIX">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3365,7 +3365,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
   if(!manager())return alert('관리자·마스터·운영진만 수정할 수 있습니다.');
   if(field.dataset.saving==='1')return;
   const raw=field.value.trim();
-  if(!/^\\d+$/.test(raw)||!Number.isSafeInteger(Number(raw)))return alert('누적 점수는 0 이상의 정수로 입력하세요.');
+  if(!/^\d+$/.test(raw)||!Number.isSafeInteger(Number(raw)))return alert('누적 점수는 0 이상의 정수로 입력하세요.');
   const uid=field.dataset.warTotal, user=users().find(u=>memberKey(u)===uid);
   if(!user)return alert('길드원 정보를 찾지 못했습니다.');
   const to=Number(raw),from=score(user);

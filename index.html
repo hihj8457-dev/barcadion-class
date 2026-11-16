@@ -273,6 +273,12 @@ body{background:#060915!important;color:#f7f7ff!important}
 #tier-list-view .tier-price-line span:last-child { white-space:nowrap; margin-left:auto; }
 @media(max-width:760px){ #tier-list-view { grid-template-columns:1fr !important; } }
 </style>
+<style id="class-v66-member-layout">
+#member-list-view .class-member-power{margin-left:0!important;font-size:12px;white-space:nowrap;flex-shrink:0}
+#member-list-view .class-member-metrics{padding-left:0!important;font-size:13px;line-height:1.5}
+#member-list-view .class-member-identity{justify-content:flex-start!important;flex-wrap:wrap;column-gap:7px;row-gap:5px}
+@media(max-width:500px){#member-list-view .class-member-power{font-size:11px}#member-list-view .class-member-metrics{font-size:12px}}
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
 
@@ -1671,7 +1677,9 @@ body{background:#060915!important;color:#f7f7ff!important}
                 if (u.role === '마스터') badgeColor = 'bg-red-500/20 text-red-400';
                 if (u.role === '운영진') badgeColor = 'bg-amber-500/20 text-amber-400';
                 const points = Math.max(0, Math.floor(Number(scores[u.id]) || 0));
-                const diamonds = points * unit;
+                const participation = typeof window.classMemberParticipationSummary==='function'
+                    ? window.classMemberParticipationSummary(u,points)
+                    : {war:0,siege:0};
                 html += `
                     <div class="class-member-card bg-slate-900/60 rounded-xl border border-slate-700/50">
                         <div class="class-member-identity">
@@ -1679,10 +1687,10 @@ body{background:#060915!important;color:#f7f7ff!important}
                             ${guildClassIcon(u.class)}
                             <span class="guild-member-name font-bold text-white" title="${escapeAttribute(u.id)}">${escapeHtml(u.id)}</span>
                             <span class="class-member-role px-1.5 py-0.5 rounded text-[10px] font-semibold whitespace-nowrap ${badgeColor}">${escapeHtml(u.role)}</span>
+                            <span class="class-member-power text-amber-400 font-bold">전투력 ${Number(u.power||0).toLocaleString()}</span>
                         </div>
                         <div class="class-member-metrics">
-                            <span class="text-amber-400 font-bold">${Number(u.power||0).toLocaleString()} <small>전투력</small></span>
-                            <span class="text-sky-300">주간 ${points.toLocaleString()}점 <span class="class-member-separator">/</span> <strong class="text-violet-300">${diamonds.toLocaleString()} 다이아</strong></span>
+                            <span class="text-sky-300">보스 참여 ${points.toLocaleString()}점 · 쟁 참여 ${participation.war.toLocaleString()}점 · 공성전 : ${participation.siege.toLocaleString()}다이아</span>
                         </div>
                     </div>`;
             });
@@ -1867,7 +1875,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             normalizeDistributionItem(item);
             if (item.distributed) { alert('이미 분배완료된 아이템입니다.'); return; }
             if (item.applicants.includes(db.currentUser)) { alert('이미 신청한 아이템입니다.'); return; }
-            if (confirm(`[${item.name}] 아이템을 (${db.currentUser})아이디로 신청하시겠습니까?`)) {
+            if (confirm(`[${item.name}] 아이템을 본인 명의(${db.currentUser})로 신청하시겠습니까?`)) {
                 item.applicants.push(db.currentUser);
                 item.applicant = item.applicants[0] || null;  
                 saveDB(); renderItems();
@@ -3236,6 +3244,11 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
    const list=siegeList(),weights=list.map(u=>weight(u,list)),total=weights.reduce((a,b)=>a+b,0);
    const pool=Math.max(0,Math.floor(Number(weekData().siege?.diamonds)||0));
    return Object.fromEntries(list.map((u,i)=>[memberKey(u),{weight:weights[i],amount:total?Math.floor(pool*weights[i]/total):0}]));
+ };
+ window.classMemberParticipationSummary=(u,bossPoints)=>{
+  const key=memberKey(u);
+  const siege=siegeShares()[key];
+  return {war:score(u),siege:siege?Number(siege.amount)||0:0};
  };
  const calc=()=>diamondCalculation(week());
  const warShare=u=>{

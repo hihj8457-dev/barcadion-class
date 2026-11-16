@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261116_V33_CROSS_MIDNIGHT">
+    <meta name="class-build-id" content="CLASS_BUILD_20261116_V34_PASSWORD_TOOLS">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -284,9 +284,32 @@ body{background:#060915!important;color:#f7f7ff!important}
             <label class="block text-sm">전투력<input id="my-profile-power" type="number" min="0" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white"></label>
             <label class="block text-sm">클래스<select id="my-profile-class" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white"><option>레인저</option><option>소서리스</option><option>파이터</option><option>어쌔신</option></select></label>
             <button onclick="saveMyProfile()" class="w-full bg-amber-500 text-slate-950 font-bold py-3 rounded-xl">변경사항 저장</button>
+            <button type="button" onclick="openPasswordChange(false)" class="w-full bg-purple-700 hover:bg-purple-600 text-white font-bold py-3 rounded-xl">🔒 내 비밀번호 변경</button>
         </div>
     </div>
     
+
+    <div id="class-password-modal" class="fixed inset-0 bg-black/85 hidden items-center justify-center z-[110] p-4" role="dialog" aria-modal="true">
+      <div class="bg-slate-800 border border-purple-400/50 rounded-2xl w-full max-w-md p-5 space-y-3 text-white">
+        <h3 class="text-lg font-bold text-purple-200">🔒 비밀번호 변경</h3>
+        <p id="class-password-notice" class="text-sm text-slate-300">현재 비밀번호를 확인한 뒤 새 비밀번호를 설정하세요.</p>
+        <label class="block text-sm">현재 비밀번호<input id="class-current-password" type="password" autocomplete="current-password" class="mt-1 w-full bg-slate-900 border border-slate-600 rounded-lg p-3"></label>
+        <label class="block text-sm">새 비밀번호 (8자 이상)<input id="class-new-password" type="password" autocomplete="new-password" class="mt-1 w-full bg-slate-900 border border-slate-600 rounded-lg p-3"></label>
+        <label class="block text-sm">새 비밀번호 확인<input id="class-confirm-password" type="password" autocomplete="new-password" class="mt-1 w-full bg-slate-900 border border-slate-600 rounded-lg p-3"></label>
+        <p id="class-password-error" class="text-sm text-red-300" role="alert"></p>
+        <div class="flex gap-2"><button id="class-password-cancel" onclick="closePasswordChange()" class="flex-1 bg-slate-600 rounded-lg p-3">취소</button><button id="class-password-submit" onclick="saveNewPassword()" class="flex-1 bg-purple-600 rounded-lg p-3 font-bold">변경하기</button></div>
+      </div>
+    </div>
+    <div id="class-reset-modal" class="fixed inset-0 bg-black/85 hidden items-center justify-center z-[110] p-4" role="dialog" aria-modal="true">
+      <div class="bg-slate-800 border border-red-500/70 rounded-2xl w-full max-w-md p-5 space-y-3 text-white">
+        <h3 class="text-xl font-bold text-red-300">⚠ 비밀번호 강제 초기화</h3>
+        <p class="text-sm">대상 회원: <strong id="class-reset-target" class="text-amber-300"></strong></p>
+        <div class="bg-red-950/60 border border-red-600 rounded-xl p-3 text-sm space-y-2"><p class="font-bold">주의: 기존 비밀번호가 즉시 무효화됩니다.</p><p>초기 비밀번호는 <strong>123456</strong>입니다. 누구나 추측할 수 있는 취약한 비밀번호이므로 회원에게 안전한 방법으로 전달하고 즉시 변경하도록 안내하세요.</p><p>초기화 기록은 서버에 남으며, 해당 회원은 다음 로그인 시 비밀번호를 반드시 변경해야 합니다.</p></div>
+        <label class="flex gap-2 items-start text-sm"><input type="checkbox" id="class-reset-agree" onchange="document.getElementById('class-reset-submit').disabled=!this.checked" class="mt-1"><span>위 위험과 계정 도용 가능성을 이해했고, 회원의 요청을 확인했습니다.</span></label>
+        <p id="class-reset-error" class="text-sm text-red-300" role="alert"></p>
+        <div class="flex gap-2"><button onclick="closePasswordReset()" class="flex-1 bg-slate-600 rounded-lg p-3">취소</button><button id="class-reset-submit" onclick="confirmPasswordReset()" disabled class="flex-1 bg-red-700 rounded-lg p-3 font-bold disabled:opacity-40">비밀번호 초기화</button></div>
+      </div>
+    </div>
     <!-- 관리자 전용: 보스 배점 안내문 수정 -->
     <div id="boss-guide-editor-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-[80] p-4" role="dialog" aria-modal="true" aria-labelledby="boss-guide-editor-title">
         <div class="bg-slate-800 border border-purple-500/50 rounded-2xl w-full max-w-xl p-5 space-y-4 shadow-2xl">
@@ -775,6 +798,7 @@ body{background:#060915!important;color:#f7f7ff!important}
 
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script>        const DEFAULT_DB = {
             users: [],
@@ -861,6 +885,7 @@ body{background:#060915!important;color:#f7f7ff!important}
         firebase.initializeApp(FIREBASE_CONFIG);
         const auth = firebase.auth();
         const store = firebase.firestore();
+        const classFunctions = firebase.app().functions("asia-northeast3");
         const ADMIN_UID = 'j33OjGYk9XXj5xiL8BG6iTsV3uw2';
         let db = JSON.parse(JSON.stringify(DEFAULT_DB));
         db.bossSpawnAnchors = {};
@@ -912,7 +937,7 @@ body{background:#060915!important;color:#f7f7ff!important}
           cloudUnsubs.push(store.collection('users').onSnapshot(s=>{profileDocs=new Map(s.docs.map(d=>[d.id,d.data()]));
             const me=profileDocs.get(cloudUser?.uid);
             if(!me){cloudReady=false;document.getElementById('app-container').classList.add('hidden');document.getElementById('auth-modal').style.display='flex';showAuthError('계정 정보가 없거나 탈퇴 처리되었습니다.');return;}
-            buildCloudView();},e=>showAuthError('회원 정보 조회 실패: '+errorText(e))));
+            buildCloudView();checkForcedPasswordChange();},e=>showAuthError('회원 정보 조회 실패: '+errorText(e))));
           cloudUnsubs.push(store.doc('guildData/main').onSnapshot(s=>{window.__sharedData=s.exists?s.data():{};sharedDataLoaded=true;buildCloudView();},e=>{console.error('길드 공용 데이터 조회 실패',e);showAuthError('보스 일정 등 길드 데이터 조회 실패: '+errorText(e));}));
           cloudUnsubs.push(store.collection('bossRecords').onSnapshot(s=>{recordDocs=new Map(s.docs.map(d=>[d.id,d.data().entries||{}]));buildCloudView();},e=>console.error(e)));
           cloudUnsubs.push(store.collection('items').onSnapshot(s=>{itemDocs=new Map(s.docs.map(d=>[d.id,d.data()]));buildCloudView();},e=>console.error(e)));
@@ -1024,7 +1049,7 @@ body{background:#060915!important;color:#f7f7ff!important}
           const visible=!!(cloudUser&&cloudReady&&profileDocs.has(cloudUser.uid));
           document.getElementById('auth-modal').style.display=visible?'none':'flex';
           document.getElementById('app-container').classList.toggle('hidden',!visible);
-          if(visible)initApp();
+          if(visible){initApp();checkForcedPasswordChange();}
         }
         function toggleAuthMode() {
           isRegisterMode=!isRegisterMode;
@@ -1077,6 +1102,73 @@ body{background:#060915!important;color:#f7f7ff!important}
             showAuthError(code==='auth/email-already-in-use'?'이미 사용 중인 로그인 아이디입니다.':code==='auth/invalid-credential'?'아이디 또는 비밀번호가 올바르지 않습니다.':errorText(e));
           }finally{btn.disabled=false;}
         }
+
+        // 비밀번호 변경: Firebase 재인증 후 본인 계정만 변경합니다.
+        let classPasswordForced=false, classResetUid=null;
+        function openPasswordChange(forced=false){
+          classPasswordForced=!!forced;
+          document.getElementById('class-password-modal').classList.replace('hidden','flex');
+          document.getElementById('class-password-notice').textContent=forced?'관리자가 비밀번호를 초기화했습니다. 임시 비밀번호(123456)를 현재 비밀번호 칸에 입력하고 새로운 비밀번호로 변경해야 계속 이용할 수 있습니다.':'현재 비밀번호를 확인한 뒤 새 비밀번호를 설정하세요.';
+          document.getElementById('class-password-cancel').style.display=forced?'none':'';
+          document.getElementById('class-password-error').textContent='';
+          ['class-current-password','class-new-password','class-confirm-password'].forEach(id=>document.getElementById(id).value='');
+          if(!forced)closeMyProfileModal();
+        }
+        function closePasswordChange(){if(classPasswordForced)return;document.getElementById('class-password-modal').classList.replace('flex','hidden');}
+        async function saveNewPassword(){
+          const old=document.getElementById('class-current-password').value;
+          const next=document.getElementById('class-new-password').value;
+          const verify=document.getElementById('class-confirm-password').value;
+          const error=document.getElementById('class-password-error');const btn=document.getElementById('class-password-submit');
+          if(!old||next.length<8||next!==verify||next==='123456'||old===next){error.textContent='현재 비밀번호와 서로 일치하는 8자 이상의 새로운 비밀번호를 입력하세요. 임시 비밀번호 재사용은 불가합니다.';return;}
+          if(!auth.currentUser){error.textContent='다시 로그인하세요.';return;}
+          btn.disabled=true;
+          try{
+            const user=auth.currentUser;
+            const credential=firebase.auth.EmailAuthProvider.credential(user.email,old);
+            await user.reauthenticateWithCredential(credential);
+            await user.updatePassword(next);
+            // 초기화 상태 해제는 서버가 최근 인증된 사용자를 검증한 후 처리합니다.
+            if(classPasswordForced){
+              try{await classFunctions.httpsCallable('completePasswordReset')({});}
+              catch(e){error.textContent='비밀번호는 변경되었지만 초기화 완료 기록 처리에 실패했습니다. 관리자에게 문의하세요. '+errorText(e);return;}
+            }
+            classPasswordForced=false;document.getElementById('class-password-modal').classList.replace('flex','hidden');
+            alert('비밀번호가 변경되었습니다.');
+          }catch(e){error.textContent=e?.code==='auth/wrong-password'||e?.code==='auth/invalid-credential'?'현재 비밀번호가 올바르지 않습니다.':errorText(e);}
+          finally{btn.disabled=false;}
+        }
+        function checkForcedPasswordChange(){
+          const me=profileDocs.get(cloudUser?.uid);
+          if(me?.mustChangePassword){
+            if(document.getElementById('class-password-modal').classList.contains('hidden'))openPasswordChange(true);
+            document.getElementById('app-container').style.pointerEvents='none';
+          }else{
+            document.getElementById('app-container').style.pointerEvents='';
+            if(classPasswordForced){classPasswordForced=false;document.getElementById('class-password-modal').classList.replace('flex','hidden');}
+          }
+        }
+        function openPasswordReset(uid){
+          if(!cloudMaster()||!uid||uid===cloudUser?.uid)return;
+          const member=db.users.find(u=>u.uid===uid);
+          if(!member||member.isGuest||member.role==='웹 관리자'||(!cloudAdmin()&&member.role==='마스터'))return;
+          classResetUid=uid;
+          document.getElementById('class-reset-target').textContent=member.id;
+          document.getElementById('class-reset-agree').checked=false;
+          document.getElementById('class-reset-submit').disabled=true;
+          document.getElementById('class-reset-error').textContent='';
+          document.getElementById('class-reset-modal').classList.replace('hidden','flex');
+        }
+        function closePasswordReset(){classResetUid=null;document.getElementById('class-reset-modal').classList.replace('flex','hidden');}
+        async function confirmPasswordReset(){
+          const btn=document.getElementById('class-reset-submit'),err=document.getElementById('class-reset-error');
+          if(!classResetUid||!document.getElementById('class-reset-agree').checked||!cloudMaster())return;
+          if(!confirm('최종 확인: 이 회원의 기존 비밀번호를 무효화하고 123456으로 변경하시겠습니까?'))return;
+          btn.disabled=true;
+          try{await classFunctions.httpsCallable('resetMemberPassword')({targetUid:classResetUid});closePasswordReset();alert('초기화 완료. 회원에게 임시 비밀번호 123456을 전달하고 즉시 변경하도록 안내하세요.');}
+          catch(e){err.textContent='초기화 실패: '+errorText(e);btn.disabled=false;}
+        }
+
         function openMyProfileModal() {
             const u = db.users.find(u=>u.id===db.currentUser);
             if (!u) return;
@@ -2402,6 +2494,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                                 <option value="운영진" ${u.role === '운영진' ? 'selected' : ''}>운영진</option>
                                 <option value="길드원" ${u.role === '길드원' ? 'selected' : ''}>길드원</option>
                             </select>`}
+                            ${!u.isGuest && u.uid && isMasterOrWebAdministrator() && u.uid!==cloudUser?.uid && (isWebAdministrator() ? u.role!=='웹 관리자' : !['웹 관리자','마스터'].includes(u.role)) ? `<button type="button" onclick="openPasswordReset('${escapeAttribute(u.uid)}')" class="text-orange-300 hover:text-orange-200 px-2 py-1 text-xs border border-orange-700 rounded">비밀번호 초기화</button>` : ''}
                             ${u.isGuest || (isMasterOrWebAdministrator() && (isWebAdministrator() ? u.role !== '웹 관리자' : !['웹 관리자','마스터'].includes(u.role)))?`<button onclick="deleteUser('${escapeAttribute(u.id)}')" class="text-red-400 hover:text-red-300 px-2 py-1 cursor-pointer"><i class="fa-solid fa-trash"></i></button>`:''}
                         </div>
                     </div>
@@ -2719,7 +2812,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <script id="class-update-monitor">
 (function(){
-  const CURRENT_BUILD = 'CLASS_BUILD_20261116_V33_CROSS_MIDNIGHT';
+  const CURRENT_BUILD = 'CLASS_BUILD_20261116_V34_PASSWORD_TOOLS';
   let updateFound = false;
   let checking = false;
   function banner(){

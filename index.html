@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261116_V32_CROSS_MIDNIGHT">
+    <meta name="class-build-id" content="CLASS_BUILD_20261116_V33_CROSS_MIDNIGHT">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -877,6 +877,7 @@ body{background:#060915!important;color:#f7f7ff!important}
         function localProfile(id,uid,d) {return {id,uid,role:d.role==='web_admin'?'웹 관리자':d.role==='master'?'마스터':d.role==='staff'?'운영진':'길드원',approved:true,class:d.class||'레인저',power:Number(d.power)||0};}
         function cloudManager() {return cloudUser && ['web_admin','master','staff'].includes(profileDocs.get(cloudUser.uid)?.role) ;}
         function cloudAdmin() {return cloudUser && profileDocs.get(cloudUser.uid)?.role==='web_admin' ;}
+        function cloudMaster() {return cloudUser && ['web_admin','master'].includes(profileDocs.get(cloudUser.uid)?.role);}
         function detachCloud() { cloudUnsubs.forEach(fn=>fn()); cloudUnsubs=[]; cloudReady=false; sharedDataLoaded=false; window.__sharedData=null; window.__archiveData=null; profileDocs.clear();recordDocs.clear();itemDocs.clear();applicationDocs.clear();guestDocs.clear();lastSnapshot=null; }
         function buildCloudView() {
           if (!cloudUser || !profileDocs.has(cloudUser.uid) || !sharedDataLoaded) return;
@@ -943,13 +944,14 @@ body{background:#060915!important;color:#f7f7ff!important}
             if(!old || stable(u)!==stable(old)) {
               if(!uid) throw new Error('Firebase UID가 없는 사용자입니다.');
               const data=cloudProfile(u);
-              if(uid!==cloudUser.uid && !cloudAdmin())throw new Error('다른 회원 정보는 웹 관리자만 수정할 수 있습니다.');
+              if(uid!==cloudUser.uid && !cloudMaster())throw new Error('다른 회원 정보는 마스터 이상만 수정할 수 있습니다.');
+              if(uid!==cloudUser.uid && !cloudAdmin() && (old?.role==='웹 관리자'||old?.role==='마스터'||u.role==='웹 관리자'||u.role==='마스터'))throw new Error('마스터는 웹 관리자·마스터 계정의 권한을 변경할 수 없습니다.');
               if(uid===cloudUser.uid && !cloudAdmin() && old && (data.role!==cloudProfile(old).role||data.approved!==cloudProfile(old).approved)) throw new Error('본인의 권한은 변경할 수 없습니다.');
               ops.push(store.doc('users/'+uid).update(data));
             }
           }
           for(const [uid,u] of prevUsers) if(!newUsers.has(uid)) {
-            if(!cloudAdmin() || uid===ADMIN_UID) throw new Error('탈퇴 처리는 웹 관리자만 할 수 있습니다.');
+            if(!cloudMaster() || uid===ADMIN_UID || (!cloudAdmin() && ['웹 관리자','마스터'].includes(u.role))) throw new Error('마스터는 운영진·길드원 계정만 추방할 수 있습니다.');
             ops.push(store.doc('users/'+uid).delete());
           }
           const sharedKeys=['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','guildDiamondsByWeek','activeWeekKey'];
@@ -2372,6 +2374,9 @@ body{background:#060915!important;color:#f7f7ff!important}
             if (db.currentUser && db.activeWeekKey !== currentWeekKey()) { ensureWeeklyRollover(); renderDiamondSummary(); }
         }, 1000);
 
+        function isMasterOrWebAdministrator() {
+            return db.users.some(u=>u.id===db.currentUser && ['웹 관리자','마스터'].includes(u.role));
+        }
         function isWebAdministrator() {
             return db.users.some(u=>u.id===db.currentUser && u.role==='웹 관리자');
         }
@@ -2392,12 +2397,12 @@ body{background:#060915!important;color:#f7f7ff!important}
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
-                            ${u.isGuest ? `<div class="flex flex-col gap-1"><span class="text-slate-400">명단 전용</span>${db.users.some(m=>!m.isGuest && m.id===u.id) ? `<button type="button" onclick="linkGuestToMember('${escapeAttribute(u.guestId)}')" class="bg-sky-700 hover:bg-sky-600 text-white rounded px-2 py-1 text-xs">정식 회원 연결</button>` : '<span class="text-slate-500 text-[10px]">동일 닉네임 가입 대기</span>'}</div>` : u.role === '웹 관리자' ? '<span class="text-purple-300 font-bold">웹 관리자</span>' : !isWebAdministrator() ? `<span class="text-slate-300">${escapeHtml(u.role)}</span>` : `<select onchange="changeUserRole('${u.id}', this.value)" class="bg-slate-900 border border-slate-700 text-white rounded p-1 text-xs">
-                                <option value="마스터" ${u.role === '마스터' ? 'selected' : ''}>마스터</option>
+                            ${u.isGuest ? `<div class="flex flex-col gap-1"><span class="text-slate-400">명단 전용</span>${db.users.some(m=>!m.isGuest && m.id===u.id) ? `<button type="button" onclick="linkGuestToMember('${escapeAttribute(u.guestId)}')" class="bg-sky-700 hover:bg-sky-600 text-white rounded px-2 py-1 text-xs">정식 회원 연결</button>` : '<span class="text-slate-500 text-[10px]">동일 닉네임 가입 대기</span>'}</div>` : u.role === '웹 관리자' ? '<span class="text-purple-300 font-bold">웹 관리자</span>' : !(isMasterOrWebAdministrator() && (isWebAdministrator() || u.role !== '마스터')) ? `<span class="text-slate-300">${escapeHtml(u.role)}</span>` : `<select onchange="changeUserRole('${u.id}', this.value)" class="bg-slate-900 border border-slate-700 text-white rounded p-1 text-xs">
+                                ${isWebAdministrator()?`<option value="마스터" ${u.role === '마스터' ? 'selected' : ''}>마스터</option>`:''}
                                 <option value="운영진" ${u.role === '운영진' ? 'selected' : ''}>운영진</option>
                                 <option value="길드원" ${u.role === '길드원' ? 'selected' : ''}>길드원</option>
                             </select>`}
-                            ${u.isGuest || isWebAdministrator()?`<button onclick="deleteUser('${escapeAttribute(u.id)}')" class="text-red-400 hover:text-red-300 px-2 py-1 cursor-pointer"><i class="fa-solid fa-trash"></i></button>`:''}
+                            ${u.isGuest || (isMasterOrWebAdministrator() && (isWebAdministrator() ? u.role !== '웹 관리자' : !['웹 관리자','마스터'].includes(u.role)))?`<button onclick="deleteUser('${escapeAttribute(u.id)}')" class="text-red-400 hover:text-red-300 px-2 py-1 cursor-pointer"><i class="fa-solid fa-trash"></i></button>`:''}
                         </div>
                     </div>
                 `;
@@ -2459,7 +2464,8 @@ body{background:#060915!important;color:#f7f7ff!important}
             alert(`${userId}님의 정보를 저장했습니다.`);
         }
         function changeUserRole(userId, newRole) {
-            if (!isWebAdministrator() || db.users.find(u=>u.id===userId)?.role === '웹 관리자' || !['마스터','운영진','길드원'].includes(newRole)) return;
+            if (!isMasterOrWebAdministrator() || db.users.find(u=>u.id===userId)?.role === '웹 관리자' || !['마스터','운영진','길드원'].includes(newRole)) return;
+            if (!isWebAdministrator() && (db.users.find(u=>u.id===userId)?.role === '마스터' || newRole === '마스터' || userId===db.currentUser)) return alert('마스터는 운영진과 길드원 직급만 변경할 수 있습니다.');
             const user = db.users.find(u => u.id === userId);
             if (user) { user.role = newRole; saveDB(); }
         }
@@ -2467,8 +2473,8 @@ body{background:#060915!important;color:#f7f7ff!important}
             if (!isCurrentAdmin()) return;
             const guest=db.users.find(u=>u.id===userId && u.isGuest);
             if(guest){if(confirm(`${userId}님을 길드원 명단에서 삭제할까요?`))store.doc('guildGuests/'+guest.guestId).delete().catch(e=>alert('삭제 실패: '+errorText(e)));return;}
-            if(!isWebAdministrator())return alert('가입 계정 삭제는 웹 관리자만 가능합니다.');
-            if (db.users.find(u=>u.id===userId)?.role === '웹 관리자') { alert("웹 관리자 계정은 삭제할 수 없습니다."); return; }
+            if(!isMasterOrWebAdministrator())return alert('가입 회원 추방은 마스터 이상만 가능합니다.');
+            if (db.users.find(u=>u.id===userId)?.role === '웹 관리자' || (!isWebAdministrator() && (db.users.find(u=>u.id===userId)?.role === '마스터' || userId===db.currentUser))) { alert('웹 관리자 또는 마스터 계정은 추방할 수 없습니다.'); return; }
             if (confirm(`${userId} 계정을 삭제하시겠습니까?`)) {
                 db.users = db.users.filter(u => u.id !== userId);
                 if (db.currentUser===userId) db.currentUser=null;
@@ -2713,7 +2719,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <script id="class-update-monitor">
 (function(){
-  const CURRENT_BUILD = 'CLASS_BUILD_20261116_V32_CROSS_MIDNIGHT';
+  const CURRENT_BUILD = 'CLASS_BUILD_20261116_V33_CROSS_MIDNIGHT';
   let updateFound = false;
   let checking = false;
   function banner(){

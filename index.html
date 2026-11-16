@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261116_V42_WEEKLY_SELECTED_DATE">
+    <meta name="class-build-id" content="CLASS_BUILD_20261116_V43_WEEKLY_SELECTED_DATE">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -811,7 +811,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                 <button type="button" onclick="addSharedBossSlot()" class="bg-purple-700 rounded-lg px-4 py-2 font-bold">시간 추가</button>
               </div>
               <div class="flex flex-wrap gap-2">
-                <button type="button" onclick="enableBossSlotAutoCalculation()" class="bg-emerald-700 border border-emerald-400 rounded-lg px-3 py-2 text-sm font-bold">가장 빠른 시간 기준 자동 계산 · 컷 연동</button>
+                <button type="button" id="boss-slot-auto-button" onclick="enableBossSlotAutoCalculation()" class="bg-emerald-700 border border-emerald-400 rounded-lg px-3 py-2 text-sm font-bold">가장 빠른 시간 기준 자동 계산 · 컷 연동</button>
                 <button type="button" onclick="resetSharedBossSlots()" class="bg-slate-700 rounded-lg px-3 py-2 text-sm">자동 생성 목록으로 되돌리기</button>
                 <button type="button" onclick="clearSharedBossSlots()" class="bg-red-900/70 border border-red-500 rounded-lg px-3 py-2 text-sm">이 날짜의 보스 체크박스 전부 제거</button>
               </div>
@@ -2122,11 +2122,20 @@ body{background:#060915!important;color:#f7f7ff!important}
             if(!sharedSlotEditable())return;
             const chosen=selectedSharedBossSlot();if(!chosen)return;
             if(!(Number(chosen.boss.cycleHours)>0))return alert('주기형 보스에만 사용할 수 있습니다.');
-            const current=editableSharedSlotTimes(chosen);
+            const btn=document.getElementById('boss-slot-auto-button');
+            if(btn?.disabled)return;
+            // Read the selected date once. Never use the previous week's anchor as a
+            // second-stage input when the button is clicked again.
+            const manual=(db.bossSlotOverrides||{})[chosen.key];
+            const current=Array.isArray(manual)&&manual.length
+                ? [...new Set(manual)].sort()
+                : editableSharedSlotTimes(chosen);
             if(!current.length)return alert('기준이 될 출현 시간이 없습니다. 먼저 시간을 추가하세요.');
             const [h,m]=current[0].split(':').map(Number);
             const first=new Date(chosen.day);first.setHours(h,m,0,0);
             if(!confirm(`${chosen.boss.name}의 선택 날짜 ${localDateKey(chosen.day)} ${current[0]}부터 해당 주 일요일까지 ${chosen.boss.cycleHours}시간마다 자동 계산할까요?\n이 보스의 수동 체크박스 목록은 자동 계산으로 전환됩니다. 이후 컷 시각에 따라 미래 체크박스가 교체되며, 과거 참여 기록은 보존됩니다.`))return;
+            if(btn){btn.disabled=true;btn.textContent='자동 계산 적용 중…';}
+            try {
             db.bossSlotAutoAnchors=db.bossSlotAutoAnchors||{};
             const old=db.bossSlotAutoAnchors[chosen.boss.name];
             const anchors=Array.isArray(old)?old.slice():(Number(old)>0?[{time:Number(old)}]:[]);
@@ -2146,10 +2155,20 @@ body{background:#060915!important;color:#f7f7ff!important}
                 const split=key.lastIndexOf('::');
                 if(split>=0 && key.slice(split+2)===chosen.boss.name && key.slice(0,split)>=datePrefix && key.slice(0,split)<=weekLastKey)delete db.bossSlotOverrides[key];
             }
+            // Recompute all dates in the selected week immediately, not after a
+            // Firestore round trip or another button click.
+            const calculated=[];
+            for(let t=new Date(chosen.day);t.getTime()<weekEnd;t.setDate(t.getDate()+1)){
+                calculated.push({date:localDateKey(t),slots:getSharedBossOccurrences(chosen.boss,t).map(v=>v.label)});
+            }
             renderBossSlotEditor();
+            const preview=document.getElementById('boss-slot-next-preview');
+            if(preview)preview.textContent='이번 주 자동 계산: '+calculated.map(v=>`${v.date} ${v.slots.join(', ')||'없음'}`).join(' · ');
             const regModal=document.getElementById('boss-reg-modal');
             if(regModal && !regModal.classList.contains('hidden'))loadUserBossRecords(true);
-            try{await saveDB();}catch(e){alert('저장에 실패했습니다. 다시 확인하세요.');}
+            await saveDB();
+            }catch(e){console.error(e);alert('자동 계산 저장에 실패했습니다. 서버 연결과 권한을 확인하세요.');}
+            finally{if(btn){btn.disabled=false;btn.textContent='가장 빠른 시간 기준 자동 계산 · 컷 연동';}}
         }
         function addSharedBossSlot() {
             if(!sharedSlotEditable())return;const chosen=selectedSharedBossSlot();if(!chosen)return;

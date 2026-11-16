@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261116_V30_CROWN_FAVICON">
+    <meta name="class-build-id" content="CLASS_BUILD_20261116_V31_CROWN_FAVICON">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1853,7 +1853,27 @@ body{background:#060915!important;color:#f7f7ff!important}
                     const d=new Date(dayStart);d.setHours(h,m,0,0);times=[d.getTime()];
                 }
             }
-            return times.map(time=>{const d=new Date(time);return {time,label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};});
+            // Keep past occurrences visible even when a cut changes the future schedule.
+            // Checked participation keys are immutable historical evidence, not a schedule forecast.
+            if (Number(boss.cycleHours) > 0) {
+                const start = dayStart.getTime(), end = dayEnd.getTime(), now = Date.now();
+                for (const event of periodicBossEvents(boss)) {
+                    const spawn = Number(event.spawnTime);
+                    if (event.type === 'cut' && Number.isFinite(spawn) && spawn >= start && spawn < end && spawn <= now) times.push(spawn);
+                }
+                const prefix = `slot_${localDateKey(dayStart)}_${boss.name}_`;
+                for (const userRecords of Object.values(db.bossRecords || {})) {
+                    for (const [key, checked] of Object.entries(userRecords || {})) {
+                        if (!checked || !key.startsWith(prefix)) continue;
+                        const label = key.slice(prefix.length);
+                        if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(label)) continue;
+                        const [h, m] = label.split(':').map(Number);
+                        const d = new Date(dayStart); d.setHours(h, m, 0, 0);
+                        if (d.getTime() <= now) times.push(d.getTime());
+                    }
+                }
+            }
+            return [...new Set(times)].sort((a,b)=>a-b).map(time=>{const d=new Date(time);return {time,label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};});
         }
         function loadUserBossRecords(preserveOpenDays = false) {
             const openDays = preserveOpenDays
@@ -2076,8 +2096,10 @@ body{background:#060915!important;color:#f7f7ff!important}
             db.bossSpawnAnchors = db.bossSpawnAnchors || {};
             if (!(Number(db.bossSpawnAnchors[name])>0)) db.bossSpawnAnchors[name]=cutTime;
             db.bossSpawnEvents=db.bossSpawnEvents||{};
-            db.bossSpawnEvents[name]=[...(db.bossSpawnEvents[name]||[]),{time:cutTime,type:'cut'}];
+            db.bossSpawnEvents[name]=[...(db.bossSpawnEvents[name]||[]),{time:cutTime,type:'cut',spawnTime:status.time}];
             saveDB(); renderBossPreview();
+            const modal=document.getElementById('boss-reg-modal');
+            if(modal && !modal.classList.contains('hidden')) loadUserBossRecords(true);
         }
         function setBossNextSpawn(name) {
             if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
@@ -2686,7 +2708,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <script id="class-update-monitor">
 (function(){
-  const CURRENT_BUILD = 'CLASS_BUILD_20261116_V30_CROWN_FAVICON';
+  const CURRENT_BUILD = 'CLASS_BUILD_20261116_V31_CROWN_FAVICON';
   let updateFound = false;
   let checking = false;
   function banner(){

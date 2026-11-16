@@ -947,7 +947,7 @@ body{background:#060915!important;color:#f7f7ff!important}
           db=next; lastSnapshot=clone(next); cloudReady=true;
           try {
             ensureWeeklyRollover();checkLoginState();
-            if(typeof refreshHome==='function') refreshHome();
+            if(typeof window.classRefreshHome==='function') window.classRefreshHome();
             if(typeof window.classV45Refresh==='function')window.classV45Refresh();
             const bossModal=document.getElementById('boss-reg-modal');
             if(bossModal && !bossModal.classList.contains('hidden')) loadUserBossRecords(true);
@@ -3007,10 +3007,16 @@ function updateClassBossTimer(){
  if(!classBossTimerLast||now-classBossTimerLast>30000){
   const byName=new Map();
   (db.bossListDef||[]).forEach(b=>{
-   const next=bossNextTime(b,now);
-   if(next==null||next<=now)return;
-   const prev=byName.get(b.name);
-   if(!prev||next<prev.next)byName.set(b.name,{name:b.name,next});
+   try{
+    let next=bossNextTime(b,now);
+    if(Number(b.cycleHours)>0 && Number.isFinite(next) && next<=now){
+      const cycle=Number(b.cycleHours)*3600000;
+      if(cycle>0)next+=Math.ceil((now-next+1)/cycle)*cycle;
+    }
+    if(!Number.isFinite(next)||next<=now)return;
+    const prev=byName.get(b.name);
+    if(!prev||next<prev.next)byName.set(b.name,{name:b.name,next});
+   }catch(err){console.warn('보스 일정 계산 실패',b?.name,err);}
   });
   classBossTimerCache=[...byName.values()].sort((a,b)=>a.next-b.next).slice(0,4);
   classBossTimerLast=now;
@@ -3030,6 +3036,7 @@ function refreshHome(){
  renderClassPatchNotes();
  }catch(e){console.warn('Dashboard refresh:',e)}
 }
+window.classRefreshHome=refreshHome;
 function renderClassPatchNotes(){
  const target=$('class-patch-list');if(!target)return;
  const entries=Array.isArray(window.__sharedData?.patchNotes)?window.__sharedData.patchNotes:[];
@@ -3081,7 +3088,7 @@ function init(){const app=$('app-container'),grid=$('dashboard-grid');if(!app||!
  const tabs=$('btn-tab-notice-1')?.parentElement;if(tabs)tabs.style.display='none';
  const memberPanel=$('class-member-slot').querySelector('.dashboard-panel');if(memberPanel){const h=memberPanel.querySelector('#panel-title-1');if(h)h.textContent='길드원 명단'}
  const obs=new MutationObserver(()=>{if(title&&title.textContent!=='클래스')title.textContent='클래스';if(subtitle&&subtitle.textContent!=='CLASS')subtitle.textContent='CLASS'});obs.observe(title,{childList:true,characterData:true,subtree:true});
- refreshHome();setInterval(updateClassBossTimer,1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClassBossTimer()});
+ refreshHome();setTimeout(refreshHome,100);setInterval(()=>{try{updateClassBossTimer()}catch(e){console.warn('보스 타이머 갱신 오류',e)}},1000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClassBossTimer()});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

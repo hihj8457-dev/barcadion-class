@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261116_V35_PASSWORD_MIN6">
+    <meta name="class-build-id" content="CLASS_BUILD_20261116_V36_BOSS_TIME_RESET">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1885,7 +1885,7 @@ body{background:#060915!important;color:#f7f7ff!important}
         function periodicBossEvents(boss) {
             const events = (db.bossSpawnEvents || {})[boss.name] || [];
             return events.filter(e => Number.isFinite(Number(e.time)))
-                .map(e => ({time:Number(e.time), type:e.type || 'cut'})).sort((a,b)=>a.time-b.time);
+                .map(e => ({time:Number(e.time), type:e.type || 'cut', spawnTime:Number(e.spawnTime)})).sort((a,b)=>a.time-b.time);
         }
         function bossPeriodicTimes(boss, fromMs, toMs) {
             const cycleMs = Number(boss.cycleHours)*3600000;
@@ -1902,7 +1902,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             const events=periodicBossEvents(boss);
             // Maintenance is effective from its scheduled start even before it happens.
             // Events after a maintenance reset override that reset for the same boss.
-            const changes=[...events.map(e=>({time:e.time,type:'cut'})),...windows.map(w=>({time:w.end,type:'reset',start:w.start}))]
+            const changes=[...events.map(e=>({time:e.time,type:e.type,spawnTime:e.spawnTime})),...windows.map(w=>({time:w.end,type:'reset',start:w.start}))]
                 .sort((a,b)=>a.time-b.time || (a.type==='reset'?-1:1));
             const out=[];
             const add=(time)=>{if(time>=fromMs && time<toMs && validDays.includes(dayNames[new Date(time).getDay()]) && !windows.some(w=>time>=w.start && time<w.end))out.push(time);};
@@ -1920,6 +1920,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             for(const change of changes){
                 if(change.time<=fromMs){
                     if(change.type==='reset'){currentAnchor=change.time;}
+                    else if(change.type==='manual'){currentAnchor=change.spawnTime;}
                     else currentAnchor=change.time+cycleMs;
                     continue;
                 }
@@ -1927,7 +1928,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                 // A future maintenance start cancels pending cycles through its end.
                 generate(change.time);
                 segmentStart=change.time;
-                currentAnchor=change.type==='reset' ? change.time : change.time+cycleMs;
+                currentAnchor=change.type==='reset' ? change.time : change.type==='manual' ? change.spawnTime : change.time+cycleMs;
                 if(change.type==='reset')add(change.time);
             }
             generate(toMs);
@@ -2083,8 +2084,9 @@ body{background:#060915!important;color:#f7f7ff!important}
         function periodicBossStatus(boss, nowMs) {
             const cycleMs = Number(boss.cycleHours) * 3600000;
             if (!(cycleMs > 0)) return null;
-            const events = periodicBossEvents(boss).filter(e => e.type === 'cut' && e.time <= nowMs);
-            const lastCut = events.length ? events[events.length - 1].time : 0;
+            const events = periodicBossEvents(boss).filter(e => e.time <= nowMs && (e.type === 'cut' || e.type === 'manual'));
+            const lastEvent = events.length ? events[events.length - 1] : null;
+            const lastCut = lastEvent ? lastEvent.time : 0;
             const windows = bossMaintenanceWindows();
             const lastReset = windows.filter(w => w.end <= nowMs).at(-1);
             const resetTime = lastReset ? lastReset.end : 0;
@@ -2093,7 +2095,8 @@ body{background:#060915!important;color:#f7f7ff!important}
             // the boss appears immediately at the maintenance end.
             if (activeAnchor > 0) {
                 const spawn = activeAnchor === resetTime && resetTime > lastCut
-                    ? resetTime : activeAnchor + cycleMs;
+                    ? resetTime : lastEvent && lastEvent.type === 'manual' && Number.isFinite(lastEvent.spawnTime)
+                        ? lastEvent.spawnTime : activeAnchor + cycleMs;
                 if (nowMs < spawn) return {time:spawn, spawned:false};
                 // If the spawn has happened, do not silently advance to another cycle.
                 return {time:spawn, spawned:true};
@@ -2203,11 +2206,14 @@ body{background:#060915!important;color:#f7f7ff!important}
             if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(answer)) { alert('예: 2026-11-16T21:00 형식으로 입력하세요.'); return; }
             const timestamp = new Date(answer).getTime();
             if (!Number.isFinite(timestamp)) { alert('올바른 날짜와 시간을 입력하세요.'); return; }
-            if (!db.bossSpawnAnchors) db.bossSpawnAnchors = {};
-            if (!(Number(db.bossSpawnAnchors[name])>0)) db.bossSpawnAnchors[name]=timestamp;
+            if (timestamp <= Date.now()) { alert('다음 출현 시각은 현재보다 미래여야 합니다.'); return; }
+            // Manual schedule changes take effect now; the selected time is the SPAWN,
+            // not a cut. Preserve historical cut/participation records unchanged.
             db.bossSpawnEvents=db.bossSpawnEvents||{};
-            db.bossSpawnEvents[name]=[...(db.bossSpawnEvents[name]||[]),{time:timestamp,type:'cut'}];
+            db.bossSpawnEvents[name]=[...(db.bossSpawnEvents[name]||[]),{time:Date.now(),type:'manual',spawnTime:timestamp}];
             saveDB(); renderBossPreview();
+            const modal=document.getElementById('boss-reg-modal');
+            if(modal && !modal.classList.contains('hidden')) loadUserBossRecords(true);
         }
 
          
@@ -2812,7 +2818,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <script id="class-update-monitor">
 (function(){
-  const CURRENT_BUILD = 'CLASS_BUILD_20261116_V35_PASSWORD_MIN6';
+  const CURRENT_BUILD = 'CLASS_BUILD_20261116_V36_BOSS_TIME_RESET';
   let updateFound = false;
   let checking = false;
   function banner(){

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261116_V43_WEEKLY_SELECTED_DATE">
+    <meta name="class-build-id" content="CLASS_BUILD_20261116_V44_STABLE_SLOTS">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -947,6 +947,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             return {...clone(d),id,applicants,applicant:applicants[0]||null};
           });
           next.weeklyArchives=clone(window.__archiveData?.weeklyArchives||[]);
+          if(pendingSaves.size){ deferredCloudView=true; return; }
           db=next; lastSnapshot=clone(next); cloudReady=true;
           try {
             ensureWeeklyRollover();checkLoginState();
@@ -975,6 +976,8 @@ body{background:#060915!important;color:#f7f7ff!important}
          
         const bossWriteQueues = new Map();
         const pendingSaves = new Set();
+        let deferredCloudView=false;
+        let saveChain=Promise.resolve();
         function queueBossWrite(uid, task) {
           const previous = bossWriteQueues.get(uid) || Promise.resolve();
           const next = previous.catch(()=>{}).then(task);
@@ -1058,13 +1061,26 @@ body{background:#060915!important;color:#f7f7ff!important}
           await Promise.all(ops);
         }
         function saveDB() {
-          if(!cloudReady)return;
-          const before=lastSnapshot;
+          if(!cloudReady)return Promise.reject(new Error('서버 데이터 로딩 중입니다.'));
           const after=clone(db);
-          lastSnapshot=after;
-          const task=persistCloudChanges(before,after);
+          // Serialize writes: a second edit cannot race the first snapshot or overwrite it.
+          const task=saveChain.catch(()=>{}).then(async()=>{
+            const before=lastSnapshot;
+            await persistCloudChanges(before,after);
+            lastSnapshot=clone(after);
+          });
+          saveChain=task;
           pendingSaves.add(task);
-          task.catch(e=>{console.error(e);alert('서버 저장 실패: '+errorText(e));}).finally(()=>pendingSaves.delete(task));
+          task.catch(e=>{console.error(e);alert('서버 저장 실패: '+errorText(e));})
+            .finally(()=>{
+              pendingSaves.delete(task);
+              if(!pendingSaves.size){
+                if(deferredCloudView){deferredCloudView=false;buildCloudView();}
+                else if(cloudUser)store.doc('guildData/main').get({source:'server'}).then(s=>{
+                  window.__sharedData=s.exists?s.data():{};buildCloudView();
+                }).catch(e=>console.warn('서버 재조회 실패',e));
+              }
+            });
           return task;
         }
         auth.onAuthStateChanged(async user=>{
@@ -2012,7 +2028,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             const weekStart=getWeekMonday(dayStart).getTime();
             const dayEnd=new Date(dayStart);dayEnd.setDate(dayEnd.getDate()+1);
             const entries=Array.isArray(saved)?saved:(Number(saved)>0?[{time:Number(saved)}]:[]);
-            // A later button click only replaces the timeline from its selected date.
+            // Latest anchor within this week, on or before the requested day.
             return entries.map(e=>Number(typeof e==='number'?e:e.time))
                 .filter(t=>Number.isFinite(t)&&t>0&&t>=weekStart&&t<dayEnd.getTime())
                 .sort((x,y)=>y-x)[0]||0;
@@ -2022,18 +2038,19 @@ body{background:#060915!important;color:#f7f7ff!important}
             const overrides=db.bossSlotOverrides||{};
             const day=new Date(date);day.setHours(0,0,0,0);
             const end=new Date(day);end.setDate(end.getDate()+1);
-            const toSlots=(times)=>[...new Set(times)].filter(Number.isFinite).sort((a,b)=>a-b)
+            const parseTime=label=>{const [h,m]=label.split(':').map(Number);const d=new Date(day);d.setHours(h,m,0,0);return d.getTime();};
+            const toSlots=times=>[...new Set(times)].filter(Number.isFinite).sort((a,b)=>a-b)
                 .map(time=>{const d=new Date(time);return {time,label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};});
-            const parseTime=(label)=>{const [h,m]=label.split(':').map(Number);const d=new Date(day);d.setHours(h,m,0,0);return d.getTime();};
             if(Object.prototype.hasOwnProperty.call(overrides,key))
                 return toSlots((Array.isArray(overrides[key])?overrides[key]:[])
                     .filter(t=>/^([01]\d|2[0-3]):[0-5]\d$/.test(t)).map(parseTime));
             const anchor=bossSlotAnchorForDate(boss,day);
             const cycle=Number(boss.cycleHours)*3600000;
             if(!(anchor>0)||!(cycle>0))return getBossOccurrencesForDay(boss,date);
-            const now=Date.now();
             const weekEnd=bossSlotWeekEnd(day);
-            const events=periodicBossEvents(boss).filter(e=>e.type==='cut'&&e.time>=anchor&&e.time<=now&&e.time<weekEnd)
+            // Apply only cuts linked to this appearance timeline; earlier cuts cannot
+            // influence a newly selected anchor. One cut replaces future occurrences.
+            const events=periodicBossEvents(boss).filter(e=>e.type==='cut'&&e.time>=anchor&&e.time<=Date.now()&&e.time<weekEnd)
                 .sort((a,b)=>a.time-b.time);
             const times=[];
             let next=anchor, cursor=0;
@@ -2044,17 +2061,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                 if(cut&&cut.time>=next&&cut.time<next+cycle){next=cut.time+cycle;cursor++;}
                 else next+=cycle;
             }
-            // Keep checked historical occurrences visible; never restore stale future slots.
-            const prefix=`slot_${localDateKey(day)}_${boss.name}_`;
-            for(const records of Object.values(db.bossRecords||{})){
-                for(const [recordKey,checked] of Object.entries(records||{})){
-                    if(!checked||!recordKey.startsWith(prefix))continue;
-                    const label=recordKey.slice(prefix.length);
-                    if(/^([01]\d|2[0-3]):[0-5]\d$/.test(label)){
-                        const time=parseTime(label);if(time<=now)times.push(time);
-                    }
-                }
-            }
+            // Attendance records are retained in Firestore but never resurrect removed slots.
             return toSlots(times);
         }
         function switchBossManageTab(tab) {

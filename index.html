@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261116_V36_BOSS_TIME_RESET">
+    <meta name="class-build-id" content="CLASS_BUILD_20261116_V37_SHARED_BOSS_SLOTS">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -775,7 +775,11 @@ body{background:#060915!important;color:#f7f7ff!important}
                 <h3 class="text-xl font-bold text-amber-400">보스 관리 · 배점 설정</h3>
                 <button onclick="closeBossManageModal()" class="text-slate-400 hover:text-white text-xl font-bold cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-5 overflow-y-auto space-y-3 flex-1">
+            <div class="flex gap-2 px-5 pt-4 border-b border-slate-700 pb-3">
+              <button id="boss-manage-config-tab" type="button" onclick="switchBossManageTab('config')" class="flex-1 rounded-lg bg-amber-500 text-slate-950 font-bold py-2">보스 설정</button>
+              <button id="boss-manage-slots-tab" type="button" onclick="switchBossManageTab('slots')" class="flex-1 rounded-lg bg-slate-700 text-white font-bold py-2">참여 체크박스 관리</button>
+            </div>
+            <div id="boss-manage-config-pane" class="p-5 overflow-y-auto space-y-3 flex-1">
                 <p class="text-xs text-slate-400">주기형 보스는 스케줄 화면의 [컷] 버튼을 누른 시각부터 설정된 시간 후 다음 등장으로 계산합니다. 아래에서 보스 배점·요일·주기도 함께 수정할 수 있습니다.</p>
                 <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 space-y-2">
                     <h4 class="text-sm font-bold text-amber-300">새 보스 추가</h4>
@@ -792,6 +796,24 @@ body{background:#060915!important;color:#f7f7ff!important}
                 </div>
                 <div id="admin-boss-list" class="space-y-2"></div>
                 <button type="button" onclick="saveAllBossDefinitions()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl">보스 설정 일괄 저장</button>
+            </div>
+            <div id="boss-manage-slots-pane" class="hidden p-5 overflow-y-auto space-y-3 flex-1">
+              <p class="text-xs text-slate-300">웹 관리자·마스터·운영진이 날짜별 참여 체크박스를 공통으로 관리합니다. 이 목록은 출현 타이머와 독립적이며, 모든 회원에게 똑같이 표시됩니다. 기존 참여 기록은 삭제하지 않습니다.</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label class="text-sm text-slate-300">날짜<input id="boss-slot-date" type="date" onchange="renderBossSlotEditor()" class="mt-1 w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-white"></label>
+                <label class="text-sm text-slate-300">보스<select id="boss-slot-boss" onchange="renderBossSlotEditor()" class="mt-1 w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-white"></select></label>
+              </div>
+              <div id="boss-slot-editor-state" class="text-xs text-amber-300"></div>
+              <div id="boss-slot-editor-list" class="flex flex-wrap gap-2 rounded-xl bg-slate-900/60 border border-slate-700 p-3 min-h-16"></div>
+              <div class="flex gap-2 items-end">
+                <label class="text-sm flex-1 text-slate-300">체크박스 추가<input id="boss-slot-new-time" type="time" class="mt-1 w-full bg-slate-900 border border-slate-600 rounded-lg p-2 text-white"></label>
+                <button type="button" onclick="addSharedBossSlot()" class="bg-purple-700 rounded-lg px-4 py-2 font-bold">시간 추가</button>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" onclick="resetSharedBossSlots()" class="bg-slate-700 rounded-lg px-3 py-2 text-sm">자동 생성 목록으로 되돌리기</button>
+                <button type="button" onclick="clearSharedBossSlots()" class="bg-red-900/70 border border-red-500 rounded-lg px-3 py-2 text-sm">이 날짜의 보스 체크박스 전부 제거</button>
+              </div>
+              <p class="text-xs text-slate-400">처음 수정할 때 해당 날짜의 자동 생성 목록을 복사하여 고정합니다. 이후 보스 컷·점검·시간 재설정으로 이 날짜의 체크박스가 다시 늘어나지 않습니다. 삭제된 시간의 기존 참여 데이터는 보존하지만 해당 시간의 점수는 현재 주간 계산에서 제외됩니다.</p>
             </div>
         </div>
     </div>
@@ -863,6 +885,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                 { name: '99보스', fixedTime: '21:00', days: ['일'] },
                 { name: '툴칸', fixedTime: '21:00', days: ['일'] }
             ],
+            bossSlotOverrides: {},
             bossRecords: {},
             weeklyArchives: [],
             activeWeekKey: null,
@@ -911,7 +934,7 @@ body{background:#060915!important;color:#f7f7ff!important}
           const next = clone(DEFAULT_DB);
           next.users = [...profileDocs].map(([uid,d])=>localProfile(d.nickname||uid,uid,d)).concat([...guestDocs].map(([gid,d])=>({id:d.nickname,guestId:gid,isGuest:true,role:'길드원',class:d.class||'레인저',power:Number(d.power)||0}))); 
           next.currentUser = own.nickname;
-          ['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','guildDiamondsByWeek','activeWeekKey'].forEach(k=>{
+          ['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','guildDiamondsByWeek','activeWeekKey'].forEach(k=>{
             if(shared[k]!==undefined) next[k]=clone(shared[k]);
           });
           next.bossRecords={};
@@ -927,6 +950,8 @@ body{background:#060915!important;color:#f7f7ff!important}
             if(typeof refreshHome==='function') refreshHome();
             const bossModal=document.getElementById('boss-reg-modal');
             if(bossModal && !bossModal.classList.contains('hidden')) loadUserBossRecords(true);
+            const slotsPane=document.getElementById('boss-manage-slots-pane');
+            if(slotsPane && !slotsPane.classList.contains('hidden')) renderBossSlotEditor();
             const archiveModal=document.getElementById('weekly-archive-modal');
             if(archiveModal && !archiveModal.classList.contains('hidden')) renderWeeklyArchives();
           } catch(e){console.error(e);}
@@ -979,7 +1004,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             if(!cloudMaster() || uid===ADMIN_UID || (!cloudAdmin() && ['웹 관리자','마스터'].includes(u.role))) throw new Error('마스터는 운영진·길드원 계정만 추방할 수 있습니다.');
             ops.push(store.doc('users/'+uid).delete());
           }
-          const sharedKeys=['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','guildDiamondsByWeek','activeWeekKey'];
+          const sharedKeys=['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','guildDiamondsByWeek','activeWeekKey'];
           if(stable(before.weeklyArchives)!==stable(after.weeklyArchives)){if(!cloudManager())throw new Error('보관함은 관리자만 수정할 수 있습니다.');ops.push(store.doc('guildPrivate/archives').set({weeklyArchives:clone(after.weeklyArchives)}));}
           const delta={};
           sharedKeys.forEach(k=>{if(stable(before[k])!==stable(after[k]))delta[k]=clone(after[k]??null);});
@@ -1970,6 +1995,87 @@ body{background:#060915!important;color:#f7f7ff!important}
             }
             return [...new Set(times)].sort((a,b)=>a-b).map(time=>{const d=new Date(time);return {time,label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};});
         }
+        // Shared participation slots are independent of the boss timer. Overrides are
+        // date+boss specific, and stored in guildData/main for all members.
+        function bossSlotOverrideKey(date,bossName) { return localDateKey(date)+'::'+bossName; }
+        function getSharedBossOccurrences(boss,date) {
+            const key=bossSlotOverrideKey(date,boss.name);
+            const overrides=db.bossSlotOverrides||{};
+            if (!Object.prototype.hasOwnProperty.call(overrides,key)) return getBossOccurrencesForDay(boss,date);
+            const day=new Date(date);day.setHours(0,0,0,0);
+            return (Array.isArray(overrides[key])?overrides[key]:[])
+                .filter(t=>/^([01]\d|2[0-3]):[0-5]\d$/.test(t))
+                .map(label=>{const [h,m]=label.split(':').map(Number);const d=new Date(day);d.setHours(h,m,0,0);return {label,time:d.getTime()};})
+                .sort((a,b)=>a.time-b.time);
+        }
+        function switchBossManageTab(tab) {
+            const allowed=cloudManager();if(!allowed)return;
+            const slots=tab==='slots';
+            document.getElementById('boss-manage-config-pane').classList.toggle('hidden',slots);
+            document.getElementById('boss-manage-slots-pane').classList.toggle('hidden',!slots);
+            for(const [name,active] of [['config',!slots],['slots',slots]]){
+                const btn=document.getElementById('boss-manage-'+name+'-tab');
+                btn.classList.toggle('bg-amber-500',active);btn.classList.toggle('text-slate-950',active);
+                btn.classList.toggle('bg-slate-700',!active);btn.classList.toggle('text-white',!active);
+            }
+            if(slots){
+                const input=document.getElementById('boss-slot-date');
+                if(!input.value)input.value=localDateKey(new Date());
+                const sel=document.getElementById('boss-slot-boss'),selected=sel.value;
+                sel.innerHTML=db.bossListDef.map(b=>`<option value="${escapeAttribute(b.name)}">${escapeHtml(b.name)}</option>`).join('');
+                if(db.bossListDef.some(b=>b.name===selected))sel.value=selected;
+                renderBossSlotEditor();
+            }
+        }
+        function selectedSharedBossSlot() {
+            const dayStr=document.getElementById('boss-slot-date').value;
+            const name=document.getElementById('boss-slot-boss').value;
+            const boss=db.bossListDef.find(b=>b.name===name);
+            if(!boss||!/^\d{4}-\d{2}-\d{2}$/.test(dayStr))return null;
+            const day=new Date(dayStr+'T12:00:00');if(isNaN(day.getTime())||localDateKey(day)!==dayStr)return null;
+            return {day,boss,key:bossSlotOverrideKey(day,name)};
+        }
+        function renderBossSlotEditor() {
+            const chosen=selectedSharedBossSlot(),list=document.getElementById('boss-slot-editor-list');
+            if(!chosen){list.textContent='날짜와 보스를 선택하세요.';return;}
+            const overridden=Object.prototype.hasOwnProperty.call(db.bossSlotOverrides||{},chosen.key);
+            const times=getSharedBossOccurrences(chosen.boss,chosen.day).map(x=>x.label);
+            document.getElementById('boss-slot-editor-state').textContent=overridden?'수동 관리 중 · 모든 회원에게 공통 적용':'자동 생성 중 · 처음 수정하면 현재 목록으로 고정';
+            list.innerHTML=times.length?times.map(t=>`<span class="inline-flex items-center gap-2 bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm"><span class="text-sky-300 font-bold">${t}</span><button type="button" aria-label="${t} 삭제" onclick="removeSharedBossSlot('${t}')" class="text-red-300 hover:text-red-100 font-bold">✕</button></span>`).join(''):'<span class="text-slate-400 text-sm">등록된 체크박스가 없습니다.</span>';
+        }
+        function sharedSlotEditable() {if(!cloudManager()||!cloudReady){alert('운영진 이상 권한 및 서버 연결이 필요합니다.');return false;}return true;}
+        function editableSharedSlotTimes(chosen) {return [...new Set(getSharedBossOccurrences(chosen.boss,chosen.day).map(x=>x.label))].sort();}
+        async function commitSharedBossSlots(chosen,times) {
+            db.bossSlotOverrides=db.bossSlotOverrides||{};
+            db.bossSlotOverrides[chosen.key]=[...new Set(times)].sort();
+            renderBossSlotEditor();
+            try{await saveDB();}catch(e){alert('저장에 실패했습니다. 새로고침 후 다시 확인하세요.');}
+        }
+        function addSharedBossSlot() {
+            if(!sharedSlotEditable())return;const chosen=selectedSharedBossSlot();if(!chosen)return;
+            const t=document.getElementById('boss-slot-new-time').value;
+            if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(t))return alert('추가할 시간을 선택하세요.');
+            const times=editableSharedSlotTimes(chosen);
+            if(times.includes(t))return alert('이미 등록된 시간입니다.');
+            commitSharedBossSlots(chosen,[...times,t]);
+        }
+        function removeSharedBossSlot(t) {
+            if(!sharedSlotEditable())return;const chosen=selectedSharedBossSlot();if(!chosen)return;
+            if(!confirm(`${localDateKey(chosen.day)} ${chosen.boss.name} ${t} 체크박스를 모든 회원 화면에서 제거할까요?\n기존 참여 기록은 삭제하지 않지만 해당 시간의 점수는 현재 계산에서 제외됩니다.`))return;
+            commitSharedBossSlots(chosen,editableSharedSlotTimes(chosen).filter(x=>x!==t));
+        }
+        function clearSharedBossSlots() {
+            if(!sharedSlotEditable())return;const chosen=selectedSharedBossSlot();if(!chosen)return;
+            if(!confirm(`${localDateKey(chosen.day)} ${chosen.boss.name}의 체크박스를 전부 제거할까요?\n모든 회원에게 적용되며 기존 참여 기록은 보존됩니다.`))return;
+            commitSharedBossSlots(chosen,[]);
+        }
+        async function resetSharedBossSlots() {
+            if(!sharedSlotEditable())return;const chosen=selectedSharedBossSlot();if(!chosen)return;
+            if(!confirm('이 날짜/보스의 수동 목록을 삭제하고 자동 생성 목록으로 되돌릴까요? 중복 시간이 다시 생길 수 있습니다.'))return;
+            db.bossSlotOverrides=db.bossSlotOverrides||{};
+            delete db.bossSlotOverrides[chosen.key];renderBossSlotEditor();
+            try{await saveDB();}catch(e){alert('저장에 실패했습니다.');}
+        }
         function loadUserBossRecords(preserveOpenDays = false) {
             const openDays = preserveOpenDays
                 ? Array.from(document.querySelectorAll('#accordion-days-container .accordion-body'))
@@ -1992,7 +2098,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                 let dayScore=0, dayMaxScore=0;
                 const rows=[];
                 db.bossListDef.forEach((boss, idx) => {
-                    const occurrences = getBossOccurrencesForDay(boss,date);
+                    const occurrences = getSharedBossOccurrences(boss,date);
                     const score = Number(db.bossScores[boss.name] ?? 1);
                     occurrences.forEach((slot) => {
                         const key = `slot_${dayStamp}_${boss.name}_${slot.label}`;

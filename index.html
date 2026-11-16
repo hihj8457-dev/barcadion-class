@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261116_V37_SHARED_BOSS_SLOTS">
+    <meta name="class-build-id" content="CLASS_BUILD_20261116_V39_AUTO_SLOTS_UPDATE_FIX">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -810,10 +810,11 @@ body{background:#060915!important;color:#f7f7ff!important}
                 <button type="button" onclick="addSharedBossSlot()" class="bg-purple-700 rounded-lg px-4 py-2 font-bold">시간 추가</button>
               </div>
               <div class="flex flex-wrap gap-2">
+                <button type="button" onclick="enableBossSlotAutoCalculation()" class="bg-emerald-700 border border-emerald-400 rounded-lg px-3 py-2 text-sm font-bold">가장 빠른 시간 기준 자동 계산 · 컷 연동</button>
                 <button type="button" onclick="resetSharedBossSlots()" class="bg-slate-700 rounded-lg px-3 py-2 text-sm">자동 생성 목록으로 되돌리기</button>
                 <button type="button" onclick="clearSharedBossSlots()" class="bg-red-900/70 border border-red-500 rounded-lg px-3 py-2 text-sm">이 날짜의 보스 체크박스 전부 제거</button>
               </div>
-              <p class="text-xs text-slate-400">처음 수정할 때 해당 날짜의 자동 생성 목록을 복사하여 고정합니다. 이후 보스 컷·점검·시간 재설정으로 이 날짜의 체크박스가 다시 늘어나지 않습니다. 삭제된 시간의 기존 참여 데이터는 보존하지만 해당 시간의 점수는 현재 주간 계산에서 제외됩니다.</p>
+              <p class="text-xs text-slate-400">자동 계산 버튼은 선택 날짜의 가장 빠른 출현 시간을 기준으로 주기를 생성합니다. 컷을 누르면 지난 출현 체크박스는 유지하고 미래 체크박스만 컷 시각 기준으로 교체합니다. 수동 수정 시 해당 날짜만 고정됩니다. 이후 보스 컷·점검·시간 재설정으로 이 날짜의 체크박스가 다시 늘어나지 않습니다. 삭제된 시간의 기존 참여 데이터는 보존하지만 해당 시간의 점수는 현재 주간 계산에서 제외됩니다.</p>
             </div>
         </div>
     </div>
@@ -886,6 +887,7 @@ body{background:#060915!important;color:#f7f7ff!important}
                 { name: '툴칸', fixedTime: '21:00', days: ['일'] }
             ],
             bossSlotOverrides: {},
+            bossSlotAutoAnchors: {},
             bossRecords: {},
             weeklyArchives: [],
             activeWeekKey: null,
@@ -934,7 +936,7 @@ body{background:#060915!important;color:#f7f7ff!important}
           const next = clone(DEFAULT_DB);
           next.users = [...profileDocs].map(([uid,d])=>localProfile(d.nickname||uid,uid,d)).concat([...guestDocs].map(([gid,d])=>({id:d.nickname,guestId:gid,isGuest:true,role:'길드원',class:d.class||'레인저',power:Number(d.power)||0}))); 
           next.currentUser = own.nickname;
-          ['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','guildDiamondsByWeek','activeWeekKey'].forEach(k=>{
+          ['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','bossSlotAutoAnchors','guildDiamondsByWeek','activeWeekKey'].forEach(k=>{
             if(shared[k]!==undefined) next[k]=clone(shared[k]);
           });
           next.bossRecords={};
@@ -1004,7 +1006,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             if(!cloudMaster() || uid===ADMIN_UID || (!cloudAdmin() && ['웹 관리자','마스터'].includes(u.role))) throw new Error('마스터는 운영진·길드원 계정만 추방할 수 있습니다.');
             ops.push(store.doc('users/'+uid).delete());
           }
-          const sharedKeys=['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','guildDiamondsByWeek','activeWeekKey'];
+          const sharedKeys=['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','bossSlotAutoAnchors','guildDiamondsByWeek','activeWeekKey'];
           if(stable(before.weeklyArchives)!==stable(after.weeklyArchives)){if(!cloudManager())throw new Error('보관함은 관리자만 수정할 수 있습니다.');ops.push(store.doc('guildPrivate/archives').set({weeklyArchives:clone(after.weeklyArchives)}));}
           const delta={};
           sharedKeys.forEach(k=>{if(stable(before[k])!==stable(after[k]))delta[k]=clone(after[k]??null);});
@@ -1912,12 +1914,12 @@ body{background:#060915!important;color:#f7f7ff!important}
             return events.filter(e => Number.isFinite(Number(e.time)))
                 .map(e => ({time:Number(e.time), type:e.type || 'cut', spawnTime:Number(e.spawnTime)})).sort((a,b)=>a.time-b.time);
         }
-        function bossPeriodicTimes(boss, fromMs, toMs) {
+        function bossPeriodicTimes(boss, fromMs, toMs, anchorOverride = null) {
             const cycleMs = Number(boss.cycleHours)*3600000;
             if (!(cycleMs > 0) || toMs <= fromMs) return [];
             const dayNames=['일','월','화','수','목','금','토'];
             const validDays=(boss.days && boss.days.length) ? boss.days : ['월','화','수','목','금','토','일'];
-            let anchor=Number((db.bossSpawnAnchors||{})[boss.name]);
+            let anchor=Number(anchorOverride) > 0 ? Number(anchorOverride) : Number((db.bossSpawnAnchors||{})[boss.name]);
             const fixed=String(boss.fixedTime||'');
             if (!(anchor>0) && /^([01]\d|2[0-3]):[0-5]\d$/.test(fixed)) {
                 const [h,m]=fixed.split(':').map(Number);
@@ -2001,7 +2003,19 @@ body{background:#060915!important;color:#f7f7ff!important}
         function getSharedBossOccurrences(boss,date) {
             const key=bossSlotOverrideKey(date,boss.name);
             const overrides=db.bossSlotOverrides||{};
-            if (!Object.prototype.hasOwnProperty.call(overrides,key)) return getBossOccurrencesForDay(boss,date);
+            if (!Object.prototype.hasOwnProperty.call(overrides,key)) {
+                const autoAnchor=Number((db.bossSlotAutoAnchors||{})[boss.name]);
+                if (!(autoAnchor>0) || !(Number(boss.cycleHours)>0)) return getBossOccurrencesForDay(boss,date);
+                const day=new Date(date);day.setHours(0,0,0,0);
+                const end=new Date(day);end.setDate(end.getDate()+1);
+                const now=Date.now();
+                const future=bossPeriodicTimes(boss,day.getTime(),end.getTime(),autoAnchor);
+                const historical=getBossOccurrencesForDay(boss,date).filter(x=>x.time<=now).map(x=>x.time);
+                // A cut is not a new spawn. Keep only elapsed appearances, and
+                // regenerate all future slots from the cut-event timeline.
+                return [...new Set([...historical,...future.filter(t=>t>now)])].sort((a,b)=>a-b)
+                    .map(time=>{const d=new Date(time);return {time,label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};});
+            }
             const day=new Date(date);day.setHours(0,0,0,0);
             return (Array.isArray(overrides[key])?overrides[key]:[])
                 .filter(t=>/^([01]\d|2[0-3]):[0-5]\d$/.test(t))
@@ -2039,8 +2053,9 @@ body{background:#060915!important;color:#f7f7ff!important}
             const chosen=selectedSharedBossSlot(),list=document.getElementById('boss-slot-editor-list');
             if(!chosen){list.textContent='날짜와 보스를 선택하세요.';return;}
             const overridden=Object.prototype.hasOwnProperty.call(db.bossSlotOverrides||{},chosen.key);
+            const auto=Number((db.bossSlotAutoAnchors||{})[chosen.boss.name])>0;
             const times=getSharedBossOccurrences(chosen.boss,chosen.day).map(x=>x.label);
-            document.getElementById('boss-slot-editor-state').textContent=overridden?'수동 관리 중 · 모든 회원에게 공통 적용':'자동 생성 중 · 처음 수정하면 현재 목록으로 고정';
+            document.getElementById('boss-slot-editor-state').textContent=overridden?'수동 관리 중 · 모든 회원에게 공통 적용':auto?'컷 연동 자동 계산 중 · 컷 시각에 맞춰 미래 체크박스 자동 교체':'기본 자동 생성 중 · 처음 수정하면 현재 목록으로 고정';
             list.innerHTML=times.length?times.map(t=>`<span class="inline-flex items-center gap-2 bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm"><span class="text-sky-300 font-bold">${t}</span><button type="button" aria-label="${t} 삭제" onclick="removeSharedBossSlot('${t}')" class="text-red-300 hover:text-red-100 font-bold">✕</button></span>`).join(''):'<span class="text-slate-400 text-sm">등록된 체크박스가 없습니다.</span>';
         }
         function sharedSlotEditable() {if(!cloudManager()||!cloudReady){alert('운영진 이상 권한 및 서버 연결이 필요합니다.');return false;}return true;}
@@ -2050,6 +2065,28 @@ body{background:#060915!important;color:#f7f7ff!important}
             db.bossSlotOverrides[chosen.key]=[...new Set(times)].sort();
             renderBossSlotEditor();
             try{await saveDB();}catch(e){alert('저장에 실패했습니다. 새로고침 후 다시 확인하세요.');}
+        }
+        async function enableBossSlotAutoCalculation() {
+            if(!sharedSlotEditable())return;
+            const chosen=selectedSharedBossSlot();if(!chosen)return;
+            if(!(Number(chosen.boss.cycleHours)>0))return alert('주기형 보스에만 사용할 수 있습니다.');
+            const current=editableSharedSlotTimes(chosen);
+            if(!current.length)return alert('기준이 될 출현 시간이 없습니다. 먼저 시간을 추가하세요.');
+            const [h,m]=current[0].split(':').map(Number);
+            const first=new Date(chosen.day);first.setHours(h,m,0,0);
+            if(!confirm(`${chosen.boss.name}의 ${current[0]}을 기준으로 ${chosen.boss.cycleHours}시간마다 자동 계산할까요?\n이 보스의 수동 체크박스 목록은 자동 계산으로 전환됩니다. 이후 컷 시각에 따라 미래 체크박스가 교체되며, 과거 참여 기록은 보존됩니다.`))return;
+            db.bossSlotAutoAnchors=db.bossSlotAutoAnchors||{};
+            db.bossSlotAutoAnchors[chosen.boss.name]=first.getTime();
+            db.bossSlotOverrides=db.bossSlotOverrides||{};
+            // Remove date-specific manual overrides from this date forward; otherwise
+            // they would continue masking cut-driven automatic future slots.
+            const datePrefix=localDateKey(chosen.day);
+            for(const key of Object.keys(db.bossSlotOverrides)) {
+                const split=key.lastIndexOf('::');
+                if(split>=0 && key.slice(split+2)===chosen.boss.name && key.slice(0,split)>=datePrefix)delete db.bossSlotOverrides[key];
+            }
+            renderBossSlotEditor();
+            try{await saveDB();}catch(e){alert('저장에 실패했습니다. 다시 확인하세요.');}
         }
         function addSharedBossSlot() {
             if(!sharedSlotEditable())return;const chosen=selectedSharedBossSlot();if(!chosen)return;
@@ -2297,6 +2334,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             db.bossSpawnEvents=db.bossSpawnEvents||{};
             db.bossSpawnEvents[name]=[...(db.bossSpawnEvents[name]||[]),{time:cutTime,type:'cut',spawnTime:status.time}];
             saveDB(); renderBossPreview();
+            if(document.getElementById('boss-manage-slots-pane') && !document.getElementById('boss-manage-slots-pane').classList.contains('hidden'))renderBossSlotEditor();
             const modal=document.getElementById('boss-reg-modal');
             if(modal && !modal.classList.contains('hidden')) loadUserBossRecords(true);
         }
@@ -2318,6 +2356,7 @@ body{background:#060915!important;color:#f7f7ff!important}
             db.bossSpawnEvents=db.bossSpawnEvents||{};
             db.bossSpawnEvents[name]=[...(db.bossSpawnEvents[name]||[]),{time:Date.now(),type:'manual',spawnTime:timestamp}];
             saveDB(); renderBossPreview();
+            if(document.getElementById('boss-manage-slots-pane') && !document.getElementById('boss-manage-slots-pane').classList.contains('hidden'))renderBossSlotEditor();
             const modal=document.getElementById('boss-reg-modal');
             if(modal && !modal.classList.contains('hidden')) loadUserBossRecords(true);
         }
@@ -2924,7 +2963,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 </script>
 <script id="class-update-monitor">
 (function(){
-  const CURRENT_BUILD = 'CLASS_BUILD_20261116_V36_BOSS_TIME_RESET';
+  const CURRENT_BUILD = document.querySelector('meta[name="class-build-id"]')?.content || '';
+  const currentVersion = Number(CURRENT_BUILD.match(/_V(\d+)(?:_|$)/i)?.[1] || 0);
   let updateFound = false;
   let checking = false;
   function banner(){
@@ -2949,7 +2989,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       const html=await response.text();
       const match=html.match(/<meta\s+name=["']class-build-id["']\s+content=["']([^"']+)["']/i);
       // Old deployments without a version marker are ignored to avoid false positives.
-      if(match && match[1]!==CURRENT_BUILD){updateFound=true;banner();}
+      if(match && currentVersion){
+        const deployedVersion = Number(match[1].match(/_V(\d+)(?:_|$)/i)?.[1] || 0);
+        // Only notify for a genuinely newer deployed version. Never flag an older cached deployment.
+        if(deployedVersion > currentVersion){updateFound=true;banner();}
+      }
     }catch(e){console.debug('업데이트 확인 실패',e);}
     finally{checking=false;}
   }

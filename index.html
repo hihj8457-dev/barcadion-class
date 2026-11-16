@@ -3282,8 +3282,8 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
   el.innerHTML=`<p class="class-v45-muted">이번 주 ${weekTitle()} · 쟁 분배 ${num(calc().warPool)} 다이아 · 누적 쟁 점수 ${num(total)}점</p>
   <div class="class-v45-panel"><p class="class-v45-muted">쟁이 발생할 때마다 <b>이번 쟁 추가 점수</b>를 입력하고 저장하세요. 기존 누적 점수에 더해집니다. 0점은 변경되지 않습니다.</p>
   <table class="class-v45-table"><thead><tr><th>길드원</th><th>누적 점수</th><th>이번 쟁 추가 점수</th><th>예상 분배 다이아</th></tr></thead><tbody>
-  ${users().map(u=>`<tr><td>${esc(u.id)}${u.isGuest?' (미가입)':''}</td><td>${editable?`<span style="display:inline-flex;align-items:center;gap:7px;white-space:nowrap"><span data-war-total-label="${esc(memberKey(u))}">${num(score(u))}점</span><input class="class-v45-input" style="display:none;width:82px;max-width:100%;padding:5px 7px" type="number" min="0" step="1" data-war-total="${esc(memberKey(u))}" value="${score(u)}" aria-label="${esc(u.id)} 누적 점수 수정"><button type="button" onclick="classV64ToggleWarScore(this)" title="누적 점수 수정" aria-label="${esc(u.id)} 누적 점수 수정" style="background:none;border:0;color:#a5b4fc;cursor:pointer;padding:3px;line-height:1;vertical-align:middle">✎</button></span>`:`${num(score(u))}점`}</td><td>${editable?`<input class="class-v45-input" type="number" min="0" step="1" data-war-uid="${esc(memberKey(u))}" value="0">`:'-'} </td><td>💎 ${num(warShare(u))}</td></tr>`).join('')}</tbody></table>
-  ${editable?'<div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px"><button class="class-v45-btn" style="background:#475569" onclick="classV62CorrectWar()">누적 점수 수정 저장</button><button class="class-v45-btn" onclick="classV45SaveWar()">이번 쟁 점수 누적 저장</button></div>':''}</div>
+  ${users().map(u=>`<tr><td>${esc(u.id)}${u.isGuest?' (미가입)':''}</td><td>${editable?`<span style="display:inline-flex;align-items:center;gap:7px;white-space:nowrap"><span data-war-total-label="${esc(memberKey(u))}">${num(score(u))}점</span><input class="class-v45-input" style="display:none;width:82px;max-width:100%;padding:5px 7px" type="number" min="0" step="1" data-war-total="${esc(memberKey(u))}" onkeydown="if(event.key==='Enter'){event.preventDefault();classV70SaveWarScore(this)}else if(event.key==='Escape'){classV70CancelWarScore(this)}" value="${score(u)}" aria-label="${esc(u.id)} 누적 점수 수정"><button type="button" onclick="classV64ToggleWarScore(this)" title="누적 점수 수정" aria-label="${esc(u.id)} 누적 점수 수정" style="background:none;border:0;color:#a5b4fc;cursor:pointer;padding:3px;line-height:1;vertical-align:middle">✎</button></span>`:`${num(score(u))}점`}</td><td>${editable?`<input class="class-v45-input" type="number" min="0" step="1" data-war-uid="${esc(memberKey(u))}" value="0">`:'-'} </td><td>💎 ${num(warShare(u))}</td></tr>`).join('')}</tbody></table>
+  ${editable?'<div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px"><button class="class-v45-btn" onclick="classV45SaveWar()">이번 쟁 점수 누적 저장</button></div>':''}</div>
   <div class="class-v45-panel"><details style="width:100%"><summary style="cursor:pointer;font-weight:700;user-select:none">쟁 점수 등록 내역 (${history.length}건) <span class="class-v45-muted" style="font-weight:400">· 눌러서 펼치기</span></summary>
   ${history.length?`<div style="max-height:220px;overflow:auto;margin-top:10px">${history.slice(-30).reverse().map(h=>`<div class="class-v45-muted" style="padding:7px 0;border-bottom:1px solid #343d59">${esc(h.at||'')} · <strong>수정자 : ${esc(warHistoryEditor(h))}</strong> · ${esc((h.entries||[]).map(e=>h.type==='correction'?e.name+' '+e.from+'점 → '+e.to+'점 (정정)':e.name+' +'+e.points+'점').join(' · '))}</div>`).join('')}</div>`:'<p class="class-v45-muted" style="margin-top:8px">아직 등록된 내역이 없습니다.</p>'}</details></div>`;
  }
@@ -3348,48 +3348,48 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
   const field=cell.querySelector('[data-war-total]');
   const label=cell.querySelector('[data-war-total-label]');
   if(!field||!label)return;
-  const editing=field.style.display!=='none';
-  field.style.display=editing?'none':'inline-block';
-  label.style.display=editing?'inline':'none';
-  button.textContent=editing?'✎':'✓';
-  button.title=editing?'누적 점수 수정':'입력 완료 (아래 수정 저장 버튼으로 저장)';
-  if(!editing){field.focus();field.select();}
+  if(field.style.display==='none'){
+    field.style.display='inline-block';label.style.display='none';
+    button.textContent='✓';button.title='Enter 또는 체크를 눌러 저장';
+    field.focus();field.select();
+  }else window.classV70SaveWarScore(field);
  };
- window.classV62CorrectWar=async function(){
+ window.classV70CancelWarScore=function(field){
+  const cell=field.closest('td'),button=cell?.querySelector('button'),label=cell?.querySelector('[data-war-total-label]');
+  if(!label||!button)return;
+  field.value=field.dataset.originalValue||field.defaultValue;
+  field.style.display='none';label.style.display='inline';
+  button.textContent='✎';button.title='누적 점수 수정';
+ };
+ window.classV70SaveWarScore=async function(field){
   if(!manager())return alert('관리자·마스터·운영진만 수정할 수 있습니다.');
-  const fields=[...document.querySelectorAll('#class-war-system [data-war-total]')];
-  const changes={};
-  for(const field of fields){
-    const value=field.value.trim();
-    if(!/^\d+$/.test(value)||!Number.isSafeInteger(Number(value)))return alert('누적 점수는 0 이상의 정수로 입력하세요.');
-    const uid=field.dataset.warTotal;
-    const user=users().find(u=>memberKey(u)===uid);
-    if(user&&Number(value)!==score(user))changes[uid]=Number(value);
-  }
-  const ids=Object.keys(changes);
-  if(!ids.length)return alert('수정된 누적 점수가 없습니다.');
-  const details=ids.map(uid=>{
-    const u=users().find(x=>memberKey(x)===uid);
-    return `${u?.id||uid}: ${u?score(u):0}점 → ${changes[uid]}점`;
-  });
-  if(!confirm(`누적 점수를 아래와 같이 정정할까요?\\n\\n${details.join('\\n')}\\n\\n이번 쟁 추가 점수는 별도로 저장됩니다.`))return;
+  if(field.dataset.saving==='1')return;
+  const raw=field.value.trim();
+  if(!/^\\d+$/.test(raw)||!Number.isSafeInteger(Number(raw)))return alert('누적 점수는 0 이상의 정수로 입력하세요.');
+  const uid=field.dataset.warTotal, user=users().find(u=>memberKey(u)===uid);
+  if(!user)return alert('길드원 정보를 찾지 못했습니다.');
+  const to=Number(raw),from=score(user);
+  if(from===to){window.classV70CancelWarScore(field);return;}
+  field.dataset.saving='1';field.disabled=true;
   const targetWeek=week();
-  await persist(x=>{
-    x.weeks=x.weeks||{};
-    const w=x.weeks[targetWeek]||(x.weeks[targetWeek]={});
-    w.war=w.war||{};
-    const entries=[];
-    for(const [uid,to] of Object.entries(changes)){
-      const from=Math.max(0,Number(w.war[uid])||0);
-      if(from===to)continue;
+  try{
+    const ok=await persist(x=>{
+      x.weeks=x.weeks||{};
+      const w=x.weeks[targetWeek]||(x.weeks[targetWeek]={});
+      w.war=w.war||{};
+      const actualFrom=Math.max(0,Number(w.war[uid])||0);
       w.war[uid]=to;
-      entries.push({uid,name:users().find(u=>memberKey(u)===uid)?.id||uid,from,to});
-    }
-    if(entries.length){
       w.warHistory=Array.isArray(w.warHistory)?w.warHistory:[];
-      w.warHistory.push({at:new Date().toLocaleString('ko-KR'),by:currentWarEditorName(),editorUid:cloudUser?.uid||'',type:'correction',entries});
+      w.warHistory.push({at:new Date().toLocaleString('ko-KR'),by:currentWarEditorName(),editorUid:cloudUser?.uid||'',type:'correction',entries:[{uid,name:user.id,from:actualFrom,to}]});
+    },null);
+    if(ok){
+      const label=field.closest('td')?.querySelector('[data-war-total-label]');
+      if(label)label.textContent=num(to)+'점';
+      field.defaultValue=String(to);field.dataset.originalValue=String(to);
+      window.classV70CancelWarScore(field);
+      if(typeof renderWar==='function')renderWar();
     }
-  },document.activeElement);
+  }finally{field.dataset.saving='';field.disabled=false;}
  };
  window.classV45SaveWar=async function(){
   const inputs=[...document.querySelectorAll('[data-war-uid]')];

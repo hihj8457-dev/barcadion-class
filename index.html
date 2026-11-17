@@ -3813,50 +3813,89 @@ body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color
 #class-war-system [style*="color:#a5b4fc"]{color:#795333!important}
 @media(max-width:760px){#boss-reg-modal .boss-reg-group{align-items:flex-start!important}.class-page:not([data-page="home"]) .class-v45-table{font-size:12px!important}}
 
-/* v87 | B&W only for secondary dialogs / setting overlays.
-   Intentionally excludes #auth-modal and main navigation pages. */
-:root{--v87-ink:#171b23;--v87-muted:#505866;--v87-line:#cbd1da;--v87-card:#ffffff;--v87-pale:#f3f5f8;--v87-primary:#20242e}
-/* Modal overlay and top-level panel */
-[id$="-modal"]:not(#auth-modal){background:rgba(10,13,19,.62)!important;color:var(--v87-ink)!important}
-[id$="-modal"]:not(#auth-modal)>div{background:#fff!important;color:var(--v87-ink)!important;border:1px solid #d5d8de!important;box-shadow:0 20px 65px rgba(0,0,0,.23)!important}
-/* Header strip in structured modals. Avoid affecting ordinary first input row. */
-:is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal) > div > div:first-child:is(.flex,.sticky){background:#20242d!important;color:#fff!important;border-bottom:1px solid #343b46!important}
-:is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal) > div > div:first-child:is(.flex,.sticky) :is(h2,h3,h4,button,i){color:#fff!important}
-/* Light panels regardless of legacy Tailwind blue/slate fill. */
-[id$="-modal"]:not(#auth-modal) :is(div,section,article,aside)[class*="bg-slate-"],
-[id$="-modal"]:not(#auth-modal) :is(div,section,article,aside)[class*="bg-gray-"],
-[id$="-modal"]:not(#auth-modal) :is(div,section,article,aside)[class*="bg-purple-"],
-[id$="-modal"]:not(#auth-modal) :is(div,section,article,aside)[class*="bg-indigo-"],
-[id$="-modal"]:not(#auth-modal) :is(div,section,article,aside)[class*="bg-amber-"]{background:#f4f6f9!important;color:var(--v87-ink)!important;border-color:var(--v87-line)!important}
-/* Header background takes precedence over nested legacy panel backgrounds. */
-:is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal) > div > div:first-child:is(.flex,.sticky){background:#20242d!important}
-/* Content labels + nested cards, tables, help text */
-[id$="-modal"]:not(#auth-modal) :is(label,p,span,small,li,td,th,summary,h3,h4,h5)[class*="text-slate-"],
-[id$="-modal"]:not(#auth-modal) :is(label,p,span,small,li,td,th,summary,h3,h4,h5)[class*="text-amber-"],
-[id$="-modal"]:not(#auth-modal) :is(label,p,span,small,li,td,th,summary,h3,h4,h5)[class*="text-purple-"],
-[id$="-modal"]:not(#auth-modal) :is(label,p,span,small,li,td,th,summary,h3,h4,h5)[class*="text-white"]{color:var(--v87-ink)!important;text-shadow:none!important}
-[id$="-modal"]:not(#auth-modal) :is(p,small)[class*="text-xs"],
-[id$="-modal"]:not(#auth-modal) :is(p,small)[class*="text-sm"]{color:var(--v87-muted)!important}
-[id$="-modal"]:not(#auth-modal) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea){background:#fff!important;color:#161a21!important;border:1px solid #abb4c2!important;box-shadow:none!important;outline-offset:1px}
-[id$="-modal"]:not(#auth-modal) :is(input,select,textarea)::placeholder{color:#697382!important;opacity:1!important}
-[id$="-modal"]:not(#auth-modal) :is(input,select,textarea):focus{border-color:#3b68b3!important;outline:2px solid rgba(59,104,179,.18)!important}
-[id$="-modal"]:not(#auth-modal) input[type="checkbox"],
-[id$="-modal"]:not(#auth-modal) input[type="radio"]{accent-color:#283243!important}
-/* Main action buttons: neutral charcoal, without bright purple/gold */
-[id$="-modal"]:not(#auth-modal) button:is([class*="bg-purple-"],[class*="bg-indigo-"],[class*="bg-amber-"],[class*="bg-blue-"],[class*="bg-green-"],[class*="bg-slate-800"],[class*="bg-slate-900"]){background:#252a34!important;color:#fff!important;border-color:#252a34!important;text-shadow:none!important}
-[id$="-modal"]:not(#auth-modal) button:is([class*="bg-slate-600"],[class*="bg-slate-500"],[class*="bg-slate-700"],[class*="bg-gray-"],[class*="bg-white"]){background:#f1f3f6!important;color:#20252e!important;border:1px solid #bdc5d1!important}
-[id$="-modal"]:not(#auth-modal) button:is([class*="bg-purple-"],[class*="bg-indigo-"],[class*="bg-amber-"],[class*="bg-blue-"]):hover{background:#3a414d!important}
-/* Explicitly dangerous operations remain visually distinct. */
-[id$="-modal"]:not(#auth-modal) button:is([class*="text-red-"],[class*="bg-red-"]){color:#a32939!important;background:#fff!important;border:1px solid #e3adb4!important}
-[id$="-modal"]:not(#auth-modal) :is(.text-red-300,.text-red-400,.text-red-500,.text-red-600){color:#aa2936!important}
-/* Member summaries and extra dynamically-rendered sections */
-#my-profile-modal .class-v45-profile-summary,
-[id$="-modal"]:not(#auth-modal) .class-v45-panel,
-[id$="-modal"]:not(#auth-modal) .class-v45-table{background:#f4f6f9!important;color:#212630!important;border:1px solid #d3d9e2!important}
-[id$="-modal"]:not(#auth-modal) .class-v45-profile-summary :is(div,p,span,li,small){color:#20252f!important}
-/* Compact screens: keep the whole editable dialog scrollable */
-@media(max-width:640px){[id$="-modal"]:not(#auth-modal)>div{max-width:100%!important;max-height:calc(100dvh - 24px)!important;overflow-y:auto}}
+</style>
+<style id="class-v88-dialog-black-white">
+/* v88: all auxiliary dialogs use neutral monochrome; keep login + main pages unchanged. */
+:root {--dlg-ink:#161a20;--dlg-muted:#555e6c;--dlg-line:#c7ced8;--dlg-faint:#f2f4f7;--dlg-charcoal:#22262e;}
+/* Scoped to the real modal roots, explicitly not the login overlay. */
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never):not(.class-login-overlay) {
+  background:rgba(12,15,20,.64)!important; color:var(--dlg-ink)!important;
+}
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never):not(.class-login-overlay) > div {
+  background:#fff!important; color:var(--dlg-ink)!important; border:1px solid #d2d7de!important;
+  box-shadow:0 24px 70px rgba(0,0,0,.24)!important;
+}
+/* Every card/pane generated in modals: undo legacy purple/navy AND old cream/wood fills. */
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(div,section,article,aside,li)[class*="bg-"],
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(.class-v45-panel,.class-v45-profile-summary,.class-v45-table,.boss-reg-group,.boss-reg-slot),
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(div,section,article)[style*="background"] {
+  background:#f4f5f7!important; color:#21252d!important; border-color:#cdd3dc!important;
+  box-shadow:none!important;
+}
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(.class-v45-table tr,.class-v45-table td,.class-v45-table th) {
+  background:transparent!important;color:#21252d!important;border-color:#d6dae2!important;
+}
+/* Explicitly keep the modal's outer content surface pure white. */
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) > div {background:#fff!important;}
+/* Consistent charcoal header; apply only to actual dialog headings, not list row headers. */
+html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal,#boss-guide-editor-modal):not(#v88-never) > div > div:first-child.flex {
+  background:#22262e!important;color:#fff!important;border-bottom:1px solid #3a404a!important;
+}
+html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal,#boss-guide-editor-modal):not(#v88-never) > div > div:first-child.flex :is(h1,h2,h3,h4,button,i,span) {
+  color:#fff!important;background:transparent!important;border-color:transparent!important;
+}
+/* Some dialogs are simple padded cards, with an in-flow header row. */
+html body :is(#my-profile-modal,#class-password-modal,#class-reset-modal,#maintenance-modal):not(#v88-never) > div > :is(h2,h3,.flex:first-child) {
+  color:#181c22!important;
+}
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(h2,h3,h4,h5,h6,strong,b,legend,summary,label,p,small,span,li,td,th) {
+  text-shadow:none!important;
+}
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(label,h2,h3,h4,h5,h6,summary) {
+  color:#1c2027!important;
+}
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(p,small,li,span,td,th)[class*="text-"] {
+  color:#4d5562!important;
+}
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(.text-white,.text-slate-100,.text-slate-200,.text-amber-300,.text-amber-400,.text-purple-200,.text-purple-300,.text-sky-300,.text-blue-300) {
+  color:#20252e!important;
+}
+/* Restore white heading and white button text after neutralizing old text utility classes. */
+html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal,#boss-guide-editor-modal):not(#v88-never) > div > div:first-child.flex :is(h1,h2,h3,h4,button,i,span) {color:#fff!important;}
+/* Inputs and their interactive state. */
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea) {
+  background:#fff!important; color:#131820!important;border:1px solid #aeb7c4!important;
+  -webkit-text-fill-color:#131820!important;box-shadow:none!important;
+}
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(input,textarea)::placeholder {color:#6b7480!important;opacity:1!important;}
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(input,select,textarea):focus {outline:2px solid #9fb3cf!important;outline-offset:1px;border-color:#637c9d!important;}
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) input:is([type="checkbox"],[type="radio"]) {accent-color:#262c35!important;}
+/* Primary actions, including controls with inline/tailwind legacy colors. */
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) button:is([class*="bg-amber-"],[class*="bg-purple-"],[class*="bg-violet-"],[class*="bg-indigo-"],[class*="bg-blue-"],[class*="bg-emerald-"],[class*="bg-green-"],[class*="bg-slate-800"],[class*="bg-slate-900"]),
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) button[style*="background"]:not([class*="red"]):not([class*="rose"]) {
+  background:#262b34!important;color:#fff!important;border:1px solid #262b34!important;
+  text-shadow:none!important;box-shadow:none!important;-webkit-text-fill-color:#fff!important;
+}
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) button:is([class*="bg-slate-500"],[class*="bg-slate-600"],[class*="bg-slate-700"],[class*="bg-gray-"],[class*="bg-white"]){
+  background:#f0f2f5!important;color:#20252c!important;border:1px solid #bfc7d2!important;-webkit-text-fill-color:#20252c!important;
+}
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) button:is([class*="text-red-"],[class*="bg-red-"],[class*="text-rose-"],[class*="bg-rose-"]){
+  background:#fff!important;color:#ab283d!important;border:1px solid #db9caa!important;-webkit-text-fill-color:#ab283d!important;
+}
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(.text-red-300,.text-red-400,.text-red-500,.text-red-600,.text-rose-400){color:#af283d!important;}
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never) button:hover:not(:disabled){filter:brightness(.95)!important;}
+/* Rendered rows in member management and registered users. */
+html body #user-manage-list > *,html body #maintenance-editor-list > * {
+  background:#f4f5f7!important;border:1px solid #cbd1da!important;color:#21252d!important;
+}
+html body #user-manage-list :is(.text-white,.text-amber-300,.text-amber-400,.text-slate-300,.text-slate-400){color:#222831!important;}
+html body #class-profile-weekly {background:#f4f5f7!important;color:#232832!important;border-color:#cbd1da!important;}
+html body #class-profile-weekly :is(div,p,small,span,strong){color:#242932!important;}
+/* Underlying pages stay wood-toned. Don't make the fullscreen overlay itself opaque. */
+@media(max-width:640px){html body [id$="-modal"]:not(#auth-modal):not(#v88-never)>div{max-height:calc(100dvh - 20px)!important;overflow-y:auto;}}
 
+/* The outer dialog surface must remain white even when it has legacy bg-slate-800. */
+html body [id$="-modal"]:not(#auth-modal):not(#v88-never):not(#v88-dialog-surface) > div {background:#ffffff!important;color:#161a20!important;}
 </style>
 </body>
 </html>

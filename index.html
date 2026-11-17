@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V95_UNIFIED_ALL_TABS">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V97_ADMIN_NEUTRAL">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1538,14 +1538,15 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
                 if(participation.siegeParticipated)participationItems.push(`공성전 : 💎 ${Number(participation.siege||0).toLocaleString()}`);
                 html += `
                     <div class="class-member-card bg-slate-900/60 rounded-xl border border-slate-700/50">
-                        <div class="class-member-identity">
-                            
-                            ${guildClassIcon(u.class)}
+                        ${guildClassIcon(u.class)}
+                        <div class="class-member-details">
+                          <div class="class-member-identity">
                             <span class="guild-member-name font-bold text-white" title="${escapeAttribute(u.id)}">${escapeHtml(u.id)}</span>
                             <span class="class-member-role px-1.5 py-0.5 rounded text-[10px] font-semibold whitespace-nowrap ${badgeColor}">${escapeHtml(u.role)}</span>
                             <span class="class-member-power text-amber-400 font-bold"><span class="class-member-power-label">전투력 </span><span class="class-member-power-value">${Number(u.power||0).toLocaleString()}</span></span>
                         </div>
-                        ${participationItems.length ? `<div class="class-member-metrics"><span class="class-member-participation-text">${participationItems.join(' · ')}</span></div>` : ''}
+                          ${participationItems.length ? `<div class="class-member-metrics"><span class="class-member-participation-text">${participationItems.join(' · ')}</span></div>` : ''}
+                        </div>
                     </div>`;
             });
             document.getElementById('member-list-view').innerHTML = html;
@@ -4364,6 +4365,162 @@ html body #class-pages > .class-page[data-page="boss"] #next-boss-preview>div>di
 @media(max-width:700px){
  html body #class-pages > .class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card){padding:14px!important}
  html body #class-pages > .class-page:not([data-page="home"]) :is(#panel-title-1,#panel-title-2,#panel-title-3,#panel-title-4,.class-card>h2){font-size:19px!important}
+}
+</style>
+
+<style id="class-v96-item-and-member-polish">
+/* v96: Distribution page follows the same neutral palette and geometry as member/boss pages.
+   Scope intentionally excludes popups and the home screen. */
+html body #class-pages > .class-page[data-page="items"] #class-item-slot .dashboard-panel,
+html body #class-pages > .class-page[data-page="items"] #class-item-slot .class-card{
+  background:#fff!important;color:#171b21!important;border:1px solid #dde1e6!important;
+  border-radius:14px!important;padding:20px!important;box-shadow:0 3px 12px rgba(18,24,32,.045)!important;
+  font-family:Pretendard,"Noto Sans KR",system-ui,sans-serif!important;
+}
+html body #class-pages > .class-page[data-page="items"] #class-item-slot :is(#tier-list-view,#item-market-list){
+  background:#fff!important;border:0!important;color:#171b21!important;
+}
+html body #class-pages > .class-page[data-page="items"] #class-item-slot :is(.tier-price-card,.class-item-row){
+  background:#fff!important;border:1px solid #dde1e6!important;border-radius:12px!important;
+  box-shadow:0 2px 8px rgba(18,24,32,.045)!important;color:#171b21!important;
+  font-size:13px!important;padding:13px 15px!important;
+}
+html body #class-pages > .class-page[data-page="items"] #class-item-slot :is(.tier-price-card,.class-item-row) :is(span,strong,b,small,div,p){
+  color:#171b21!important;-webkit-text-fill-color:#171b21!important;text-shadow:none!important;
+}
+html body #class-pages > .class-page[data-page="items"] #class-item-slot :is(.tier-price-card,.class-item-row) :is(.text-slate-400,.text-slate-500){
+  color:#545d68!important;-webkit-text-fill-color:#545d68!important;
+}
+html body #class-pages > .class-page[data-page="items"] #class-item-slot :is(.tier-price-card,.class-item-row) :is(.text-amber-400,.tier-price-line>span:last-child){
+  font-weight:750!important;
+}
+/* Main category/secondary categories: charcoal active, white inactive. */
+html body #class-pages > .class-page[data-page="items"] #class-item-slot :is(#btn-tab-dist-기준-3,#btn-tab-dist-신청-3,#tier-category-tabs button,#tier-equipment-tabs button,.item-cat-btn){
+  border:1px solid #d7dce2!important;border-radius:9px!important;
+  font-family:inherit!important;font-size:13px!important;font-weight:750!important;
+  box-shadow:none!important;min-height:33px!important;
+}
+html body #class-pages > .class-page[data-page="items"] #class-item-slot :is(#btn-tab-dist-기준-3,#btn-tab-dist-신청-3,#tier-category-tabs button,#tier-equipment-tabs button,.item-cat-btn).bg-amber-500,
+html body #class-pages > .class-page[data-page="items"] #class-item-slot :is(#btn-tab-dist-기준-3,#btn-tab-dist-신청-3,#tier-category-tabs button,#tier-equipment-tabs button,.item-cat-btn).bg-blue-600{
+  background:#262a30!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#262a30!important;
+}
+html body #class-pages > .class-page[data-page="items"] #class-item-slot :is(#btn-tab-dist-기준-3,#btn-tab-dist-신청-3,#tier-category-tabs button,#tier-equipment-tabs button,.item-cat-btn).bg-slate-700,
+html body #class-pages > .class-page[data-page="items"] #class-item-slot :is(#btn-tab-dist-기준-3,#btn-tab-dist-신청-3,#tier-category-tabs button,#tier-equipment-tabs button,.item-cat-btn).bg-slate-800{
+  background:#fff!important;color:#242a33!important;-webkit-text-fill-color:#242a33!important;
+}
+html body #class-pages > .class-page[data-page="items"] #class-item-slot .class-item-row button{
+  font-family:inherit!important;font-size:12px!important;font-weight:750!important;
+}
+html body #class-pages > .class-page[data-page="items"] #class-item-slot .class-item-row button.bg-blue-600{
+  background:#262a30!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border:1px solid #262a30!important;
+}
+html body #class-pages > .class-page[data-page="items"] #class-item-slot #item-pagination button{
+  font-family:inherit!important;font-weight:750!important;
+}
+/* Member rows: icon takes the full two-line height; both text lines share one start edge. */
+html body #class-pages > .class-page[data-page="members"] #member-list-view .class-member-card{
+  display:grid!important;grid-template-columns:44px minmax(0,1fr)!important;
+  align-items:center!important;column-gap:12px!important;row-gap:0!important;
+  min-height:76px!important;
+}
+html body #class-pages > .class-page[data-page="members"] #member-list-view .class-member-card > .guild-class-icon{
+  grid-column:1!important;grid-row:1!important;display:flex!important;
+  width:44px!important;height:52px!important;flex:none!important;
+  align-items:center!important;justify-content:center!important;
+  overflow:visible!important;
+}
+html body #class-pages > .class-page[data-page="members"] #member-list-view .class-member-card > .guild-class-icon img{
+  width:42px!important;height:50px!important;max-width:42px!important;max-height:50px!important;
+  object-fit:contain!important;display:block!important;
+}
+html body #class-pages > .class-page[data-page="members"] #member-list-view .class-member-details{
+  grid-column:2!important;grid-row:1!important;display:flex!important;flex-direction:column!important;
+  justify-content:center!important;gap:3px!important;min-width:0!important;
+}
+html body #class-pages > .class-page[data-page="members"] #member-list-view .class-member-details .class-member-identity{
+  display:flex!important;flex-direction:row!important;align-items:center!important;
+  justify-content:flex-start!important;flex-wrap:wrap!important;gap:3px 6px!important;
+  min-width:0!important;margin:0!important;padding:0!important;
+}
+html body #class-pages > .class-page[data-page="members"] #member-list-view .class-member-details .class-member-metrics{
+  padding:0!important;margin:0!important;min-width:0!important;line-height:1.5!important;
+}
+@media(max-width:540px){
+ html body #class-pages > .class-page[data-page="members"] #member-list-view .class-member-card{grid-template-columns:40px minmax(0,1fr)!important;column-gap:9px!important}
+ html body #class-pages > .class-page[data-page="members"] #member-list-view .class-member-card > .guild-class-icon{width:40px!important;height:48px!important}
+ html body #class-pages > .class-page[data-page="members"] #member-list-view .class-member-card > .guild-class-icon img{width:38px!important;height:46px!important}
+}
+</style>
+
+<style id="class-v97-admin-tab-neutral">
+/* v97: ADMIN MAIN TAB ONLY; leave modals, left sidebar, login, and other pages intact. */
+html body #class-pages > .class-page[data-page="admin"]{
+  background:#fff!important;color:#171b21!important;
+  font:14px/1.55 Pretendard,"Noto Sans KR",system-ui,sans-serif!important;
+}
+html body #class-pages > .class-page[data-page="admin"] > .class-actions{
+  display:flex!important;align-items:center!important;justify-content:space-between!important;
+  gap:12px!important;margin-bottom:16px!important;
+}
+html body #class-pages > .class-page[data-page="admin"] > .class-actions h2{
+  color:#171b21!important;font-size:21px!important;font-weight:800!important;line-height:1.4!important;
+}
+html body #class-pages > .class-page[data-page="admin"] #class-admin-slot > .dashboard-panel,
+html body #class-pages > .class-page[data-page="admin"] > .class-card{
+  background:#fff!important;border:1px solid #dde1e6!important;border-radius:14px!important;
+  box-shadow:0 3px 12px rgba(18,24,32,.045)!important;
+  color:#171b21!important;padding:20px!important;
+}
+/* Dark boxes retained from the old theme are ONLY cleared within the admin tab. */
+html body #class-pages > .class-page[data-page="admin"] #class-admin-slot [class*="bg-slate-"],
+html body #class-pages > .class-page[data-page="admin"] #class-admin-slot #diamond-summary-panel,
+html body #class-pages > .class-page[data-page="admin"] #class-admin-slot #admin-control-panel,
+html body #class-pages > .class-page[data-page="admin"] #class-ratio-system [class*="bg-slate-"]{
+  background:#f7f8fa!important;border-color:#dde1e6!important;color:#171b21!important;
+}
+html body #class-pages > .class-page[data-page="admin"] #class-admin-slot #diamond-summary-panel,
+html body #class-pages > .class-page[data-page="admin"] #class-admin-slot .space-y-3 > [class*="bg-slate-"]{
+  border:1px solid #dde1e6!important;border-radius:12px!important;padding:14px!important;
+}
+html body #class-pages > .class-page[data-page="admin"] #class-admin-slot :is(h1,h2,h3,h4,p,span,small,strong,b,label,li,td,th,div):not(button),
+html body #class-pages > .class-page[data-page="admin"] #class-ratio-system :is(h1,h2,h3,h4,p,span,small,strong,b,label,li,td,th,div):not(button){
+  color:#171b21!important;-webkit-text-fill-color:#171b21!important;text-shadow:none!important;
+  font-family:inherit!important;
+}
+html body #class-pages > .class-page[data-page="admin"] #class-admin-slot :is(.text-slate-400,.text-slate-500,.text-slate-300),
+html body #class-pages > .class-page[data-page="admin"] #class-ratio-system :is(.text-slate-400,.text-slate-500,.text-slate-300){
+  color:#545d68!important;-webkit-text-fill-color:#545d68!important;
+}
+html body #class-pages > .class-page[data-page="admin"] :is(#class-admin-slot,#class-ratio-system) :is(input:not([type=checkbox]):not([type=radio]),select,textarea){
+  background:#fff!important;color:#171b21!important;-webkit-text-fill-color:#171b21!important;
+  border:1px solid #cbd1d9!important;border-radius:9px!important;
+  font:13px/1.5 Pretendard,"Noto Sans KR",system-ui,sans-serif!important;
+}
+html body #class-pages > .class-page[data-page="admin"] :is(#class-admin-slot,#class-ratio-system) :is(input,textarea)::placeholder{
+  color:#7a828e!important;-webkit-text-fill-color:#7a828e!important;
+}
+/* Admin actions share the same charcoal-and-white button language as other tabs. */
+html body #class-pages > .class-page[data-page="admin"] :is(#class-admin-slot,#class-ratio-system) button:not(:disabled),
+html body #class-pages > .class-page[data-page="admin"] > .class-actions > button{
+  background:#262a30!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+  border:1px solid #262a30!important;border-radius:9px!important;
+  font-family:inherit!important;font-size:13px!important;font-weight:750!important;
+  text-shadow:none!important;box-shadow:0 2px 5px rgba(0,0,0,.09)!important;
+}
+html body #class-pages > .class-page[data-page="admin"] :is(#class-admin-slot,#class-ratio-system) button:not(:disabled) :is(span,strong,i){
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+html body #class-pages > .class-page[data-page="admin"] :is(#class-admin-slot,#class-ratio-system) button:disabled{
+  opacity:.5!important;cursor:not-allowed!important;
+}
+html body #class-pages > .class-page[data-page="admin"] > .class-card > h2,
+html body #class-pages > .class-page[data-page="admin"] #panel-title-4{
+  font-size:21px!important;font-weight:800!important;color:#171b21!important;
+  border-bottom:1px solid #dde1e6!important;padding-bottom:11px!important;
+}
+@media(max-width:700px){
+ html body #class-pages > .class-page[data-page="admin"] #class-admin-slot > .dashboard-panel,
+ html body #class-pages > .class-page[data-page="admin"] > .class-card{padding:14px!important}
 }
 </style>
 </body>

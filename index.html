@@ -86,6 +86,23 @@
         .guild-class-icon { width: 26px; height: 30px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 26px; }
         .guild-class-icon img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; filter: brightness(1.25) contrast(1.13) drop-shadow(0 0 3px rgba(147,197,253,.65)); }
 #member-list-view .class-member-participation-text{color:#d5deef!important;font-weight:500;line-height:1.55}
+
+/* v113: 회원가입 필드 가독성 보정 (아이보리 테마) */
+#auth-modal #register-nickname-wrap > label,
+#auth-modal #register-fields label {
+  color:#432b1e !important;
+  font-size:15px !important;
+  font-weight:750 !important;
+  line-height:1.5;
+}
+#auth-modal #register-nickname-wrap {margin-top:13px;}
+#auth-modal #register-nickname-wrap > label {display:block;margin-bottom:6px;}
+#auth-modal #register-fields {margin-top:8px;}
+#auth-modal #reg-nickname::placeholder,
+#auth-modal #reg-power::placeholder {color:#836e5e !important;opacity:1;}
+#auth-modal #reg-class, #auth-modal #reg-power, #auth-modal #reg-nickname {
+ color:#302015 !important; background-color:#fffaf6 !important;
+}
 </style>
 <style id="class-dashboard-style">
 body{background:#070b16!important;color:#f3f4fa}#app-container{max-width:1500px!important}#app-container>header{background:#0d1425!important;border-color:#343b60!important;margin-bottom:16px!important}#site-title{font-size:2rem!important;color:#fff!important}#site-subtitle{letter-spacing:.19em;color:#b7a5e9!important}#dashboard-grid{display:none!important}.class-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:22px}.class-nav button{padding:17px 8px;border:1px solid #41476a;border-radius:12px;background:#0d1629;color:#dfe5fa;font-weight:800;font-size:1.05rem}.class-nav button.active{background:linear-gradient(120deg,#392064,#211744);border-color:#ad70ff;box-shadow:0 0 17px #7131b35c;color:#fff}.class-page{display:none}.class-page.active{display:block}.class-card{background:#0d1426;border:1px solid #454568;border-radius:17px;padding:22px;box-shadow:0 9px 25px #0005}.class-card h2{font-size:1.28rem;font-weight:800;margin-bottom:17px}.class-home-top{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;margin-bottom:18px}.class-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.class-stat{background:#10182d;border:1px solid #343a5e;border-radius:14px;padding:20px 8px;text-align:center}.class-stat .symbol{font-size:30px;margin-bottom:12px}.class-stat .caption{font-size:14px;color:#c8cbe0}.class-stat .value{font-size:clamp(17px,2vw,29px);font-weight:900;margin-top:9px;overflow-wrap:anywhere}.class-bosses{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.class-boss{background:#10182d;border:1px solid #454769;border-radius:13px;padding:21px 10px;text-align:center}.class-boss:first-child{border-color:#ae68ff;box-shadow:0 0 13px #8646db55}.class-boss strong{display:block;font-size:18px;margin-bottom:12px}.class-boss span{font-size:clamp(16px,2vw,27px);font-weight:800}.class-panel-slot .dashboard-panel{height:auto!important;min-height:520px!important;width:100%!important}.class-panel-slot #member-list-view,.class-panel-slot #next-boss-preview,.class-panel-slot #item-market-list,.class-panel-slot #tier-list-view{max-height:none!important}.class-panel-slot #notice-text-view{max-height:none!important;min-height:120px!important}.class-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.class-btn{background:#242a45;border:1px solid #5b5b83;border-radius:10px;padding:8px 14px;font-weight:700;color:white}.class-admin-button{background:#2a2145;border:1px solid #8058b3;border-radius:10px;padding:9px 13px;color:#f4e8ff;font-weight:700}.class-page .dashboard-panel{background:#0d1426!important;border-color:#454568!important}.class-page .dashboard-panel>div{max-width:100%}@media(max-width:850px){.class-home-top{grid-template-columns:1fr}.class-bosses{grid-template-columns:repeat(2,minmax(0,1fr))}.class-stats{gap:6px}.class-card{padding:14px}.class-stat{padding:14px 4px}.class-nav button{font-size:13px;padding:13px 4px}#app-container>header{align-items:flex-start!important;gap:10px}#app-container>header>div:last-child{flex-wrap:wrap;gap:8px}}@media(max-width:450px){.class-nav button{font-size:12px}.class-bosses{gap:8px}.class-boss{padding:16px 5px}.class-stats .caption{font-size:12px}}
@@ -997,7 +1014,7 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
             window.__sharedData=s.exists?s.data():{};
             sharedDataLoaded=true;
             scheduleCloudView();
-          },e=>{console.error('길드 공용 데이터 조회 실패',e);showAuthError('보스 일정 등 길드 데이터 조회 실패: '+errorText(e));}));
+          },e=>{console.error('길드 공용 데이터 조회 실패',e);showAuthError((e && e.code==='permission-denied' ? '길드 공용 데이터 읽기 권한이 없습니다. Firebase Firestore 보안 규칙에서 로그인 회원의 guildData/main 읽기 권한을 확인해 주세요. (permission-denied)' : '보스 일정 등 길드 데이터 조회 실패: '+errorText(e)));}));
           cloudUnsubs.push(store.collection('bossRecords').onSnapshot(s=>{recordDocs=new Map(s.docs.map(d=>[d.id,d.data().entries||{}]));scheduleCloudView();},e=>console.error(e)));
           cloudUnsubs.push(store.collection('items').onSnapshot(s=>{itemDocs=new Map(s.docs.map(d=>[d.id,d.data()]));scheduleCloudView();},e=>console.error(e)));
           cloudUnsubs.push(store.doc('guildPrivate/archives').onSnapshot(s=>{window.__archiveData=s.exists?s.data():{};scheduleCloudView();},e=>{window.__archiveData={};}));

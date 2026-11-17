@@ -325,6 +325,9 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
                         <h2 id="panel-title-1" class="text-lg font-bold text-amber-400 flex items-center">
                             <i class="fa-solid fa-bullhorn mr-2"></i> 길드원 명단
                         </h2>
+                        <button type="button" id="class-member-manage-trigger" onclick="openUserManageModal()" style="display:none" aria-label="길드원 관리" title="길드원 관리">
+                            <i class="fa-solid fa-users-gear" aria-hidden="true"></i><span>길드원 관리</span>
+                        </button>
                     </div>
                     <div id="content-notice-1" class="hidden space-y-3">
                         <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/50 text-sm text-slate-300 min-h-[180px] max-h-[220px] overflow-y-auto" id="notice-text-view"></div>
@@ -465,9 +468,6 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
                         <div id="admin-control-panel" class="hidden space-y-2 pt-2 border-t border-slate-700">
                             <p class="text-xs font-bold text-amber-400">관리자 전용 제어</p>
                             <button type="button" onclick="openWeeklyArchiveModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold">통합 참여 내역 보관함</button>
-                            <button onclick="openUserManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
-                                <i class="fa-solid fa-users-gear mr-1"></i> 길드원 관리
-                            </button>
                             <button onclick="openItemManageModal()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded-xl text-xs font-semibold transition cursor-pointer">
                                 <i class="fa-solid fa-box-archive mr-1"></i> 분배 아이템 등록/삭제
                             </button>
@@ -1566,6 +1566,8 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
             });
             document.getElementById('member-list-view').innerHTML = html;
             fitGuildMemberNames();
+            const memberManageTrigger = document.getElementById('class-member-manage-trigger');
+            if (memberManageTrigger) memberManageTrigger.style.display = isCurrentAdmin() ? 'inline-flex' : 'none';
             document.getElementById('total-member-count').innerText = `${sorted.length}명`;
             document.getElementById('stat-member-count').innerText = `${sorted.length}명`;
             if (typeof window.classFilterMemberList === 'function') window.classFilterMemberList();
@@ -2914,7 +2916,7 @@ function refreshHome(){
  try{
  updateClassBossTimer();
  renderClassHomeRatios();
- $('class-admin-link').style.display=isCurrentAdmin()?'flex':'none'; const pencil=$('class-notice-edit-trigger');if(pencil)pencil.style.display=isCurrentAdmin()?'inline-flex':'none';
+ $('class-admin-link').style.display=isCurrentAdmin()?'flex':'none'; const memberButton=$('class-member-manage-trigger');if(memberButton)memberButton.style.display=isCurrentAdmin()?'inline-flex':'none'; const pencil=$('class-notice-edit-trigger');if(pencil)pencil.style.display=isCurrentAdmin()?'inline-flex':'none';
  renderClassPatchNotes();
  }catch(e){console.warn('Dashboard refresh:',e)}
 }
@@ -3617,5 +3619,20 @@ html,body{background:#fbf5ef!important}
   };
 })();
 </script>
+
+<style id="class-v83-member-management-button">
+/* 길드원 탭 제목 우측: 운영진 이상에만 표시되는 관리 버튼 */
+#class-member-slot #class-member-manage-trigger{
+  align-items:center!important;justify-content:center!important;gap:7px!important;
+  min-height:35px!important;padding:7px 13px!important;flex-shrink:0!important;
+  border:1px solid #bd9068!important;border-radius:10px!important;
+  background:linear-gradient(160deg,#765032,#4a2d1e)!important;
+  color:#fff7ec!important;font-size:12px!important;font-weight:750!important;
+  box-shadow:0 2px 6px #48291924!important;cursor:pointer!important;
+}
+#class-member-slot #class-member-manage-trigger:hover{background:linear-gradient(160deg,#89603e,#593522)!important}
+#class-member-slot #class-member-manage-trigger:focus-visible{outline:3px solid #d7a778!important;outline-offset:2px!important}
+@media(max-width:500px){#class-member-slot #class-member-manage-trigger{font-size:11px!important;padding:7px 10px!important}}
+</style>
 </body>
 </html>

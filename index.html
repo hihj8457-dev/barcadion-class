@@ -3812,6 +3812,51 @@ body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color
 #class-war-system :is(p,span,summary,td,th,label),#class-siege-system :is(p,span,summary,td,th,label){text-shadow:none!important}
 #class-war-system [style*="color:#a5b4fc"]{color:#795333!important}
 @media(max-width:760px){#boss-reg-modal .boss-reg-group{align-items:flex-start!important}.class-page:not([data-page="home"]) .class-v45-table{font-size:12px!important}}
+
+/* v87 | B&W only for secondary dialogs / setting overlays.
+   Intentionally excludes #auth-modal and main navigation pages. */
+:root{--v87-ink:#171b23;--v87-muted:#505866;--v87-line:#cbd1da;--v87-card:#ffffff;--v87-pale:#f3f5f8;--v87-primary:#20242e}
+/* Modal overlay and top-level panel */
+[id$="-modal"]:not(#auth-modal){background:rgba(10,13,19,.62)!important;color:var(--v87-ink)!important}
+[id$="-modal"]:not(#auth-modal)>div{background:#fff!important;color:var(--v87-ink)!important;border:1px solid #d5d8de!important;box-shadow:0 20px 65px rgba(0,0,0,.23)!important}
+/* Header strip in structured modals. Avoid affecting ordinary first input row. */
+:is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal) > div > div:first-child:is(.flex,.sticky){background:#20242d!important;color:#fff!important;border-bottom:1px solid #343b46!important}
+:is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal) > div > div:first-child:is(.flex,.sticky) :is(h2,h3,h4,button,i){color:#fff!important}
+/* Light panels regardless of legacy Tailwind blue/slate fill. */
+[id$="-modal"]:not(#auth-modal) :is(div,section,article,aside)[class*="bg-slate-"],
+[id$="-modal"]:not(#auth-modal) :is(div,section,article,aside)[class*="bg-gray-"],
+[id$="-modal"]:not(#auth-modal) :is(div,section,article,aside)[class*="bg-purple-"],
+[id$="-modal"]:not(#auth-modal) :is(div,section,article,aside)[class*="bg-indigo-"],
+[id$="-modal"]:not(#auth-modal) :is(div,section,article,aside)[class*="bg-amber-"]{background:#f4f6f9!important;color:var(--v87-ink)!important;border-color:var(--v87-line)!important}
+/* Header background takes precedence over nested legacy panel backgrounds. */
+:is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal) > div > div:first-child:is(.flex,.sticky){background:#20242d!important}
+/* Content labels + nested cards, tables, help text */
+[id$="-modal"]:not(#auth-modal) :is(label,p,span,small,li,td,th,summary,h3,h4,h5)[class*="text-slate-"],
+[id$="-modal"]:not(#auth-modal) :is(label,p,span,small,li,td,th,summary,h3,h4,h5)[class*="text-amber-"],
+[id$="-modal"]:not(#auth-modal) :is(label,p,span,small,li,td,th,summary,h3,h4,h5)[class*="text-purple-"],
+[id$="-modal"]:not(#auth-modal) :is(label,p,span,small,li,td,th,summary,h3,h4,h5)[class*="text-white"]{color:var(--v87-ink)!important;text-shadow:none!important}
+[id$="-modal"]:not(#auth-modal) :is(p,small)[class*="text-xs"],
+[id$="-modal"]:not(#auth-modal) :is(p,small)[class*="text-sm"]{color:var(--v87-muted)!important}
+[id$="-modal"]:not(#auth-modal) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea){background:#fff!important;color:#161a21!important;border:1px solid #abb4c2!important;box-shadow:none!important;outline-offset:1px}
+[id$="-modal"]:not(#auth-modal) :is(input,select,textarea)::placeholder{color:#697382!important;opacity:1!important}
+[id$="-modal"]:not(#auth-modal) :is(input,select,textarea):focus{border-color:#3b68b3!important;outline:2px solid rgba(59,104,179,.18)!important}
+[id$="-modal"]:not(#auth-modal) input[type="checkbox"],
+[id$="-modal"]:not(#auth-modal) input[type="radio"]{accent-color:#283243!important}
+/* Main action buttons: neutral charcoal, without bright purple/gold */
+[id$="-modal"]:not(#auth-modal) button:is([class*="bg-purple-"],[class*="bg-indigo-"],[class*="bg-amber-"],[class*="bg-blue-"],[class*="bg-green-"],[class*="bg-slate-800"],[class*="bg-slate-900"]){background:#252a34!important;color:#fff!important;border-color:#252a34!important;text-shadow:none!important}
+[id$="-modal"]:not(#auth-modal) button:is([class*="bg-slate-600"],[class*="bg-slate-500"],[class*="bg-slate-700"],[class*="bg-gray-"],[class*="bg-white"]){background:#f1f3f6!important;color:#20252e!important;border:1px solid #bdc5d1!important}
+[id$="-modal"]:not(#auth-modal) button:is([class*="bg-purple-"],[class*="bg-indigo-"],[class*="bg-amber-"],[class*="bg-blue-"]):hover{background:#3a414d!important}
+/* Explicitly dangerous operations remain visually distinct. */
+[id$="-modal"]:not(#auth-modal) button:is([class*="text-red-"],[class*="bg-red-"]){color:#a32939!important;background:#fff!important;border:1px solid #e3adb4!important}
+[id$="-modal"]:not(#auth-modal) :is(.text-red-300,.text-red-400,.text-red-500,.text-red-600){color:#aa2936!important}
+/* Member summaries and extra dynamically-rendered sections */
+#my-profile-modal .class-v45-profile-summary,
+[id$="-modal"]:not(#auth-modal) .class-v45-panel,
+[id$="-modal"]:not(#auth-modal) .class-v45-table{background:#f4f6f9!important;color:#212630!important;border:1px solid #d3d9e2!important}
+[id$="-modal"]:not(#auth-modal) .class-v45-profile-summary :is(div,p,span,li,small){color:#20252f!important}
+/* Compact screens: keep the whole editable dialog scrollable */
+@media(max-width:640px){[id$="-modal"]:not(#auth-modal)>div{max-width:100%!important;max-height:calc(100dvh - 24px)!important;overflow-y:auto}}
+
 </style>
 </body>
 </html>

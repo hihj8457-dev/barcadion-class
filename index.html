@@ -1171,8 +1171,9 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
             else adminPanel.classList.add('hidden');
 
             const noticeEditBox = document.getElementById('admin-notice-edit-box');
-            if (isAdmin) noticeEditBox.classList.remove('hidden');
-            else noticeEditBox.classList.add('hidden');
+            // V93: 편집창은 권한과 무관하게 최초/데이터 갱신 시 닫힌 상태를 유지합니다.
+            noticeEditBox.classList.add('hidden');
+            noticeEditBox.style.display = 'none';
 
             renderNotice();
             renderMembers();
@@ -1482,6 +1483,8 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
             db.notice = document.getElementById('notice-input').value;
             saveDB();
             renderNotice();
+            const noticeEditor = document.getElementById('admin-notice-edit-box');
+            if (noticeEditor) { noticeEditor.classList.add('hidden'); noticeEditor.style.display = 'none'; }
             alert("공지사항이 수정되었습니다.");
         }
 
@@ -4158,6 +4161,105 @@ html body #item-pagination button.class-page-number-active{
 }
 html body #item-pagination button:hover{background:#80573b!important;}
 html body #item-pagination button:focus-visible{outline:2px solid #222!important;outline-offset:2px;}
+</style>
+<style id="class-v93-walnut-panels-notice-folded">
+
+/* CLASS v93 - confirmed walnut-on-white main pages. Popup layers are deliberately OUT OF SCOPE. */
+/* Never let a high-specificity editor box rule override hidden state. */
+#admin-notice-edit-box.hidden{display:none!important;visibility:hidden!important}
+#admin-notice-edit-box:not(.hidden){visibility:visible!important}
+
+/* Main canvas stays white, sidebar and auth/login untouched. */
+html body #app-container #class-pages,
+html body #app-container #class-pages>.class-page{background:#fff!important}
+#class-pages>.class-page{
+ --v93-walnut:#40281c;--v93-deep:#2e1a12;--v93-border:#c79b61;
+ --v93-ivory:#fff0d9;--v93-muted:#e2c5a6;--v93-gold:#f4ce83;
+}
+/* Consistent walnut surfaces in all dashboard tab content. This excludes overlays,
+   profile/editor modal roots, authentication and sidebar/navigation. */
+#class-pages>.class-page :is(.class-card,.dashboard-panel,.class-v45-panel,.class-member-card,
+  .class-v45-table, .boss-reg-group, .class-v85-boss-tools>div,
+  #next-boss-preview>div,#tier-list-view>div,#item-market-list>div,
+  #class-war-system>div,#class-siege-system>div){
+ background:linear-gradient(130deg,#513522 0%,#3e271b 55%,#2d1a13 100%)!important;
+ color:var(--v93-ivory)!important;
+ border:1px solid var(--v93-border)!important;
+ box-shadow:0 3px 12px rgba(37,19,10,.11)!important;
+}
+/* Reassert list and schedule cards that have older high-specificity cream/gray overrides. */
+#class-pages>.class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card,
+#class-pages>.class-page[data-page="boss"] #next-boss-preview>div,
+#class-pages>.class-page[data-page="war"] .class-v45-panel,
+#class-pages>.class-page[data-page="siege"] .class-v45-panel{
+ background:linear-gradient(115deg,#4e3222,#312017)!important;
+ border:1px solid #bf9566!important;color:#fff0d9!important;
+}
+/* The principal text on the dark cards is ivory, independent of old amber/black
+   declarations. Buttons and form fields are intentionally not selected. */
+#class-pages>.class-page :is(.class-card,.dashboard-panel,.class-v45-panel,.class-member-card,#next-boss-preview>div,#tier-list-view>div,#item-market-list>div)
+ :is(h1,h2,h3,h4,h5,h6,p,span,strong,b,small,label,summary,li,th,td,dt,dd,time,output):not(button):not([role="button"]){
+ color:var(--v93-ivory)!important;
+ -webkit-text-fill-color:var(--v93-ivory)!important;
+ text-shadow:none!important;
+}
+/* Text directly under pages e.g. war/siege captions or schedule instructions. */
+#class-pages>.class-page :is(#class-war-system,#class-siege-system,#class-boss-slot,#class-member-slot,#class-item-slot,#class-admin-slot)
+ :is(.class-v45-muted,.text-slate-400,.text-xs,.class-member-participation-text):not(button){
+ color:var(--v93-muted)!important;
+ -webkit-text-fill-color:var(--v93-muted)!important;
+}
+/* Titles from the light shell also become ivory only when on walnut surfaces. */
+#class-pages>.class-page :is(.class-card,.dashboard-panel,.class-v45-panel) :is(.text-amber-400,.text-slate-900,.text-slate-800,.text-white,.guild-member-name){
+ color:var(--v93-ivory)!important;-webkit-text-fill-color:var(--v93-ivory)!important;
+}
+/* Explicit member text override for v82's high-specificity pale-card rules. */
+#class-pages>.class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card :is(.guild-member-name,.class-member-participation-text,span,strong,b,small){
+ color:#fff0db!important;-webkit-text-fill-color:#fff0db!important;
+}
+/* Gold-framed controls mirror the LV.75 emblem without losing text contrast. */
+#class-pages>.class-page :is(.class-btn,.class-admin-button,.class-section-manage-btn,.class-v45-btn,
+  .class-v85-participate,#class-member-manage-trigger,.class-boss-register),
+#class-pages>.class-page button:is(.bg-amber-500,.bg-blue-600,.bg-slate-700,.bg-rose-500):not(:disabled){
+ background:linear-gradient(180deg,#634027,#372116)!important;
+ border:1px solid #e2b772!important;border-radius:9px!important;
+ color:#fff3db!important;-webkit-text-fill-color:#fff3db!important;
+ font-weight:800!important;text-shadow:none!important;
+}
+#class-pages>.class-page :is(.class-btn,.class-admin-button,.class-section-manage-btn,.class-v45-btn,
+  .class-v85-participate,#class-member-manage-trigger,.class-boss-register) :is(span,i,b,strong){
+ color:#fff3db!important;-webkit-text-fill-color:#fff3db!important;font-weight:800!important;
+}
+#class-pages>.class-page :is(.class-btn,.class-admin-button,.class-section-manage-btn,.class-v45-btn,
+  .class-v85-participate,#class-member-manage-trigger,.class-boss-register):hover{
+ border-color:#ffd99b!important;background:#734c30!important;
+}
+/* Readable text entry against walnut, without affecting separate modal forms. */
+#class-pages>.class-page :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea){
+ background:#fffaf4!important;color:#24201c!important;-webkit-text-fill-color:#24201c!important;
+ border:1px solid #cba67f!important;
+}
+#class-pages>.class-page :is(input,textarea)::placeholder{color:#74695e!important;-webkit-text-fill-color:#74695e!important}
+/* The original v92 boss cards/countdown and diamond chart stay as laid out.
+   Keep time semantic emphasis distinct from general card text. */
+#class-pages>.class-page[data-page="boss"] #next-boss-preview>div>div.text-lg.text-amber-400{
+ background:#d5eff3!important;border-color:#71c8d9!important;
+ color:#07546a!important;-webkit-text-fill-color:#07546a!important;
+}
+#class-pages>.class-page[data-page="boss"] #next-boss-preview>div>div.text-lg.text-rose-400{
+ background:#ffe5e8!important;border-color:#e9a7b1!important;
+ color:#a12b3a!important;-webkit-text-fill-color:#a12b3a!important;
+}
+#class-pages>.class-page[data-page="home"] .class-boss-countdown,
+#class-pages>.class-page[data-page="home"] .class-boss-countdown *{
+ font-family:Georgia,'Noto Serif KR',serif!important;
+}
+/* Native controls remain legible and not gold-on-gold. */
+#class-pages>.class-page input[type="checkbox"]{accent-color:#e3b56e!important}
+@media(max-width:720px){
+ #class-pages>.class-page :is(.class-card,.dashboard-panel,.class-v45-panel,.class-member-card){border-radius:12px!important}
+}
+
 </style>
 </body>
 </html>

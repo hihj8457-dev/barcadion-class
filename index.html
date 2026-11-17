@@ -1910,28 +1910,49 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
             const parseTime=label=>{const [h,m]=label.split(':').map(Number);const d=new Date(day);d.setHours(h,m,0,0);return d.getTime();};
             const toSlots=times=>[...new Set(times)].filter(Number.isFinite).sort((a,b)=>a-b)
                 .map(time=>{const d=new Date(time);return {time,label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};});
-            if(Object.prototype.hasOwnProperty.call(overrides,key))
-                return toSlots((Array.isArray(overrides[key])?overrides[key]:[])
-                    .filter(t=>/^([01]\d|2[0-3]):[0-5]\d$/.test(t)).map(parseTime));
-            const anchor=bossSlotAnchorForDate(boss,day);
             const cycle=Number(boss.cycleHours)*3600000;
-            if(!(anchor>0)||!(cycle>0))return getBossOccurrencesForDay(boss,date);
-            const weekEnd=bossSlotWeekEnd(day);
-            // Apply only cuts linked to this appearance timeline; earlier cuts cannot
-            // influence a newly selected anchor. One cut replaces future occurrences.
-            const events=periodicBossEvents(boss).filter(e=>e.type==='cut'&&e.time>=anchor&&e.time<=Date.now()&&e.time<weekEnd)
-                .sort((a,b)=>a.time-b.time);
-            const times=[];
-            let next=anchor, cursor=0;
-            for(let i=0;i<5000&&next<Math.min(end.getTime(),weekEnd);i++){
-                while(cursor<events.length&&events[cursor].time<next)cursor++;
-                const cut=events[cursor];
-                if(next>=day.getTime()&&next<end.getTime())times.push(next);
-                if(cut&&cut.time>=next&&cut.time<next+cycle){next=cut.time+cycle;cursor++;}
-                else next+=cycle;
+            // First calculate the existing manual / weekly-anchor schedule. This is
+            // still authoritative for dates and occurrences BEFORE maintenance.
+            let originalTimes;
+            if(Object.prototype.hasOwnProperty.call(overrides,key)) {
+                originalTimes=(Array.isArray(overrides[key])?overrides[key]:[])
+                    .filter(t=>/^([01]\d|2[0-3]):[0-5]\d$/.test(t)).map(parseTime);
+            } else {
+                const anchor=bossSlotAnchorForDate(boss,day);
+                if(!(anchor>0)||!(cycle>0)) {
+                    originalTimes=getBossOccurrencesForDay(boss,date).map(slot=>slot.time);
+                } else {
+                    const weekEnd=bossSlotWeekEnd(day);
+                    const events=periodicBossEvents(boss).filter(e=>e.type==='cut'&&e.time>=anchor&&e.time<=Date.now()&&e.time<weekEnd)
+                        .sort((a,b)=>a.time-b.time);
+                    originalTimes=[];
+                    let next=anchor,cursor=0;
+                    for(let i=0;i<5000&&next<Math.min(end.getTime(),weekEnd);i++){
+                        while(cursor<events.length&&events[cursor].time<next)cursor++;
+                        const cut=events[cursor];
+                        if(next>=day.getTime()&&next<end.getTime())originalTimes.push(next);
+                        if(cut&&cut.time>=next&&cut.time<next+cycle){next=cut.time+cycle;cursor++;}
+                        else next+=cycle;
+                    }
+                }
             }
-            // Attendance records are retained in Firestore but never resurrect removed slots.
-            return toSlots(times);
+            if(!(cycle>0))return toSlots(originalTimes);
+
+            // Maintenance ends the previous periodic-boss cycle and forces every
+            // periodic boss to spawn together at the maintenance END (09:00 in
+            // the user's example). Old weekly auto-anchors or date overrides
+            // must not resurrect 08:10/08:12 during maintenance or after reset.
+            // Keep pre-maintenance slots, and use the SAME reset-aware periodic
+            // schedule as the live boss timer for everything after the reset.
+            const weekStart=getWeekMonday(day).getTime();
+            const reset=bossMaintenanceWindows()
+                .filter(w=>w.end>=weekStart&&w.end<end.getTime())
+                .at(-1);
+            if(!reset)return toSlots(originalTimes);
+            const prior=originalTimes.filter(t=>t<reset.start);
+            const after=bossPeriodicTimes(boss,day.getTime(),end.getTime())
+                .filter(t=>t>=reset.end);
+            return toSlots([...prior,...after]);
         }
         function switchBossManageTab(tab) {
             const allowed=cloudManager();if(!allowed)return;

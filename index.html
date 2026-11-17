@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V84_UNIFIED_WALNUT">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V89_NEUTRAL_MODAL_TEXT">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3896,6 +3896,85 @@ html body #class-profile-weekly :is(div,p,small,span,strong){color:#242932!impor
 
 /* The outer dialog surface must remain white even when it has legacy bg-slate-800. */
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never):not(#v88-dialog-surface) > div {background:#ffffff!important;color:#161a20!important;}
+</style>
+
+<style id="class-v89-modal-text-neutral">
+/* v89: final neutral contrast layer scoped to dialogs only. Keep the walnut pages intact. */
+html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) {
+  --modal-title:#161a21;--modal-body:#303743;--modal-muted:#5d6774;--modal-border:#cbd2dc;
+}
+/* Undo walnut, amber and purple foregrounds in generated popup content. */
+html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(p,span,small,em,strong,b,li,dt,dd,td,th,label,summary,legend,time,output)[class*="text-"],
+html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(p,span,small,em,strong,b,li,dt,dd,td,th,label,summary,legend,time,output)[style*="color:"] {
+  color:#374151!important;-webkit-text-fill-color:#374151!important;text-shadow:none!important;
+}
+html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(h1,h2,h3,h4,h5,h6,legend,summary) {
+  color:#191e26!important;-webkit-text-fill-color:#191e26!important;text-shadow:none!important;
+}
+/* Restore white text inside dark action buttons, and neutral for secondary buttons. */
+html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) button[style*="background"]:not([class*="red"]):not([class*="rose"]),
+html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) button:is([class*="bg-amber"],[class*="bg-purple"],[class*="bg-violet"],[class*="bg-indigo"],[class*="bg-blue"],[class*="bg-emerald"],[class*="bg-green"],[class*="bg-slate-800"],[class*="bg-slate-900"]) {
+  background:#272c35!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#272c35!important;
+}
+html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) button:is([class*="bg-slate-500"],[class*="bg-slate-600"],[class*="bg-slate-700"],[class*="bg-gray"],[class*="bg-white"]) {
+  background:#f1f3f6!important;color:#303743!important;-webkit-text-fill-color:#303743!important;border-color:#bdc5d1!important;
+}
+html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) button:is([class*="text-red"],[class*="bg-red"],[class*="text-rose"],[class*="bg-rose"]) {
+  color:#b4233c!important;-webkit-text-fill-color:#b4233c!important;background:#fff!important;border-color:#d8a9b3!important;
+}
+/* Specific boss participation rows: previously had hardcoded walnut title, slot and point colors. */
+html body #boss-reg-modal .boss-reg-group {
+  background:#f6f7f9!important;color:#232933!important;border-color:#d2d8e1!important;
+}
+html body #boss-reg-modal .boss-reg-group:hover {background:#edf1f5!important;}
+html body #boss-reg-modal .boss-reg-name {
+  color:#1e2530!important;-webkit-text-fill-color:#1e2530!important;font-weight:800!important;
+}
+html body #boss-reg-modal .boss-reg-slot,html body #boss-reg-modal .boss-reg-slot span {
+  color:#3d4653!important;-webkit-text-fill-color:#3d4653!important;
+}
+html body #boss-reg-modal .boss-reg-points {
+  color:#4d5664!important;-webkit-text-fill-color:#4d5664!important;font-weight:700!important;
+}
+html body #boss-reg-modal .boss-reg-slot input[type="checkbox"] {accent-color:#252c35!important;filter:none!important;opacity:1!important;}
+html body #boss-reg-modal .accordion-body,
+html body #boss-reg-modal [id^="accordion-day"] {background:#fff!important;color:#29323e!important;border-color:#d8dce4!important;}
+html body #boss-reg-modal #accordion-days-container > div {
+  background:#fff!important;border:1px solid #d1d8e2!important;border-radius:11px!important;
+}
+html body #boss-reg-modal #accordion-days-container > div > div:first-child {
+  background:#eef1f5!important;color:#242c37!important;border-color:#d1d8e2!important;
+}
+html body #boss-reg-modal #accordion-days-container > div > div:first-child :is(span,strong,b) {
+  color:#303947!important;-webkit-text-fill-color:#303947!important;
+}
+html body #boss-reg-modal #accordion-days-container > div > div:first-child .text-slate-400 {
+  color:#647082!important;-webkit-text-fill-color:#647082!important;
+}
+html body #boss-reg-modal #accordion-days-container > div > div:first-child .text-amber-400 {
+  color:#242b35!important;-webkit-text-fill-color:#242b35!important;
+}
+html body #boss-reg-modal :is(.text-sky-200,.text-sky-300,.text-amber-300,.text-amber-400,.text-amber-500,.text-orange-300,.text-orange-400) {
+  color:#465161!important;-webkit-text-fill-color:#465161!important;
+}
+/* Weekly profile, war/siege records and other dynamic cards within dialogs. */
+html body [id$="-modal"]:not(#auth-modal) :is(.class-v45-panel,.class-v45-profile-summary,.class-v45-table,.class-v45-table tr,.class-v45-table td,.class-v45-table th) {
+  color:#2e3642!important;-webkit-text-fill-color:#2e3642!important;border-color:#d4dae2!important;
+}
+html body [id$="-modal"]:not(#auth-modal) :is(.class-v45-panel,.class-v45-profile-summary) {
+  background:#f3f5f7!important;
+}
+html body [id$="-modal"]:not(#auth-modal) :is(.class-v45-panel,.class-v45-profile-summary) :is(span,small,p,b,strong,li) {
+  color:#3e4856!important;-webkit-text-fill-color:#3e4856!important;
+}
+/* Readable action text on dark buttons even when buttons contain nested icons/spans. */
+html body [id$="-modal"]:not(#auth-modal) button:is([class*="bg-amber"],[class*="bg-purple"],[class*="bg-violet"],[class*="bg-indigo"],[class*="bg-blue"],[class*="bg-emerald"],[class*="bg-green"],[class*="bg-slate-800"],[class*="bg-slate-900"]) :is(span,strong,i) {
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+/* Actual charcoal header text stays white, regardless of shared label rules. */
+html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal,#boss-guide-editor-modal) > div > div:first-child.flex :is(h1,h2,h3,h4,span,button,i,strong) {
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
 </style>
 </body>
 </html>

@@ -3081,7 +3081,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
 .class-v45-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .class-v45-panel{background:#111b31;border:1px solid #555a80;border-radius:13px;padding:15px;margin:12px 0}
 .class-v45-table{width:100%;border-collapse:collapse;font-size:14px}
-.class-v45-table th,.class-v45-table td{padding:10px;border-bottom:1px solid #343d59;text-align:left}
+.class-v45-table th,.class-v45-table td{padding:10px;border-bottom:1px solid #ead5c1;text-align:left}
 .class-v45-input{background:#0b1224;border:1px solid #66708c;color:#fff;padding:9px;border-radius:8px;width:100%;max-width:190px}
 .class-v45-btn{background:linear-gradient(120deg,#7131b3,#52247c);border:1px solid #bd8cff;border-radius:9px;padding:10px 17px;font-weight:800;color:white;cursor:pointer}
 .class-v45-muted{color:#aab4ce;font-size:13px}
@@ -3158,10 +3158,10 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
   el.innerHTML=`<p class="class-v45-muted">이번 주 ${weekTitle()} · 쟁 분배 ${num(calc().warPool)} 다이아 · 누적 쟁 점수 ${num(total)}점</p>
   <div class="class-v45-panel"><p class="class-v45-muted">쟁이 발생할 때마다 <b>이번 쟁 추가 점수</b>를 입력하고 저장하세요. 기존 누적 점수에 더해집니다. 0점은 변경되지 않습니다.</p>
   <table class="class-v45-table"><thead><tr><th>길드원</th><th>누적 점수</th><th>이번 쟁 추가 점수</th><th>예상 분배 다이아</th></tr></thead><tbody>
-  ${users().map(u=>`<tr><td>${esc(u.id)}${u.isGuest?' (미가입)':''}</td><td>${editable?`<span style="display:inline-flex;align-items:center;gap:7px;white-space:nowrap"><span data-war-total-label="${esc(memberKey(u))}">${num(score(u))}점</span><input class="class-v45-input" style="display:none;width:82px;max-width:100%;padding:5px 7px" type="number" min="0" step="1" data-war-total="${esc(memberKey(u))}" onkeydown="if(event.key==='Enter'){event.preventDefault();classV70SaveWarScore(this)}else if(event.key==='Escape'){classV70CancelWarScore(this)}" value="${score(u)}" aria-label="${esc(u.id)} 누적 점수 수정"><button type="button" onclick="classV64ToggleWarScore(this)" title="누적 점수 수정" aria-label="${esc(u.id)} 누적 점수 수정" style="background:none;border:0;color:#a5b4fc;cursor:pointer;padding:3px;line-height:1;vertical-align:middle">✎</button></span>`:`${num(score(u))}점`}</td><td>${editable?`<input class="class-v45-input" type="number" min="0" step="1" data-war-uid="${esc(memberKey(u))}" value="0">`:'-'} </td><td>💎 ${num(warShare(u))}</td></tr>`).join('')}</tbody></table>
+  ${users().map(u=>`<tr><td>${esc(u.id)}${u.isGuest?' (미가입)':''}</td><td>${editable?`<span style="display:inline-flex;align-items:center;gap:7px;white-space:nowrap"><span data-war-total-label="${esc(memberKey(u))}">${num(score(u))}점</span><input class="class-v45-input" style="display:none;width:82px;max-width:100%;padding:5px 7px" type="number" min="0" step="1" data-war-total="${esc(memberKey(u))}" onkeydown="if(event.key==='Enter'){event.preventDefault();classV70SaveWarScore(this)}else if(event.key==='Escape'){classV70CancelWarScore(this)}" value="${score(u)}" aria-label="${esc(u.id)} 누적 점수 수정"><button type="button" onclick="classV64ToggleWarScore(this)" title="누적 점수 수정" aria-label="${esc(u.id)} 누적 점수 수정" style="background:none;border:0;color:#81532e;cursor:pointer;padding:3px;line-height:1;vertical-align:middle">✎</button></span>`:`${num(score(u))}점`}</td><td>${editable?`<input class="class-v45-input" type="number" min="0" step="1" data-war-uid="${esc(memberKey(u))}" value="0">`:'-'} </td><td>💎 ${num(warShare(u))}</td></tr>`).join('')}</tbody></table>
   ${editable?'<div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px"><button class="class-v45-btn" onclick="classV45SaveWar()">이번 쟁 점수 누적 저장</button></div>':''}</div>
   <div class="class-v45-panel"><details style="width:100%"><summary style="cursor:pointer;font-weight:700;user-select:none">쟁 점수 등록 내역 (${history.length}건) <span class="class-v45-muted" style="font-weight:400">· 눌러서 펼치기</span></summary>
-  ${history.length?`<div style="max-height:220px;overflow:auto;margin-top:10px">${history.slice(-30).reverse().map(h=>`<div class="class-v45-muted" style="padding:7px 0;border-bottom:1px solid #343d59">${esc(h.at||'')} · <strong>수정자 : ${esc(warHistoryEditor(h))}</strong> · ${esc((h.entries||[]).map(e=>h.type==='correction'?e.name+' '+e.from+'점 → '+e.to+'점 (정정)':e.name+' +'+e.points+'점').join(' · '))}</div>`).join('')}</div>`:'<p class="class-v45-muted" style="margin-top:8px">아직 등록된 내역이 없습니다.</p>'}</details></div>`;
+  ${history.length?`<div style="max-height:220px;overflow:auto;margin-top:10px">${history.slice(-30).reverse().map(h=>`<div class="class-v45-muted" style="padding:7px 0;border-bottom:1px solid #ead5c1">${esc(h.at||'')} · <strong>수정자 : ${esc(warHistoryEditor(h))}</strong> · ${esc((h.entries||[]).map(e=>h.type==='correction'?e.name+' '+e.from+'점 → '+e.to+'점 (정정)':e.name+' +'+e.points+'점').join(' · '))}</div>`).join('')}</div>`:'<p class="class-v45-muted" style="margin-top:8px">아직 등록된 내역이 없습니다.</p>'}</details></div>`;
  }
  function renderSiege(){
   const el=$('class-siege-system');if(!el||typeof db==='undefined')return;
@@ -3191,12 +3191,12 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)updateClas
   const isStaff=roles.includes(u.role);
   const staffAmount=isStaff?opsShare(u):0;
   const total=bossAmount+warAmount+siegeAmount+staffAmount;
-  el.innerHTML=`<strong style="color:#d8b4fe">이번 주 참여·분배 요약 (${weekTitle()})</strong>
+  el.innerHTML=`<strong style="color:#67402b">이번 주 참여·분배 요약 (${weekTitle()})</strong>
   <div style="margin-top:8px">보스 참여 점수: ${num(weeklyScores(week())[u.id]||0)}점 💎 ${num(bossAmount)}</div>
   <div>쟁 참여 점수: ${num(score(u))}점 💎 ${num(warAmount)}</div>
   <div>공성전: ${ss?'참여':'불참'} 💎 ${num(siegeAmount)}</div>
   ${isStaff?`<div>운영진 배분: 💎 ${num(staffAmount)}</div>`:''}
-  <div style="margin-top:9px;padding-top:9px;border-top:1px solid #51456c;font-weight:800;color:#f8d38a">금주 총 합 분배금: 💎 ${num(total)}</div>`;
+  <div style="margin-top:9px;padding-top:9px;border-top:1px solid #d8baa0;font-weight:800;color:#704421">금주 총 합 분배금: 💎 ${num(total)}</div>`;
  }
  async function persist(next,button){
   if(!manager())return alert('관리자·마스터·운영진만 수정할 수 있습니다.');
@@ -3747,6 +3747,71 @@ body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color
 /* 공지/모달 등에서 과거 다크 배경색 클래스 잔존 최소화 */
 :is(#boss-manage-modal,#boss-guide-editor-modal,#boss-reg-modal,#my-profile-modal,#site-settings-modal,#item-manage-modal,#user-manage-modal) :is(div,section,article)[class*="bg-slate-"],
 :is(#boss-manage-modal,#boss-guide-editor-modal,#boss-reg-modal,#my-profile-modal,#site-settings-modal,#item-manage-modal,#user-manage-modal) :is(div,section,article)[class*="bg-gray-"]{background:#f7ede2!important;color:#493426!important;border-color:#d9bea1!important}
+</style>
+<style id="class-v86-readable-all-areas">
+/* v86 - fill in dedicated legacy modules omitted by v84-v85 overrides. */
+:root{--class-ivory:#fffaf6;--class-panel:#f7ede2;--class-border:#dfc5ad;--class-ink:#412c20;--class-muted:#745741;--class-walnut:#68432d}
+/* War, siege, and admin-specific renderer components use custom classes rather than tailwind background classes. */
+#class-war-system,#class-siege-system,#class-ratio-system,#class-admin-system,#class-profile-weekly{color:var(--class-ink)!important}
+#class-war-system .class-v45-panel,#class-siege-system .class-v45-panel,#class-ratio-system .class-v45-panel,
+#class-war-system .class-v45-grid>.class-v45-panel,#class-siege-system .class-v45-grid>.class-v45-panel,
+.class-page:not([data-page="home"]) .class-v45-panel{background:#fffaf6!important;border:1px solid #dfc5ad!important;color:#412c20!important;box-shadow:0 2px 8px #5d34100a!important}
+.class-page:not([data-page="home"]) .class-v45-muted,#class-profile-weekly .class-v45-muted{color:#755743!important}
+.class-page:not([data-page="home"]) .class-v45-table{width:100%!important;color:#412c20!important;background:transparent!important;border-collapse:collapse!important}
+.class-page:not([data-page="home"]) .class-v45-table th{background:#f2e4d5!important;color:#4e3324!important;font-weight:800!important;border-bottom:1px solid #d3b394!important}
+.class-page:not([data-page="home"]) .class-v45-table td{background:transparent!important;color:#453022!important;border-bottom:1px solid #ead7c3!important}
+.class-page:not([data-page="home"]) .class-v45-table tr:nth-child(even) td{background:#fcf4eb!important}
+.class-page:not([data-page="home"]) .class-v45-table tr:hover td{background:#f3e8db!important}
+.class-page:not([data-page="home"]) .class-v45-input{background:#fffefd!important;border:1px solid #c9a789!important;color:#3f2b20!important;box-shadow:none!important}
+.class-page:not([data-page="home"]) .class-v45-btn{background:linear-gradient(150deg,#845d3f,#50321f)!important;border:1px solid #b88d60!important;color:#fff9ed!important;text-shadow:none!important}
+.class-page:not([data-page="home"]) .class-v45-btn:hover{background:#795035!important}
+.class-v45-profile-summary,#class-profile-weekly{background:#fff5e9!important;color:#4b3223!important;border:1px solid #dfc1a2!important;border-radius:12px!important}
+.class-v45-profile-summary div,#class-profile-weekly div{color:#503929!important}
+.class-v45-profile-summary strong,#class-profile-weekly strong{color:#684128!important}
+/* Boss participation modal: previously navy entries with unreadable dark labels. */
+#boss-reg-modal .boss-reg-group{background:#f7eade!important;border:1px solid #d9b89d!important;border-radius:10px!important;color:#3d291d!important;min-height:48px!important}
+#boss-reg-modal .boss-reg-name{color:#3f281b!important;font-weight:800!important}
+#boss-reg-modal .boss-reg-slot,#boss-reg-modal .boss-reg-slot span{color:#684429!important;font-weight:700!important}
+#boss-reg-modal .boss-reg-slot input[type="checkbox"]{accent-color:#855a34!important;opacity:1!important;width:18px!important;height:18px!important;filter:none!important}
+#boss-reg-modal .boss-reg-points{color:#875519!important;font-weight:800!important}
+#boss-reg-modal .boss-reg-group:hover{background:#f3e1cc!important}
+#boss-reg-modal .boss-reg-unset{color:#815c3c!important}
+#boss-reg-modal .accordion-body,#boss-reg-modal [id^="accordion-day"]{background:#fff8f0!important;color:#3c2b1f!important}
+#boss-reg-modal .bg-slate-900\/80,#boss-reg-modal .bg-slate-900\/70,#boss-reg-modal .bg-slate-900\/60,#boss-reg-modal .bg-slate-900\/50{background:#f6e7d8!important;color:#483123!important;border-color:#d9b89d!important}
+#boss-reg-modal .text-sky-300,#boss-reg-modal .text-sky-200{color:#775232!important}
+#boss-reg-modal .text-amber-400{color:#8c5721!important}
+/* Boss schedule: card background, date and cut status legibility. */
+.class-page[data-page="boss"] #next-boss-preview>div,.class-page[data-page="boss"] #next-boss-preview>article{background:#fff9f3!important;border-color:#d9b89e!important;color:#463022!important}
+.class-page[data-page="boss"] #next-boss-preview :is(.text-white,.text-slate-100,.text-slate-200,.text-slate-300,.text-slate-400,.text-slate-500){color:#644631!important}
+.class-page[data-page="boss"] #next-boss-preview .font-bold{color:#3e281a!important}
+.class-page[data-page="boss"] #next-boss-preview .text-rose-400{color:#a32b3d!important;font-weight:800!important}
+.class-page[data-page="boss"] #next-boss-preview .text-amber-400{color:#885622!important}
+.class-page[data-page="boss"] #next-boss-preview button.bg-rose-500:not(:disabled){background:#ad3548!important;border:1px solid #8b2435!important;color:#fff!important;font-weight:900!important;opacity:1!important;min-width:34px!important}
+.class-page[data-page="boss"] #next-boss-preview button.bg-rose-500:disabled{background:#e2c8c7!important;color:#775a58!important;border:1px solid #c6a09d!important;opacity:1!important}
+.class-page[data-page="boss"] #next-boss-preview button.bg-blue-600{background:#775036!important;color:#fff9f0!important;border:1px solid #9d704e!important}
+/* Alert and maintenance card (was muddy purple-gray on cream). */
+.class-page[data-page="boss"] [class*="bg-purple-"],.class-page[data-page="boss"] [class*="bg-violet-"]:not(button){background:#f4e8dc!important;color:#462f21!important;border-color:#d9b797!important}
+.class-page[data-page="boss"] .text-purple-200,.class-page[data-page="boss"] .text-purple-300{color:#62412e!important}
+#maintenance-schedule-list,#maintenance-schedule-list *{color:#70533d!important}
+/* Global dialog surfaces, even dark custom controls and dynamically generated children. */
+[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(div,section,article,aside,li,label)[class*="bg-slate-"],
+[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(div,section,article,aside,li,label)[class*="bg-purple-"],
+[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(div,section,article,aside,li,label)[class*="bg-violet-"],
+[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(div,section,article,aside,li,label)[class*="bg-gray-"]{background:#f7ebdf!important;color:#452f22!important;border-color:#dcbda1!important}
+[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(.text-purple-200,.text-purple-300,.text-purple-400,.text-violet-200,.text-violet-300,.text-violet-400,.text-slate-500,.text-slate-600,.text-gray-500,.text-sky-200,.text-sky-300,.text-amber-300){color:#725035!important}
+[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(.text-red-300,.text-red-400,.text-rose-300,.text-rose-400){color:#ad3545!important}
+[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(button.bg-purple-600,button.bg-purple-700,button.bg-purple-800,button.bg-violet-600,button.bg-violet-700,button.bg-indigo-600,button.bg-blue-600,button.bg-amber-500,button.bg-emerald-700){background:linear-gradient(145deg,#825638,#4e301f)!important;color:#fff8ee!important;border:1px solid #b18a61!important;text-shadow:none!important}
+[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) button.bg-red-700,[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) button.bg-rose-500{background:#ac3544!important;color:#fff!important;border-color:#9c2f3c!important}
+[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) button.bg-slate-600,[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) button.bg-slate-700{background:#ead7c2!important;color:#4a3121!important;border-color:#cba37d!important}
+[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) input:not([type="checkbox"]):not([type="radio"]),
+[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) select,
+[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) textarea{background:#fffefa!important;color:#39281e!important;border-color:#cba888!important}
+[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) input[type="checkbox"]{accent-color:#875a38!important}
+/* Dynamic war/siege content: avoid dark override from old injected style attributes. */
+#class-war-system .class-v45-panel,#class-siege-system .class-v45-panel{background:#fffaf5!important}
+#class-war-system :is(p,span,summary,td,th,label),#class-siege-system :is(p,span,summary,td,th,label){text-shadow:none!important}
+#class-war-system [style*="color:#a5b4fc"]{color:#795333!important}
+@media(max-width:760px){#boss-reg-modal .boss-reg-group{align-items:flex-start!important}.class-page:not([data-page="home"]) .class-v45-table{font-size:12px!important}}
 </style>
 </body>
 </html>

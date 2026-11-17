@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V90_BOSS_UNIFIED_NEUTRAL_TEXT">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V92_WHITE_MAIN_FONT_PAGINATION">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1688,7 +1688,7 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
             }
             document.getElementById('item-market-list').innerHTML = html;
             const pagination = document.getElementById('item-pagination');
-            pagination.innerHTML = pages <= 1 ? '' : Array.from({length:pages},(_,i) => `<button type="button" onclick="goToItemPage(${i+1})" class="px-3 py-1 rounded text-xs font-bold ${itemPage===i+1?'bg-amber-500 text-slate-950':'bg-slate-700 text-slate-200'}">${i+1}</button>`).join('');
+            pagination.innerHTML = pages <= 1 ? '' : Array.from({length:pages},(_,i) => `<button type="button" onclick="goToItemPage(${i+1})" class="px-3 py-1 rounded text-xs font-bold ${itemPage===i+1?'bg-amber-700 text-white class-page-number-active':'bg-slate-700 text-white class-page-number'}">${i+1}</button>`).join('');
             document.getElementById('stat-item-count').innerText = `${db.items.length}개`;
         }
 
@@ -4120,6 +4120,44 @@ button[onclick="saveGuildDiamonds()"] {
 .class-page[data-page="items"] .class-section-manage-btn * {
   color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:800!important;
 }
+</style>
+
+<style id="class-v92-white-canvas-font-and-pagination">
+/* V92: Only the right-hand app canvas changes; sidebar and login keep their palette. */
+html body #app-container,
+html body #app-container #class-pages,
+html body #app-container #class-pages > .class-page {
+  background-color:#ffffff!important;
+}
+html body #app-container {color:#16191d!important;}
+/* The layout retains the original cream bordered cards and walnut controls. */
+html body #app-container #class-pages > .class-page:not([data-page="home"]){color:#15191f!important;}
+html body #app-container #class-pages > .class-page:not([data-page="home"])
+ :is(.class-card,.dashboard-panel,.class-v45-panel) :is(h1,h2,h3,h4,h5,h6,p,span,small,strong,b,label,time,li,td,th,dt,dd,summary,legend,output):not(button):not([role="button"]):not(.class-v85-count-highlight){
+ color:#15191f!important;text-shadow:none!important;
+}
+/* Consistent readable Korean sans-serif across text, controls and dialogs.
+   Keep the decorative CLASS lettermark and the homepage boss countdown numerals intact. */
+html body :is(h1,h2,h3,h4,h5,h6,p,span,small,strong,b,label,time,li,td,th,dt,dd,summary,legend,output,button,input,select,textarea,a){
+ font-family:'Pretendard','Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
+}
+html body :is(.class-login-brand strong,#class-sidebar-brand strong,#class-sidebar-brand small),
+html body #class-home .class-boss-countdown,
+html body #class-home .class-boss-countdown * {
+ font-family:Georgia,'Noto Serif KR',serif!important;
+}
+/* Pagination buttons remain readable both selected and unselected. */
+html body #item-pagination button {
+ background:#65422d!important;border:1px solid #8c6345!important;
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+ font-weight:800!important;min-width:32px;
+}
+html body #item-pagination button.class-page-number-active{
+ background:#32241d!important;border-color:#32241d!important;
+ box-shadow:0 0 0 2px #b38a61!important;
+}
+html body #item-pagination button:hover{background:#80573b!important;}
+html body #item-pagination button:focus-visible{outline:2px solid #222!important;outline-offset:2px;}
 </style>
 </body>
 </html>

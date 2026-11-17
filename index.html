@@ -3284,7 +3284,7 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
    info.parentNode.insertBefore(wrap,info);wrap.append(crest,info);
   }
   if(!document.getElementById('class-profile-toggle')){
-    const toggle=document.createElement('button');toggle.id='class-profile-toggle';toggle.type='button';toggle.textContent='⌄';toggle.setAttribute('aria-label','프로필 메뉴');toggle.setAttribute('aria-expanded','false');wrap.append(toggle);
+    const toggle=document.createElement('button');toggle.id='class-profile-toggle';toggle.type='button';toggle.innerHTML='<svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="m5 9 7 7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';toggle.setAttribute('aria-label','프로필 메뉴');toggle.setAttribute('aria-expanded','false');wrap.append(toggle);
     const menu=document.createElement('div');menu.id='class-profile-menu';menu.hidden=true;
     const my=document.createElement('button');my.type='button';my.textContent='♟  마이페이지';my.onclick=()=>{menu.hidden=true;toggle.setAttribute('aria-expanded','false');openMyProfileModal()};
     const exit=document.createElement('button');exit.type='button';exit.textContent='↪  로그아웃';exit.onclick=()=>logout();menu.append(my,exit);wrap.append(menu);
@@ -4951,6 +4951,48 @@ html body #app-container #class-nav #class-admin-link[hidden] {
   display:none!important;
   visibility:hidden!important;
 }
+
+/* v117: profile dropdown chevron only — no other UI or feature changes. */
+#class-profile-wrap {
+  border-color:#dbbb8b!important;
+  border-radius:17px!important;
+  background:linear-gradient(145deg,#fffdf9 0%,#fff8f2 55%,#f6e8dd 100%)!important;
+  box-shadow:0 4px 12px #64402b20, inset 0 1px 0 #ffffff!important;
+}
+#class-profile-toggle {
+  position:relative!important;
+  box-sizing:border-box!important;
+  margin-left:auto!important;
+  width:48px!important;
+  min-width:48px!important;
+  height:38px!important;
+  border:0!important;
+  border-radius:0!important;
+  padding:0 0 0 12px!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  color:#59391f!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  cursor:pointer!important;
+}
+#class-profile-toggle::before {
+  content:"";
+  position:absolute;
+  left:0;
+  top:5px;
+  bottom:5px;
+  width:1px;
+  background:#dfbea0;
+}
+#class-profile-toggle svg {
+  display:block;
+  flex:none;
+  transition:transform .18s ease;
+}
+#class-profile-toggle[aria-expanded="true"] svg {transform:rotate(180deg)}
+#class-profile-toggle:focus-visible {outline:2px solid #a77a40!important;outline-offset:2px}
 </style>
 </body>
 </html>

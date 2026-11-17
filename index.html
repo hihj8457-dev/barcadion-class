@@ -1593,7 +1593,7 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
             ));
             document.getElementById('tier-list-view').innerHTML = rows.map(t =>
                 `<div class="tier-price-card bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 text-sm">
-                    <div class="tier-price-line"><span class="font-bold text-white">${escapeHtml(t.name)}</span><span class="text-amber-400 font-bold">${t.price == null ? '미정 / 별도 기준' : Number(t.price).toLocaleString()+' 다이아'}</span></div>
+                    <div class="tier-price-line"><span class="class-tier-rarity-name font-bold ${itemRarityClass(t)}" style="color:${itemRarityColor(t)} !important;-webkit-text-fill-color:${itemRarityColor(t)} !important">${escapeHtml(t.name)}</span><span class="class-tier-price font-bold">${t.price == null ? '미정 / 별도 기준' : Number(t.price).toLocaleString()+' 다이아'}</span></div>
                     ${t.note ? `<div class="text-slate-400 mt-1 text-xs">${escapeHtml(t.note)}</div>` : ''}
                 </div>`).join('') || '<p class="text-slate-400 text-sm py-3">등록된 분배 기준이 없습니다.</p>';
         }
@@ -1633,8 +1633,12 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
         }
 
         function itemRarity(name) {
-            const m = String(name||'').match(/\[(고급|희귀|영웅|전설)\]/);
-            return m ? m[1] : (String(name||'').match(/^(고급|희귀|영웅|전설)(?:\s|$)/)?.[1] || '');
+            // 분배 기준에는 '찢어진 영웅 ...'처럼 등급 앞에 다른 단어가 올 수도 있다.
+            // 등급이 이름 앞/중간에 있거나 [등급] 형태인 경우 모두 판별한다.
+            const nameText = String(name || '').trim();
+            return nameText.match(/\[(고급|희귀|영웅|전설)\]/)?.[1]
+                || nameText.match(/(?:^|\s)(고급|희귀|영웅|전설)(?=\s|$)/)?.[1]
+                || '';
         }
         function itemRarityClass(item) {
             const raw = typeof item === 'object' ? (item.grade || itemRarity(item.name)) : itemRarity(item);
@@ -4672,6 +4676,19 @@ html body #item-market-list .class-item-name.class-rarity-legendary {color:#a977
  html body #item-market-list .class-item-row .class-item-action {width:70px!important;min-width:70px!important}
  html body #item-market-list .class-item-row .class-item-action button {font-size:11px!important;padding:5px 4px!important}
 }
+
+/* v101: 아이템 신청 및 분배 기준에 동일한 등급별 이름색 적용 */
+#tier-list-view .class-tier-rarity-name,
+#item-market-list .class-item-name { font-weight:700!important; }
+#tier-list-view .class-tier-price { color:#374151!important; -webkit-text-fill-color:#374151!important; }
+#tier-list-view .class-tier-rarity-name.class-rarity-advanced,
+#item-market-list .class-item-name.class-rarity-advanced { color:#15803d!important; -webkit-text-fill-color:#15803d!important; }
+#tier-list-view .class-tier-rarity-name.class-rarity-rare,
+#item-market-list .class-item-name.class-rarity-rare { color:#2563eb!important; -webkit-text-fill-color:#2563eb!important; }
+#tier-list-view .class-tier-rarity-name.class-rarity-heroic,
+#item-market-list .class-item-name.class-rarity-heroic { color:#dc2626!important; -webkit-text-fill-color:#dc2626!important; }
+#tier-list-view .class-tier-rarity-name.class-rarity-legendary,
+#item-market-list .class-item-name.class-rarity-legendary { color:#a97700!important; -webkit-text-fill-color:#a97700!important; }
 </style>
 </body>
 </html>

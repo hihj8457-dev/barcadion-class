@@ -272,6 +272,45 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
 }
 #weekly-archive-list input[type="checkbox"]{accent-color:#252b35;}
 </style>
+
+<style id="class-v109-archive-and-mobile-pagination">
+/* The sidebar and the separate black/white dialogs keep their existing design. */
+#weekly-archive-list .class-archive-meta {
+  color:#a56a00!important;-webkit-text-fill-color:#a56a00!important;
+  font-weight:600;
+}
+#weekly-archive-list .class-archive-nickname {
+  color:#171b22!important;-webkit-text-fill-color:#171b22!important;
+  font-weight:800!important;font-size:14px!important;
+}
+#weekly-archive-list .class-archive-completion {
+  background:#f5f6f8!important;border:1px solid #d7dfe7!important;
+  color:#202936!important;-webkit-text-fill-color:#202936!important;
+}
+#weekly-archive-list .class-archive-completion span {
+  color:#202936!important;-webkit-text-fill-color:#202936!important;
+}
+/* Unselected numbers are white with charcoal numerals. Selected stays charcoal/white. */
+html body #item-pagination {display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:6px!important;min-height:36px;align-items:center}
+html body #item-pagination button.class-page-number {
+  background:#fff!important;border:1px solid #cbd1d9!important;
+  color:#20242b!important;-webkit-text-fill-color:#20242b!important;
+  font-weight:750!important;min-width:34px;min-height:34px;
+  line-height:1.3;flex:0 0 auto!important;
+}
+html body #item-pagination button.class-page-number-active {
+  background:#252a32!important;border:1px solid #252a32!important;
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+  font-weight:800!important;min-width:34px;min-height:34px;
+  line-height:1.3;flex:0 0 auto!important;box-shadow:none!important;
+}
+html body #item-pagination button.class-page-number:hover {background:#f2f4f7!important;}
+html body #item-pagination button.class-page-number-active:hover {background:#353b45!important;}
+@media(max-width:600px){
+  html body #item-pagination{position:relative;z-index:1;flex-shrink:0!important;}
+  html body #item-pagination button{font-size:13px!important;}
+}
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
 
@@ -1680,10 +1719,9 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
         let currentItemCategory = '전체';
         let itemPage = 1;
         function getItemsPerPage() {
-             
-            const panel = document.getElementById('item-market-list')?.closest('.dashboard-panel');
-            const height = panel ? panel.getBoundingClientRect().height : (Number(db.settings?.panelHeight) || 800);
-            return Math.max(6, Math.min(30, Math.floor((height - 210) / 100)));
+            // A page's row content can change its container height. Never derive the
+            // page size from that height or pagination may disappear on mobile.
+            return window.matchMedia('(max-width: 600px)').matches ? 6 : 10;
         }
         function goToItemPage(page) { itemPage = page; renderItems(); }
         function filterItemCategory(cat) {
@@ -2701,14 +2739,14 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
                     const amount=Math.floor(Math.max(0,Number(score||0)))*Number(d.unit||0);
                     const checked=a.distributionCompleted?.[name]===true;
                     const checkbox=amount>0?`<label class="inline-flex items-center gap-2 whitespace-nowrap text-sm font-semibold ${checked?'text-emerald-300':'text-slate-200'}"><input type="checkbox" class="w-4 h-4 accent-emerald-500" ${checked?'checked':''} onchange="toggleArchiveDistribution(${index},'${encodeURIComponent(name)}',this.checked)">분배 완료</label>`:'';
-                    return `<div class="border-t border-slate-700/50 py-2"><div class="font-semibold text-white mb-1">${escapeHtml(name)}</div><div class="flex flex-wrap justify-between items-end gap-2"><div class="text-slate-300 leading-6 min-w-0">${dayText} <span class="text-amber-300 font-bold">· 총 합 ${Number(score).toLocaleString()}점 · ${amount.toLocaleString()} 다이아</span></div>${checkbox}</div></div>`;
+                    return `<div class="border-t border-slate-700/50 py-2"><div class="class-archive-nickname font-bold text-white mb-1">${escapeHtml(name)}</div><div class="flex flex-wrap justify-between items-end gap-2"><div class="text-slate-300 leading-6 min-w-0">${dayText} <span class="text-amber-300 font-bold">· 총 합 ${Number(score).toLocaleString()}점 · ${amount.toLocaleString()} 다이아</span></div>${checkbox}</div></div>`;
                 }).join('');
                 return `<details data-archive-week="${escapeAttribute(a.weekKey||'')}" class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(archiveDisplayLabel(a)+(a.type?"":" 보스 참여 기록"))}</summary>
                     <div class="mt-3 text-xs text-slate-300 space-y-2">
-                        <div class="flex flex-wrap gap-2 items-center"><span>기록 기간: ${escapeHtml(a.weekKey||'')}</span><button onclick="editArchiveLabel(${index})" class="bg-slate-700 text-amber-300 rounded px-2 py-1">주차 이름 수정</button><button onclick="deleteWeeklyArchive(${index})" class="bg-red-900/60 text-red-200 rounded px-2 py-1">내역 삭제</button></div>
-                        <p>보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR'))}</p>
-                        <p>총 다이아 ${Number(d.total||0).toLocaleString()} · 1점당 ${Number(d.unit||0).toLocaleString()} 다이아</p>
-                        <div class="rounded-lg border border-violet-500/40 bg-violet-900/20 p-3"><div class="flex items-center justify-between gap-2 text-sm font-bold"><span>다이아 분배 완료</span><span class="text-violet-200">${completed}/${eligible.length}명</span></div><div class="h-2 bg-slate-700 rounded-full mt-2 overflow-hidden"><div class="h-full bg-violet-400 rounded-full" style="width:${eligible.length?completed/eligible.length*100:0}%"></div></div></div>
+                        <div class="flex flex-wrap gap-2 items-center"><span class="class-archive-meta">기록 기간: ${escapeHtml(a.weekKey||'')}</span><button onclick="editArchiveLabel(${index})" class="bg-slate-700 text-amber-300 rounded px-2 py-1">주차 이름 수정</button><button onclick="deleteWeeklyArchive(${index})" class="bg-red-900/60 text-red-200 rounded px-2 py-1">내역 삭제</button></div>
+                        <p class="class-archive-meta">보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR'))}</p>
+                        <p class="class-archive-meta">총 다이아 ${Number(d.total||0).toLocaleString()} · 1점당 ${Number(d.unit||0).toLocaleString()} 다이아</p>
+                        <div class="class-archive-completion rounded-lg border p-3"><div class="flex items-center justify-between gap-2 text-sm font-bold"><span>다이아 분배 완료</span><span>${completed}/${eligible.length}명</span></div></div>
                         <div class="space-y-1">${rows||'참여 내역 없음'}</div>
                     </div></details>`;
             }).join('')||'<p class="text-xs text-slate-400">보관된 주차 내역이 없습니다.</p>';

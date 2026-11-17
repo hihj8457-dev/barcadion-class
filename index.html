@@ -1130,10 +1130,30 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
             });
           return task;
         }
-        auth.onAuthStateChanged(async user=>{
+        // A newly created Firebase Auth user does not yet have a Firestore profile.
+        // Wait for /users/{uid} to exist before starting protected collection listeners.
+        let ownProfileGateUnsub = null;
+        let authGateSequence = 0;
+        auth.onAuthStateChanged(user=>{
+          const sequence = ++authGateSequence;
+          if(ownProfileGateUnsub){ownProfileGateUnsub();ownProfileGateUnsub=null;}
+          detachCloud();
           cloudUser=user;
-          if(!user){detachCloud();db=clone(DEFAULT_DB);db.currentUser=null;checkLoginState();return;}
-          subscribeCloud();
+          if(!user){db=clone(DEFAULT_DB);db.currentUser=null;checkLoginState();return;}
+          checkLoginState();
+          const uid=user.uid;
+          const stop=store.doc('users/'+uid).onSnapshot(s=>{
+            if(sequence!==authGateSequence || cloudUser?.uid!==uid)return;
+            if(!s.exists)return; // Registration may still be writing the profile.
+            // Start all protected queries only once the profile is present.
+            if(ownProfileGateUnsub){ownProfileGateUnsub();ownProfileGateUnsub=null;}
+            subscribeCloud();
+          },e=>{
+            if(sequence===authGateSequence)showAuthError('회원 정보 확인 실패: '+errorText(e));
+          });
+          // onSnapshot callback is asynchronous in the Firebase browser SDK.
+          if(sequence===authGateSequence && cloudUser?.uid===uid)ownProfileGateUnsub=stop;
+          else stop();
         });
         window.onload=()=>{checkLoginState();};
         function checkLoginState() {

@@ -1134,20 +1134,28 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
         // Wait for /users/{uid} to exist before starting protected collection listeners.
         let ownProfileGateUnsub = null;
         let authGateSequence = 0;
+        let cloudSubscriptionsStarted = false;
+        function startCloudAfterVerifiedProfile(uid, sequence) {
+          if(sequence!==authGateSequence || cloudUser?.uid!==uid || cloudSubscriptionsStarted) return;
+          cloudSubscriptionsStarted=true;
+          if(ownProfileGateUnsub){ownProfileGateUnsub();ownProfileGateUnsub=null;}
+          subscribeCloud();
+        }
         auth.onAuthStateChanged(user=>{
           const sequence = ++authGateSequence;
           if(ownProfileGateUnsub){ownProfileGateUnsub();ownProfileGateUnsub=null;}
           detachCloud();
+          cloudSubscriptionsStarted=false;
           cloudUser=user;
           if(!user){db=clone(DEFAULT_DB);db.currentUser=null;checkLoginState();return;}
           checkLoginState();
           const uid=user.uid;
           const stop=store.doc('users/'+uid).onSnapshot(s=>{
             if(sequence!==authGateSequence || cloudUser?.uid!==uid)return;
-            if(!s.exists)return; // Registration may still be writing the profile.
-            // Start all protected queries only once the profile is present.
-            if(ownProfileGateUnsub){ownProfileGateUnsub();ownProfileGateUnsub=null;}
-            subscribeCloud();
+            // A local cache/optimistic write is not enough for Firestore rules.
+            // Wait until the backend has acknowledged /users/{uid}.
+            if(!s.exists || s.metadata.fromCache || s.metadata.hasPendingWrites)return;
+            startCloudAfterVerifiedProfile(uid, sequence);
           },e=>{
             if(sequence===authGateSequence)showAuthError('회원 정보 확인 실패: '+errorText(e));
           });
@@ -1198,6 +1206,8 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
               const cred=await auth.createUserWithEmailAndPassword(email,pw);
               try {
                 await store.doc('users/'+cred.user.uid).set({loginId:loginId.toLowerCase(),nickname,role:'member',approved:true,class:document.getElementById('reg-class').value,power});
+                const verified=await store.doc('users/'+cred.user.uid).get({source:'server'});
+                if(verified.exists && cloudUser?.uid===cred.user.uid)startCloudAfterVerifiedProfile(cred.user.uid,authGateSequence);
               } catch(e) {await auth.signOut();throw new Error('계정은 생성되었지만 프로필 저장에 실패했습니다. 관리자에게 문의하세요. '+errorText(e));}
               alert('회원가입 완료! 로그인 아이디와 게임 닉네임은 서로 독립적입니다.');
               isRegisterMode=false;
@@ -1206,6 +1216,11 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
               const cred=await auth.signInWithEmailAndPassword(email,pw);
               const doc=await store.doc('users/'+cred.user.uid).get();
               if(!doc.exists){await auth.signOut();throw new Error('회원 정보가 없거나 탈퇴 처리된 계정입니다.');}
+              // Force a backend-confirmed profile before opening protected listeners.
+              const verified=await store.doc('users/'+cred.user.uid).get({source:'server'});
+              if(verified.exists && cloudUser?.uid===cred.user.uid) {
+                startCloudAfterVerifiedProfile(cred.user.uid,authGateSequence);
+              }
             }
           }catch(e){
             const code=e?.code||'';

@@ -335,11 +335,19 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
                     </div>
 
                     <div id="content-member-1" class="space-y-2">
-                        <div class="text-xs text-slate-400 flex justify-between items-center mb-1">
-                            <span>전투력 높은 순 · 이번 주 참여 점수</span>
-                            <span id="total-member-count">0명</span>
+                        <div class="class-member-toolbar">
+                            <div class="class-member-search-wrap">
+                                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                                <input id="class-member-search" type="search" placeholder="길드원 아이디 검색" aria-label="길드원 아이디 검색" autocomplete="off" spellcheck="false" oninput="window.classFilterMemberList()" />
+                                <button type="button" class="class-member-search-clear" onclick="window.classClearMemberSearch()" aria-label="검색어 지우기" title="검색어 지우기"><i class="fa-solid fa-xmark"></i></button>
+                            </div>
+                            <div class="class-member-toolbar-meta">
+                                <span>전투력 높은 순 · 이번 주 참여 점수</span>
+                                <span id="total-member-count" aria-live="polite">0명</span>
+                            </div>
                         </div>
                         <div class="max-h-[210px] overflow-y-auto space-y-1.5 pr-1" id="member-list-view"></div>
+                        <div id="class-member-search-empty" class="hidden" role="status">검색 결과가 없습니다.</div>
                     </div>
                 </div>
             </div>
@@ -1560,6 +1568,7 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
             fitGuildMemberNames();
             document.getElementById('total-member-count').innerText = `${sorted.length}명`;
             document.getElementById('stat-member-count').innerText = `${sorted.length}명`;
+            if (typeof window.classFilterMemberList === 'function') window.classFilterMemberList();
         }
 
         let activeTierCategory = '장비';
@@ -3544,5 +3553,69 @@ html,body{background:#fbf5ef!important}
 }
 
 </style>
+
+<style id="class-v82-member-list">
+/* 길드원 목록: 기존 홈의 아이보리/월넛/골드 팔레트에 맞춘 독립 스타일. */
+.class-page[data-page="members"]{color:#39281e!important}
+.class-page[data-page="members"] .class-panel-slot{width:100%!important;min-width:0!important}
+#class-member-slot .dashboard-panel{background:linear-gradient(180deg,#fffaf6 0%,#fcf4ec 100%)!important;border:1px solid #e5cbb3!important;border-radius:16px!important;box-shadow:0 5px 18px #4c2c1716!important;color:#39281e!important;padding:22px!important;min-height:400px!important;height:auto!important}
+#class-member-slot .dashboard-panel #panel-title-1{color:#4c301e!important;font-size:22px!important;font-weight:800!important;border:0!important;text-shadow:none!important}
+#class-member-slot .dashboard-panel #panel-title-1 i{color:#a87943!important}
+#class-member-slot .dashboard-panel>div:first-child>div:first-child{border-color:#e8d5c3!important}
+#class-member-slot #content-member-1{color:#473226!important}
+#class-member-slot .class-member-toolbar{display:flex!important;align-items:center!important;justify-content:space-between!important;flex-wrap:wrap!important;gap:12px!important;margin:0 0 15px!important}
+#class-member-slot .class-member-search-wrap{position:relative!important;display:flex!important;align-items:center!important;width:min(360px,100%)!important;min-height:44px!important;flex:0 1 360px!important;color:#99724f!important}
+#class-member-slot .class-member-search-wrap>i{position:absolute!important;left:14px!important;z-index:1!important;pointer-events:none!important;color:#9e7957!important;font-size:14px!important}
+#class-member-slot #class-member-search{appearance:none!important;-webkit-appearance:none!important;box-sizing:border-box!important;width:100%!important;height:44px!important;border:1px solid #d9b99b!important;border-radius:11px!important;background:#fffdfb!important;padding:10px 43px 10px 40px!important;color:#3b281c!important;font-size:14px!important;font-weight:550!important;line-height:1.4!important;outline:none!important;box-shadow:0 2px 7px #51331d0e!important}
+#class-member-slot #class-member-search::placeholder{color:#9b8573!important;opacity:1!important}
+#class-member-slot #class-member-search:focus{border-color:#a57343!important;box-shadow:0 0 0 3px #c19c6f29!important}
+#class-member-slot #class-member-search::-webkit-search-cancel-button{-webkit-appearance:none!important;appearance:none!important}
+#class-member-slot .class-member-search-clear{position:absolute!important;right:7px!important;top:7px!important;width:30px!important;height:30px!important;border:0!important;border-radius:8px!important;background:transparent!important;color:#977b65!important;cursor:pointer!important}
+#class-member-slot .class-member-search-clear:hover{background:#f2e4d8!important;color:#5c3b22!important}
+#class-member-slot .class-member-toolbar-meta{display:flex!important;justify-content:space-between!important;gap:12px!important;align-items:center!important;flex:1 1 260px!important;color:#8b6e56!important;font-size:13px!important}
+#class-member-slot #total-member-count{font-weight:800!important;color:#785031!important;white-space:nowrap!important}
+#class-member-slot #member-list-view{box-sizing:border-box!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;min-height:120px!important;max-height:none!important;overflow:visible!important;padding:0!important;margin:0!important}
+#class-member-slot #member-list-view .class-member-card{box-sizing:border-box!important;width:100%!important;min-width:0!important;margin:0!important;padding:14px 16px!important;background:#fffcf8!important;border:1px solid #e6d1bb!important;border-radius:12px!important;box-shadow:0 2px 7px #4b2d1910!important;color:#3c2a20!important;transition:border-color .15s,box-shadow .15s!important}
+#class-member-slot #member-list-view .class-member-card:hover{border-color:#cfa373!important;box-shadow:0 3px 11px #4b2d1920!important}
+#class-member-slot #member-list-view .class-member-card[hidden]{display:none!important}
+#class-member-slot #member-list-view .guild-member-name{color:#35251c!important;font-size:15px!important;font-weight:800!important;text-shadow:none!important}
+#class-member-slot #member-list-view .class-member-power{color:#986020!important;font-weight:800!important;font-size:12px!important;white-space:nowrap!important}
+#class-member-slot #member-list-view .class-member-participation-text{color:#786554!important;font-size:12px!important;font-weight:550!important;line-height:1.55!important}
+#class-member-slot #member-list-view .class-member-role{border:1px solid #e1c7ab!important;background:#f4e9dc!important;color:#754b2b!important;font-size:10px!important}
+#class-member-slot #member-list-view .class-member-role.bg-red-500\/20{background:#fbe4df!important;color:#9d4338!important;border-color:#ebc3bb!important}
+#class-member-slot #member-list-view .class-member-role.bg-amber-500\/20{background:#fff0d8!important;color:#875621!important}
+#class-member-slot #member-list-view .class-member-role.bg-purple-500\/20{background:#f1e8f5!important;color:#78518d!important;border-color:#dfcce7!important}
+#class-member-slot #member-list-view .guild-class-icon img{filter:contrast(1.25) brightness(.80)!important}
+#class-member-slot #class-member-search-empty{margin:15px 0 2px!important;padding:25px!important;text-align:center!important;background:#fffaf6!important;border:1px dashed #d7b99a!important;border-radius:12px!important;color:#876c56!important;font-size:14px!important}
+@media(max-width:1050px){#class-member-slot #member-list-view{grid-template-columns:1fr!important}}
+@media(max-width:600px){#class-member-slot .dashboard-panel{padding:15px!important}#class-member-slot .class-member-search-wrap{flex:1 1 100%!important;width:100%!important}#class-member-slot .class-member-toolbar-meta{flex:1 1 100%!important;font-size:12px!important}#class-member-slot #member-list-view .class-member-card{padding:12px!important}}
+</style>
+<script id="class-v82-member-search">
+(function(){
+  function applyFilter(){
+    const field=document.getElementById('class-member-search');
+    const list=document.getElementById('member-list-view');
+    if(!field||!list)return;
+    const q=field.value.trim().toLocaleLowerCase();
+    const cards=[...list.querySelectorAll('.class-member-card')];
+    let visible=0;
+    cards.forEach(card=>{
+      const name=card.querySelector('.guild-member-name')?.textContent||'';
+      const show=!q||name.toLocaleLowerCase().includes(q);
+      card.hidden=!show;
+      if(show)visible++;
+    });
+    const total=document.getElementById('total-member-count');
+    if(total)total.textContent=q?`검색 ${visible}명 / 전체 ${cards.length}명`:`${cards.length}명`;
+    document.getElementById('class-member-search-empty')?.classList.toggle('hidden',!q||visible>0);
+  }
+  window.classFilterMemberList=applyFilter;
+  window.classClearMemberSearch=function(){
+    const field=document.getElementById('class-member-search');
+    if(!field)return;
+    field.value='';applyFilter();field.focus();
+  };
+})();
+</script>
 </body>
 </html>

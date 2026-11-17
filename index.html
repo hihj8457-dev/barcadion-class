@@ -360,31 +360,18 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
                         <h2 id="panel-title-2" class="text-lg font-bold text-amber-400 flex items-center">
-                            <i class="fa-solid fa-dragon mr-2"></i> 보스 관리
+                            <i class="fa-solid fa-dragon mr-2"></i> 보스 스케줄
                         </h2>
                         <button type="button" class="class-section-manage-btn" id="class-boss-manage-trigger" onclick="openBossManageModal()" style="display:none" aria-label="보스 관리 설정"><i class="fa-solid fa-gear" aria-hidden="true"></i> 보스 관리</button>
                     </div>
-                    <div class="flex space-x-2 mb-4">
-                        <button onclick="switchTab('boss-reg', '2')" id="btn-tab-boss-reg-2" data-default-label="참여 등록" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer">참여 등록</button>
-                        <button onclick="switchTab('boss-sched', '2')" id="btn-tab-boss-sched-2" data-default-label="스케줄 보기" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer">스케줄 보기</button>
-                    </div>
-
-                    <div id="content-boss-reg-2" class="space-y-4">
-                        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 text-center">
-                            <button onclick="openBossModal()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-xl text-sm transition shadow-lg flex items-center justify-center cursor-pointer">
-                                <i class="fa-solid fa-square-check mr-2"></i> 보스 참여 등록
-                            </button>
-                        </div>
-                        <div class="text-xs text-slate-400 bg-slate-900/40 p-3 rounded-xl space-y-1">
-                            <div class="flex items-center justify-between gap-2 mb-1">
-                                <p class="font-semibold text-amber-400"><i class="fa-solid fa-circle-info mr-1"></i> 기본 보스 배점</p>
-                                <button type="button" onclick="openBossGuideEditor()" class="admin-only hidden text-xs font-bold text-purple-100 bg-purple-800/70 hover:bg-purple-700 border border-purple-400/60 rounded-lg px-3 py-1.5"><i class="fa-solid fa-pen mr-1"></i>수정</button>
+                    <div id="content-boss-sched-2" class="space-y-3">
+                        <div class="class-v85-boss-tools">
+                            <button type="button" onclick="openBossModal()" class="class-v85-participate"><i class="fa-solid fa-square-check" aria-hidden="true"></i> 보스 참여 등록</button>
+                            <div class="class-v85-score-guide">
+                                <div class="class-v85-guide-heading"><strong><i class="fa-solid fa-circle-info" aria-hidden="true"></i> 기본 보스 배점</strong><button type="button" onclick="openBossGuideEditor()" class="admin-only hidden class-v85-guide-edit"><i class="fa-solid fa-pen" aria-hidden="true"></i> 수정</button></div>
+                                <p id="boss-guide-text" style="white-space:pre-line"></p>
                             </div>
-                            <p id="boss-guide-text" style="white-space: pre-line;"></p>
                         </div>
-                    </div>
-
-                    <div id="content-boss-sched-2" class="hidden space-y-3">
                         <div class="bg-slate-900/70 border border-purple-500/40 rounded-xl p-3 space-y-2">
                             <div class="flex justify-between items-center gap-2"><strong class="text-sm text-purple-200">서버 점검 예약 · 주기형 보스 초기화</strong><button type="button" onclick="openMaintenanceEditor()" class="admin-only hidden text-xs px-3 py-1.5 rounded-lg bg-purple-800 border border-purple-400">점검 관리</button></div>
                             <div id="maintenance-schedule-list" class="text-xs text-slate-300">등록된 점검 없음</div>
@@ -1199,17 +1186,8 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
                 document.getElementById('content-member-1')?.classList.remove('hidden');
                 document.getElementById('content-notice-1')?.classList.add('hidden');
             } else if (frameNum === '2') {
-                if (tabName === 'boss-reg') {
-                    document.getElementById('btn-tab-boss-reg-2').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer";
-                    document.getElementById('btn-tab-boss-sched-2').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer";
-                    document.getElementById('content-boss-reg-2').classList.remove('hidden');
-                    document.getElementById('content-boss-sched-2').classList.add('hidden');
-                } else {
-                    document.getElementById('btn-tab-boss-sched-2').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer";
-                    document.getElementById('btn-tab-boss-reg-2').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-slate-700 text-slate-300 transition cursor-pointer";
-                    document.getElementById('content-boss-sched-2').classList.remove('hidden');
-                    document.getElementById('content-boss-reg-2').classList.add('hidden');
-                }
+                // v85: 보스는 하위 탭 없이 단일 스케줄 화면입니다.
+                document.getElementById('content-boss-sched-2')?.classList.remove('hidden');
             } else if (frameNum === '3') {
                 if (tabName === 'dist-기준') {
                     document.getElementById('btn-tab-dist-기준-3').className = "flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer";
@@ -1230,7 +1208,7 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
             document.getElementById('site-title').innerText = '클래스';
             document.getElementById('site-subtitle').innerText = 'CLASS';
             (s.panelTitles || DEFAULT_DB.settings.panelTitles).forEach((title, index) => {
-                if(index===0)title='길드원 목록';
+                if(index===0)title='길드원 목록'; if(index===1)title='보스 스케줄';
                 const el = document.getElementById(`panel-title-${index + 1}`);
                 if (el) {
                     const icon = el.querySelector('i');
@@ -2203,8 +2181,12 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
                     ? resetTime : lastEvent && lastEvent.type === 'manual' && Number.isFinite(lastEvent.spawnTime)
                         ? lastEvent.spawnTime : activeAnchor + cycleMs;
                 if (nowMs < spawn) return {time:spawn, spawned:false};
-                // If the spawn has happened, do not silently advance to another cycle.
-                return {time:spawn, spawned:true};
+                // 컷 기록이 없으면 등장 후 한 시간까지만 컷 대기로 표시합니다.
+                // 1시간 경과 후에는 원래 등장 시각을 기준으로 다음 주기를 예측합니다.
+                // DB의 컷 기록과 참여 체크 내역은 변경하지 않습니다.
+                if (nowMs - spawn < 3600000) return {time:spawn, spawned:true};
+                const elapsedCycles = Math.floor((nowMs - spawn) / cycleMs) + 1;
+                return {time:spawn + elapsedCycles*cycleMs, spawned:false};
             }
             const anchor = Number((db.bossSpawnAnchors || {})[boss.name]);
             if (!(anchor > 0)) {
@@ -2214,7 +2196,9 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
             // The original anchor represents a scheduled spawn, not a cut.
             const elapsed = nowMs - anchor;
             if (elapsed < 0) return {time:anchor, spawned:false};
-            return {time:anchor + Math.floor(elapsed / cycleMs) * cycleMs, spawned:true};
+            const lastSpawn = anchor + Math.floor(elapsed / cycleMs) * cycleMs;
+            if (nowMs - lastSpawn < 3600000) return {time:lastSpawn, spawned:true};
+            return {time:lastSpawn + cycleMs, spawned:false};
         }
         function bossNextTime(boss, nowMs) {
             if (Number(boss.cycleHours) > 0) {
@@ -3725,5 +3709,44 @@ body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color
   window.classV84RefreshManageButtons=showAdminButtons;
 })();
 </script>
+<style id="class-v85-readable-interiors-and-boss-schedule">
+/* v85: 모든 서브페이지 내부의 진한 카드 배경을 아이보리로 전환 */
+.class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) :is(div,section,article,aside,ul,li)[class*="bg-slate-"],
+.class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) :is(div,section,article,aside,ul,li)[class*="bg-gray-"],
+.class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) :is(div,section,article,aside,ul,li)[class*="bg-purple-"]{
+ background:#f8eee3!important;color:#3d2b20!important;border-color:#dec3a7!important;
+}
+.class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) :is(div,section,article,aside,ul,li)[class*="bg-slate-"] :is(p,span,strong,h2,h3,h4,small,label),
+.class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) :is(div,section,article,aside,ul,li)[class*="bg-gray-"] :is(p,span,strong,h2,h3,h4,small,label){color:#463124!important}
+.class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) [class*="text-slate-"],
+.class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) [class*="text-gray-"]{color:#624935!important}
+.class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) [class*="text-rose-"],
+.class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) [class*="text-red-"]{color:#b23b4a!important}
+.class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) [class*="text-amber-"],
+.class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) [class*="text-yellow-"]{color:#8c5325!important}
+.class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) :is(button,[role="button"])[class*="bg-slate-"]{background:#eaddcf!important;color:#4a3022!important;border-color:#d1ad87!important}
+.class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) :is(button,[role="button"])[class*="bg-purple-"]{background:#69452e!important;color:#fff6e9!important;border-color:#ad7d4d!important}
+/* 보스 스케줄 리스트: 밝은 카드와 선명한 보스 이름·시간·경고 */
+.class-page[data-page="boss"] #next-boss-preview{max-height:none!important;overflow:visible!important;background:#fff9f3!important;border-color:#dec3a7!important}
+.class-page[data-page="boss"] #next-boss-preview>div{background:#fffaf5!important;border:1px solid #dec3a7!important;border-radius:12px!important;padding:15px!important;box-shadow:0 2px 7px #4a2c1510!important}
+.class-page[data-page="boss"] #next-boss-preview .font-bold{color:#422b1d!important}
+.class-page[data-page="boss"] #next-boss-preview .text-rose-400{color:#af3e49!important}
+.class-page[data-page="boss"] #next-boss-preview .text-amber-400{color:#865322!important}
+.class-page[data-page="boss"] #next-boss-preview button.bg-rose-500:not(:disabled){background:#b3444d!important;color:white!important}
+.class-page[data-page="boss"] #next-boss-preview button.bg-blue-600{background:#725036!important;color:white!important}
+.class-page[data-page="boss"] #next-boss-preview button:disabled{opacity:.44!important}
+.class-page[data-page="boss"] #maintenance-schedule-list{color:#624735!important}
+.class-v85-boss-tools{display:grid;grid-template-columns:minmax(210px, .32fr) minmax(320px,1fr);gap:12px;align-items:stretch;margin-bottom:14px}
+.class-v85-participate{background:#64402c!important;color:#fff8ef!important;border:1px solid #ab7849!important;border-radius:12px!important;font-weight:800;padding:12px 16px!important;box-shadow:0 3px 9px #4025161c!important}
+.class-v85-participate:hover{background:#795237!important}
+.class-v85-score-guide{background:#fff7f0!important;border:1px solid #e3c9ac!important;color:#482f20!important;padding:12px 15px!important;border-radius:12px!important}
+.class-v85-guide-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:5px}
+.class-v85-score-guide #boss-guide-text{color:#634b38!important;font-size:12px;line-height:1.7;max-height:98px;overflow-y:auto}
+.class-v85-guide-edit{background:#f2e0cc!important;color:#634127!important;border:1px solid #cfaa86!important;border-radius:8px!important;padding:5px 10px;font-weight:700;font-size:11px}
+@media(max-width:760px){.class-v85-boss-tools{grid-template-columns:1fr}}
+/* 공지/모달 등에서 과거 다크 배경색 클래스 잔존 최소화 */
+:is(#boss-manage-modal,#boss-guide-editor-modal,#boss-reg-modal,#my-profile-modal,#site-settings-modal,#item-manage-modal,#user-manage-modal) :is(div,section,article)[class*="bg-slate-"],
+:is(#boss-manage-modal,#boss-guide-editor-modal,#boss-reg-modal,#my-profile-modal,#site-settings-modal,#item-manage-modal,#user-manage-modal) :is(div,section,article)[class*="bg-gray-"]{background:#f7ede2!important;color:#493426!important;border-color:#d9bea1!important}
+</style>
 </body>
 </html>

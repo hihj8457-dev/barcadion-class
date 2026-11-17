@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V89_NEUTRAL_MODAL_TEXT">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V90_BOSS_UNIFIED_NEUTRAL_TEXT">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3975,6 +3975,95 @@ html body [id$="-modal"]:not(#auth-modal) button:is([class*="bg-amber"],[class*=
 html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal,#boss-guide-editor-modal) > div > div:first-child.flex :is(h1,h2,h3,h4,span,button,i,strong) {
   color:#fff!important;-webkit-text-fill-color:#fff!important;
 }
+</style>
+<style id="class-v90-unified-boss-and-neutral-content">
+/* V90 — readable black/gray typography for ALL main content tabs. Buttons keep their own palette. */
+.class-page:not([data-page="home"]){--read-ink:#22252b;--read-muted:#535b66;--read-line:#e1d3c6;color:var(--read-ink)!important}
+.class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel,.class-v45-panel){color:var(--read-ink)!important}
+.class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel,.class-v45-panel) :is(h1,h2,h3,h4,h5,h6,p,span,small,strong,b,label,time,li,td,th,dt,dd,summary,legend,output):not(button):not([role="button"]):not(.class-v85-count-highlight){
+ color:var(--read-ink)!important;text-shadow:none!important;
+}
+.class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel,.class-v45-panel) :is(.text-xs,.text-sm,.class-v45-muted):not(button):not(.class-v85-count-highlight),
+.class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel,.class-v45-panel) :is(p,span,small)[class*="text-slate-"]{
+ color:var(--read-muted)!important;
+}
+/* Keep primary actions as existing wood buttons; neutralize ordinary text only. */
+.class-page:not([data-page="home"]) :is(input,textarea,select){color:#23272e!important}
+/* Boss page top-level mirrors the members list card. */
+.class-page[data-page="boss"] #class-boss-slot{width:100%!important;min-width:0!important}
+.class-page[data-page="boss"] #class-boss-slot>.dashboard-panel,
+.class-page[data-page="boss"] #class-boss-slot .dashboard-panel{
+ background:linear-gradient(180deg,#fffaf6,#fdf7f1)!important;
+ border:1px solid #e5cbb4!important;border-radius:15px!important;
+ box-shadow:0 4px 14px rgba(49,31,21,.055)!important;
+ padding:20px!important;color:#25282e!important;
+}
+.class-page[data-page="boss"] #class-boss-slot .dashboard-panel>div>div:first-child{
+ border-color:#e7d8c9!important;
+}
+.class-page[data-page="boss"] #class-boss-slot #panel-title-2{
+ color:#22252b!important;font-size:18px!important;font-weight:800!important;
+}
+.class-page[data-page="boss"] #class-boss-slot #panel-title-2 i{color:#8d6242!important}
+.class-page[data-page="boss"] #content-boss-sched-2{gap:12px!important}
+/* Registration action more compact; score guide quiet and aligned. */
+.class-page[data-page="boss"] .class-v85-boss-tools{grid-template-columns:minmax(165px,.30fr) minmax(0,1fr)!important;gap:12px!important}
+.class-page[data-page="boss"] .class-v85-participate{min-height:76px!important}
+.class-page[data-page="boss"] .class-v85-score-guide{background:#f7f6f5!important;border-color:#ded7d0!important;color:#22252b!important}
+.class-page[data-page="boss"] .class-v85-score-guide #boss-guide-text{color:#535b66!important}
+/* Server maintenance status is another light sub-card, not tinted wood. */
+.class-page[data-page="boss"] #content-boss-sched-2>div[class*="bg-slate-900"]{
+ background:#f5f5f6!important;border:1px solid #d9dce2!important;
+ color:#292e36!important;
+}
+.class-page[data-page="boss"] #content-boss-sched-2>div[class*="bg-slate-900"] :is(strong,span,div):not(button){color:#313741!important}
+.class-page[data-page="boss"] #maintenance-schedule-list,
+.class-page[data-page="boss"] #maintenance-schedule-list *{color:#525a66!important}
+/* Boss live list — neutral cards like guild members, with calm separators. */
+.class-page[data-page="boss"] #next-boss-preview{
+ background:transparent!important;border:0!important;box-shadow:none!important;
+ padding:0!important;max-height:none!important;overflow:visible!important;
+ display:grid!important;gap:9px!important;
+}
+.class-page[data-page="boss"] #next-boss-preview>div{
+ background:#fffdfb!important;border:1px solid #e5d4c5!important;
+ border-radius:12px!important;padding:15px 17px!important;
+ box-shadow:0 2px 7px rgba(58,37,25,.04)!important;
+ color:#252a32!important;min-width:0!important;
+}
+.class-page[data-page="boss"] #next-boss-preview>div>div:first-child{display:flex!important;align-items:center!important;gap:8px!important}
+.class-page[data-page="boss"] #next-boss-preview .font-bold.text-white{color:#23272d!important;font-size:15px!important}
+.class-page[data-page="boss"] #next-boss-preview .text-slate-400{color:#626b77!important}
+/* Countdown is the only highlighted text. Distinguish upcoming vs. already spawned. */
+.class-page[data-page="boss"] #next-boss-preview>div>div.text-lg{
+ display:inline-flex!important;align-items:center!important;gap:7px!important;
+ width:max-content!important;max-width:100%!important;overflow-wrap:anywhere!important;
+ padding:5px 10px!important;border-radius:8px!important;
+ font-variant-numeric:tabular-nums!important;font-size:clamp(16px,1.35vw,21px)!important;
+ font-weight:850!important;line-height:1.4!important;letter-spacing:.2px!important;
+}
+.class-page[data-page="boss"] #next-boss-preview>div>div.text-lg.text-amber-400{
+ color:#16647a!important;background:#e8f4f7!important;border:1px solid #c7e6ed!important;
+}
+.class-page[data-page="boss"] #next-boss-preview>div>div.text-lg.text-rose-400{
+ color:#a72e43!important;background:#fff0f0!important;border:1px solid #f3d4d7!important;
+}
+.class-page[data-page="boss"] #next-boss-preview>div>div.text-lg.text-slate-400{
+ color:#5e6874!important;background:#eff1f4!important;border:1px solid #dbe0e6!important;
+}
+/* Protect the bold action text in wood buttons from old/global contrast overrides. */
+.class-page[data-page="boss"] #next-boss-preview button,
+.class-page[data-page="boss"] .class-v85-participate,
+.class-page[data-page="boss"] .class-section-manage-btn{font-weight:750!important}
+.class-page[data-page="boss"] #next-boss-preview button.bg-blue-600,
+.class-page[data-page="boss"] #next-boss-preview button.bg-rose-500:not(:disabled){color:#fff!important}
+/* War, siege, items & admin: titles and body always dark neutral, not amber/chocolate. */
+.class-page:is([data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"],[data-page="members"]) :is(.class-card,.dashboard-panel,.class-v45-panel) :is(h2,h3,h4,strong,th,td,p,span,small):not(button){color:#252a32!important}
+.class-page:is([data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"],[data-page="members"]) :is(.class-v45-muted,.text-slate-400,.text-xs):not(button){color:#58616c!important}
+/* Role badges and validated status markers retain their semantic colors. */
+.class-page:not([data-page="home"]) :is(.text-red-500,.text-red-600,.text-rose-500,.text-green-600,.text-emerald-600):not(button){color:inherit}
+@media(max-width:860px){.class-page[data-page="boss"] .class-v85-boss-tools{grid-template-columns:1fr!important}}
+@media(max-width:600px){.class-page[data-page="boss"] #class-boss-slot .dashboard-panel{padding:13px!important}.class-page[data-page="boss"] #next-boss-preview>div{padding:12px!important}}
 </style>
 </body>
 </html>

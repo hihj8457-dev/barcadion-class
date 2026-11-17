@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V97_ADMIN_NEUTRAL">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V105_CLEAN_TIER_BOSS">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -201,6 +201,11 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
 </style>
 
 
+<style id="class-v105-tier-readable-separator">
+#tier-list-view .tier-price-line{display:flex;align-items:baseline;flex-wrap:wrap;column-gap:7px;row-gap:3px}
+#tier-list-view .class-tier-separator{color:#6b7280!important;font-weight:700;flex:none}
+#tier-list-view .class-tier-price{white-space:nowrap}
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
 
@@ -361,7 +366,7 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
                 <div>
                     <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-700">
                         <h2 id="panel-title-2" class="text-lg font-bold text-amber-400 flex items-center">
-                            <i class="fa-solid fa-dragon mr-2"></i> 보스 스케줄
+                            보스 스케줄
                         </h2>
                         <button type="button" class="class-section-manage-btn" id="class-boss-manage-trigger" onclick="openBossManageModal()" style="display:none" aria-label="보스 관리 설정"><i class="fa-solid fa-gear" aria-hidden="true"></i> 보스 관리</button>
                     </div>
@@ -1593,7 +1598,7 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
             ));
             document.getElementById('tier-list-view').innerHTML = rows.map(t =>
                 `<div class="tier-price-card bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 text-sm">
-                    <div class="tier-price-line"><span class="class-tier-rarity-name font-bold ${itemRarityClass(t)}" style="color:${itemRarityColor(t)} !important;-webkit-text-fill-color:${itemRarityColor(t)} !important">${escapeHtml(t.name)}</span><span class="class-tier-price font-bold">${t.price == null ? '미정 / 별도 기준' : Number(t.price).toLocaleString()+' 다이아'}</span></div>
+                    <div class="tier-price-line"><span class="class-tier-rarity-name font-bold ${itemRarityClass(t)}" style="color:${itemRarityColor(t)} !important;-webkit-text-fill-color:${itemRarityColor(t)} !important">${escapeHtml(t.name)}</span><span class="class-tier-separator" aria-hidden="true">·</span><span class="class-tier-price font-bold">${t.price == null ? '미정 / 별도 기준' : Number(t.price).toLocaleString()+' 다이아'}</span></div>
                     ${t.note ? `<div class="text-slate-400 mt-1 text-xs">${escapeHtml(t.note)}</div>` : ''}
                 </div>`).join('') || '<p class="text-slate-400 text-sm py-3">등록된 분배 기준이 없습니다.</p>';
         }
@@ -1761,19 +1766,6 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
                 saveDB(); renderItems();
                 alert('신청이 취소되었습니다.');
             }
-        }
-
-        function toggleItemDistributed(itemId) {
-            if (!isCurrentAdmin()) { alert('관리자만 분배 상태를 변경할 수 있습니다.'); return; }
-            const item = db.items.find(i => String(i.id) === String(itemId));
-            if (!item) return;
-            normalizeDistributionItem(item);
-            const nextState = !item.distributed;
-            if (!confirm(`[${item.name}] 아이템을 ${nextState ? '분배완료' : '분배완료 취소'} 처리하시겠습니까?`)) return;
-            item.distributed = nextState;
-            saveDB(); renderItems();
-            const adminList = document.getElementById('admin-item-list');
-            if (adminList && !document.getElementById('item-manage-modal').classList.contains('hidden')) renderAdminItemList();
         }
 
         const daysOfWeek = ['월요일', '화요일', '수요일', '목요일', '금요일', '토요일', '일요일'];

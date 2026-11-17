@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V92_WHITE_MAIN_FONT_PAGINATION">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V94_MONO_MEMBERS_BOSS">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -199,6 +199,7 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
 @media(max-width:800px){#app-container{padding:60px 12px 22px!important}#class-nav{width:100%!important;min-width:0!important;height:56px;bottom:auto;padding:5px!important;flex-direction:row!important;overflow-x:auto;gap:4px!important}#class-nav:before{display:none!important}#class-nav button{flex:0 0 auto;width:auto!important;font-size:13px!important;padding:10px!important}#app-container>header{height:75px!important;margin-top:12px!important}#class-home .class-home-top{grid-template-columns:1fr!important}#class-home .class-bosses{grid-template-columns:1fr!important}#class-home .class-boss-primary{grid-column:auto}#class-home .class-v46-ratio-chart{gap:15px!important;padding:8px!important;flex-wrap:wrap!important}#class-home .class-announcements{gap:0}#class-home .class-notice-half,#class-home .class-patch-half{width:50%;padding:0 6px!important}}
 @media(max-width:560px){.class-login-card{padding:25px 20px}.class-login-fields{grid-template-columns:1fr;gap:8px}.class-login-card h2{font-size:35px;margin-bottom:22px}.class-login-brand strong{font-size:40px}#class-home .class-boss-primary .class-boss-art{width:90px;height:125px}#class-home .class-boss-primary .class-boss-countdown{font-size:22px!important}#class-home .class-boss-primary strong{font-size:20px!important}#class-home .class-boss{padding:9px!important;gap:10px!important;min-height:130px!important}#class-home .class-boss-art{height:80px;width:70px}#class-home .class-home-top>.class-card{padding:8px!important}#class-home .class-mini-heading h2{font-size:13px!important}#class-home .class-notice-half,#class-home .class-patch-half{flex-wrap:wrap}#class-home .class-v46-ratio-chart{justify-content:center!important}}
 </style>
+
 
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
@@ -1171,9 +1172,8 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
             else adminPanel.classList.add('hidden');
 
             const noticeEditBox = document.getElementById('admin-notice-edit-box');
-            // V93: 편집창은 권한과 무관하게 최초/데이터 갱신 시 닫힌 상태를 유지합니다.
-            noticeEditBox.classList.add('hidden');
-            noticeEditBox.style.display = 'none';
+            if (isAdmin) noticeEditBox.classList.remove('hidden');
+            else noticeEditBox.classList.add('hidden');
 
             renderNotice();
             renderMembers();
@@ -1483,8 +1483,6 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
             db.notice = document.getElementById('notice-input').value;
             saveDB();
             renderNotice();
-            const noticeEditor = document.getElementById('admin-notice-edit-box');
-            if (noticeEditor) { noticeEditor.classList.add('hidden'); noticeEditor.style.display = 'none'; }
             alert("공지사항이 수정되었습니다.");
         }
 
@@ -4162,103 +4160,113 @@ html body #item-pagination button.class-page-number-active{
 html body #item-pagination button:hover{background:#80573b!important;}
 html body #item-pagination button:focus-visible{outline:2px solid #222!important;outline-offset:2px;}
 </style>
-<style id="class-v93-walnut-panels-notice-folded">
+<style id="class-v94-modern-monochrome">
 
-/* CLASS v93 - confirmed walnut-on-white main pages. Popup layers are deliberately OUT OF SCOPE. */
-/* Never let a high-specificity editor box rule override hidden state. */
-#admin-notice-edit-box.hidden{display:none!important;visibility:hidden!important}
-#admin-notice-edit-box:not(.hidden){visibility:visible!important}
+/* V94: neutral black-and-white content, approved walnut sidebar left intact. */
+:root{--v94-white:#fff;--v94-canvas:#fff;--v94-line:#d9dce1;--v94-ink:#171a1f;--v94-muted:#525b66;--v94-charcoal:#262a30;--v94-soft:#f5f6f8}
+html body #class-main,html body #class-main-content,html body .class-page:not([data-page="home"]){background:#fff!important}
+html body .class-page:not([data-page="home"]){color:var(--v94-ink)!important}
+/* Shared main panel: not the hidden dialog/modal DOM. */
+html body .class-page:not([data-page="home"]) .class-panel-slot>.dashboard-panel,
+html body .class-page:not([data-page="home"]) .class-panel-slot .dashboard-panel{
+ background:#fff!important;border:1px solid #e0e2e6!important;box-shadow:0 3px 14px rgba(20,24,30,.055)!important;
+ border-radius:15px!important;color:#171a1f!important
+}
+html body .class-page:not([data-page="home"]) .class-panel-slot :is(h1,h2,h3,h4,h5,h6,p,span,strong,small,label,li,th,td,summary):not(button):not([class*="count-highlight"]):not(.class-member-role){
+ color:#202329!important;text-shadow:none!important
+}
+html body .class-page:not([data-page="home"]) .class-panel-slot :is(.text-xs,.text-slate-400,.text-slate-500,.class-v45-muted):not(button){color:#59616b!important}
+html body .class-page:not([data-page="home"]) .class-panel-slot :is(input,textarea,select){background:#fff!important;color:#202329!important;border-color:#cdd2da!important;box-shadow:none!important}
+html body .class-page:not([data-page="home"]) .class-panel-slot :is(input,textarea)::placeholder{color:#7a828e!important}
+/* Clear active vs inactive action buttons without brown washes. Exclude inline modal triggers' content. */
+html body .class-page:not([data-page="home"]) .class-panel-slot :is(.class-section-manage-btn,.class-member-manage-trigger,.class-v85-participate){
+ background:linear-gradient(#393d44,#1f2228)!important;border:1px solid #2c3036!important;color:#fff!important;box-shadow:0 3px 8px rgba(0,0,0,.1)!important;
+ font-weight:800!important
+}
+html body .class-page:not([data-page="home"]) .class-panel-slot :is(.class-section-manage-btn,.class-v85-participate) :is(span,i,svg){color:#fff!important}
+/* Members listing: two columns, neutral-gray cards and naturally contrasting labels. */
+html body .class-page[data-page="members"] #class-member-slot .dashboard-panel,
+html body .class-page[data-page="members"] #class-member-slot .dashboard-panel #content-member-1{background:#fff!important;color:#171a1f!important}
+html body .class-page[data-page="members"] #class-member-slot #panel-title-1{color:#121418!important;font-size:23px!important;font-weight:850!important}
+html body .class-page[data-page="members"] #class-member-slot #panel-title-1 i{color:#25282d!important}
+html body .class-page[data-page="members"] #class-member-slot #class-member-search{
+ background:#fff!important;border:1px solid #cdd2d9!important;border-radius:11px!important;color:#15181d!important;
+}
+html body .class-page[data-page="members"] #class-member-slot :is(.class-member-toolbar-meta,#total-member-count){color:#3a4048!important}
+html body .class-page[data-page="members"] #member-list-view .class-member-card{
+ background:#fff!important;color:#1b1f25!important;border:1px solid #d9dde3!important;border-radius:12px!important;
+ box-shadow:0 3px 8px rgba(25,29,34,.045)!important;padding:15px 17px!important
+}
+html body .class-page[data-page="members"] #member-list-view .class-member-card:hover{border-color:#9da5b2!important;box-shadow:0 5px 12px rgba(25,29,34,.085)!important}
+html body .class-page[data-page="members"] #member-list-view :is(.guild-member-name,.class-member-power){color:#171a1f!important;font-weight:800!important}
+html body .class-page[data-page="members"] #member-list-view .class-member-participation-text{color:#3d444e!important;font-weight:500!important}
+html body .class-page[data-page="members"] #member-list-view .class-member-role{
+ background:#f0f1f3!important;border-color:#cfd3da!important;color:#313741!important;font-weight:750!important
+}
+html body .class-page[data-page="members"] #member-list-view .class-member-role.bg-red-500\/20{background:#f7e9eb!important;color:#8c2938!important}
+html body .class-page[data-page="members"] #member-list-view .class-member-role.bg-purple-500\/20{background:#eaeaf3!important;color:#4d507d!important}
+html body .class-page[data-page="members"] #class-member-manage-trigger,
+html body .class-page[data-page="members"] #class-member-manage-trigger *{
+ color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:800!important
+}
+html body .class-page[data-page="members"] #class-member-manage-trigger{background:linear-gradient(#393d44,#1e2126)!important;border:1px solid #2c3036!important}
+/* Boss management header: same light visual language as member listing. */
+html body .class-page[data-page="boss"] #class-boss-slot>.dashboard-panel,
+html body .class-page[data-page="boss"] #class-boss-slot .dashboard-panel{background:#fff!important;border-color:#dedfe3!important;box-shadow:0 3px 14px #15191f0c!important}
+html body .class-page[data-page="boss"] #panel-title-2,
+html body .class-page[data-page="boss"] #panel-title-2 i{color:#171a1e!important}
+html body .class-page[data-page="boss"] .class-v85-boss-tools{gap:12px!important}
+html body .class-page[data-page="boss"] .class-v85-participate{
+ background:linear-gradient(#f4f5f7,#e7e9ec)!important;color:#161a20!important;border:1px solid #d4d8df!important;min-height:74px!important;
+}
+html body .class-page[data-page="boss"] .class-v85-participate i{color:#171a20!important}
+html body .class-page[data-page="boss"] .class-v85-score-guide,
+html body .class-page[data-page="boss"] #content-boss-sched-2>div[class*="bg-slate-900"]{
+ background:#f7f8fa!important;border:1px solid #d9dce2!important;color:#181c22!important;box-shadow:none!important
+}
+html body .class-page[data-page="boss"] .class-v85-score-guide :is(strong,p,span),
+html body .class-page[data-page="boss"] #boss-guide-text{color:#262b32!important}
+html body .class-page[data-page="boss"] #next-boss-preview{display:grid!important;gap:8px!important;background:transparent!important}
+html body .class-page[data-page="boss"] #next-boss-preview>div{
+ background:#fff!important;border:1px solid #d7dbe1!important;border-radius:11px!important;
+ box-shadow:0 2px 8px rgba(20,25,30,.045)!important;color:#1f242a!important;
+ padding:13px 16px!important
+}
+html body .class-page[data-page="boss"] #next-boss-preview .font-bold.text-white{color:#171a20!important;font-weight:850!important}
+html body .class-page[data-page="boss"] #next-boss-preview>div>div.text-lg{
+ background:linear-gradient(#34383e,#202329)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+ border:1px solid #363940!important;border-radius:9px!important;font-variant-numeric:tabular-nums!important;
+ padding:6px 13px!important;line-height:1.35!important;font-weight:850!important;
+ box-shadow:0 2px 5px #16181b24!important;letter-spacing:.2px!important
+}
+html body .class-page[data-page="boss"] #next-boss-preview>div>div.text-lg.text-rose-400{
+ background:#f1f2f4!important;color:#303640!important;-webkit-text-fill-color:#303640!important;border-color:#cfd4da!important
+}
+html body .class-page[data-page="boss"] #next-boss-preview button:not(:disabled),
+html body .class-page[data-page="boss"] .class-section-manage-btn{
+ background:linear-gradient(#3a3e44,#22252b)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+ border:1px solid #31363e!important;font-weight:850!important
+}
+html body .class-page[data-page="boss"] #next-boss-preview button:disabled{
+ background:#f1f2f4!important;color:#5f6875!important;-webkit-text-fill-color:#5f6875!important;border-color:#cdd1d7!important
+}
+/* Consistent monochrome for other main pages without altering separate overlays. */
+html body .class-page:is([data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]) .class-panel-slot :is(.class-card,.class-v45-panel,.class-v45-table,.boss-reg-group),
+html body .class-page:is([data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]) .class-panel-slot :is(.bg-slate-900,.bg-slate-800,.bg-gray-900){
+ background:#f8f9fa!important;border-color:#d9dde3!important;color:#202329!important
+}
 
-/* Main canvas stays white, sidebar and auth/login untouched. */
-html body #app-container #class-pages,
-html body #app-container #class-pages>.class-page{background:#fff!important}
-#class-pages>.class-page{
- --v93-walnut:#40281c;--v93-deep:#2e1a12;--v93-border:#c79b61;
- --v93-ivory:#fff0d9;--v93-muted:#e2c5a6;--v93-gold:#f4ce83;
-}
-/* Consistent walnut surfaces in all dashboard tab content. This excludes overlays,
-   profile/editor modal roots, authentication and sidebar/navigation. */
-#class-pages>.class-page :is(.class-card,.dashboard-panel,.class-v45-panel,.class-member-card,
-  .class-v45-table, .boss-reg-group, .class-v85-boss-tools>div,
-  #next-boss-preview>div,#tier-list-view>div,#item-market-list>div,
-  #class-war-system>div,#class-siege-system>div){
- background:linear-gradient(130deg,#513522 0%,#3e271b 55%,#2d1a13 100%)!important;
- color:var(--v93-ivory)!important;
- border:1px solid var(--v93-border)!important;
- box-shadow:0 3px 12px rgba(37,19,10,.11)!important;
-}
-/* Reassert list and schedule cards that have older high-specificity cream/gray overrides. */
-#class-pages>.class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card,
-#class-pages>.class-page[data-page="boss"] #next-boss-preview>div,
-#class-pages>.class-page[data-page="war"] .class-v45-panel,
-#class-pages>.class-page[data-page="siege"] .class-v45-panel{
- background:linear-gradient(115deg,#4e3222,#312017)!important;
- border:1px solid #bf9566!important;color:#fff0d9!important;
-}
-/* The principal text on the dark cards is ivory, independent of old amber/black
-   declarations. Buttons and form fields are intentionally not selected. */
-#class-pages>.class-page :is(.class-card,.dashboard-panel,.class-v45-panel,.class-member-card,#next-boss-preview>div,#tier-list-view>div,#item-market-list>div)
- :is(h1,h2,h3,h4,h5,h6,p,span,strong,b,small,label,summary,li,th,td,dt,dd,time,output):not(button):not([role="button"]){
- color:var(--v93-ivory)!important;
- -webkit-text-fill-color:var(--v93-ivory)!important;
- text-shadow:none!important;
-}
-/* Text directly under pages e.g. war/siege captions or schedule instructions. */
-#class-pages>.class-page :is(#class-war-system,#class-siege-system,#class-boss-slot,#class-member-slot,#class-item-slot,#class-admin-slot)
- :is(.class-v45-muted,.text-slate-400,.text-xs,.class-member-participation-text):not(button){
- color:var(--v93-muted)!important;
- -webkit-text-fill-color:var(--v93-muted)!important;
-}
-/* Titles from the light shell also become ivory only when on walnut surfaces. */
-#class-pages>.class-page :is(.class-card,.dashboard-panel,.class-v45-panel) :is(.text-amber-400,.text-slate-900,.text-slate-800,.text-white,.guild-member-name){
- color:var(--v93-ivory)!important;-webkit-text-fill-color:var(--v93-ivory)!important;
-}
-/* Explicit member text override for v82's high-specificity pale-card rules. */
-#class-pages>.class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card :is(.guild-member-name,.class-member-participation-text,span,strong,b,small){
- color:#fff0db!important;-webkit-text-fill-color:#fff0db!important;
-}
-/* Gold-framed controls mirror the LV.75 emblem without losing text contrast. */
-#class-pages>.class-page :is(.class-btn,.class-admin-button,.class-section-manage-btn,.class-v45-btn,
-  .class-v85-participate,#class-member-manage-trigger,.class-boss-register),
-#class-pages>.class-page button:is(.bg-amber-500,.bg-blue-600,.bg-slate-700,.bg-rose-500):not(:disabled){
- background:linear-gradient(180deg,#634027,#372116)!important;
- border:1px solid #e2b772!important;border-radius:9px!important;
- color:#fff3db!important;-webkit-text-fill-color:#fff3db!important;
- font-weight:800!important;text-shadow:none!important;
-}
-#class-pages>.class-page :is(.class-btn,.class-admin-button,.class-section-manage-btn,.class-v45-btn,
-  .class-v85-participate,#class-member-manage-trigger,.class-boss-register) :is(span,i,b,strong){
- color:#fff3db!important;-webkit-text-fill-color:#fff3db!important;font-weight:800!important;
-}
-#class-pages>.class-page :is(.class-btn,.class-admin-button,.class-section-manage-btn,.class-v45-btn,
-  .class-v85-participate,#class-member-manage-trigger,.class-boss-register):hover{
- border-color:#ffd99b!important;background:#734c30!important;
-}
-/* Readable text entry against walnut, without affecting separate modal forms. */
-#class-pages>.class-page :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea){
- background:#fffaf4!important;color:#24201c!important;-webkit-text-fill-color:#24201c!important;
- border:1px solid #cba67f!important;
-}
-#class-pages>.class-page :is(input,textarea)::placeholder{color:#74695e!important;-webkit-text-fill-color:#74695e!important}
-/* The original v92 boss cards/countdown and diamond chart stay as laid out.
-   Keep time semantic emphasis distinct from general card text. */
-#class-pages>.class-page[data-page="boss"] #next-boss-preview>div>div.text-lg.text-amber-400{
- background:#d5eff3!important;border-color:#71c8d9!important;
- color:#07546a!important;-webkit-text-fill-color:#07546a!important;
-}
-#class-pages>.class-page[data-page="boss"] #next-boss-preview>div>div.text-lg.text-rose-400{
- background:#ffe5e8!important;border-color:#e9a7b1!important;
- color:#a12b3a!important;-webkit-text-fill-color:#a12b3a!important;
-}
-#class-pages>.class-page[data-page="home"] .class-boss-countdown,
-#class-pages>.class-page[data-page="home"] .class-boss-countdown *{
- font-family:Georgia,'Noto Serif KR',serif!important;
-}
-/* Native controls remain legible and not gold-on-gold. */
-#class-pages>.class-page input[type="checkbox"]{accent-color:#e3b56e!important}
-@media(max-width:720px){
- #class-pages>.class-page :is(.class-card,.dashboard-panel,.class-v45-panel,.class-member-card){border-radius:12px!important}
-}
+/* Final high-specificity corrections for legacy V82/V90 selectors. */
+html body .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card{background:#fff!important;border-color:#d9dde3!important;color:#1b1f25!important;box-shadow:0 3px 8px #191d220b!important}
+html body .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card :is(.guild-member-name,.class-member-power){color:#171a1f!important}
+html body .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-participation-text{color:#3e4650!important}
+html body .class-page[data-page="members"] #class-member-slot #class-member-manage-trigger{background:#272b31!important;border:1px solid #292c33!important;color:#fff!important}
+html body .class-page[data-page="boss"] #class-boss-slot #next-boss-preview>div{background:#fff!important;border-color:#d7dbe1!important}
+html body .class-page[data-page="boss"] #class-boss-slot #next-boss-preview>div>div.text-lg.text-amber-400{background:#292d33!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#292d33!important}
+html body .class-page[data-page="boss"] #class-boss-slot #next-boss-preview>div>div.text-lg.text-rose-400{background:#edf0f3!important;color:#262c35!important;-webkit-text-fill-color:#262c35!important;border-color:#ccd1d9!important}
+
+/* Keep all dialogs independently black-and-white; no global changes to their selectors. */
+@media(max-width:860px){html body .class-page[data-page="boss"] .class-v85-boss-tools{grid-template-columns:1fr!important}}
 
 </style>
 </body>

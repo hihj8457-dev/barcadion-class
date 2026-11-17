@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V94_MONO_MEMBERS_BOSS">
+    <meta name="class-build-id" content="CLASS_BUILD_20261117_V95_UNIFIED_ALL_TABS">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1543,7 +1543,7 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
                             ${guildClassIcon(u.class)}
                             <span class="guild-member-name font-bold text-white" title="${escapeAttribute(u.id)}">${escapeHtml(u.id)}</span>
                             <span class="class-member-role px-1.5 py-0.5 rounded text-[10px] font-semibold whitespace-nowrap ${badgeColor}">${escapeHtml(u.role)}</span>
-                            <span class="class-member-power text-amber-400 font-bold">전투력 ${Number(u.power||0).toLocaleString()}</span>
+                            <span class="class-member-power text-amber-400 font-bold"><span class="class-member-power-label">전투력 </span><span class="class-member-power-value">${Number(u.power||0).toLocaleString()}</span></span>
                         </div>
                         ${participationItems.length ? `<div class="class-member-metrics"><span class="class-member-participation-text">${participationItems.join(' · ')}</span></div>` : ''}
                     </div>`;
@@ -4268,6 +4268,103 @@ html body .class-page[data-page="boss"] #class-boss-slot #next-boss-preview>div>
 /* Keep all dialogs independently black-and-white; no global changes to their selectors. */
 @media(max-width:860px){html body .class-page[data-page="boss"] .class-v85-boss-tools{grid-template-columns:1fr!important}}
 
+</style>
+
+<style id="class-v95-all-tabs-unified">
+/* V95 — one shared design language for all MAIN pages except home.
+   Scope deliberately excludes side navigation, auth UI, and modal/popover overlays. */
+:root{--ui95-bg:#ffffff;--ui95-card:#ffffff;--ui95-sub:#f7f8fa;--ui95-line:#dde1e6;--ui95-ink:#171b21;--ui95-muted:#545d68;--ui95-action:#262a30;--ui95-accent:#2563eb}
+html body #class-pages > .class-page:not([data-page="home"]){
+ background:var(--ui95-bg)!important;color:var(--ui95-ink)!important;
+ font-family:Pretendard,"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,sans-serif!important;
+ font-size:14px!important;line-height:1.55!important;
+}
+/* Page-level cards: member/boss/war/siege/items/admin use matching surface and spacing. */
+html body #class-pages > .class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card,.class-v45-panel){
+ background:var(--ui95-card)!important;color:var(--ui95-ink)!important;
+ border:1px solid var(--ui95-line)!important;border-radius:14px!important;
+ box-shadow:0 3px 12px rgba(18,24,32,.045)!important;
+}
+html body #class-pages > .class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card){padding:20px!important}
+html body #class-pages > .class-page:not([data-page="home"]) .class-v45-panel{padding:15px!important;margin:12px 0!important}
+html body #class-pages > .class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card,.class-v45-panel) :is(h1,h2,h3,h4,h5,h6){
+ color:var(--ui95-ink)!important;text-shadow:none!important;font-family:inherit!important;
+ letter-spacing:-.025em!important;line-height:1.4!important;
+}
+html body #class-pages > .class-page:not([data-page="home"]) :is(#panel-title-1,#panel-title-2,#panel-title-3,#panel-title-4,.class-card>h2,.class-actions>h2){
+ font-size:21px!important;font-weight:800!important;color:var(--ui95-ink)!important;
+ padding-bottom:11px!important;margin-bottom:13px!important;
+ border-bottom:1px solid var(--ui95-line)!important;
+}
+html body #class-pages > .class-page:not([data-page="home"]) :is(.class-v45-panel,.class-card,.dashboard-panel) :is(h3,h4){font-size:16px!important;font-weight:750!important}
+/* Readable typography; do not touch buttons or input controls here. */
+html body #class-pages > .class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel,.class-v45-panel) :is(p,span,small,strong,b,label,li,td,th,summary,legend,output):not(button):not([class*="count-highlight"]):not(.class-member-power-value):not(.class-member-role){
+ color:var(--ui95-ink)!important;text-shadow:none!important;font-family:inherit!important;
+}
+html body #class-pages > .class-page:not([data-page="home"]) :is(.class-v45-muted,.class-member-participation-text,.class-member-toolbar-meta,.text-slate-400,.text-slate-500){
+ color:var(--ui95-muted)!important;font-size:12px!important;
+}
+/* A single appearance for form fields on all main tabs. */
+html body #class-pages > .class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel,.class-v45-panel) :is(input:not([type="checkbox"]):not([type="radio"]),textarea,select){
+ background:#fff!important;color:var(--ui95-ink)!important;
+ border:1px solid #cbd1d9!important;border-radius:9px!important;
+ font-family:inherit!important;font-size:13px!important;
+ box-shadow:none!important;
+}
+html body #class-pages > .class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel,.class-v45-panel) :is(input,textarea)::placeholder{color:#7a828e!important}
+/* Existing interactions remain; color/weight/sizing are unified for actual action controls. */
+html body #class-pages > .class-page:not([data-page="home"]) :is(.class-v45-btn,.class-btn,.class-section-manage-btn,.class-member-manage-trigger,.class-v85-participate,button[class*="bg-amber"],button[class*="bg-yellow"]){
+ background:var(--ui95-action)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+ border:1px solid #262a30!important;border-radius:9px!important;
+ font-family:inherit!important;font-size:13px!important;font-weight:750!important;
+ text-shadow:none!important;box-shadow:0 2px 5px rgba(0,0,0,.09)!important;
+}
+html body #class-pages > .class-page:not([data-page="home"]) :is(.class-v45-btn,.class-btn,.class-section-manage-btn,.class-member-manage-trigger,.class-v85-participate) :is(span,strong,i,svg){
+ color:inherit!important;-webkit-text-fill-color:inherit!important;
+}
+html body #class-pages > .class-page:not([data-page="home"]) button:disabled{opacity:.55!important;box-shadow:none!important;cursor:not-allowed!important}
+/* Repeated list rows and tables (including war, siege and item distribution). */
+html body #class-pages > .class-page:not([data-page="home"]) :is(.class-v45-table,.class-v45-table tr,.class-v45-table td,.class-v45-table th){
+ background-color:transparent!important;color:var(--ui95-ink)!important;border-color:var(--ui95-line)!important;font-family:inherit!important;font-size:13px!important;
+}
+html body #class-pages > .class-page:not([data-page="home"]) :is(.boss-reg-group,.class-v85-score-guide,[class*="bg-slate-900"],[class*="bg-slate-800"]):not(button){
+ background:var(--ui95-sub)!important;color:var(--ui95-ink)!important;border-color:var(--ui95-line)!important;
+}
+/* All member cards match the boss and item surface. */
+html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card{
+ background:#fff!important;border:1px solid var(--ui95-line)!important;border-radius:12px!important;
+ box-shadow:0 2px 8px rgba(18,24,32,.045)!important;padding:14px 16px!important;
+ font-family:inherit!important;font-size:13px!important;
+}
+html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .guild-member-name{font-size:14px!important;font-weight:800!important;color:var(--ui95-ink)!important}
+html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-power{
+ font-size:12px!important;font-weight:750!important;color:var(--ui95-ink)!important;
+}
+/* Only the combat-power numeric VALUE gets the unique blue accent. */
+html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-power .class-member-power-label{
+ color:var(--ui95-ink)!important;-webkit-text-fill-color:var(--ui95-ink)!important;
+}
+html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-power .class-member-power-value{
+ color:var(--ui95-accent)!important;-webkit-text-fill-color:var(--ui95-accent)!important;font-weight:850!important;
+ font-variant-numeric:tabular-nums!important;
+}
+/* Neutral supporting info and compact tabs in item distribution/boss/war/siege. */
+html body #class-pages > .class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel) :is(.class-tabs,.class-nav){font-family:inherit!important}
+html body #class-pages > .class-page:not([data-page="home"]) #next-boss-preview>div{
+ background:#fff!important;border:1px solid var(--ui95-line)!important;border-radius:12px!important;
+ padding:14px 16px!important;box-shadow:0 2px 8px rgba(18,24,32,.045)!important;
+}
+html body #class-pages > .class-page[data-page="boss"] #next-boss-preview>div>div.text-lg.text-amber-400{
+ background:#262a30!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border:1px solid #262a30!important;
+}
+html body #class-pages > .class-page[data-page="boss"] #next-boss-preview>div>div.text-lg.text-rose-400{
+ background:#eef0f3!important;color:#242a33!important;-webkit-text-fill-color:#242a33!important;border:1px solid #d3d8df!important;
+}
+/* Preserve modal overlays' own black/white design; no generic body/button rules here. */
+@media(max-width:700px){
+ html body #class-pages > .class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card){padding:14px!important}
+ html body #class-pages > .class-page:not([data-page="home"]) :is(#panel-title-1,#panel-title-2,#panel-title-3,#panel-title-4,.class-card>h2){font-size:19px!important}
+}
 </style>
 </body>
 </html>

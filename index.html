@@ -960,7 +960,75 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
         function cloudManager() {return cloudUser && ['web_admin','master','staff'].includes(profileDocs.get(cloudUser.uid)?.role) ;}
         function cloudAdmin() {return cloudUser && profileDocs.get(cloudUser.uid)?.role==='web_admin' ;}
         function cloudMaster() {return cloudUser && ['web_admin','master'].includes(profileDocs.get(cloudUser.uid)?.role);}
-        function detachCloud() { cloudUnsubs.forEach(fn=>fn()); cloudUnsubs=[]; cloudReady=false; sharedDataLoaded=false; window.__sharedData=null; window.__archiveData=null; profileDocs.clear();recordDocs.clear();itemDocs.clear();applicationDocs.clear();guestDocs.clear();lastSnapshot=null; }
+        // v118: Keep only the data needed by the visible page subscribed for regular members.
+        const optionalCloudStops = new Map();
+        let userCloudStop=null, userCloudScope='';
+        let cloudSectionRunning=false;
+        function detachCloud() {
+          cloudUnsubs.forEach(fn=>fn());cloudUnsubs=[];
+          optionalCloudStops.forEach(stop=>stop());optionalCloudStops.clear();
+          if(userCloudStop){userCloudStop();userCloudStop=null;}userCloudScope='';
+          cloudReady=false; sharedDataLoaded=false; window.__sharedData=null; window.__archiveData=null;
+          profileDocs.clear();recordDocs.clear();itemDocs.clear();applicationDocs.clear();guestDocs.clear();lastSnapshot=null;
+        }
+        function classCurrentPage(){return document.querySelector('#class-pages .class-page.active')?.dataset.page||'home';}
+        function classBossRegistrationVisible(){const x=document.getElementById('boss-reg-modal');return !!(x && !x.classList.contains('hidden'));}
+        function classProfileVisible(){const x=document.getElementById('my-profile-modal');return !!(x && !x.classList.contains('hidden'));}
+        function syncCloudSections(){
+          if(!cloudUser || !cloudSubscriptionsStarted)return;
+          const role=profileDocs.get(cloudUser.uid)?.role;
+          const manager=['web_admin','master','staff'].includes(role);
+          const page=classCurrentPage();
+          const membersPage=['members','war','siege','admin'].includes(page);
+          const requireUsers=manager || membersPage || page==='items';
+          const scope=requireUsers?'all':'own';
+          if(scope!==userCloudScope){
+            if(userCloudStop)userCloudStop();userCloudStop=null;userCloudScope=scope;
+            if(scope==='all'){
+              userCloudStop=store.collection('users').onSnapshot(s=>{
+                profileDocs=new Map(s.docs.map(d=>[d.id,d.data()]));
+                if(!profileDocs.has(cloudUser?.uid)){cloudReady=false;showAuthError('계정 정보가 없거나 탈퇴 처리되었습니다.');return;}
+                scheduleCloudView();checkForcedPasswordChange();syncCloudSections();
+              },e=>showAuthError('회원 정보 조회 실패: '+errorText(e)));
+            }else{
+              // Keep the signed-in profile live so permission/role changes take effect.
+              const uid=cloudUser.uid;
+              profileDocs=new Map([...profileDocs].filter(([id])=>id===uid));
+              userCloudStop=store.doc('users/'+uid).onSnapshot(s=>{
+                if(!s.exists){cloudReady=false;showAuthError('계정 정보가 없거나 탈퇴 처리되었습니다.');return;}
+                profileDocs=new Map([[uid,s.data()]]);
+                scheduleCloudView();checkForcedPasswordChange();syncCloudSections();
+              },e=>showAuthError('회원 정보 조회 실패: '+errorText(e)));
+            }
+          }
+          const wants={
+            guests:manager || membersPage,
+            records:manager || page==='members' || page==='war' || page==='siege' || classBossRegistrationVisible() || classProfileVisible(),
+            items:manager || page==='items',
+            applications:manager || page==='items',
+            archives:manager
+          };
+          const subscriptions={
+            guests:()=>store.collection('guildGuests').onSnapshot(s=>{guestDocs=new Map(s.docs.map(d=>[d.id,d.data()]));scheduleCloudView();},e=>console.error('비가입 길드원 조회 실패',e)),
+            records:()=>store.collection('bossRecords').onSnapshot(s=>{recordDocs=new Map(s.docs.map(d=>[d.id,d.data().entries||{}]));scheduleCloudView();},e=>console.error('보스 기록 조회 실패',e)),
+            items:()=>store.collection('items').onSnapshot(s=>{itemDocs=new Map(s.docs.map(d=>[d.id,d.data()]));scheduleCloudView();},e=>console.error('아이템 조회 실패',e)),
+            applications:()=>store.collection('applications').onSnapshot(s=>{applicationDocs=new Map(s.docs.map(d=>[d.id,d.data().active===true]));scheduleCloudView();},e=>console.error('신청 내역 조회 실패',e)),
+            archives:()=>store.doc('guildPrivate/archives').onSnapshot(s=>{window.__archiveData=s.exists?s.data():{};scheduleCloudView();},e=>{window.__archiveData={};console.error('보관함 조회 실패',e);})
+          };
+          for(const [key,want] of Object.entries(wants)){
+            if(want&&!optionalCloudStops.has(key))optionalCloudStops.set(key,subscriptions[key]());
+            if(!want&&optionalCloudStops.has(key)){
+              optionalCloudStops.get(key)();optionalCloudStops.delete(key);
+              if(key==='guests')guestDocs.clear();
+              if(key==='records')recordDocs.clear();
+              if(key==='items')itemDocs.clear();
+              if(key==='applications')applicationDocs.clear();
+              if(key==='archives')window.__archiveData=null;
+              scheduleCloudView();
+            }
+          }
+        }
+        window.classSyncCloudSections=syncCloudSections;
         function buildCloudView() {
           if (!cloudUser || !profileDocs.has(cloudUser.uid) || !sharedDataLoaded) return;
           const own = profileDocs.get(cloudUser.uid);
@@ -1002,25 +1070,18 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
         }
         function subscribeCloud() {
           detachCloud();
-          cloudUnsubs.push(store.collection('guildGuests').onSnapshot(s=>{guestDocs=new Map(s.docs.map(d=>[d.id,d.data()]));scheduleCloudView();},e=>console.error('비가입 길드원 조회 실패',e)));
-          cloudUnsubs.push(store.collection('users').onSnapshot(s=>{profileDocs=new Map(s.docs.map(d=>[d.id,d.data()]));
-            const me=profileDocs.get(cloudUser?.uid);
-            if(!me){cloudReady=false;document.getElementById('app-container').classList.add('hidden');document.getElementById('auth-modal').style.display='flex';showAuthError('계정 정보가 없거나 탈퇴 처리되었습니다.');return;}
-            scheduleCloudView();checkForcedPasswordChange();},e=>showAuthError('회원 정보 조회 실패: '+errorText(e))));
+          // Start own profile or member list and page-specific listeners. Guild-wide settings
+          // remain live because home notices, patch notes, boss times and ratios use them.
+          cloudSubscriptionsStarted=true;
+          syncCloudSections();
           cloudUnsubs.push(store.doc('guildData/main').onSnapshot({includeMetadataChanges:true},s=>{
-            // Ignore Firestore's possibly stale disk cache at first login.
-            // Wait for a server-confirmed snapshot before showing schedules.
             if(s.metadata && s.metadata.fromCache && !sharedDataLoaded)return;
             window.__sharedData=s.exists?s.data():{};
             sharedDataLoaded=true;
             scheduleCloudView();
-          },e=>{console.error('길드 공용 데이터 조회 실패',e);showAuthError((e && e.code==='permission-denied' ? '길드 공용 데이터 읽기 권한이 없습니다. Firebase Firestore 보안 규칙에서 로그인 회원의 guildData/main 읽기 권한을 확인해 주세요. (permission-denied)' : '보스 일정 등 길드 데이터 조회 실패: '+errorText(e)));}));
-          cloudUnsubs.push(store.collection('bossRecords').onSnapshot(s=>{recordDocs=new Map(s.docs.map(d=>[d.id,d.data().entries||{}]));scheduleCloudView();},e=>console.error(e)));
-          cloudUnsubs.push(store.collection('items').onSnapshot(s=>{itemDocs=new Map(s.docs.map(d=>[d.id,d.data()]));scheduleCloudView();},e=>console.error(e)));
-          cloudUnsubs.push(store.doc('guildPrivate/archives').onSnapshot(s=>{window.__archiveData=s.exists?s.data():{};scheduleCloudView();},e=>{window.__archiveData={};}));
-          cloudUnsubs.push(store.collection('applications').onSnapshot(s=>{applicationDocs=new Map(s.docs.map(d=>[d.id,d.data().active===true]));scheduleCloudView();},e=>console.error(e)));
+          },e=>{console.error('길드 공용 데이터 조회 실패',e);showAuthError('길드 공용 데이터 조회 실패: '+errorText(e));}));
         }
-         
+
         const bossWriteQueues = new Map();
         const pendingSaves = new Set();
         let deferredCloudView=false;
@@ -1122,10 +1183,9 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
             .finally(()=>{
               pendingSaves.delete(task);
               if(!pendingSaves.size){
+                // Firestore's existing live listener reflects committed writes. Avoid a
+                // second forced server read after each save. Never drop the queued snapshot.
                 if(deferredCloudView){deferredCloudView=false;buildCloudView();}
-                else if(cloudUser)store.doc('guildData/main').get({source:'server'}).then(s=>{
-                  window.__sharedData=s.exists?s.data():{};buildCloudView();
-                }).catch(e=>console.warn('서버 재조회 실패',e));
               }
             });
           return task;
@@ -1301,8 +1361,9 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
             document.getElementById('my-profile-power').value=u.power;
             document.getElementById('my-profile-class').value=u.class;
             document.getElementById('my-profile-modal').classList.remove('hidden');
+            if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections();
         }
-        function closeMyProfileModal() { document.getElementById('my-profile-modal').classList.add('hidden'); }
+        function closeMyProfileModal() { document.getElementById('my-profile-modal').classList.add('hidden'); if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections(); }
         function saveMyProfile() {
             const u=db.users.find(x=>x.uid===cloudUser?.uid); if(!u)return;
             const nickname=document.getElementById('my-profile-id').value.trim();
@@ -1944,9 +2005,10 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
             const user = db.users.find(u => u.id === db.currentUser);
             document.getElementById('modal-target-user').textContent = db.currentUser;
             document.getElementById('boss-reg-modal').classList.remove('hidden');
+            if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections();
             loadUserBossRecords();
         }
-        function closeBossModal() { document.getElementById('boss-reg-modal').classList.add('hidden'); }
+        function closeBossModal() { document.getElementById('boss-reg-modal').classList.add('hidden'); if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections(); }
 
         // A scheduled maintenance is a hard reset only for periodic bosses.
         // Cut events retain previous occurrences, while changing subsequent intervals.
@@ -3085,7 +3147,7 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
 <script id="class-dashboard-script">
 (function(){
 const $=id=>document.getElementById(id);
-function page(name){if(name==='admin'&&!isCurrentAdmin())name='home';document.querySelectorAll('.class-page').forEach(x=>x.classList.toggle('active',x.dataset.page===name));document.querySelectorAll('.class-nav button').forEach(x=>x.classList.toggle('active',x.dataset.target===name));window.scrollTo({top:0,behavior:'instant'});if(name==='home')refreshHome();if(typeof window.classV45Refresh==='function')window.classV45Refresh();}
+function page(name){if(name==='admin'&&!isCurrentAdmin())name='home';document.querySelectorAll('.class-page').forEach(x=>x.classList.toggle('active',x.dataset.page===name));document.querySelectorAll('.class-nav button').forEach(x=>x.classList.toggle('active',x.dataset.target===name));if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections();window.scrollTo({top:0,behavior:'instant'});if(name==='home')refreshHome();if(typeof window.classV45Refresh==='function')window.classV45Refresh();}
 function renderClassHomeRatios(){
  const el=document.getElementById('class-home-ratio-chart');if(!el||typeof db==='undefined'||!db)return;
  const r=db.participationSystem?.ratios||{reserve:5,operations:20,war:55,boss:20};

@@ -332,6 +332,18 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
 #weekly-archive-list .class-archive-nickname{font-weight:800!important}
 #weekly-archive-list .class-archive-completion{display:none!important}
 </style>
+<style id="class-v120-archive-actions">
+
+/* 보관함 3종 버튼 행 통일: 기록 데이터와 다른 화면에는 영향 없음 */
+#weekly-archive-list .class-archive-actions {
+  display:flex; align-items:center; justify-content:flex-start;
+  flex-wrap:wrap; gap:8px; margin-bottom:8px;
+}
+#weekly-archive-list .class-archive-actions button {
+  display:inline-flex; align-items:center; justify-content:center;
+  min-height:30px; white-space:nowrap;
+}
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
 
@@ -2958,7 +2970,7 @@ const subscriptions={
                         const box=Number(e.amount)>0?`<label class="inline-flex items-center gap-2 text-sm ${checked?'text-emerald-300':'text-slate-200'}"><input type="checkbox" ${checked?'checked':''} onchange="toggleParticipationArchiveDistribution(${index},'${encodeURIComponent(e.key)}',this.checked)">분배 완료</label>`:'';
                         return `<div class="flex flex-wrap justify-between gap-2 border-t border-slate-700/50 py-2"><span><strong class="class-archive-nickname">${escapeHtml(e.name)}</strong> · ${a.type==='war'?Number(e.score||0).toLocaleString()+'점':Number(e.weight||1).toFixed(2)+'배'} · 💎 ${Number(e.amount||0).toLocaleString()}</span>${box}</div>`;
                     }).join('');
-                    return `<details data-archive-week="${escapeAttribute(a.weekKey||'')}-${a.type}-${index}" class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(a.label||weekLabel(a.weekKey)+' '+(a.type==='war'?'쟁 참여 기록':'공성전 기록'))}</summary><div class="mt-3 text-xs text-slate-300 space-y-2"><div class="flex justify-between flex-wrap gap-2"><span>보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}))}</span><button onclick="exportWeeklyArchiveExcel(${index})" class="bg-emerald-800 text-white rounded px-2 py-1">엑셀 내보내기</button><button onclick="deleteWeeklyArchive(${index})" class="bg-red-900/60 text-red-200 rounded px-2 py-1">내역 삭제</button></div><p>총 분배 다이아 💎 ${Number(a.pool||0).toLocaleString()} · 분배 완료 ${completed}/${eligible.length}명</p>${rows||'<p>참여 내역 없음</p>'}</div></details>`;
+                    return `<details data-archive-week="${escapeAttribute(a.weekKey||'')}-${a.type}-${index}" class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(a.label||weekLabel(a.weekKey)+' '+(a.type==='war'?'쟁 참여 기록':'공성전 기록'))}</summary><div class="mt-3 text-xs text-slate-300 space-y-2"><div class="class-archive-actions"><button onclick="editArchiveLabel(${index})" class="bg-slate-700 text-amber-300 rounded px-2 py-1">주차 이름 수정</button><button onclick="exportWeeklyArchiveExcel(${index})" class="bg-emerald-800 text-white rounded px-2 py-1">엑셀 내보내기</button><button onclick="deleteWeeklyArchive(${index})" class="bg-red-900/60 text-red-200 rounded px-2 py-1">내역 삭제</button></div><p class="class-archive-meta">보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}))}</p><p class="class-archive-meta">총 분배 다이아 💎 ${Number(a.pool||0).toLocaleString()} · 분배 완료 ${completed}/${eligible.length}명</p>${rows||'<p>참여 내역 없음</p>'}</div></details>`;
                 }
                 const scores=Object.entries(a.scores||{}).sort((x,y)=>y[1]-x[1]);
                 const d=a.diamonds||{};
@@ -2974,7 +2986,7 @@ const subscriptions={
                 }).join('');
                 return `<details data-archive-week="${escapeAttribute(a.weekKey||'')}" class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(archiveDisplayLabel(a)+(a.type?"":" 보스 참여 기록"))}${a.archiveMode==='auto'?' <span class="text-xs text-emerald-300 ml-2">자동 보관</span>':a.archiveMode==='manual'?' <span class="text-xs text-slate-400 ml-2">수동 보관</span>':''}</summary>
                     <div class="mt-3 text-xs text-slate-300 space-y-2">
-                        <div class="flex flex-wrap gap-2 items-center"><span class="class-archive-meta">기록 기간: ${escapeHtml(a.weekKey||'')}</span><button onclick="editArchiveLabel(${index})" class="bg-slate-700 text-amber-300 rounded px-2 py-1">주차 이름 수정</button><button onclick="exportWeeklyArchiveExcel(${index})" class="bg-emerald-800 text-white rounded px-2 py-1">엑셀 내보내기</button><button onclick="deleteWeeklyArchive(${index})" class="bg-red-900/60 text-red-200 rounded px-2 py-1">내역 삭제</button></div>
+                        <div class="class-archive-actions"><button onclick="editArchiveLabel(${index})" class="bg-slate-700 text-amber-300 rounded px-2 py-1">주차 이름 수정</button><button onclick="exportWeeklyArchiveExcel(${index})" class="bg-emerald-800 text-white rounded px-2 py-1">엑셀 내보내기</button><button onclick="deleteWeeklyArchive(${index})" class="bg-red-900/60 text-red-200 rounded px-2 py-1">내역 삭제</button></div>
                         <p class="class-archive-meta">보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}))}</p>
                         <p class="class-archive-meta">총 분배 다이아 💎 ${Number(d.total||0).toLocaleString()} · 분배 완료 ${completed}/${eligible.length}명</p>
                         <div class="space-y-1">${rows||'참여 내역 없음'}</div>

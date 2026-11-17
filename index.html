@@ -311,6 +311,10 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
   html body #item-pagination button{font-size:13px!important;}
 }
 </style>
+<style id="class-v110-week-archive">
+#weekly-archive-list .class-archive-nickname{font-weight:800!important}
+#weekly-archive-list .class-archive-completion{display:none!important}
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen">
 
@@ -1037,7 +1041,7 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
             ops.push(store.doc('users/'+uid).delete());
           }
           const sharedKeys=['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','bossSlotAutoAnchors','guildDiamondsByWeek','participationSystem','activeWeekKey'];
-          if(stable(before.weeklyArchives)!==stable(after.weeklyArchives)){if(!cloudManager())throw new Error('보관함은 관리자만 수정할 수 있습니다.');ops.push(store.doc('guildPrivate/archives').set({weeklyArchives:clone(after.weeklyArchives)}));}
+          if(stable(before.weeklyArchives)!==stable(after.weeklyArchives)){if(!cloudManager())throw new Error('보관함은 운영진 이상만 수정할 수 있습니다.');ops.push(store.doc('guildPrivate/archives').set({weeklyArchives:clone(after.weeklyArchives)}));}
           const delta={};
           sharedKeys.forEach(k=>{if(stable(before[k])!==stable(after[k]))delta[k]=clone(after[k]??null);});
           if(Object.keys(delta).length){if(!cloudManager()) throw new Error('관리자 권한이 필요한 작업입니다.');ops.push(store.doc('guildData/main').set(delta,{merge:true}));}
@@ -2477,21 +2481,37 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
             const modal=document.getElementById('boss-reg-modal');if(modal&&!modal.classList.contains('hidden'))loadUserBossRecords(true);
         }
 
-        function localDateKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+        // All weekly dates use the Korean calendar (UTC+09), regardless of device timezone.
+        // A week starts Monday 00:00 KST; persisted keys remain YYYY-MM-DD for compatibility.
+        const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+        function kstCalendarDate(value) {
+            return new Date(new Date(value).getTime() + KST_OFFSET_MS);
+        }
+        function kstDateFromKey(key, hour=0) {
+            const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(key||''));
+            if(!match) return new Date(NaN);
+            return new Date(Date.UTC(+match[1],+match[2]-1,+match[3],hour-9));
+        }
+        function localDateKey(d) {
+            const k = kstCalendarDate(d);
+            return `${k.getUTCFullYear()}-${String(k.getUTCMonth()+1).padStart(2,'0')}-${String(k.getUTCDate()).padStart(2,'0')}`;
+        }
         function getWeekMonday(date) {
-            const d = new Date(date); d.setHours(0,0,0,0);
-            d.setDate(d.getDate() - (d.getDay()+6)%7); return d;
+            const k = kstCalendarDate(date);
+            const daysSinceMonday = (k.getUTCDay()+6)%7;
+            return new Date(Date.UTC(k.getUTCFullYear(),k.getUTCMonth(),k.getUTCDate()-daysSinceMonday,-9));
         }
         function currentWeekKey() { return localDateKey(getWeekMonday(new Date())); }
         function weekLabel(key) {
-            const monday = new Date(`${key}T12:00:00`);
-            if (isNaN(monday.getTime())) return key;
-            const sunday = new Date(monday); sunday.setDate(sunday.getDate()+6);
-            const first = new Date(monday.getFullYear(), monday.getMonth(), 1);
-            const firstMonday = new Date(first);
-            firstMonday.setDate(1 + (8-first.getDay())%7);
-            const weekNo = Math.max(1,Math.floor((monday.getTime()-firstMonday.getTime())/604800000)+1);
-            return `${monday.getMonth()+1}월 ${weekNo}주차 (${localDateKey(monday)} ~ ${localDateKey(sunday)})`;
+            const monday=kstDateFromKey(key,12);
+            if(isNaN(monday.getTime()))return key;
+            const k=kstCalendarDate(monday);
+            const y=k.getUTCFullYear(),m=k.getUTCMonth(),day=k.getUTCDate();
+            const firstDay=new Date(Date.UTC(y,m,1));
+            const firstMonday=1+(8-firstDay.getUTCDay())%7;
+            const weekNo=Math.max(1,Math.floor((day-firstMonday)/7)+1);
+            const sunday=new Date(monday.getTime()+6*86400000);
+            return `${m+1}월 ${weekNo}주차 (${key} ~ ${localDateKey(sunday)})`;
         }
         function archiveDisplayLabel(a) {
             const label=a.label||'';
@@ -2507,14 +2527,14 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
             a.label=label.trim().slice(0,100);saveDB();renderWeeklyArchives();
         }
         function weeklyDailyScores(weekKey) {
-            const monday=new Date(`${weekKey}T12:00:00`);
+            const monday=kstDateFromKey(weekKey,12);
             const result={};
             if(isNaN(monday.getTime()))return result;
             for(const u of db.users)result[u.id]=[0,0,0,0,0,0,0];
             for(let offset=0;offset<7;offset++){
-                const day=new Date(monday);day.setDate(monday.getDate()+offset);
+                const day=new Date(monday.getTime()+offset*86400000);
                 const dateKey=localDateKey(day);
-                const short=['일','월','화','수','목','금','토'][day.getDay()];
+                const short=['일','월','화','수','목','금','토'][kstCalendarDate(day).getUTCDay()];
                 db.bossListDef.forEach((boss,index)=>{
                     getBossOccurrencesForDay(boss,day).forEach((slot,slotIndex)=>{
                         const key=`slot_${dateKey}_${boss.name}_${slot.label}`;
@@ -2529,14 +2549,14 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
             return result;
         }
         function weeklyScores(weekKey) {
-            const monday = new Date(`${weekKey}T12:00:00`);
+            const monday = kstDateFromKey(weekKey,12);
             if (isNaN(monday.getTime())) return {};
             const totals = {};
             db.users.forEach(u => { totals[u.id] = 0; });
             for (let offset=0; offset<7; offset++) {
-                const day = new Date(monday); day.setDate(monday.getDate()+offset);
+                const day = new Date(monday.getTime()+offset*86400000);
                 const dateKey = localDateKey(day);
-                const dayShort = ['일','월','화','수','목','금','토'][day.getDay()];
+                const dayShort = ['일','월','화','수','목','금','토'][kstCalendarDate(day).getUTCDay()];
                 db.bossListDef.forEach((boss,index) => {
                     const slots = getBossOccurrencesForDay(boss,day);
                     slots.forEach((slot,slotIndex) => {
@@ -2567,25 +2587,41 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
             return {total,truncated:Math.floor(total/100)*100,expense,reserve,points,unit,
                 bossPool,warPool,bossDistributed,warDistributed,distributed:bossDistributed+warDistributed+expense};
         }
-        function archiveWeek(weekKey) {
-            if (!weekKey || db.weeklyArchives.some(a=>a.weekKey===weekKey)) return;
+        function archiveWeek(weekKey, mode='manual') {
+            // Manual snapshots and the end-of-week snapshot are independent.
+            // Never use the editable label to detect whether auto-archiving occurred.
+            if (!weekKey || !/^\d{4}-\d{2}-\d{2}$/.test(weekKey)) return false;
+            db.weeklyArchives = db.weeklyArchives || [];
+            if (mode==='auto' && db.weeklyArchives.some(a=>!a.type && a.weekKey===weekKey && a.archiveMode==='auto')) return false;
             const scores = weeklyScores(weekKey);
             const records = {};
             const start = weekKey;
-            const next = new Date(`${weekKey}T12:00:00`); next.setDate(next.getDate()+7);
+            const next = new Date(kstDateFromKey(weekKey,12).getTime()+7*86400000);
             const end = localDateKey(next);
             for (const [user, entries] of Object.entries(db.bossRecords)) {
                 const selected = Object.fromEntries(Object.entries(entries || {}).filter(([key]) => key.startsWith('slot_') && key.slice(5,15)>=start && key.slice(5,15)<end));
                 if (Object.keys(selected).length) records[user] = selected;
             }
-            db.weeklyArchives.push({weekKey, label:weekLabel(weekKey), archivedAt:new Date().toISOString(), scores, dailyScores:weeklyDailyScores(weekKey), records, diamonds:diamondCalculation(weekKey,scores)});
+            db.weeklyArchives.push({weekKey, archiveMode:mode, label:weekLabel(weekKey), archivedAt:new Date().toISOString(), scores, dailyScores:weeklyDailyScores(weekKey), records, diamonds:diamondCalculation(weekKey,scores)});
             db.weeklyArchives.sort((a,b)=>b.weekKey.localeCompare(a.weekKey));
+            return true;
+        }
+        // A logged-in operator, master or web administrator can trigger rollover.
+        // Regular guild members never trigger archive writes.
+        function canTriggerWeeklyAutoArchive() {
+            return !!(cloudReady && cloudManager() && sharedDataLoaded &&
+                window.__sharedData && Object.keys(window.__sharedData).length);
         }
         function ensureWeeklyRollover() {
+            if (!canTriggerWeeklyAutoArchive()) return;
             const nowKey = currentWeekKey();
-            if (!db.activeWeekKey) { if(cloudManager() && window.__sharedData && Object.keys(window.__sharedData).length){ db.activeWeekKey = nowKey; saveDB(); } return; }
-            if (db.activeWeekKey !== nowKey && cloudManager() && window.__sharedData && Object.keys(window.__sharedData).length) {
-                if (db.activeWeekKey < nowKey) archiveWeek(db.activeWeekKey);
+            if (!db.activeWeekKey) {
+                db.activeWeekKey = nowKey;
+                saveDB();
+                return;
+            }
+            if (db.activeWeekKey < nowKey) {
+                archiveWeek(db.activeWeekKey, 'auto');
                 db.activeWeekKey = nowKey;
                 saveDB();
             }
@@ -2624,7 +2660,7 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
         function archiveCurrentWeekManually() {
             if (!isCurrentAdmin()) return;
             if (!confirm('현재 주차 기록을 보관하시겠습니까? 이번 주 기록은 삭제되지 않으며 보관 시점의 스냅샷이 저장됩니다.')) return;
-            archiveWeek(currentWeekKey()); saveDB(); renderWeeklyArchives();
+            archiveWeek(currentWeekKey(),'manual'); saveDB(); renderWeeklyArchives();
         }
         function archiveClassParticipation(type) {
             if (!isCurrentAdmin() || !cloudReady) return alert('관리자 권한과 서버 연결을 확인하세요.');
@@ -2680,11 +2716,11 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
             const entries=a.records?.[name]||{};
             const byDay=Array(7).fill(0);
             let found=false;
-            const start=new Date(`${a.weekKey}T12:00:00`);
+            const start=kstDateFromKey(a.weekKey,12);
             if(!Number.isNaN(start.getTime()))for(const [key,checked] of Object.entries(entries)) {
                 if(checked!==true || !key.startsWith('slot_'))continue;
                 const date=key.slice(5,15);
-                const d=new Date(`${date}T12:00:00`);
+                const d=kstDateFromKey(date,12);
                 const offset=Math.round((d-start)/86400000);
                 if(offset<0||offset>6)continue;
                 const rest=key.slice(16);
@@ -2725,9 +2761,9 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
                     const rows=entries.map(e=>{
                         const checked=a.distributionCompleted?.[e.key]===true;
                         const box=Number(e.amount)>0?`<label class="inline-flex items-center gap-2 text-sm ${checked?'text-emerald-300':'text-slate-200'}"><input type="checkbox" ${checked?'checked':''} onchange="toggleParticipationArchiveDistribution(${index},'${encodeURIComponent(e.key)}',this.checked)">분배 완료</label>`:'';
-                        return `<div class="flex flex-wrap justify-between gap-2 border-t border-slate-700/50 py-2"><span>${escapeHtml(e.name)} · ${a.type==='war'?Number(e.score||0).toLocaleString()+'점':Number(e.weight||1).toFixed(2)+'배'} · 💎 ${Number(e.amount||0).toLocaleString()}</span>${box}</div>`;
+                        return `<div class="flex flex-wrap justify-between gap-2 border-t border-slate-700/50 py-2"><span><strong class="class-archive-nickname">${escapeHtml(e.name)}</strong> · ${a.type==='war'?Number(e.score||0).toLocaleString()+'점':Number(e.weight||1).toFixed(2)+'배'} · 💎 ${Number(e.amount||0).toLocaleString()}</span>${box}</div>`;
                     }).join('');
-                    return `<details data-archive-week="${escapeAttribute(a.weekKey||'')}-${a.type}-${index}" class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(a.label||weekLabel(a.weekKey)+' '+(a.type==='war'?'쟁 참여 기록':'공성전 기록'))}</summary><div class="mt-3 text-xs text-slate-300 space-y-2"><div class="flex justify-between flex-wrap gap-2"><span>보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR'))}</span><button onclick="deleteWeeklyArchive(${index})" class="bg-red-900/60 text-red-200 rounded px-2 py-1">내역 삭제</button></div><p>총 분배 다이아 💎 ${Number(a.pool||0).toLocaleString()} · 분배 완료 ${completed}/${eligible.length}명</p>${rows||'<p>참여 내역 없음</p>'}</div></details>`;
+                    return `<details data-archive-week="${escapeAttribute(a.weekKey||'')}-${a.type}-${index}" class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(a.label||weekLabel(a.weekKey)+' '+(a.type==='war'?'쟁 참여 기록':'공성전 기록'))}</summary><div class="mt-3 text-xs text-slate-300 space-y-2"><div class="flex justify-between flex-wrap gap-2"><span>보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}))}</span><button onclick="deleteWeeklyArchive(${index})" class="bg-red-900/60 text-red-200 rounded px-2 py-1">내역 삭제</button></div><p>총 분배 다이아 💎 ${Number(a.pool||0).toLocaleString()} · 분배 완료 ${completed}/${eligible.length}명</p>${rows||'<p>참여 내역 없음</p>'}</div></details>`;
                 }
                 const scores=Object.entries(a.scores||{}).sort((x,y)=>y[1]-x[1]);
                 const d=a.diamonds||{};
@@ -2739,14 +2775,13 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
                     const amount=Math.floor(Math.max(0,Number(score||0)))*Number(d.unit||0);
                     const checked=a.distributionCompleted?.[name]===true;
                     const checkbox=amount>0?`<label class="inline-flex items-center gap-2 whitespace-nowrap text-sm font-semibold ${checked?'text-emerald-300':'text-slate-200'}"><input type="checkbox" class="w-4 h-4 accent-emerald-500" ${checked?'checked':''} onchange="toggleArchiveDistribution(${index},'${encodeURIComponent(name)}',this.checked)">분배 완료</label>`:'';
-                    return `<div class="border-t border-slate-700/50 py-2"><div class="class-archive-nickname font-bold text-white mb-1">${escapeHtml(name)}</div><div class="flex flex-wrap justify-between items-end gap-2"><div class="text-slate-300 leading-6 min-w-0">${dayText} <span class="text-amber-300 font-bold">· 총 합 ${Number(score).toLocaleString()}점 · ${amount.toLocaleString()} 다이아</span></div>${checkbox}</div></div>`;
+                    return `<div class="border-t border-slate-700/50 py-2"><div class="class-archive-nickname font-bold text-white mb-1">${escapeHtml(name)}</div><div class="flex flex-wrap justify-between items-end gap-2"><div class="text-slate-300 leading-6 min-w-0">${dayText} <span>· 총 합 ${Number(score).toLocaleString()}점 · 💎 ${amount.toLocaleString()}</span></div>${checkbox}</div></div>`;
                 }).join('');
-                return `<details data-archive-week="${escapeAttribute(a.weekKey||'')}" class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(archiveDisplayLabel(a)+(a.type?"":" 보스 참여 기록"))}</summary>
+                return `<details data-archive-week="${escapeAttribute(a.weekKey||'')}" class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(archiveDisplayLabel(a)+(a.type?"":" 보스 참여 기록"))}${a.archiveMode==='auto'?' <span class="text-xs text-emerald-300 ml-2">자동 보관</span>':a.archiveMode==='manual'?' <span class="text-xs text-slate-400 ml-2">수동 보관</span>':''}</summary>
                     <div class="mt-3 text-xs text-slate-300 space-y-2">
                         <div class="flex flex-wrap gap-2 items-center"><span class="class-archive-meta">기록 기간: ${escapeHtml(a.weekKey||'')}</span><button onclick="editArchiveLabel(${index})" class="bg-slate-700 text-amber-300 rounded px-2 py-1">주차 이름 수정</button><button onclick="deleteWeeklyArchive(${index})" class="bg-red-900/60 text-red-200 rounded px-2 py-1">내역 삭제</button></div>
-                        <p class="class-archive-meta">보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR'))}</p>
-                        <p class="class-archive-meta">총 다이아 ${Number(d.total||0).toLocaleString()} · 1점당 ${Number(d.unit||0).toLocaleString()} 다이아</p>
-                        <div class="class-archive-completion rounded-lg border p-3"><div class="flex items-center justify-between gap-2 text-sm font-bold"><span>다이아 분배 완료</span><span>${completed}/${eligible.length}명</span></div></div>
+                        <p class="class-archive-meta">보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}))}</p>
+                        <p class="class-archive-meta">총 분배 다이아 💎 ${Number(d.total||0).toLocaleString()} · 분배 완료 ${completed}/${eligible.length}명</p>
                         <div class="space-y-1">${rows||'참여 내역 없음'}</div>
                     </div></details>`;
             }).join('')||'<p class="text-xs text-slate-400">보관된 주차 내역이 없습니다.</p>';
@@ -2756,8 +2791,27 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
         setInterval(() => {
             const pane = document.getElementById('content-boss-sched-2');
             if (pane && !pane.classList.contains('hidden') && db.currentUser) renderBossPreview();
-            if (db.currentUser && db.activeWeekKey !== currentWeekKey()) { ensureWeeklyRollover(); renderDiamondSummary(); }
+            if(db.currentUser){
+                const kstWeek=currentWeekKey();
+                if(window.__classDisplayedKstWeek!==kstWeek){
+                    window.__classDisplayedKstWeek=kstWeek;
+                    ensureWeeklyRollover();
+                    renderDiamondSummary();
+                    renderMembers();
+                    renderWeeklyArchives();
+                    if(typeof window.classRefreshHome==='function')window.classRefreshHome();
+                    if(document.getElementById('class-war-system'))renderWar();
+                    if(document.getElementById('class-siege-system'))renderSiege();
+                    const reg=document.getElementById('boss-reg-modal');
+                    if(reg&&!reg.classList.contains('hidden'))loadUserBossRecords(true);
+                }else if(db.activeWeekKey!==kstWeek){ensureWeeklyRollover();}
+            }
         }, 1000);
+
+        document.addEventListener('visibilitychange',()=>{
+            if(document.visibilityState==='visible')window.__classDisplayedKstWeek=null;
+        });
+        window.addEventListener('pageshow',()=>{window.__classDisplayedKstWeek=null;});
 
         function isMasterOrWebAdministrator() {
             return db.users.some(u=>u.id===db.currentUser && ['웹 관리자','마스터'].includes(u.role));

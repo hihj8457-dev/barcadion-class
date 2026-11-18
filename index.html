@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261117_V107_ARCHIVE_NEUTRAL">
+    <meta name="class-build-id" content="CLASS_BUILD_20261118_V127_SAVE_RACE_FIX">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -2528,19 +2528,23 @@ const subscriptions={
           if(bossEditTimer!==null)clearTimeout(bossEditTimer);
           bossEditTimer=setTimeout(()=>{bossEditTimer=null;void flushBossDraftSave().catch(e=>console.error('보스 기록 자동 저장 실패',e));},750);
         }
+        let bossSaveAttemptId=0;
         async function flushBossDraftSave(){
           if(bossEditTimer!==null){clearTimeout(bossEditTimer);bossEditTimer=null;}
           if(!bossEditDirty)return bossEditFlush;
           bossEditDirty=false;
+          const attemptId=++bossSaveAttemptId;
           setBossSaveStatus('서버 저장 중');
-          // Register a pending save before the server snapshot is permitted to rebuild the view.
+          // Only the most recent save attempt may change the visible save state.
+          // A later queued save contains the complete draft, so an older failure
+          // must not mark a successfully saved newer draft as dirty.
           bossEditFlush=saveDB().then(()=>{
-            if(!bossEditDirty)setBossSaveStatus('저장 완료');
+            if(attemptId===bossSaveAttemptId && !bossEditDirty)setBossSaveStatus('저장 완료');
           },err=>{
-            // Keep the draft marked unsaved. A later click on '참여 기록 저장'
-            // must retry instead of returning the same rejected promise.
-            bossEditDirty=true;
-            setBossSaveStatus('저장 실패 · 다시 저장해 주세요');
+            if(attemptId===bossSaveAttemptId){
+              bossEditDirty=true;
+              setBossSaveStatus('저장 실패 · 다시 저장해 주세요');
+            }
             throw err;
           });
           return bossEditFlush;

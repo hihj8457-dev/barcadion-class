@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261118_V127_SAVE_RACE_FIX">
+    <meta name="class-build-id" content="CLASS_BUILD_20261118_V130_SUNDAY_ARCHIVE_SKIP_EXISTING">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -998,9 +998,12 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
          let bossRecordScope='';
          let allUsersLoaded=false;
          function archiveModalVisible(){const el=document.getElementById('weekly-archive-modal');return !!(el&&!el.classList.contains('hidden'));}
-         function rolloverPending(){return !!(cloudManager() && sharedDataLoaded && window.__sharedData?.activeWeekKey && window.__sharedData.activeWeekKey < currentWeekKey());}
+         function rolloverPending(){return !!(cloudManager() && sharedDataLoaded && window.__sharedData?.activeWeekKey && autoArchiveDueWeek(window.__sharedData.activeWeekKey));}
          function readyForRollover(){return ['guests','records','archives'].every(k=>optionalCloudLoaded.has(k)) && userCloudScope==='all' && allUsersLoaded && profileDocs.size>0;}
          let autoRolloverSaving=false;
+         let autoRolloverNextAttempt=0;
+         let autoRolloverFailures=0;
+         let autoArchiveCompletedSundayWeek=null;
         let userCloudStop=null, userCloudScope='';
         let userCloudReleaseTimer=null, allowUserScopeDowngrade=false;
         let cloudSectionRunning=false;
@@ -2892,59 +2895,128 @@ const subscriptions={
             db.weeklyArchives.sort((a,b)=>b.weekKey.localeCompare(a.weekKey));
             return true;
         }
-        // A logged-in operator, master or web administrator can trigger rollover.
-        // Regular guild members never trigger archive writes.
-        function canTriggerWeeklyAutoArchive() {
-            return !!(cloudReady && cloudManager() && sharedDataLoaded &&
-                window.__sharedData && Object.keys(window.__sharedData).length);
+        // v130: Sunday 23:59 KST is the first opportunity to archive the current week.
+        // If nobody with staff permissions is online, catch up on the next staff visit.
+        // Never silently advance a week without checking which archive TYPES exist.
+        function sundayArchiveWindow(now=new Date()) {
+          const k=kstCalendarDate(now);
+          return k.getUTCDay()===0 && k.getUTCHours()===23 && k.getUTCMinutes()===59;
         }
-        // Single transaction commits the archive AND the week pointer together.
-        // A concurrent staff member sees the new pointer and cannot create a duplicate.
+        function archiveNextWeekKey(weekKey) {
+          return localDateKey(new Date(kstDateFromKey(weekKey,12).getTime()+7*86400000));
+        }
+        function autoArchiveDueWeek(activeWeek) {
+          if(!/^\d{4}-\d{2}-\d{2}$/.test(String(activeWeek||'')))return null;
+          const current=currentWeekKey();
+          if(activeWeek<current)return activeWeek; // Missed Sunday, recover retained source data.
+          return activeWeek===current && sundayArchiveWindow() && autoArchiveCompletedSundayWeek!==current ? activeWeek : null;
+        }
+        function hasArchivedCategory(archives,weekKey,type) {
+          // Any existing manual/automatic snapshot of the same week and category wins.
+          // A renamed archive is still recognized by weekKey and type.
+          return (archives||[]).some(a=>a && a.weekKey===weekKey &&
+            (a.type==='war'?'war':a.type==='siege'?'siege':(!a.type||a.type==='boss')?'boss':'other')===type);
+        }
+        // Reuse the exact participation allocation algorithm for manual and automatic archives.
+        function createParticipationArchiveSnapshot(type,wk) {
+          const data=db.participationSystem?.weeks?.[wk]||{};
+          const members=(db.users||[]).filter(u=>u.uid||u.isGuest);
+          const key=u=>u.uid||('guest:'+String(u.guestId||u.id));
+          const entries=[];
+          let pool=0;
+          if(type==='war') {
+            const scores=members.map(u=>({u,score:Math.max(0,Number(data.war?.[key(u)])||0)}));
+            const total=scores.reduce((a,x)=>a+x.score,0);
+            pool=Math.max(0,Number(diamondCalculation(wk).warPool)||0);
+            for(const {u,score} of scores)if(score>0)
+              entries.push({key:key(u),name:u.id,power:Number(u.power)||0,score,amount:total?Math.floor(pool*score/total):0});
+          } else if(type==='siege') {
+            const selected=members.filter(u=>data.siege?.participants?.[key(u)]===true);
+            pool=Math.max(0,Math.floor(Number(data.siege?.diamonds)||0));
+            const powers=selected.map(u=>Math.max(0,Number(u.power)||0));
+            const min=powers.length?Math.min(...powers):0,max=powers.length?Math.max(...powers):0;
+            const weights=selected.map(u=>max<=min?1:1+7*Math.pow(Math.max(0,Math.min(1,((Number(u.power)||0)-min)/(max-min))),2));
+            const total=weights.reduce((a,b)=>a+b,0);
+            selected.forEach((u,i)=>entries.push({key:key(u),name:u.id,power:Number(u.power)||0,weight:weights[i],amount:total?Math.floor(pool*weights[i]/total):0}));
+          } else throw new Error('지원하지 않는 보관 종류');
+          return {type,weekKey:wk,label:weekLabel(wk)+' '+(type==='war'?'쟁 참여 기록':'공성전 기록'),
+            archiveMode:'auto',archivedAt:new Date().toISOString(),pool,entries,distributionCompleted:{}};
+        }
+        function canTriggerWeeklyAutoArchive() {
+          return !!(cloudReady && cloudManager() && sharedDataLoaded &&
+            window.__sharedData && Object.keys(window.__sharedData).length);
+        }
         async function commitWeeklyRollover(){
           if(!cloudManager()||!cloudReady||!readyForRollover())return;
           if(bossEditDirty)await flushBossDraftSave();
           await waitForPendingSaves();
-          const target=currentWeekKey();
           const sharedRef=store.doc('guildData/main');
           const archiveRef=store.doc('guildPrivate/archives');
           const memberIds=[...profileDocs.keys()];
           await store.runTransaction(async tx=>{
-            // All reads precede all writes, as required by Firestore transactions.
-            const [sharedSnap,archiveSnap,...memberSnaps]=await Promise.all([
-              tx.get(sharedRef),tx.get(archiveRef),
-              ...memberIds.map(uid=>tx.get(store.doc('bossRecords/'+uid)))
-            ]);
+            // Read week pointer and archive index first; skip already-saved categories
+            // BEFORE reading every member document. All reads precede all writes.
+            const [sharedSnap,archiveSnap]=await Promise.all([tx.get(sharedRef),tx.get(archiveRef)]);
             const shared=sharedSnap.exists?sharedSnap.data():{};
-            const oldWeek=shared.activeWeekKey;
-            if(!oldWeek){tx.set(sharedRef,{activeWeekKey:target},{merge:true});return;}
-            if(oldWeek>=target)return;
+            const savedWeek=shared.activeWeekKey;
+            const week=autoArchiveDueWeek(savedWeek);
+            if(!savedWeek){tx.set(sharedRef,{activeWeekKey:currentWeekKey()},{merge:true});return;}
+            if(!week)return;
             const archives=clone(archiveSnap.exists?(archiveSnap.data().weeklyArchives||[]):[]);
-            if(!archives.some(a=>!a.type&&a.weekKey===oldWeek&&a.archiveMode==='auto')){
-              // Use a consistent server read of the boss records to form the snapshot.
-              const work=clone(db);work.activeWeekKey=oldWeek;
-              work.bossRecords={};
-              for(let i=0;i<memberIds.length;i++){
-                const nick=profileDocs.get(memberIds[i])?.nickname;
-                if(nick)work.bossRecords[nick]=memberSnaps[i].exists?(memberSnaps[i].data().entries||{}):{};
-              }
+            const needed=['boss','war','siege'].filter(type=>!hasArchivedCategory(archives,week,type));
+            if(needed.length){
+              const work=clone(db);
+              // Prefer the transaction's current server-shared data to potentially stale UI state.
+              ['guildDiamondsByWeek','participationSystem','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','bossSlotAutoAnchors'].forEach(k=>{
+                if(shared[k]!==undefined)work[k]=clone(shared[k]);
+              });
+              work.activeWeekKey=week;
               work.weeklyArchives=[];
+              if(needed.includes('boss')){
+                const snaps=await Promise.all(memberIds.map(uid=>tx.get(store.doc('bossRecords/'+uid))));
+                work.bossRecords={};
+                for(let i=0;i<memberIds.length;i++){
+                  const nick=profileDocs.get(memberIds[i])?.nickname;
+                  if(nick)work.bossRecords[nick]=snaps[i].exists?(snaps[i].data().entries||{}):{};
+                }
+              }
               const oldDB=db;
-              try{db=work;archiveWeek(oldWeek,'auto');}finally{db=oldDB;}
-              if(!work.weeklyArchives.length)throw new Error('주차 보관 스냅샷을 생성하지 못했습니다.');
-              archives.push(work.weeklyArchives[0]);
+              try {
+                db=work;
+                if(needed.includes('boss')){
+                  archiveWeek(week,'auto');
+                  if(work.weeklyArchives.length!==1)throw new Error('보스 보관 스냅샷 생성 실패');
+                }
+                for(const type of needed.filter(t=>t!=='boss'))
+                  work.weeklyArchives.push(createParticipationArchiveSnapshot(type,week));
+              }finally{db=oldDB;}
+              archives.push(...work.weeklyArchives);
               archives.sort((a,b)=>String(b.weekKey||'').localeCompare(String(a.weekKey||'')));
               tx.set(archiveRef,{weeklyArchives:archives});
             }
-            tx.set(sharedRef,{activeWeekKey:target},{merge:true});
+            // Sunday: keep the current week live through 23:59:59.
+            // Monday or later: advance pointer one week, allowing missed-week recovery.
+            if(week<currentWeekKey())tx.set(sharedRef,{activeWeekKey:archiveNextWeekKey(week)},{merge:true});
           });
         }
         function ensureWeeklyRollover() {
           if(!canTriggerWeeklyAutoArchive() || autoRolloverSaving)return;
-          if(db.activeWeekKey && db.activeWeekKey>=currentWeekKey())return;
-          if(db.activeWeekKey && !readyForRollover()){syncCloudSections();return;}
+          if(Date.now()<autoRolloverNextAttempt)return;
+          if(!autoArchiveDueWeek(window.__sharedData?.activeWeekKey))return;
+          if(!readyForRollover()){syncCloudSections();return;}
           autoRolloverSaving=true;
-          commitWeeklyRollover().catch(e=>console.error('주차 자동 보관 실패',e))
-            .finally(()=>{autoRolloverSaving=false;syncCloudSections();});
+          const attemptedWeek=autoArchiveDueWeek(window.__sharedData?.activeWeekKey);
+          commitWeeklyRollover().then(()=>{
+            autoRolloverFailures=0;
+            if(attemptedWeek===currentWeekKey() && sundayArchiveWindow())autoArchiveCompletedSundayWeek=attemptedWeek;
+            // Avoid re-reading archives in a tight timer loop while listener catches up.
+            autoRolloverNextAttempt=Date.now()+15000;
+          }).catch(e=>{
+            autoRolloverFailures++;
+            const delay=Math.min(300000,10000*Math.pow(2,Math.min(autoRolloverFailures-1,5)));
+            autoRolloverNextAttempt=Date.now()+delay;
+            console.error('주차 자동 보관 실패 - 재시도 대기 '+Math.round(delay/1000)+'초',e);
+          }).finally(()=>{autoRolloverSaving=false;syncCloudSections();});
         }
         function renderDiamondSummary() {
             const container = document.getElementById('diamond-summary-content');
@@ -2989,29 +3061,12 @@ const subscriptions={
             if (!['war','siege'].includes(type)) return;
             if(!readyForRollover())return alert('보관용 전체 데이터가 아직 로딩 중입니다. 잠시 후 다시 시도해 주세요.');
             const wk=currentWeekKey();
-            const data=db.participationSystem?.weeks?.[wk]||{};
-            const members=(db.users||[]).filter(u=>u.uid||u.isGuest);
-            const key=u=>u.uid||('guest:'+String(u.guestId||u.id));
-            const entries=[];
-            let pool=0;
-            if(type==='war') {
-                const scores=members.map(u=>({u,score:Math.max(0,Number(data.war?.[key(u)])||0)}));
-                const total=scores.reduce((a,x)=>a+x.score,0);
-                pool=Math.max(0,Number(diamondCalculation(wk).warPool)||0);
-                for(const {u,score} of scores) if(score>0)entries.push({key:key(u),name:u.id,power:Number(u.power)||0,score,amount:total?Math.floor(pool*score/total):0});
-            } else {
-                const selected=members.filter(u=>data.siege?.participants?.[key(u)]===true);
-                pool=Math.max(0,Math.floor(Number(data.siege?.diamonds)||0));
-                const powers=selected.map(u=>Math.max(0,Number(u.power)||0));
-                const min=powers.length?Math.min(...powers):0,max=powers.length?Math.max(...powers):0;
-                const weights=selected.map(u=>max<=min?1:1+7*Math.pow(Math.max(0,Math.min(1,((Number(u.power)||0)-min)/(max-min))),2));
-                const total=weights.reduce((a,b)=>a+b,0);
-                selected.forEach((u,i)=>entries.push({key:key(u),name:u.id,power:Number(u.power)||0,weight:weights[i],amount:total?Math.floor(pool*weights[i]/total):0}));
-            }
             const label=weekLabel(wk)+' '+(type==='war'?'쟁 참여 기록':'공성전 기록');
             if(!confirm('「'+label+'」을(를) 보관할까요? 현재 참여 내역은 삭제되지 않습니다.'))return;
+            const snapshot=createParticipationArchiveSnapshot(type,wk);
+            snapshot.archiveMode='manual';
             db.weeklyArchives=db.weeklyArchives||[];
-            db.weeklyArchives.push({type,weekKey:wk,label,archiveMode:'manual',archivedAt:new Date().toISOString(),pool,entries,distributionCompleted:{}});
+            db.weeklyArchives.push(snapshot);
             saveDB();renderWeeklyArchives();
         }
         function toggleParticipationArchiveDistribution(index,encodedKey,checked) {
@@ -3191,7 +3246,7 @@ const subscriptions={
                     if(document.getElementById('class-siege-system'))renderSiege();
                     const reg=document.getElementById('boss-reg-modal');
                     if(reg&&!reg.classList.contains('hidden'))loadUserBossRecords(true);
-                }else if(db.activeWeekKey!==kstWeek){ensureWeeklyRollover();}
+                }else if(autoArchiveDueWeek(window.__sharedData?.activeWeekKey)){ensureWeeklyRollover();}
             }
         }, 1000);
 

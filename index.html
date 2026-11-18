@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261118_V133_ARCHIVE_CHECK_WEEK_START_FIX">
+    <meta name="class-build-id" content="CLASS_BUILD_20261118_V134_WEEK_TEST_RESET_ARCHIVE_LAYOUT_DIAMOND_COMPACT">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -377,6 +377,25 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
 #class-pages .class-page[data-page="admin"] .class-v132-ratio-grid input{width:100%;min-width:0;box-sizing:border-box}
 #class-pages .class-page[data-page="admin"] .class-v132-save-all{width:100%;margin-top:10px;background:#252525!important;color:#fff!important;border:1px solid #393939!important}
 @media(max-width:820px){#class-pages .class-page[data-page="admin"] .class-v132-ratio-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<style id="class-v134-refinements">
+/* Compact ratios: labels above input, visually aligned with guild total diamond input. */
+#class-pages .class-page[data-page="admin"] .class-v132-ratio-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:0}
+#class-pages .class-page[data-page="admin"] .class-v134-ratio-field{min-width:0;padding:0!important;margin:0!important;background:transparent!important;border:0!important;box-shadow:none!important;display:flex;flex-direction:column;align-items:stretch;gap:5px}
+#class-pages .class-page[data-page="admin"] .class-v134-ratio-field>label{display:block;font-size:12px;font-weight:650;color:#555;margin:0;line-height:1.45}
+#class-pages .class-page[data-page="admin"] .class-v134-ratio-input{display:flex;align-items:center;gap:8px;min-width:0}
+#class-pages .class-page[data-page="admin"] .class-v134-ratio-input input{width:100%;min-width:0;box-sizing:border-box;height:39px!important;min-height:39px!important;padding:7px 9px!important;margin:0!important;background:#fff!important;border:1px solid #cbd5e1!important;border-radius:8px!important;font-size:13px!important;color:#222!important}
+#class-pages .class-page[data-page="admin"] .class-v134-ratio-input span{flex:none;color:#555;font-size:13px}
+#class-pages .class-page[data-page="admin"] .class-v134-ratio-note{margin:10px 0 3px!important;font-size:11px!important;line-height:1.55}
+#class-pages .class-page[data-page="admin"] #class-week-control-panel button.class-week-test-return{background:#f6f6f6!important;color:#444!important;border:1px dashed #999!important}
+/* Shared archive list typography and checkbox layout for all three archive types. */
+#weekly-archive-list .class-v134-archive-member{font-size:12px!important;line-height:1.55!important;align-items:center!important;min-height:40px}
+#weekly-archive-list .class-v134-archive-member-text{min-width:0;flex:1 1 350px;overflow-wrap:anywhere}
+#weekly-archive-list .class-v134-archive-member .class-archive-nickname{font-size:13px!important;line-height:1.5!important}
+#weekly-archive-list .class-v134-day-scores{font-size:12px!important;color:#303742!important}
+#weekly-archive-list .class-v134-archive-member label{font-size:12px!important;font-weight:500!important;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;margin-left:auto;color:#303742!important}
+#weekly-archive-list .class-v134-archive-member label input[type="checkbox"]{width:16px!important;height:16px!important;min-width:16px;accent-color:#252a32!important}
+@media(max-width:800px){#class-pages .class-page[data-page="admin"] .class-v132-ratio-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
@@ -3166,6 +3185,34 @@ const subscriptions={
           }catch(e){classSaveIndicator('새 주차 시작 실패',true);alert('시작 실패: '+errorText(e));}
           finally{classWeekPointerSyncing=false;classRenderWeekControls();}
         }
+        // v134: Restrained test-only return from an early-started next week.
+        // No archive documents or participation entries are deleted or overwritten.
+        async function classReturnToCalendarWeekForTest(){
+          if(!cloudReady || !cloudUser || !cloudAdmin())
+            return alert('웹 관리자만 테스트 주차를 복귀할 수 있습니다.');
+          if(classWeekPointerSyncing)return;
+          const calendar=calendarWeekKey();
+          const active=currentWeekKey();
+          const expectedNext=localDateKey(new Date(kstDateFromKey(calendar,12).getTime()+7*86400000));
+          if(active!==expectedNext)return alert('현재 달력 주차보다 정확히 한 주 앞서 시작한 경우에만 복귀할 수 있습니다.');
+          if(!confirm(`테스트 주차를 ${weekLabel(calendar)}로 복귀할까요?\n이미 보관한 자료나 체크 기록은 삭제되지 않습니다. 보관본이 있는 항목은 재마감 시 중복 저장되지 않습니다.`))return;
+          classWeekPointerSyncing=true;
+          classSaveIndicator('테스트 주차 복귀 중');
+          try{
+            await store.runTransaction(async tx=>{
+              const ref=store.doc('guildData/main');
+              const snapshot=await tx.get(ref);
+              const remote=snapshot.exists?snapshot.data():{};
+              if(remote.activeWeekKey!==expectedNext)throw new Error('다른 운영진이 주차를 변경했습니다.');
+              if(calendarWeekKey()!==calendar)throw new Error('날짜가 바뀌었습니다. 다시 시도하세요.');
+              tx.set(ref,{activeWeekKey:calendar,registrationGate:{weekKey:calendar,closed:false,testResetAt:firebase.firestore.Timestamp.now(),testResetBy:cloudUser.uid}},{merge:true});
+            });
+            classSaveIndicator('테스트 주차 복귀 완료');
+            alert('현재 달력 주차로 복귀했어. 기존 보관 기록은 유지돼.');
+          }catch(e){classSaveIndicator('테스트 복귀 실패',true);alert('복귀 실패: '+errorText(e));}
+          finally{classWeekPointerSyncing=false;classRenderWeekControls();}
+        }
+        window.classReturnToCalendarWeekForTest=classReturnToCalendarWeekForTest;
         window.classCloseWeek=classCloseWeek;
         window.classStartWeek=classStartWeek;
         function classRenderWeekControls(){
@@ -3174,9 +3221,12 @@ const subscriptions={
           box.style.display=cloudReady&&cloudManager()?'block':'none';
           if(box.style.display==='none')return;
 const closed=classWeekClosed(), canStart=closed;
+           const calendar=calendarWeekKey(), expectedNext=localDateKey(new Date(kstDateFromKey(calendar,12).getTime()+7*86400000));
+           const canTestReset=cloudUser && cloudAdmin() && currentWeekKey()===expectedNext;
            box.innerHTML=`<div class="class-week-info">${weekLabel(currentWeekKey())} · ${closed?'등록 마감':'등록 가능'} · 다음 주차는 운영진이 수동 시작</div>
              <button type="button" id="class-week-close-btn" onclick="classCloseWeek()" ${closed?'disabled':''}>금주 기록 마감</button>
-             <button type="button" id="class-week-start-btn" onclick="classStartWeek()" ${canStart?'':'disabled'}>금주 기록 시작</button>`;
+             <button type="button" id="class-week-start-btn" onclick="classStartWeek()" ${canStart?'':'disabled'}>금주 기록 시작</button>
+             ${canTestReset?'<button type="button" class="class-week-test-return" onclick="classReturnToCalendarWeekForTest()">테스트: 이번 주차로 복귀</button>':''}`;
         }
         async function commitWeeklyRollover(){return classArchiveCurrentWeek(false);}
         function ensureWeeklyRollover(){
@@ -3411,7 +3461,7 @@ const closed=classWeekClosed(), canStart=closed;
                     const rows=entries.map(e=>{
                         const checked=a.distributionCompleted?.[e.key]===true;
                         const box=Number(e.amount)>0?`<label class="inline-flex items-center gap-2 text-sm ${checked?'text-emerald-300':'text-slate-200'}"><input type="checkbox" ${checked?'checked':''} onchange="toggleParticipationArchiveDistribution(${index},'${encodeURIComponent(e.key)}',this.checked)">분배 완료</label>`:'';
-                        return `<div class="flex flex-wrap justify-between gap-2 border-t border-slate-700/50 py-2"><span><strong class="class-archive-nickname">${escapeHtml(e.name)}</strong> · ${a.type==='war'?Number(e.score||0).toLocaleString()+'점':Number(e.weight||1).toFixed(2)+'배'} · 💎 ${Number(e.amount||0).toLocaleString()}</span>${box}</div>`;
+                        return `<div class="class-v134-archive-member flex flex-wrap justify-between gap-2 border-t border-slate-700/50 py-2"><span class="class-v134-archive-member-text"><strong class="class-archive-nickname">${escapeHtml(e.name)}</strong> · ${a.type==='war'?Number(e.score||0).toLocaleString()+'점':Number(e.weight||1).toFixed(2)+'배'} · 💎 ${Number(e.amount||0).toLocaleString()}</span>${box}</div>`;
                     }).join('');
                     return `<details data-archive-week="${escapeAttribute(a.weekKey||'')}-${a.type}-${index}" class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(a.label||weekLabel(a.weekKey)+' '+(a.type==='war'?'쟁 참여 기록':'공성전 기록'))}${a.archiveMode==='auto'?' <span class="text-xs text-emerald-300 ml-2">자동 보관</span>':(a.archiveMode==='manual'||!a.archiveMode)?' <span class="text-xs text-slate-400 ml-2">수동 보관</span>':''}</summary><div class="mt-3 text-xs text-slate-300 space-y-2"><div class="class-archive-actions"><button onclick="editArchiveLabel(${index})" class="bg-slate-700 text-amber-300 rounded px-2 py-1">주차 이름 수정</button><button onclick="exportWeeklyArchiveExcel(${index})" class="bg-emerald-800 text-white rounded px-2 py-1">엑셀 내보내기</button><button onclick="deleteWeeklyArchive(${index})" class="bg-red-900/60 text-red-200 rounded px-2 py-1">내역 삭제</button></div><p class="class-archive-meta">보관 시각: ${escapeHtml(new Date(a.archivedAt).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}))}</p><p class="class-archive-meta">총 분배 다이아 💎 ${Number(a.pool||0).toLocaleString()} · 분배 완료 ${completed}/${eligible.length}명</p>${rows||'<p>참여 내역 없음</p>'}</div></details>`;
                 }
@@ -3425,7 +3475,7 @@ const closed=classWeekClosed(), canStart=closed;
                     const amount=Math.floor(Math.max(0,Number(score||0)))*Number(d.unit||0);
                     const checked=a.distributionCompleted?.[name]===true;
                     const checkbox=amount>0?`<label class="inline-flex items-center gap-2 whitespace-nowrap text-sm font-semibold ${checked?'text-emerald-300':'text-slate-200'}"><input type="checkbox" class="w-4 h-4 accent-emerald-500" ${checked?'checked':''} onchange="toggleArchiveDistribution(${index},'${encodeURIComponent(name)}',this.checked)">분배 완료</label>`:'';
-                    return `<div class="border-t border-slate-700/50 py-2"><div class="class-archive-nickname font-bold text-white mb-1">${escapeHtml(name)}</div><div class="flex flex-wrap justify-between items-end gap-2"><div class="text-slate-300 leading-6 min-w-0">${dayText} <span>· 총 합 ${Number(score).toLocaleString()}점 · 💎 ${amount.toLocaleString()}</span></div>${checkbox}</div></div>`;
+                    return `<div class="class-v134-archive-member flex flex-wrap justify-between items-center gap-2 border-t border-slate-700/50 py-2"><div class="class-v134-archive-member-text"><strong class="class-archive-nickname">${escapeHtml(name)}</strong> <span class="class-v134-day-scores">· ${dayText} · 총 합 ${Number(score).toLocaleString()}점 · 💎 ${amount.toLocaleString()}</span></div>${checkbox}</div>`;
                 }).join('');
                 return `<details data-archive-week="${escapeAttribute(a.weekKey||'')}" class="bg-slate-900/70 border border-slate-700 rounded-xl p-3"><summary class="cursor-pointer text-amber-400 font-bold">${escapeHtml(archiveDisplayLabel(a)+(a.type?"":" 보스 참여 기록"))}${a.archiveMode==='auto'?' <span class="text-xs text-emerald-300 ml-2">자동 보관</span>':a.archiveMode==='manual'?' <span class="text-xs text-slate-400 ml-2">수동 보관</span>':''}</summary>
                     <div class="mt-3 text-xs text-slate-300 space-y-2">
@@ -4146,8 +4196,8 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
   const el=$('class-ratio-system');if(!el||typeof db==='undefined')return;
   const r=system().ratios;
   const fields=[['reserve','길드 여유 자금'],['operations','운영진 분배'],['war','쟁 참여'],['boss','보스 참여']];
-  el.innerHTML=`<p class="class-v45-muted">길드 자금만 적용합니다. 공성전 서버 다이아는 제외됩니다. 운영진 몫은 마스터·운영진에게 균등 분배한 예상액입니다.</p>
-<div class="class-v45-grid class-v132-ratio-grid">${fields.map(([k,label])=>`<label class="class-v45-panel">${label}<div><input class="class-v45-input" data-ratio="${k}" type="number" min="0" max="100" step="1" value="${Number(r[k])}" ${manager()?'':'disabled'}> %</div></label>`).join('')}</div>
+  el.innerHTML=`<div class="class-v132-ratio-grid">${fields.map(([k,label])=>`<div class="class-v134-ratio-field"><label for="class-ratio-${k}">${label}</label><div class="class-v134-ratio-input"><input id="class-ratio-${k}" class="class-v45-input" data-ratio="${k}" type="number" min="0" max="100" step="1" value="${Number(r[k])}" ${manager()?'':'disabled'}><span>%</span></div></div>`).join('')}</div>
+   <p class="class-v45-muted class-v134-ratio-note">길드 자금만 적용합니다. 공성전 서버 다이아는 제외됩니다. 운영진 몫은 마스터·운영진에게 균등 분배한 예상액입니다.</p>
    ${manager()?'<button class="class-v45-btn class-v132-save-all" onclick="classV132SaveDiamondAndRatios()">다이아 · 분배율 한 번에 저장</button>':''}`;
  }
  function renderProfile(){

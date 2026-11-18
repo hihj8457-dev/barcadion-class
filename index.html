@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261118_V131_WEEK_CLOSE_ITEM_CLEANUP">
+    <meta name="class-build-id" content="CLASS_BUILD_20261118_V132_MANUAL_WEEK_ADMIN_UI">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -364,6 +364,20 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
 #class-week-control-panel .class-week-info{font-size:13px;color:#684934;margin-bottom:8px}
 #class-v131-save-indicator{position:fixed;bottom:14px;right:14px;z-index:999;background:#fffbf5;border:1px solid #d8b98e;padding:8px 13px;border-radius:9px;color:#493320;font-size:12px;box-shadow:0 3px 12px #0002;display:none}
 </style>
+<style id="class-v132-admin-controls">
+#class-pages .class-page[data-page="admin"] #class-week-control-panel{margin:0 0 12px;padding:10px 12px;background:#fafafa!important;border:1px solid #d2d2d2!important;border-radius:10px;color:#222!important;box-shadow:none}
+#class-pages .class-page[data-page="admin"] #class-week-control-panel .class-week-info{color:#444!important;font-size:12px;margin-bottom:5px}
+#class-pages .class-page[data-page="admin"] #class-week-control-panel button{font-size:12px!important;padding:7px 12px!important;min-height:32px!important;margin:3px 6px 1px 0!important;background:#242424!important;border:1px solid #333!important;color:#fff!important;border-radius:7px!important;box-shadow:none!important}
+#class-pages .class-page[data-page="admin"] #class-week-control-panel button:disabled{background:#ededed!important;color:#777!important;border-color:#d7d7d7!important;opacity:1!important}
+#class-pages .class-page[data-page="admin"] #diamond-admin-edit{display:block!important}
+#class-pages .class-page[data-page="admin"] #diamond-admin-edit.hidden{display:none!important}
+#class-pages .class-page[data-page="admin"] #class-ratio-system{margin-top:10px;padding-top:10px;border-top:1px solid #d6c6b7}
+#class-pages .class-page[data-page="admin"] .class-v132-ratio-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#class-pages .class-page[data-page="admin"] .class-v132-ratio-grid>.class-v45-panel{min-width:0;padding:10px!important;box-sizing:border-box}
+#class-pages .class-page[data-page="admin"] .class-v132-ratio-grid input{width:100%;min-width:0;box-sizing:border-box}
+#class-pages .class-page[data-page="admin"] .class-v132-save-all{width:100%;margin-top:10px;background:#252525!important;color:#fff!important;border:1px solid #393939!important}
+@media(max-width:820px){#class-pages .class-page[data-page="admin"] .class-v132-ratio-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
 
@@ -616,7 +630,7 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
                             <div id="diamond-summary-content" class="space-y-1 text-xs text-slate-300"></div>
                             <div id="diamond-admin-edit" class="hidden border-t border-slate-700 pt-2">
                                 <label class="text-xs text-slate-300">길드 총 다이아 <input id="diamond-total-input" type="number" min="0" step="1" class="mt-1 w-full bg-slate-950 border border-slate-600 rounded-lg p-2 text-white" placeholder="총 다이아 입력"></label>
-                                <button type="button" onclick="saveGuildDiamonds()" class="mt-2 w-full bg-amber-500 text-slate-950 font-bold rounded-lg p-2 text-xs">총 다이아 저장</button>
+                                
                             </div>
                         </div>
                         <div id="admin-control-panel" class="hidden space-y-2 pt-2 border-t border-slate-700">
@@ -1005,7 +1019,7 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
          let bossRecordScope='';
          let allUsersLoaded=false;
          function archiveModalVisible(){const el=document.getElementById('weekly-archive-modal');return !!(el&&!el.classList.contains('hidden'));}
-         function rolloverPending(){return !!(cloudManager() && sharedDataLoaded && (classManualWeekClosePreparing || (sundayArchiveWindow() && !classWeekClosed() && autoArchiveCompletedSundayWeek!==currentWeekKey())));}
+         function rolloverPending(){return !!(cloudManager() && sharedDataLoaded && (classManualWeekClosePreparing || (sundayArchiveWindow() && currentWeekKey()===calendarWeekKey() && !classWeekClosed() && autoArchiveCompletedSundayWeek!==currentWeekKey())));}
          function readyForRollover(){return ['guests','records','archives'].every(k=>optionalCloudLoaded.has(k)) && userCloudScope==='all' && allUsersLoaded && profileDocs.size>0;}
          let autoRolloverSaving=false;
          let autoRolloverNextAttempt=0;
@@ -1019,6 +1033,8 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
         function classWeekClosed(week=currentWeekKey()){
           const gate=classWeekGate();
           if(gate.weekKey!==week)return false;
+           if(gate.closed===true)return true;
+           // Compatibility for a closure saved by v131 before the v132 migration.
           const until=gate.closedUntil;
           const millis=typeof until?.toMillis==='function'?until.toMillis():
             Number(until?.seconds||0)*1000;
@@ -1192,7 +1208,7 @@ const subscriptions={
             if(s.metadata && s.metadata.fromCache && !sharedDataLoaded)return;
             window.__sharedData=s.exists?s.data():{};
             sharedDataLoaded=true;
-            if(cloudManager())void classSyncCurrentWeekPointer();
+            // v132: the week pointer is changed ONLY by the staff Start Week button.
             syncCloudSections();
             scheduleCloudView();
           },e=>{console.error('길드 공용 데이터 조회 실패',e);showAuthError('길드 공용 데이터 조회 실패: '+errorText(e));}));
@@ -2528,9 +2544,7 @@ const subscriptions={
             if (!targetUser) return;
             if (!db.bossRecords[targetUser]) db.bossRecords[targetUser] = {};
             const records = db.bossRecords[targetUser];
-            const base = new Date(); base.setHours(0,0,0,0);
-             
-            const monday = new Date(base); monday.setDate(base.getDate() - (base.getDay()+6)%7);
+            const monday=kstDateFromKey(currentWeekKey(),12);
             let containerHtml = '', totalScore = 0, maxPossibleScore = 0;
             for (let offset=0; offset<7; offset++) {
                 const date = new Date(monday); date.setDate(monday.getDate()+offset);
@@ -2593,7 +2607,7 @@ const subscriptions={
             const targetUser = db.currentUser;
             if (!targetUser) return;
             if (confirm(`${targetUser}님의 이번 주 보스 참여 체크를 초기화하시겠습니까?`)) {
-                const monday = getWeekMonday(new Date());
+                const monday = kstDateFromKey(currentWeekKey(),12);
                 const sunday = new Date(monday); sunday.setDate(monday.getDate()+7);
                 const start = localDateKey(monday), end = localDateKey(sunday);
                 for (const key of Object.keys(db.bossRecords[targetUser] || {})) {
@@ -2891,7 +2905,14 @@ const subscriptions={
             const daysSinceMonday = (k.getUTCDay()+6)%7;
             return new Date(Date.UTC(k.getUTCFullYear(),k.getUTCMonth(),k.getUTCDate()-daysSinceMonday,-9));
         }
-        function currentWeekKey() { return localDateKey(getWeekMonday(new Date())); }
+        function calendarWeekKey() { return localDateKey(getWeekMonday(new Date())); }
+        // v132: The participation week follows the explicitly started server week.
+        // Clock rollover never changes this pointer.
+        function currentWeekKey() {
+          const shared=window.__sharedData;
+          return /^\d{4}-\d{2}-\d{2}$/.test(String(shared?.activeWeekKey||''))
+            ? shared.activeWeekKey : calendarWeekKey();
+        }
         function weekLabel(key) {
             const monday=kstDateFromKey(key,12);
             if(isNaN(monday.getTime()))return key;
@@ -3005,7 +3026,7 @@ const subscriptions={
           return localDateKey(new Date(kstDateFromKey(weekKey,12).getTime()+7*86400000));
         }
         function autoArchiveDueWeek() {
-          return sundayArchiveWindow() && !classWeekClosed() &&
+          return sundayArchiveWindow() && currentWeekKey()===calendarWeekKey() && !classWeekClosed() &&
             autoArchiveCompletedSundayWeek!==currentWeekKey()?currentWeekKey():null;
         }
         function hasArchivedCategory(archives,weekKey,type) {
@@ -3052,7 +3073,7 @@ const subscriptions={
             const [sharedSnap,archiveSnap]=await Promise.all([tx.get(sharedRef),tx.get(archiveRef)]);
             const shared=sharedSnap.exists?sharedSnap.data():{};
             const gate=shared.registrationGate||{};
-            const gated=gate.weekKey===week && gate.closedUntil?.toMillis?.()>Date.now();
+            const gated=gate.weekKey===week && (gate.closed===true || gate.closedUntil?.toMillis?.()>Date.now());
             if(gated)return {alreadyClosed:true,added:[]};
             const archives=clone(archiveSnap.exists?(archiveSnap.data().weeklyArchives||[]):[]);
             const needed=['boss','war','siege'].filter(type=>!hasArchivedCategory(archives,week,type));
@@ -3082,10 +3103,9 @@ const subscriptions={
               tx.set(archiveRef,{weeklyArchives:archives});
             }
             if(closeWeek){
-              // The lock expires at next Monday 00:00 KST even if nobody is online.
-              const nextMonday=kstDateFromKey(archiveNextWeekKey(week),0);
-              const expiry=firebase.firestore.Timestamp.fromDate(nextMonday);
-              tx.set(sharedRef,{registrationGate:{weekKey:week,closedUntil:expiry,closedBy:cloudUser.uid,closedAt:firebase.firestore.Timestamp.now()}},{merge:true});
+// v132: close only the ACTIVE week; only an explicit Start Week opens the next one.
+               if(shared.activeWeekKey && shared.activeWeekKey!==week)throw new Error('서버 주차가 변경됐습니다. 새로고침 후 다시 시도하세요.');
+               tx.set(sharedRef,{...(shared.activeWeekKey?{}:{activeWeekKey:week}),registrationGate:{weekKey:week,closed:true,closedBy:cloudUser.uid,closedAt:firebase.firestore.Timestamp.now()}},{merge:true});
             }
             return {alreadyClosed:false,added:needed};
           });
@@ -3119,26 +3139,32 @@ const subscriptions={
             syncCloudSections();classRenderWeekControls();
           }
         }
-        async function classSyncCurrentWeekPointer(){
-          if(!cloudManager()||!cloudReady||classWeekPointerSyncing||Date.now()<classPointerSyncNextAttempt)return;
-          const current=currentWeekKey();
-          if(window.__sharedData?.activeWeekKey===current)return;
-          classWeekPointerSyncing=true;classPointerSyncNextAttempt=Date.now()+60000;
-          try{
-            await store.runTransaction(async tx=>{
-              const ref=store.doc('guildData/main');const snap=await tx.get(ref);
-              const existing=snap.exists?snap.data().activeWeekKey:null;
-              if(existing!==current)tx.set(ref,{activeWeekKey:current},{merge:true});
-            });
-          }catch(e){console.warn('주차 표시 갱신 실패 (보관 복구는 실행하지 않음)',e);}
-          finally{classWeekPointerSyncing=false;}
-        }
         async function classStartWeek(){
-          if(!cloudManager())return;
-          if(classWeekClosed())return alert('마감된 주차는 재개할 수 없습니다. 새로운 주차가 시작되면 등록이 자동으로 열립니다.');
-          await classSyncCurrentWeekPointer();
-          classRenderWeekControls();
-          alert('현재 주차는 등록이 가능한 상태입니다.');
+          if(!cloudManager()||!cloudReady)return alert('운영진 이상 권한과 서버 연결이 필요합니다.');
+          if(classWeekPointerSyncing)return;
+          const next=calendarWeekKey(), previous=currentWeekKey();
+          if(previous===next)return alert('현재 주차가 이미 시작되어 있습니다.');
+          if(previous>next)return alert('현재 날짜보다 미래 주차는 시작할 수 없습니다.');
+          if(!classWeekClosed(previous))return alert('기존 주차를 먼저 [금주 기록 마감] 해주세요.');
+          if(!confirm(`${weekLabel(previous)} 기록을 종료하고 ${weekLabel(next)} 기록을 시작할까요?\n이전 주차는 다시 열 수 없습니다.`))return;
+          classWeekPointerSyncing=true;
+          classSaveIndicator('새 주차 시작 처리 중');
+          try{
+            const ref=store.doc('guildData/main');
+            await store.runTransaction(async tx=>{
+              const snap=await tx.get(ref),remote=snap.exists?snap.data():{};
+              const current=remote.activeWeekKey||previous;
+              if(current===next)return;
+              if(current!==previous)throw new Error('다른 운영진이 주차를 변경했습니다. 새로고침 후 확인하세요.');
+              if(current>=next)throw new Error('이미 시작되었거나 현재 날짜보다 미래인 주차입니다.');
+              if(remote.registrationGate?.weekKey!==current || remote.registrationGate?.closed!==true)
+                throw new Error('기존 주차가 마감되지 않았습니다.');
+              tx.set(ref,{activeWeekKey:next,registrationGate:{weekKey:next,closed:false,startedBy:cloudUser.uid,startedAt:firebase.firestore.Timestamp.now()}},{merge:true});
+            });
+            classSaveIndicator('새 주차 시작 완료');
+            alert('새 주차가 시작되었습니다. 보스·쟁·공성전 참여 등록이 가능합니다.');
+          }catch(e){classSaveIndicator('새 주차 시작 실패',true);alert('시작 실패: '+errorText(e));}
+          finally{classWeekPointerSyncing=false;classRenderWeekControls();}
         }
         window.classCloseWeek=classCloseWeek;
         window.classStartWeek=classStartWeek;
@@ -3147,10 +3173,10 @@ const subscriptions={
           if(!box)return;
           box.style.display=cloudReady&&cloudManager()?'block':'none';
           if(box.style.display==='none')return;
-          const closed=classWeekClosed();
-          box.innerHTML=`<div class="class-week-info">${weekLabel(currentWeekKey())} · ${closed?'🔒 등록 마감':'🔓 등록 가능'} · 일요일 23:59 미마감 주차 자동 보관</div>
-            <button type="button" id="class-week-close-btn" onclick="classCloseWeek()" ${closed?'disabled':''}>금주 기록 마감</button>
-            <button type="button" id="class-week-start-btn" onclick="classStartWeek()" ${closed?'disabled':''}>금주 기록 시작</button>`;
+const closed=classWeekClosed(), canStart=closed && currentWeekKey()<calendarWeekKey();
+           box.innerHTML=`<div class="class-week-info">${weekLabel(currentWeekKey())} · ${closed?'등록 마감':'등록 가능'} · 다음 주차는 운영진이 수동 시작</div>
+             <button type="button" id="class-week-close-btn" onclick="classCloseWeek()" ${closed?'disabled':''}>금주 기록 마감</button>
+             <button type="button" id="class-week-start-btn" onclick="classStartWeek()" ${canStart?'':'disabled'}>금주 기록 시작</button>`;
         }
         async function commitWeeklyRollover(){return classArchiveCurrentWeek(false);}
         function ensureWeeklyRollover(){
@@ -3186,14 +3212,7 @@ const subscriptions={
             edit.classList.toggle('hidden',!isCurrentAdmin());
             if (isCurrentAdmin()) document.getElementById('diamond-total-input').value = d.total;
         }
-        function saveGuildDiamonds() {
-            if (!isCurrentAdmin()) return alert('관리자만 설정할 수 있습니다.');
-            const input = document.getElementById('diamond-total-input');
-            const amount = Number(input.value);
-            if (!Number.isSafeInteger(amount) || amount<0) return alert('0 이상의 정수 다이아를 입력하세요.');
-            db.guildDiamondsByWeek[currentWeekKey()] = amount;
-            saveDB().then(()=>alert('이번 주 길드 다이아가 저장되었습니다.'),()=>classRestoreLastServerView());renderDiamondSummary();
-        }
+        function saveGuildDiamonds(){return window.classV132SaveDiamondAndRatios?.();}
         function openWeeklyArchiveModal() {
             if (!isCurrentAdmin()) return alert('관리자 권한이 필요합니다.');
             document.getElementById('weekly-archive-modal').classList.remove('hidden');
@@ -3294,13 +3313,24 @@ const subscriptions={
             finally{if(button?.tagName==='BUTTON')button.disabled=false;}
         }
 
-        function deleteWeeklyArchive(index) {
-            if (!isCurrentAdmin()) return alert('관리자만 삭제할 수 있습니다.');
+        async function deleteWeeklyArchive(index) {
+            if(!cloudManager()||!cloudReady)return alert('운영진 이상 권한과 서버 연결을 확인하세요.');
             const archive=db.weeklyArchives[index];
-            if (!archive) return;
-            if (!confirm(`「${archive.label||weekLabel(archive.weekKey)}」 보관 내역을 영구 삭제할까요?\n엑셀 내보내기 파일을 다운로드하고 열어서 내용이 정상인지 확인했나요?\n이 기록을 삭제하면 서버 보관함에서 복구할 수 없으며 원본 참여 기록은 삭제하지 않습니다.`)) return;
-            db.weeklyArchives.splice(index,1);
-            saveDB();renderWeeklyArchives();
+            if(!archive)return;
+            if(!confirm(`「${archive.label||weekLabel(archive.weekKey)}」 보관 내역을 영구 삭제할까요?\n엑셀 내보내기 파일을 다운로드하고 내용이 정상인지 확인했나요?\n삭제하면 복구할 수 없습니다.`))return;
+            const identity=a=>String(a.archivedAt||'')+'|'+String(a.weekKey||'')+'|'+String(a.type||'boss');
+            const key=identity(archive);
+            try{
+              const ref=store.doc('guildPrivate/archives');
+              await store.runTransaction(async tx=>{
+                const snap=await tx.get(ref);
+                const list=snap.exists?(snap.data().weeklyArchives||[]):[];
+                const matches=list.filter(a=>identity(a)===key);
+                if(matches.length!==1)throw new Error('보관 기록을 찾지 못했거나 중복 기록이 있습니다. 목록을 갱신해 주세요.');
+                tx.set(ref,{weeklyArchives:list.filter(a=>identity(a)!==key)},{merge:true});
+              });
+              alert('보관 내역을 삭제했습니다.');
+            }catch(e){console.error(e);alert('삭제 실패: '+errorText(e));}
         }
         function archiveDailyFallback(a,name) {
             const stored=a.dailyScores?.[name];
@@ -3385,8 +3415,8 @@ const subscriptions={
             const pane = document.getElementById('content-boss-sched-2');
             if (pane && !pane.classList.contains('hidden') && db.currentUser) renderBossPreview();
             if(db.currentUser){
-                const kstWeek=currentWeekKey();
-                if(window.__classDisplayedKstWeek!==kstWeek){
+const kstWeek=calendarWeekKey();
+                 if(window.__classDisplayedKstWeek!==kstWeek){
                     window.__classDisplayedKstWeek=kstWeek;
                     ensureWeeklyRollover();
                     renderDiamondSummary();
@@ -3778,9 +3808,12 @@ function init(){const app=$('app-container'),grid=$('dashboard-grid');if(!app||!
  document.getElementById('app-container').appendChild(mobileShade);
  document.body.appendChild(mobileToggle);
 
- const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div id="class-week-control-panel" style="display:none"></div><div class="class-home-top"><div class="class-card class-announcements"><div class="class-notice-half"><div class="class-mini-heading"><h2>📢 공지사항</h2><button type="button" class="class-notice-pencil" id="class-notice-edit-trigger" title="공지사항 수정" onclick="classToggleNoticeEditor()" style="display:none">✎</button></div><div id="class-notice-slot"></div></div><div class="class-patch-half"><div class="class-mini-heading"><h2>📄 패치노트</h2><button id="class-patch-add" type="button" class="class-btn" style="display:none" onclick="classAddPatchNote()" title="패치노트 등록">✎</button></div><div id="class-patch-list" class="class-patch-list"><div class="text-slate-400">등록된 패치노트가 없습니다.</div></div></div></div></div><div class="class-card class-boss-card"><div class="class-actions"><h2 style="margin:0">⚔ 보스 타이머</h2><button class="class-btn class-boss-register" id="class-all-bosses">＋ 보스 참여 등록</button></div><div class="class-bosses" id="class-boss-list"></div></div><div class="class-card class-weekly-card"><h2>💎 분배 요약</h2><div id="class-home-ratio-chart" class="class-v46-ratio-chart"></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="war"><div class="class-card"><h2>쟁 참여 관리</h2><div id="class-war-system"></div></div></section><section class="class-page" data-page="siege"><div class="class-card"><h2>공성전</h2><div id="class-siege-system"></div></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div class="class-panel-slot" id="class-admin-slot"></div><div class="class-card" style="margin-top:16px"><h2>💎 길드 자금 분배율 설정</h2><div id="class-ratio-system"></div></div></section>`;
+ const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div class="class-home-top"><div class="class-card class-announcements"><div class="class-notice-half"><div class="class-mini-heading"><h2>📢 공지사항</h2><button type="button" class="class-notice-pencil" id="class-notice-edit-trigger" title="공지사항 수정" onclick="classToggleNoticeEditor()" style="display:none">✎</button></div><div id="class-notice-slot"></div></div><div class="class-patch-half"><div class="class-mini-heading"><h2>📄 패치노트</h2><button id="class-patch-add" type="button" class="class-btn" style="display:none" onclick="classAddPatchNote()" title="패치노트 등록">✎</button></div><div id="class-patch-list" class="class-patch-list"><div class="text-slate-400">등록된 패치노트가 없습니다.</div></div></div></div></div><div class="class-card class-boss-card"><div class="class-actions"><h2 style="margin:0">⚔ 보스 타이머</h2><button class="class-btn class-boss-register" id="class-all-bosses">＋ 보스 참여 등록</button></div><div class="class-bosses" id="class-boss-list"></div></div><div class="class-card class-weekly-card"><h2>💎 분배 요약</h2><div id="class-home-ratio-chart" class="class-v46-ratio-chart"></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="war"><div class="class-card"><h2>쟁 참여 관리</h2><div id="class-war-system"></div></div></section><section class="class-page" data-page="siege"><div class="class-card"><h2>공성전</h2><div id="class-siege-system"></div></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div id="class-week-control-panel" style="display:none"></div><div class="class-panel-slot" id="class-admin-slot"></div></section>`;
  $('class-all-bosses').onclick=()=>openBossModal();$('class-admin-back').onclick=()=>page('home');
  $('class-member-slot').append(panels[0]);$('class-boss-slot').append(panels[1]);$('class-item-slot').append(panels[2]);$('class-admin-slot').append(panels[3]);
+ const ratioHost=document.createElement('div');ratioHost.id='class-ratio-system';
+ const diamondEdit=document.getElementById('diamond-admin-edit');
+ if(diamondEdit)diamondEdit.append(ratioHost);
  const notice=$('content-notice-1');if(notice){$('class-notice-slot').append(notice);notice.classList.remove('hidden')};/* 기존 다이아 패널은 홈의 새 분배 요약 그래프로 대체하므로 이동하지 않음 */
  const member=$('content-member-1');if(member)member.classList.remove('hidden');
  const tabs=$('btn-tab-notice-1')?.parentElement;if(tabs)tabs.style.display='none';
@@ -4087,8 +4120,8 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
   const r=system().ratios;
   const fields=[['reserve','길드 여유 자금'],['operations','운영진 분배'],['war','쟁 참여'],['boss','보스 참여']];
   el.innerHTML=`<p class="class-v45-muted">길드 자금만 적용합니다. 공성전 서버 다이아는 제외됩니다. 운영진 몫은 마스터·운영진에게 균등 분배한 예상액입니다.</p>
-  <div class="class-v45-grid">${fields.map(([k,label])=>`<label class="class-v45-panel">${label}<div><input class="class-v45-input" data-ratio="${k}" type="number" min="0" max="100" step="1" value="${Number(r[k])}" ${manager()?'':'disabled'}> %</div></label>`).join('')}</div>
-  ${manager()?'<button class="class-v45-btn" onclick="classV45SaveRatios()">분배율 저장 (합계 100%)</button>':''}`;
+<div class="class-v45-grid class-v132-ratio-grid">${fields.map(([k,label])=>`<label class="class-v45-panel">${label}<div><input class="class-v45-input" data-ratio="${k}" type="number" min="0" max="100" step="1" value="${Number(r[k])}" ${manager()?'':'disabled'}> %</div></label>`).join('')}</div>
+   ${manager()?'<button class="class-v45-btn class-v132-save-all" onclick="classV132SaveDiamondAndRatios()">다이아 · 분배율 한 번에 저장</button>':''}`;
  }
  function renderProfile(){
   const el=$('class-profile-weekly');if(!el||typeof db==='undefined')return;
@@ -4116,8 +4149,9 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
    await store.runTransaction(async tx=>{
     const snap=await tx.get(ref);
     const server=snap.data()||{};
-    const until=server.registrationGate?.closedUntil;
-    if(server.registrationGate?.weekKey===currentWeekKey()&&until?.toMillis?.()>Date.now())
+    const gate=server.registrationGate||{};
+    if(server.activeWeekKey && server.activeWeekKey!==currentWeekKey())throw new Error('주차가 변경되었습니다. 다시 확인하세요.');
+    if(gate.weekKey===currentWeekKey() && (gate.closed===true || gate.closedUntil?.toMillis?.()>Date.now()))
       throw new Error('등록이 마감되었습니다.');
     const remote=server.participationSystem||{ratios:{reserve:5,operations:20,war:55,boss:20},weeks:{}};
     const updated=JSON.parse(JSON.stringify(remote));
@@ -4225,11 +4259,33 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
   const participants=Object.fromEntries([...document.querySelectorAll('[data-siege-uid]')].map(el=>[el.dataset.siegeUid,el.checked]));
   await persist(x=>{x.weeks=x.weeks||{};x.weeks[week()]=x.weeks[week()]||{};x.weeks[week()].siege={diamonds:n,participants};},document.activeElement);
  };
- window.classV45SaveRatios=async function(){
-  const r=Object.fromEntries([...document.querySelectorAll('[data-ratio]')].map(el=>[el.dataset.ratio,Number(el.value)]));
-  if(Object.values(r).some(n=>!Number.isSafeInteger(n)||n<0||n>100)||Object.values(r).reduce((a,b)=>a+b,0)!==100)return alert('각 비율은 0~100 정수이며 합계가 100%여야 합니다.');
-  await persist(x=>{x.ratios=r;},document.activeElement);
+ window.classV132SaveDiamondAndRatios=async function(){
+   if(!manager()||!cloudReady)return alert('운영진 이상 권한과 서버 연결을 확인하세요.');
+   const total=Number(document.getElementById('diamond-total-input')?.value);
+   const ratioInputs=[...document.querySelectorAll('#class-ratio-system [data-ratio]')];
+   const r=Object.fromEntries(ratioInputs.map(el=>[el.dataset.ratio,Number(el.value)]));
+   if(!Number.isSafeInteger(total)||total<0)return alert('총 다이아는 0 이상의 정수로 입력하세요.');
+   if(ratioInputs.length!==4||Object.values(r).some(n=>!Number.isSafeInteger(n)||n<0||n>100)||Object.values(r).reduce((a,b)=>a+b,0)!==100)
+     return alert('분배율은 0~100 정수이며 합계가 100%여야 합니다.');
+   const btn=document.activeElement;
+   if(btn?.disabled)return;
+   if(btn)btn.disabled=true;
+   const target=currentWeekKey();
+   try{
+     await store.runTransaction(async tx=>{
+       const ref=store.doc('guildData/main');const snap=await tx.get(ref);
+       const remote=snap.exists?snap.data():{};
+       if(remote.activeWeekKey && remote.activeWeekKey!==target)throw new Error('서버 주차가 변경됐습니다. 다시 시도하세요.');
+       const system=JSON.parse(JSON.stringify(remote.participationSystem||{ratios:{},weeks:{}}));
+       system.ratios=r;
+       const totals={...(remote.guildDiamondsByWeek||{}),[target]:total};
+       tx.set(ref,{participationSystem:system,guildDiamondsByWeek:totals},{merge:true});
+     });
+     alert('금주 다이아와 길드 자금 분배율을 함께 저장했습니다.');
+   }catch(e){console.error(e);alert('저장 실패: '+(e.message||e));}
+   finally{if(btn)btn.disabled=false;}
  };
+ window.classV45SaveRatios=window.classV132SaveDiamondAndRatios;
  function refresh(){
   if(typeof db==='undefined'||!cloudReady)return;
   const active=document.querySelector('.class-page.active')?.dataset.page;

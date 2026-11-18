@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261118_V138_MEMBER_SEARCH_VISIBILITY_FIX">
+    <meta name="class-build-id" content="CLASS_BUILD_20261118_V139_VISIBILITY_SAFETY_WAR_LOG_UI_REMOVED">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -414,6 +414,10 @@ html body #class-pages > .class-page[data-page="members"] #member-list-view .cla
 html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card[hidden] {
   display:none!important;
 }
+</style>
+<style id="class-v139-visibility-safety">
+/* Display safety: hidden is authoritative even when legacy components force display !important. */
+html body [hidden] { display:none!important; }
 </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
@@ -4182,30 +4186,16 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
   const me=users().find(u=>u.uid&&u.uid===cloudUser?.uid);
   return me?.id||'관리자';
  }
- function warHistoryEditor(h){
-  if(h.editorUid){const u=users().find(x=>x.uid===h.editorUid);if(u)return u.id;}
-  const saved=String(h.by||'관리자');
-  if(!saved.includes('@'))return saved;
-  // Legacy entries contain an email; resolve it from current profile data without showing it.
-  try{
-   for(const [uid,profile] of profileDocs){
-    if(String(profile?.email||'').toLowerCase()===saved.toLowerCase())return profile.nickname||users().find(x=>x.uid===uid)?.id||'관리자';
-   }
-  }catch(e){}
-  if(cloudUser?.email?.toLowerCase()===saved.toLowerCase())return currentWarEditorName();
-  return '관리자';
- }
+
  function renderWar(){
   const el=$('class-war-system');if(!el||typeof db==='undefined')return;
   const editable=manager()&&classRegistrationAllowed(), w=weekData(), total=users().reduce((a,u)=>a+score(u),0);
-  const history=Array.isArray(w.warHistory)?w.warHistory:[];
   el.innerHTML=`<p class="class-v45-muted">이번 주 ${weekTitle()} · 쟁 분배 ${num(calc().warPool)} 다이아 · 누적 쟁 점수 ${num(total)}점</p>
   <div class="class-v45-panel"><p class="class-v45-muted">쟁이 발생할 때마다 <b>이번 쟁 추가 점수</b>를 입력하고 저장하세요. 기존 누적 점수에 더해집니다. 0점은 변경되지 않습니다.</p>
   <table class="class-v45-table"><thead><tr><th>길드원</th><th>누적 점수</th><th>이번 쟁 추가 점수</th><th>예상 분배 다이아</th></tr></thead><tbody>
   ${users().map(u=>`<tr><td>${esc(u.id)}${u.isGuest?' (미가입)':''}</td><td>${editable?`<span style="display:inline-flex;align-items:center;gap:7px;white-space:nowrap"><span data-war-total-label="${esc(memberKey(u))}">${num(score(u))}점</span><input class="class-v45-input" style="display:none;width:82px;max-width:100%;padding:5px 7px" type="number" min="0" step="1" data-war-total="${esc(memberKey(u))}" onkeydown="if(event.key==='Enter'){event.preventDefault();classV70SaveWarScore(this)}else if(event.key==='Escape'){classV70CancelWarScore(this)}" value="${score(u)}" aria-label="${esc(u.id)} 누적 점수 수정"><button type="button" onclick="classV64ToggleWarScore(this)" title="누적 점수 수정" aria-label="${esc(u.id)} 누적 점수 수정" style="background:none;border:0;color:#81532e;cursor:pointer;padding:3px;line-height:1;vertical-align:middle">✎</button></span>`:`${num(score(u))}점`}</td><td>${editable?`<input class="class-v45-input" type="number" min="0" step="1" data-war-uid="${esc(memberKey(u))}" value="0">`:'-'} </td><td>💎 ${num(warShare(u))}</td></tr>`).join('')}</tbody></table>
   ${editable?'<div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px"><button class="class-v45-btn" onclick="classV45SaveWar()">이번 쟁 점수 누적 저장</button></div>':''}</div>
-  <div class="class-v45-panel"><details style="width:100%"><summary style="cursor:pointer;font-weight:700;user-select:none">쟁 점수 등록 내역 (${history.length}건) <span class="class-v45-muted" style="font-weight:400">· 눌러서 펼치기</span></summary>
-  ${history.length?`<div style="max-height:220px;overflow:auto;margin-top:10px">${history.slice(-30).reverse().map(h=>`<div class="class-v45-muted" style="padding:7px 0;border-bottom:1px solid #ead5c1">${esc(h.at||'')} · <strong>수정자 : ${esc(warHistoryEditor(h))}</strong> · ${esc((h.entries||[]).map(e=>h.type==='correction'?e.name+' '+e.from+'점 → '+e.to+'점 (정정)':e.name+' +'+e.points+'점').join(' · '))}</div>`).join('')}</div>`:'<p class="class-v45-muted" style="margin-top:8px">아직 등록된 내역이 없습니다.</p>'}</details></div>`;
+`;
  }
  function renderSiege(){
   const el=$('class-siege-system');if(!el||typeof db==='undefined')return;

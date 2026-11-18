@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261118_V134_WEEK_TEST_RESET_ARCHIVE_LAYOUT_DIAMOND_COMPACT">
+    <meta name="class-build-id" content="CLASS_BUILD_20261118_V135_CLOSURE_RECOVERY">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -387,7 +387,7 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
 #class-pages .class-page[data-page="admin"] .class-v134-ratio-input input{width:100%;min-width:0;box-sizing:border-box;height:39px!important;min-height:39px!important;padding:7px 9px!important;margin:0!important;background:#fff!important;border:1px solid #cbd5e1!important;border-radius:8px!important;font-size:13px!important;color:#222!important}
 #class-pages .class-page[data-page="admin"] .class-v134-ratio-input span{flex:none;color:#555;font-size:13px}
 #class-pages .class-page[data-page="admin"] .class-v134-ratio-note{margin:10px 0 3px!important;font-size:11px!important;line-height:1.55}
-#class-pages .class-page[data-page="admin"] #class-week-control-panel button.class-week-test-return{background:#f6f6f6!important;color:#444!important;border:1px dashed #999!important}
+#class-pages .class-page[data-page="admin"] #class-week-control-panel button.class-week-recover{background:#f6f6f6!important;color:#444!important;border:1px dashed #999!important}
 /* Shared archive list typography and checkbox layout for all three archive types. */
 #weekly-archive-list .class-v134-archive-member{font-size:12px!important;line-height:1.55!important;align-items:center!important;min-height:40px}
 #weekly-archive-list .class-v134-archive-member-text{min-width:0;flex:1 1 350px;overflow-wrap:anywhere}
@@ -3185,34 +3185,44 @@ const subscriptions={
           }catch(e){classSaveIndicator('새 주차 시작 실패',true);alert('시작 실패: '+errorText(e));}
           finally{classWeekPointerSyncing=false;classRenderWeekControls();}
         }
-        // v134: Restrained test-only return from an early-started next week.
-        // No archive documents or participation entries are deleted or overwritten.
-        async function classReturnToCalendarWeekForTest(){
-          if(!cloudReady || !cloudUser || !cloudAdmin())
-            return alert('웹 관리자만 테스트 주차를 복귀할 수 있습니다.');
-          if(classWeekPointerSyncing)return;
-          const calendar=calendarWeekKey();
+        // v135: Permanent admin-only closure recovery. Never delete archives or participation entries.
+        // Can reopen the currently closed week, or roll back one week after an accidental Start.
+        async function classRecoverClosure(){
+          if(!cloudReady || !cloudUser || !cloudAdmin())return alert('마감 복구는 웹 관리자만 사용할 수 있습니다.');
+          if(classWeekPointerSyncing || classWeekCloseRunning)return;
           const active=currentWeekKey();
-          const expectedNext=localDateKey(new Date(kstDateFromKey(calendar,12).getTime()+7*86400000));
-          if(active!==expectedNext)return alert('현재 달력 주차보다 정확히 한 주 앞서 시작한 경우에만 복귀할 수 있습니다.');
-          if(!confirm(`테스트 주차를 ${weekLabel(calendar)}로 복귀할까요?\n이미 보관한 자료나 체크 기록은 삭제되지 않습니다. 보관본이 있는 항목은 재마감 시 중복 저장되지 않습니다.`))return;
+          const sameWeekClosed=classWeekClosed(active);
+          const previous=localDateKey(new Date(kstDateFromKey(active,12).getTime()-7*86400000));
+          const target=sameWeekClosed?active:previous;
+          if(!/^\d{4}-\d{2}-\d{2}$/.test(active)||!/^\d{4}-\d{2}-\d{2}$/.test(target))return alert('주차 정보가 올바르지 않습니다.');
+          const explanation=sameWeekClosed
+            ? `${weekLabel(active)}의 마감을 취소하고 참여 등록을 다시 허용합니다.`
+            : `${weekLabel(active)}에서 직전 주차인 ${weekLabel(previous)}로 되돌리고 등록을 다시 허용합니다.`;
+          if(!confirm(`마감 복구 (웹 관리자 전용)\n\n${explanation}\n\n보관함 기록과 기존 참여 내역은 삭제하거나 덮어쓰지 않습니다. 이미 저장된 보관본은 자동 갱신되지 않습니다.\n\n복구를 실행할까요?`))return;
           classWeekPointerSyncing=true;
-          classSaveIndicator('테스트 주차 복귀 중');
+          classSaveIndicator('마감 복구 처리 중');
           try{
             await store.runTransaction(async tx=>{
               const ref=store.doc('guildData/main');
               const snapshot=await tx.get(ref);
               const remote=snapshot.exists?snapshot.data():{};
-              if(remote.activeWeekKey!==expectedNext)throw new Error('다른 운영진이 주차를 변경했습니다.');
-              if(calendarWeekKey()!==calendar)throw new Error('날짜가 바뀌었습니다. 다시 시도하세요.');
-              tx.set(ref,{activeWeekKey:calendar,registrationGate:{weekKey:calendar,closed:false,testResetAt:firebase.firestore.Timestamp.now(),testResetBy:cloudUser.uid}},{merge:true});
+              if(remote.activeWeekKey!==active)throw new Error('다른 운영진이 주차를 변경했습니다. 새로고침 후 확인하세요.');
+              const gate=remote.registrationGate||{};
+              const actuallyClosed=gate.weekKey===active&&(gate.closed===true || (typeof gate.closedUntil?.toMillis==='function' && gate.closedUntil.toMillis()>Date.now()));
+              if(actuallyClosed!==sameWeekClosed)throw new Error('마감 상태가 달라졌습니다. 다시 확인하세요.');
+              if(!actuallyClosed && localDateKey(new Date(kstDateFromKey(active,12).getTime()-7*86400000))!==target)
+                throw new Error('복구 대상은 직전 주차만 가능합니다.');
+              const recoveredAt=firebase.firestore.Timestamp.now();
+              const history=Array.isArray(remote.weekRecoveryLog)?remote.weekRecoveryLog.slice(-49):[];
+              history.push({fromWeek:active,toWeek:target,kind:actuallyClosed?'reopen':'rollback',by:cloudUser.uid,at:recoveredAt});
+              tx.set(ref,{activeWeekKey:target,weekRecoveryLog:history,registrationGate:{weekKey:target,closed:false,recoveredBy:cloudUser.uid,recoveredAt,recoveryFromWeek:active,recoveryKind:actuallyClosed?'reopen':'rollback'}},{merge:true});
             });
-            classSaveIndicator('테스트 주차 복귀 완료');
-            alert('테스트 되돌리기');
-          }catch(e){classSaveIndicator('테스트 복귀 실패',true);alert('복귀 실패: '+errorText(e));}
+            classSaveIndicator('마감 복구 완료');
+            alert(`마감 복구 완료: ${weekLabel(target)}\n기존 보관 기록은 변경되지 않았습니다.`);
+          }catch(e){classSaveIndicator('마감 복구 실패',true);alert('마감 복구 실패: '+errorText(e));}
           finally{classWeekPointerSyncing=false;classRenderWeekControls();}
         }
-        window.classReturnToCalendarWeekForTest=classReturnToCalendarWeekForTest;
+        window.classRecoverClosure=classRecoverClosure;
         window.classCloseWeek=classCloseWeek;
         window.classStartWeek=classStartWeek;
         function classRenderWeekControls(){
@@ -3221,12 +3231,11 @@ const subscriptions={
           box.style.display=cloudReady&&cloudManager()?'block':'none';
           if(box.style.display==='none')return;
 const closed=classWeekClosed(), canStart=closed;
-           const calendar=calendarWeekKey(), expectedNext=localDateKey(new Date(kstDateFromKey(calendar,12).getTime()+7*86400000));
-           const canTestReset=cloudUser && cloudAdmin() && currentWeekKey()===expectedNext;
+           const canRecover=cloudUser && cloudAdmin() && /^\d{4}-\d{2}-\d{2}$/.test(currentWeekKey());
            box.innerHTML=`<div class="class-week-info">${weekLabel(currentWeekKey())} · ${closed?'등록 마감':'등록 가능'} · 다음 주차는 운영진이 수동 시작</div>
              <button type="button" id="class-week-close-btn" onclick="classCloseWeek()" ${closed?'disabled':''}>금주 기록 마감</button>
              <button type="button" id="class-week-start-btn" onclick="classStartWeek()" ${canStart?'':'disabled'}>금주 기록 시작</button>
-             ${canTestReset?'<button type="button" class="class-week-test-return" onclick="classReturnToCalendarWeekForTest()">테스트: 이번 주차로 복귀</button>':''}`;
+             ${canRecover?'<button type="button" class="class-week-recover" onclick="classRecoverClosure()">마감 복구</button>':''}`;
         }
         async function commitWeeklyRollover(){return classArchiveCurrentWeek(false);}
         function ensureWeeklyRollover(){

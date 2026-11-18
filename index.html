@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261118_V137_CLASS_LOGO_ARTIFACTS_FIXED">
+    <meta name="class-build-id" content="CLASS_BUILD_20261118_V138_MEMBER_SEARCH_VISIBILITY_FIX">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -405,6 +405,14 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
 html body #class-pages > .class-page[data-page="members"] #member-list-view .class-member-card > .guild-class-icon img {
   filter: none !important;
   opacity: 1 !important;
+}
+</style>
+
+<style id="class-v138-member-search-visibility-fix">
+/* Keep the search result hidden even though the member-layout CSS forces display:grid.
+   Only search-filtered cards are affected; all other member styling stays unchanged. */
+html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card[hidden] {
+  display:none!important;
 }
 </style>
 </head>

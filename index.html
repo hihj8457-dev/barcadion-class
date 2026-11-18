@@ -3208,7 +3208,7 @@ const subscriptions={
               tx.set(ref,{activeWeekKey:calendar,registrationGate:{weekKey:calendar,closed:false,testResetAt:firebase.firestore.Timestamp.now(),testResetBy:cloudUser.uid}},{merge:true});
             });
             classSaveIndicator('테스트 주차 복귀 완료');
-            alert('현재 달력 주차로 복귀했어. 기존 보관 기록은 유지돼.');
+            alert('테스트 되돌리기');
           }catch(e){classSaveIndicator('테스트 복귀 실패',true);alert('복귀 실패: '+errorText(e));}
           finally{classWeekPointerSyncing=false;classRenderWeekControls();}
         }

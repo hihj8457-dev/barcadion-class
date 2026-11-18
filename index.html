@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261118_V132_MANUAL_WEEK_ADMIN_UI">
+    <meta name="class-build-id" content="CLASS_BUILD_20261118_V133_ARCHIVE_CHECK_WEEK_START_FIX">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1174,7 +1174,7 @@ const subscriptions={
           if(pendingSaves.size || bossEditDirty){ deferredCloudView=true; return; }
           // Firestore can emit metadata-only snapshots with identical data.
           // Skip expensive full-screen re-rendering unless the data actually changed.
-          const incomingSignature=stable(next)+'|gate:'+String(window.__sharedData?.registrationGate?.weekKey||'')+':'+String(window.__sharedData?.registrationGate?.closedUntil?.toMillis?.()||0);
+          const incomingSignature=stable(next)+'|gate:'+String(window.__sharedData?.registrationGate?.weekKey||'')+':'+String(window.__sharedData?.registrationGate?.closed===true)+':'+String(window.__sharedData?.registrationGate?.closedUntil?.toMillis?.()||0);
           if(cloudReady && incomingSignature===lastRenderedCloudState)return;
           lastRenderedCloudState=incomingSignature;
           db=next; lastSnapshot=clone(next); cloudReady=true;
@@ -3142,11 +3142,11 @@ const subscriptions={
         async function classStartWeek(){
           if(!cloudManager()||!cloudReady)return alert('운영진 이상 권한과 서버 연결이 필요합니다.');
           if(classWeekPointerSyncing)return;
-          const next=calendarWeekKey(), previous=currentWeekKey();
-          if(previous===next)return alert('현재 주차가 이미 시작되어 있습니다.');
-          if(previous>next)return alert('현재 날짜보다 미래 주차는 시작할 수 없습니다.');
+          const previous=currentWeekKey();
+          const next=localDateKey(new Date(kstDateFromKey(previous,12).getTime()+7*86400000));
+          if(!/^\d{4}-\d{2}-\d{2}$/.test(previous))return alert('주차 정보를 확인할 수 없습니다.');
           if(!classWeekClosed(previous))return alert('기존 주차를 먼저 [금주 기록 마감] 해주세요.');
-          if(!confirm(`${weekLabel(previous)} 기록을 종료하고 ${weekLabel(next)} 기록을 시작할까요?\n이전 주차는 다시 열 수 없습니다.`))return;
+          if(!confirm(`${weekLabel(previous)} 기록을 종료하고 ${weekLabel(next)} 기록을 시작할까요?\n오늘이 새 주차 시작일 전이어도 즉시 다음 주차로 이동합니다. 이전 주차는 다시 열 수 없습니다.`))return;
           classWeekPointerSyncing=true;
           classSaveIndicator('새 주차 시작 처리 중');
           try{
@@ -3173,7 +3173,7 @@ const subscriptions={
           if(!box)return;
           box.style.display=cloudReady&&cloudManager()?'block':'none';
           if(box.style.display==='none')return;
-const closed=classWeekClosed(), canStart=closed && currentWeekKey()<calendarWeekKey();
+const closed=classWeekClosed(), canStart=closed;
            box.innerHTML=`<div class="class-week-info">${weekLabel(currentWeekKey())} · ${closed?'등록 마감':'등록 가능'} · 다음 주차는 운영진이 수동 시작</div>
              <button type="button" id="class-week-close-btn" onclick="classCloseWeek()" ${closed?'disabled':''}>금주 기록 마감</button>
              <button type="button" id="class-week-start-btn" onclick="classStartWeek()" ${canStart?'':'disabled'}>금주 기록 시작</button>`;
@@ -3239,15 +3239,52 @@ const closed=classWeekClosed(), canStart=closed && currentWeekKey()<calendarWeek
             db.weeklyArchives.push(snapshot);
             saveDB();renderWeeklyArchives();
         }
+        // v133: Edit exactly one completion flag against the latest server archive.
+        // Never save the stale local copy of all archives when a checkbox changes.
+        const classArchiveCheckBusy = new Set();
+        async function classSetArchiveDistribution(index, targetKey, checked, kind) {
+          if(!isCurrentAdmin() || !cloudReady) { alert('관리자 권한과 서버 연결을 확인하세요.'); return; }
+          const source = db.weeklyArchives?.[index];
+          if(!source) return;
+          const archiveId = String(source.archivedAt||'')+'|'+String(source.weekKey||'')+'|'+String(source.type||'boss');
+          const pendingKey=archiveId+'|'+targetKey;
+          if(classArchiveCheckBusy.has(pendingKey))return;
+          classArchiveCheckBusy.add(pendingKey);
+          try {
+            await waitForPendingSaves();
+            const ref=store.doc('guildPrivate/archives');
+            await store.runTransaction(async tx=>{
+              const snap=await tx.get(ref);
+              if(!snap.exists)throw new Error('보관함을 찾을 수 없습니다.');
+              const archives=clone(snap.data().weeklyArchives||[]);
+              const position=archives.findIndex(a=>String(a.archivedAt||'')+'|'+String(a.weekKey||'')+'|'+String(a.type||'boss')===archiveId);
+              if(position<0)throw new Error('해당 보관 기록이 삭제되었거나 변경되었습니다.');
+              const archive=archives[position];
+              if(kind==='participation'){
+                if(!['war','siege'].includes(archive.type) || !(archive.entries||[]).some(e=>e.key===targetKey&&Number(e.amount)>0))
+                  throw new Error('분배 대상이 아닙니다.');
+              }else{
+                const amount=Math.floor(Math.max(0,Number(archive.scores?.[targetKey]||0)))*Number(archive.diamonds?.unit||0);
+                if(amount<=0)throw new Error('분배 대상이 아닙니다.');
+              }
+              archive.distributionCompleted={...(archive.distributionCompleted||{}),[targetKey]:!!checked};
+              tx.update(ref,{weeklyArchives:archives});
+            });
+            // onSnapshot will refresh the archive; do not overwrite it from an old screen snapshot.
+            classSaveIndicator('분배 완료 상태 저장 완료');
+          }catch(e){
+            console.error('보관함 분배 완료 변경 실패:',e);
+            classSaveIndicator('분배 완료 상태 저장 실패',true);
+            alert('분배 완료 저장 실패: '+errorText(e));
+          }finally{
+            classArchiveCheckBusy.delete(pendingKey);
+            syncCloudSections();
+            // Re-render based on server events, not an optimistic stale archive.
+            renderWeeklyArchives();
+          }
+        }
         function toggleParticipationArchiveDistribution(index,encodedKey,checked) {
-            if(!isCurrentAdmin()||!cloudReady)return alert('관리자 권한과 서버 연결을 확인하세요.');
-            const a=db.weeklyArchives?.[index];if(!a||!['war','siege'].includes(a.type))return;
-            const key=decodeURIComponent(encodedKey);
-            if(!a.entries?.some(e=>e.key===key&&e.amount>0))return;
-            a.distributionCompleted=a.distributionCompleted||{};
-            a.distributionCompleted[key]=!!checked;
-            const result=saveDB();renderWeeklyArchives();
-            if(result?.catch)result.catch(()=>renderWeeklyArchives());
+          return classSetArchiveDistribution(index,decodeURIComponent(encodedKey),checked,'participation');
         }
 
         // v119: Export a single independent archive, including all original snapshot data.
@@ -3359,17 +3396,7 @@ const closed=classWeekClosed(), canStart=closed && currentWeekKey()<calendarWeek
             return Array(7).fill(0);
         }
         function toggleArchiveDistribution(index, encodedName, checked) {
-            if(!isCurrentAdmin() || !cloudReady) return alert('관리자 권한 또는 서버 연결을 확인하세요.');
-            const a=db.weeklyArchives[index];
-            if(!a) return;
-            const name=decodeURIComponent(encodedName);
-            const amount=Math.floor(Math.max(0,Number(a.scores?.[name]||0)))*Number(a.diamonds?.unit||0);
-            if(amount<=0) return;
-            a.distributionCompleted=a.distributionCompleted||{};
-            a.distributionCompleted[name]=!!checked;
-            const save=saveDB();
-            renderWeeklyArchives();
-            if(save)save.catch(()=>{renderWeeklyArchives();});
+          return classSetArchiveDistribution(index,decodeURIComponent(encodedName),checked,'boss');
         }
         function renderWeeklyArchives() {
             const el=document.getElementById('weekly-archive-list');

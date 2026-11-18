@@ -979,6 +979,7 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
         db.bossMaintenance = [];
         let isRegisterMode = false;
         let cloudReady = false, sharedDataLoaded = false, cloudUnsubs = [], cloudUser = null, lastSnapshot = null;
+        let lastRenderedCloudState = null;
         let profileDocs = new Map(), recordDocs = new Map(), itemDocs = new Map(), applicationDocs = new Map(), guestDocs = new Map();
         const clone = x => JSON.parse(JSON.stringify(x));
         const stable = x => JSON.stringify(x);
@@ -992,18 +993,24 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
         // v118: Keep only the data needed by the visible page subscribed for regular members.
         const optionalCloudStops = new Map();
          const optionalCloudLoaded = new Set();
+         const optionalCloudReleaseTimers = new Map();
+         const CLOUD_IDLE_RELEASE_MS=30000;
+         let bossRecordScope='';
          let allUsersLoaded=false;
          function archiveModalVisible(){const el=document.getElementById('weekly-archive-modal');return !!(el&&!el.classList.contains('hidden'));}
          function rolloverPending(){return !!(cloudManager() && sharedDataLoaded && window.__sharedData?.activeWeekKey && window.__sharedData.activeWeekKey < currentWeekKey());}
          function readyForRollover(){return ['guests','records','archives'].every(k=>optionalCloudLoaded.has(k)) && userCloudScope==='all' && allUsersLoaded && profileDocs.size>0;}
          let autoRolloverSaving=false;
         let userCloudStop=null, userCloudScope='';
+        let userCloudReleaseTimer=null, allowUserScopeDowngrade=false;
         let cloudSectionRunning=false;
         function detachCloud() {
           cloudUnsubs.forEach(fn=>fn());cloudUnsubs=[];
-          optionalCloudStops.forEach(stop=>stop());optionalCloudStops.clear();optionalCloudLoaded.clear();allUsersLoaded=false;
+          optionalCloudReleaseTimers.forEach(timer=>clearTimeout(timer));optionalCloudReleaseTimers.clear();
+          optionalCloudStops.forEach(stop=>stop());optionalCloudStops.clear();optionalCloudLoaded.clear();bossRecordScope='';allUsersLoaded=false;
+          if(userCloudReleaseTimer!==null){clearTimeout(userCloudReleaseTimer);userCloudReleaseTimer=null;}
           if(userCloudStop){userCloudStop();userCloudStop=null;}userCloudScope='';
-          cloudReady=false; sharedDataLoaded=false; window.__sharedData=null; window.__archiveData=null;
+          cloudReady=false; sharedDataLoaded=false; window.__sharedData=null; window.__archiveData=null; lastRenderedCloudState=null;
           profileDocs.clear();recordDocs.clear();itemDocs.clear();applicationDocs.clear();guestDocs.clear();lastSnapshot=null;
         }
         function classCurrentPage(){return document.querySelector('#class-pages .class-page.active')?.dataset.page||'home';}
@@ -1020,8 +1027,17 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
            const membersPage=['members','war','siege'].includes(page);
            const adminPage=manager && page==='admin';
            const archiveOpen=manager && archiveModalVisible();
-           const requireUsers=membersPage || adminPage || page==='items' || rollover || archiveOpen || classBossRegistrationVisible() || classProfileVisible();
+           const requireUsers=membersPage || adminPage || page==='items' || rollover || archiveOpen;
            const scope=requireUsers?'all':'own';
+           // Briefly retain the all-users subscription while the user switches tabs.
+           // Without this, every home -> members -> home round-trip rereads the full list.
+           if(scope==='own' && userCloudScope==='all' && !allowUserScopeDowngrade){
+             if(userCloudReleaseTimer===null)userCloudReleaseTimer=setTimeout(()=>{
+               userCloudReleaseTimer=null;allowUserScopeDowngrade=true;
+               try{syncCloudSections();}finally{allowUserScopeDowngrade=false;}
+             },CLOUD_IDLE_RELEASE_MS);
+           }else{
+           if(userCloudReleaseTimer!==null){clearTimeout(userCloudReleaseTimer);userCloudReleaseTimer=null;}
            if(scope!==userCloudScope){
              if(userCloudStop)userCloudStop();userCloudStop=null;userCloudScope=scope;allUsersLoaded=false;
              if(scope==='all'){
@@ -1041,30 +1057,45 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
                },e=>showAuthError('회원 정보 조회 실패: '+errorText(e)));
              }
            }
+           }
            const wants={
              guests:membersPage || adminPage || archiveOpen || rollover,
-             records:membersPage || adminPage || archiveOpen || rollover || classBossRegistrationVisible() || classProfileVisible(),
+             records:membersPage || adminPage || archiveOpen || rollover ? 'all' : (classBossRegistrationVisible() || classProfileVisible() ? 'own' : false),
              items:page==='items' || adminPage,
              applications:page==='items' || adminPage,
              archives:archiveOpen || rollover
            };
 const subscriptions={
             guests:()=>store.collection('guildGuests').onSnapshot({includeMetadataChanges:true},s=>{guestDocs=new Map(s.docs.map(d=>[d.id,d.data()]));if(!s.metadata.fromCache)optionalCloudLoaded.add('guests');scheduleCloudView();},e=>console.error('비가입 길드원 조회 실패',e)),
-            records:()=>store.collection('bossRecords').onSnapshot({includeMetadataChanges:true},s=>{recordDocs=new Map(s.docs.map(d=>[d.id,d.data().entries||{}]));if(!s.metadata.fromCache)optionalCloudLoaded.add('records');scheduleCloudView();},e=>console.error('보스 기록 조회 실패',e)),
+            records:(scope)=>scope==='own' ? store.doc('bossRecords/'+cloudUser.uid).onSnapshot({includeMetadataChanges:true},s=>{recordDocs=new Map([[cloudUser.uid,s.exists?(s.data().entries||{}):{}]]);if(!s.metadata.fromCache)optionalCloudLoaded.add('records');scheduleCloudView();},e=>console.error('본인 보스 기록 조회 실패',e)) : store.collection('bossRecords').onSnapshot({includeMetadataChanges:true},s=>{recordDocs=new Map(s.docs.map(d=>[d.id,d.data().entries||{}]));if(!s.metadata.fromCache)optionalCloudLoaded.add('records');scheduleCloudView();},e=>console.error('보스 기록 조회 실패',e)),
             items:()=>store.collection('items').onSnapshot(s=>{itemDocs=new Map(s.docs.map(d=>[d.id,d.data()]));optionalCloudLoaded.add('items');scheduleCloudView();},e=>console.error('아이템 조회 실패',e)),
-            applications:()=>store.collection('applications').onSnapshot(s=>{applicationDocs=new Map(s.docs.map(d=>[d.id,d.data().active===true]));optionalCloudLoaded.add('applications');scheduleCloudView();},e=>console.error('신청 내역 조회 실패',e)),
+            applications:()=>store.collection('applications').where('active','==',true).onSnapshot(s=>{applicationDocs=new Map(s.docs.map(d=>[d.id,d.data().active===true]));optionalCloudLoaded.add('applications');scheduleCloudView();},e=>console.error('신청 내역 조회 실패',e)),
             archives:()=>store.doc('guildPrivate/archives').onSnapshot({includeMetadataChanges:true},s=>{window.__archiveData=s.exists?s.data():{};if(!s.metadata.fromCache)optionalCloudLoaded.add('archives');scheduleCloudView();},e=>{window.__archiveData={};console.error('보관함 조회 실패',e);})
           };
+          // Keep unused listeners for 30s to avoid a full re-read on quick tab changes.
+          // A record scope change must be immediate: own and all must never be conflated.
           for(const [key,want] of Object.entries(wants)){
-            if(want&&!optionalCloudStops.has(key))optionalCloudStops.set(key,subscriptions[key]());
-            if(!want&&optionalCloudStops.has(key)){
-              optionalCloudStops.get(key)();optionalCloudStops.delete(key);optionalCloudLoaded.delete(key);
-              if(key==='guests')guestDocs.clear();
-              if(key==='records')recordDocs.clear();
-              if(key==='items')itemDocs.clear();
-              if(key==='applications')applicationDocs.clear();
-              if(key==='archives')window.__archiveData=null;
-              scheduleCloudView();
+            if(want){
+              if(optionalCloudReleaseTimers.has(key)){clearTimeout(optionalCloudReleaseTimers.get(key));optionalCloudReleaseTimers.delete(key);}
+              if(key==='records' && optionalCloudStops.has(key) && bossRecordScope!==want){
+                optionalCloudStops.get(key)();optionalCloudStops.delete(key);optionalCloudLoaded.delete(key);recordDocs.clear();
+              }
+              if(!optionalCloudStops.has(key)){
+                if(key==='records')bossRecordScope=want;
+                optionalCloudStops.set(key,subscriptions[key](want));
+              }
+            } else if(optionalCloudStops.has(key) && !optionalCloudReleaseTimers.has(key)){
+              optionalCloudReleaseTimers.set(key,setTimeout(()=>{
+                optionalCloudReleaseTimers.delete(key);
+                if(!optionalCloudStops.has(key))return;
+                optionalCloudStops.get(key)();optionalCloudStops.delete(key);optionalCloudLoaded.delete(key);
+                if(key==='guests')guestDocs.clear();
+                if(key==='records'){recordDocs.clear();bossRecordScope='';}
+                if(key==='items')itemDocs.clear();
+                if(key==='applications')applicationDocs.clear();
+                if(key==='archives')window.__archiveData=null;
+                scheduleCloudView();
+              },CLOUD_IDLE_RELEASE_MS));
             }
           }
         }
@@ -1086,7 +1117,12 @@ const subscriptions={
             return {...clone(d),id,applicants,applicant:applicants[0]||null};
           });
           next.weeklyArchives=clone(window.__archiveData?.weeklyArchives||[]);
-          if(pendingSaves.size){ deferredCloudView=true; return; }
+          if(pendingSaves.size || bossEditDirty){ deferredCloudView=true; return; }
+          // Firestore can emit metadata-only snapshots with identical data.
+          // Skip expensive full-screen re-rendering unless the data actually changed.
+          const incomingSignature=stable(next);
+          if(cloudReady && incomingSignature===lastRenderedCloudState)return;
+          lastRenderedCloudState=incomingSignature;
           db=next; lastSnapshot=clone(next); cloudReady=true;
           if(typeof window.classInvalidateBossTimer==='function')window.classInvalidateBossTimer();
           try {
@@ -1160,7 +1196,29 @@ const subscriptions={
             ops.push(store.doc('users/'+uid).delete());
           }
           const sharedKeys=['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','bossSlotAutoAnchors','guildDiamondsByWeek','participationSystem','activeWeekKey'];
-          if(stable(before.weeklyArchives)!==stable(after.weeklyArchives)){if(!cloudManager())throw new Error('보관함은 운영진 이상만 수정할 수 있습니다.');ops.push(store.doc('guildPrivate/archives').set({weeklyArchives:clone(after.weeklyArchives)}));}
+          if(stable(before.weeklyArchives)!==stable(after.weeklyArchives)){
+            if(!cloudManager())throw new Error('보관함은 운영진 이상만 수정할 수 있습니다.');
+            ops.push(store.runTransaction(async tx=>{
+              const ref=store.doc('guildPrivate/archives');const snap=await tx.get(ref);
+              const server=clone(snap.exists?(snap.data().weeklyArchives||[]):[]);
+              const base=before.weeklyArchives||[],target=after.weeklyArchives||[];
+              const key=a=>String(a.archivedAt||'')+'|'+String(a.weekKey||'')+'|'+String(a.type||'boss');
+              const b=new Map(base.map(a=>[key(a),a]));const t=new Map(target.map(a=>[key(a),a]));
+              const current=new Map(server.map(a=>[key(a),a]));
+              for(const [id,old] of b){
+                const edited=t.get(id);
+                if(edited && stable(edited)===stable(old))continue;
+                if(!current.has(id)||stable(current.get(id))!==stable(old))throw new Error('다른 운영진이 해당 보관 기록을 수정했습니다. 보관함을 다시 열고 확인해 주세요.');
+                if(edited)current.set(id,clone(edited));else current.delete(id);
+              }
+              for(const [id,entry] of t)if(!b.has(id)){
+                if(!current.has(id))current.set(id,clone(entry));
+                else if(stable(current.get(id))!==stable(entry))throw new Error('동일한 보관 기록이 이미 서버에 있습니다.');
+              }
+              const merged=[...current.values()].sort((a,b)=>String(b.weekKey||'').localeCompare(String(a.weekKey||'')));
+              tx.set(ref,{weeklyArchives:merged});
+            }));
+          }
           const delta={};
           sharedKeys.forEach(k=>{if(stable(before[k])!==stable(after[k]))delta[k]=clone(after[k]??null);});
           if(Object.keys(delta).length){if(!cloudManager()) throw new Error('관리자 권한이 필요한 작업입니다.');ops.push(store.doc('guildData/main').set(delta,{merge:true}));}
@@ -1177,14 +1235,21 @@ const subscriptions={
             if(changed.length || removed.length) ops.push(queueBossWrite(uid, async()=>{
               const ref=store.doc('bossRecords/'+uid);
                
-              for(const key of changed) {
-                await ref.set({entries:{[key]:newEntries[key]}},{merge:true});
-              }
-              for(const key of removed) {
-                 
-                const field=new firebase.firestore.FieldPath('entries',key);
-                await ref.update(field,firebase.firestore.FieldValue.delete());
-              }
+              // One update per user (rather than one write per checkbox).
+              // Dot-containing keys are addressed with FieldPath, never string field paths.
+              const patch=[];
+              for(const key of changed)patch.push(new firebase.firestore.FieldPath('entries',key),newEntries[key]);
+              for(const key of removed)patch.push(new firebase.firestore.FieldPath('entries',key),firebase.firestore.FieldValue.delete());
+              if(!patch.length)return;
+              // A missing document must first be created. A transaction makes the
+              // create/update decision consistent under simultaneous writes.
+              await store.runTransaction(async tx=>{
+                const snap=await tx.get(ref);
+                if(!snap.exists){
+                  const entries={};for(const key of changed)entries[key]=newEntries[key];
+                  tx.set(ref,{entries});
+                }else tx.update(ref,...patch);
+              });
             }));
           }
           const oldItems=new Map((before.items||[]).map(i=>[String(i.id),i]));
@@ -1226,7 +1291,7 @@ const subscriptions={
               if(!pendingSaves.size){
                 // Firestore's existing live listener reflects committed writes. Avoid a
                 // second forced server read after each save. Never drop the queued snapshot.
-                if(deferredCloudView){deferredCloudView=false;buildCloudView();}
+                if(deferredCloudView && !bossEditDirty){deferredCloudView=false;buildCloudView();}
               }
             });
           return task;
@@ -2049,7 +2114,7 @@ const subscriptions={
             if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections();
             loadUserBossRecords();
         }
-        function closeBossModal() { document.getElementById('boss-reg-modal').classList.add('hidden'); if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections(); }
+        function closeBossModal() { if(bossEditDirty)void flushBossDraftSave().catch(e=>console.error('보스 기록 저장 실패',e)); document.getElementById('boss-reg-modal').classList.add('hidden'); if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections(); }
 
         // A scheduled maintenance is a hard reset only for periodic bosses.
         // Cut events retain previous occurrences, while changing subsequent intervals.
@@ -2440,6 +2505,46 @@ const subscriptions={
                 loadUserBossRecords();
             }
         }
+        let bossEditTimer=null;
+        let bossEditDirty=false;
+        let bossEditFlush=Promise.resolve();
+        function setBossSaveStatus(message){
+          let el=document.getElementById('class-boss-save-status');
+          if(!el){
+            const anchor=document.getElementById('modal-target-user');
+            if(!anchor)return;
+            el=document.createElement('span');el.id='class-boss-save-status';
+            el.style.cssText='display:inline-block;margin-left:9px;font-size:11px;font-weight:600;color:#b58b51';
+            anchor.insertAdjacentElement('afterend',el);
+          }
+          el.textContent=message;
+        }
+        window.addEventListener('beforeunload',e=>{
+          if(bossEditDirty || pendingSaves.size){e.preventDefault();e.returnValue='';}
+        });
+        function queueBossDraftSave(){
+          bossEditDirty=true;
+          setBossSaveStatus('저장 대기 중');
+          if(bossEditTimer!==null)clearTimeout(bossEditTimer);
+          bossEditTimer=setTimeout(()=>{bossEditTimer=null;void flushBossDraftSave().catch(e=>console.error('보스 기록 자동 저장 실패',e));},750);
+        }
+        async function flushBossDraftSave(){
+          if(bossEditTimer!==null){clearTimeout(bossEditTimer);bossEditTimer=null;}
+          if(!bossEditDirty)return bossEditFlush;
+          bossEditDirty=false;
+          setBossSaveStatus('서버 저장 중');
+          // Register a pending save before the server snapshot is permitted to rebuild the view.
+          bossEditFlush=saveDB().then(()=>{
+            if(!bossEditDirty)setBossSaveStatus('저장 완료');
+          },err=>{
+            // Keep the draft marked unsaved. A later click on '참여 기록 저장'
+            // must retry instead of returning the same rejected promise.
+            bossEditDirty=true;
+            setBossSaveStatus('저장 실패 · 다시 저장해 주세요');
+            throw err;
+          });
+          return bossEditFlush;
+        }
         function onBossCheckChange(checkbox) {
             const user = db.currentUser;
             if (!user || checkbox.getAttribute('data-user') !== user) { alert('본인 기록만 수정할 수 있습니다.'); loadUserBossRecords(); return; }
@@ -2448,12 +2553,13 @@ const subscriptions={
             db.bossRecords[user][key] = checkbox.checked;
             const legacy = checkbox.getAttribute('data-legacy');
             if (legacy && Object.prototype.hasOwnProperty.call(db.bossRecords[user], legacy)) delete db.bossRecords[user][legacy];
-            saveDB();
+            queueBossDraftSave();
             loadUserBossRecords(true);
             renderDiamondSummary();
         }
         async function saveBossRecords() {
             try {
+                await flushBossDraftSave();
                 await waitForPendingSaves();
                 alert('참여 기록이 서버에 저장되었습니다.');
                 closeBossModal();
@@ -2788,21 +2894,53 @@ const subscriptions={
             return !!(cloudReady && cloudManager() && sharedDataLoaded &&
                 window.__sharedData && Object.keys(window.__sharedData).length);
         }
+        // Single transaction commits the archive AND the week pointer together.
+        // A concurrent staff member sees the new pointer and cannot create a duplicate.
+        async function commitWeeklyRollover(){
+          if(!cloudManager()||!cloudReady||!readyForRollover())return;
+          if(bossEditDirty)await flushBossDraftSave();
+          await waitForPendingSaves();
+          const target=currentWeekKey();
+          const sharedRef=store.doc('guildData/main');
+          const archiveRef=store.doc('guildPrivate/archives');
+          const memberIds=[...profileDocs.keys()];
+          await store.runTransaction(async tx=>{
+            // All reads precede all writes, as required by Firestore transactions.
+            const [sharedSnap,archiveSnap,...memberSnaps]=await Promise.all([
+              tx.get(sharedRef),tx.get(archiveRef),
+              ...memberIds.map(uid=>tx.get(store.doc('bossRecords/'+uid)))
+            ]);
+            const shared=sharedSnap.exists?sharedSnap.data():{};
+            const oldWeek=shared.activeWeekKey;
+            if(!oldWeek){tx.set(sharedRef,{activeWeekKey:target},{merge:true});return;}
+            if(oldWeek>=target)return;
+            const archives=clone(archiveSnap.exists?(archiveSnap.data().weeklyArchives||[]):[]);
+            if(!archives.some(a=>!a.type&&a.weekKey===oldWeek&&a.archiveMode==='auto')){
+              // Use a consistent server read of the boss records to form the snapshot.
+              const work=clone(db);work.activeWeekKey=oldWeek;
+              work.bossRecords={};
+              for(let i=0;i<memberIds.length;i++){
+                const nick=profileDocs.get(memberIds[i])?.nickname;
+                if(nick)work.bossRecords[nick]=memberSnaps[i].exists?(memberSnaps[i].data().entries||{}):{};
+              }
+              work.weeklyArchives=[];
+              const oldDB=db;
+              try{db=work;archiveWeek(oldWeek,'auto');}finally{db=oldDB;}
+              if(!work.weeklyArchives.length)throw new Error('주차 보관 스냅샷을 생성하지 못했습니다.');
+              archives.push(work.weeklyArchives[0]);
+              archives.sort((a,b)=>String(b.weekKey||'').localeCompare(String(a.weekKey||'')));
+              tx.set(archiveRef,{weeklyArchives:archives});
+            }
+            tx.set(sharedRef,{activeWeekKey:target},{merge:true});
+          });
+        }
         function ensureWeeklyRollover() {
-            if (!canTriggerWeeklyAutoArchive() || autoRolloverSaving) return;
-            const nowKey = currentWeekKey();
-            if (!db.activeWeekKey) {
-                db.activeWeekKey = nowKey;
-                saveDB();
-                return;
-            }
-            if (db.activeWeekKey < nowKey) {
-                if (!readyForRollover()) { syncCloudSections(); return; }
-                autoRolloverSaving=true;
-                archiveWeek(db.activeWeekKey, 'auto');
-                db.activeWeekKey = nowKey;
-                Promise.resolve(saveDB()).catch(e=>console.error('주차 자동 보관 실패',e)).finally(()=>{autoRolloverSaving=false;syncCloudSections();});
-            }
+          if(!canTriggerWeeklyAutoArchive() || autoRolloverSaving)return;
+          if(db.activeWeekKey && db.activeWeekKey>=currentWeekKey())return;
+          if(db.activeWeekKey && !readyForRollover()){syncCloudSections();return;}
+          autoRolloverSaving=true;
+          commitWeeklyRollover().catch(e=>console.error('주차 자동 보관 실패',e))
+            .finally(()=>{autoRolloverSaving=false;syncCloudSections();});
         }
         function renderDiamondSummary() {
             const container = document.getElementById('diamond-summary-content');
@@ -3519,6 +3657,8 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
   const setCount=(v)=>{const target=document.getElementById('class-online-number');if(target)target.textContent=v;};
   let activeUid=null, activeRef=null, connectedRef=null, presenceRef=null;
   let presenceListener=null, connectionListener=null, started=false;
+  let presenceChangedListener=null,presenceRemovedListener=null;
+  let onlineUsers=new Set();
   let generation=0;
   const sessionId='tab_'+Math.random().toString(36).slice(2)+'_'+Date.now().toString(36);
   function startDB(){
@@ -3530,8 +3670,11 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
     const oldRef=activeRef;
     ++generation;
     if(connectedRef&&connectionListener) connectedRef.off('value',connectionListener);
-    if(presenceRef&&presenceListener) presenceRef.off('value',presenceListener);
-    activeUid=null;activeRef=null;connectedRef=null;presenceRef=null;connectionListener=null;presenceListener=null;started=false;
+    if(presenceRef&&presenceListener)presenceRef.off('child_added',presenceListener);
+    if(presenceRef&&presenceChangedListener)presenceRef.off('child_changed',presenceChangedListener);
+    if(presenceRef&&presenceRemovedListener)presenceRef.off('child_removed',presenceRemovedListener);
+    onlineUsers.clear();
+    activeUid=null;activeRef=null;connectedRef=null;presenceRef=null;connectionListener=null;presenceListener=null;presenceChangedListener=null;presenceRemovedListener=null;started=false;
     setCount('--명');
     // Explicit logout removes our own tab now; onDisconnect covers abrupt close/network loss.
     if(oldRef){try{await oldRef.remove();await oldRef.onDisconnect().cancel();}catch(e){console.warn('접속 상태 삭제는 연결 종료 시 자동 처리될 수 있습니다.',e);}}
@@ -3549,14 +3692,21 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
     const session=realdb.ref('presence/'+user.uid+'/'+sessionId);
     activeRef=session;
     presenceRef=realdb.ref('presence');
-    presenceListener=function(snapshot){
+    // child events send only the changed account's sessions, not all presence data.
+    const updateUser=snapshot=>{
       if(token!==generation)return;
-      const val=snapshot.val()||{};
-      let total=0;
-      Object.values(val).forEach(sessions=>{if(sessions && typeof sessions==='object' && Object.keys(sessions).length)total++;});
-      setCount(total+'명');
+      const sessions=snapshot.val();
+      if(sessions&&typeof sessions==='object'&&Object.keys(sessions).length)onlineUsers.add(snapshot.key);
+      else onlineUsers.delete(snapshot.key);
+      setCount(onlineUsers.size+'명');
     };
-    presenceRef.on('value',presenceListener,e=>{console.warn('온라인 인원 읽기 오류',e);setCount('확인 불가');});
+    presenceListener=updateUser;
+    presenceChangedListener=updateUser;
+    presenceRemovedListener=snapshot=>{if(token!==generation)return;onlineUsers.delete(snapshot.key);setCount(onlineUsers.size+'명');};
+    const onError=e=>{console.warn('온라인 인원 읽기 오류',e);setCount('확인 불가');};
+    presenceRef.on('child_added',presenceListener,onError);
+    presenceRef.on('child_changed',presenceChangedListener,onError);
+    presenceRef.on('child_removed',presenceRemovedListener,onError);
     connectedRef=realdb.ref('.info/connected');
     connectionListener=function(snap){
       if(token!==generation||snap.val()!==true)return;

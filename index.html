@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261119_V143_BOSS_SCHEDULE_ARCHIVE_2W">
+    <meta name="class-build-id" content="CLASS_BUILD_20261120_V144_APPROVAL_ADMIN_SCORE_RESET">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1060,7 +1060,7 @@ html body #app-container #class-pages #class-war-system table.class-v45-table tb
         const errorText = e => (e && (e.message || e.code)) || String(e);
         function showAuthError(msg) { const el=document.getElementById('auth-error'); el.textContent=msg; el.style.display='block'; }
         function cloudProfile(u) { return {nickname:u.id, role:u.role==='웹 관리자'?'web_admin':u.role==='마스터'?'master':u.role==='운영진'?'staff':'member',approved:u.approved!==false,class:u.class||'레인저',power:Number(u.power)||0}; }
-        function localProfile(id,uid,d) {return {id,uid,role:d.role==='web_admin'?'웹 관리자':d.role==='master'?'마스터':d.role==='staff'?'운영진':'길드원',approved:true,class:d.class||'레인저',power:Number(d.power)||0};}
+        function localProfile(id,uid,d) {return {id,uid,role:d.role==='web_admin'?'웹 관리자':d.role==='master'?'마스터':d.role==='staff'?'운영진':'길드원',approved:d.approved!==false,class:d.class||'레인저',power:Number(d.power)||0};}
         function cloudManager() {return cloudUser && ['web_admin','master','staff'].includes(profileDocs.get(cloudUser.uid)?.role) ;}
         function cloudAdmin() {return cloudUser && profileDocs.get(cloudUser.uid)?.role==='web_admin' ;}
         function cloudMaster() {return cloudUser && ['web_admin','master'].includes(profileDocs.get(cloudUser.uid)?.role);}
@@ -1159,14 +1159,14 @@ html body #app-container #class-pages #class-war-system table.class-v45-table tb
                userCloudStop=store.collection('users').onSnapshot({includeMetadataChanges:true},s=>{
                  profileDocs=new Map(s.docs.map(d=>[d.id,d.data()]));
                  allUsersLoaded=!s.metadata.fromCache;
-                 if(!profileDocs.has(cloudUser?.uid)){cloudReady=false;showAuthError('계정 정보가 없거나 탈퇴 처리되었습니다.');return;}
+                 if(!profileDocs.has(cloudUser?.uid)||profileDocs.get(cloudUser.uid)?.approved===false){cloudReady=false;checkLoginState();showAuthError('계정 승인 상태를 확인하세요.');return;}
                  scheduleCloudView();checkForcedPasswordChange();syncCloudSections();
                },e=>showAuthError('회원 정보 조회 실패: '+errorText(e)));
              }else{
                const uid=cloudUser.uid;
                profileDocs=new Map([...profileDocs].filter(([id])=>id===uid));
                userCloudStop=store.doc('users/'+uid).onSnapshot(s=>{
-                 if(!s.exists){cloudReady=false;showAuthError('계정 정보가 없거나 탈퇴 처리되었습니다.');return;}
+                 if(!s.exists||s.data()?.approved===false){cloudReady=false;checkLoginState();showAuthError('계정 승인 대기 또는 이용 제한 상태입니다.');return;}
                  profileDocs=new Map([[uid,s.data()]]);
                  scheduleCloudView();checkForcedPasswordChange();syncCloudSections();
                },e=>showAuthError('회원 정보 조회 실패: '+errorText(e)));
@@ -1216,11 +1216,11 @@ const subscriptions={
         }
         window.classSyncCloudSections=syncCloudSections;
         function buildCloudView() {
-          if (!cloudUser || !profileDocs.has(cloudUser.uid) || !sharedDataLoaded) return;
+          if (!cloudUser || !profileDocs.has(cloudUser.uid) || profileDocs.get(cloudUser.uid)?.approved===false || !sharedDataLoaded) return;
           const own = profileDocs.get(cloudUser.uid);
           const shared = window.__sharedData || {};
           const next = clone(DEFAULT_DB);
-          next.users = [...profileDocs].map(([uid,d])=>localProfile(d.nickname||uid,uid,d)).concat([...guestDocs].map(([gid,d])=>({id:d.nickname,guestId:gid,isGuest:true,role:'길드원',class:d.class||'레인저',power:Number(d.power)||0}))); 
+          next.users = [...profileDocs].filter(([uid,d])=>d.approved!==false).map(([uid,d])=>localProfile(d.nickname||uid,uid,d)).concat([...guestDocs].map(([gid,d])=>({id:d.nickname,guestId:gid,isGuest:true,role:'길드원',class:d.class||'레인저',power:Number(d.power)||0}))); 
           next.currentUser = own.nickname;
           ['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','bossSlotAutoAnchors','guildDiamondsByWeek','participationSystem','activeWeekKey'].forEach(k=>{
             if(shared[k]!==undefined) next[k]=clone(shared[k]);
@@ -1496,6 +1496,7 @@ const subscriptions={
                                                                                 
                                                                     
             if(!s.exists || s.metadata.fromCache || s.metadata.hasPendingWrites)return;
+            if(s.data().approved===false){showAuthError('가입 승인 대기 중입니다. 관리자가 승인하면 자동으로 접속됩니다.');return;}
             startCloudAfterVerifiedProfile(uid, sequence);
           },e=>{
             if(sequence===authGateSequence)showAuthError('회원 정보 확인 실패: '+errorText(e));
@@ -1506,7 +1507,7 @@ const subscriptions={
         });
         window.onload=()=>{checkLoginState();};
         function checkLoginState() {
-          const visible=!!(cloudUser&&cloudReady&&profileDocs.has(cloudUser.uid));
+          const visible=!!(cloudUser&&cloudReady&&profileDocs.has(cloudUser.uid)&&profileDocs.get(cloudUser.uid)?.approved!==false);
           document.getElementById('auth-modal').style.display=visible?'none':'flex';
           document.getElementById('app-container').classList.toggle('hidden',!visible);
           if(visible){initApp();checkForcedPasswordChange();window.classPresenceStart?.(cloudUser);classRenderWeekControls();}
@@ -1546,11 +1547,11 @@ const subscriptions={
               await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
               const cred=await auth.createUserWithEmailAndPassword(email,pw);
               try {
-                await store.doc('users/'+cred.user.uid).set({loginId:loginId.toLowerCase(),nickname,role:'member',approved:true,class:document.getElementById('reg-class').value,power});
+                await store.doc('users/'+cred.user.uid).set({loginId:loginId.toLowerCase(),nickname,role:'member',approved:false,approvalRequestedAt:firebase.firestore.FieldValue.serverTimestamp(),class:document.getElementById('reg-class').value,power});
                 const verified=await store.doc('users/'+cred.user.uid).get({source:'server'});
-                if(verified.exists && cloudUser?.uid===cred.user.uid)startCloudAfterVerifiedProfile(cred.user.uid,authGateSequence);
+                if(verified.exists && verified.data().approved!==false && cloudUser?.uid===cred.user.uid)startCloudAfterVerifiedProfile(cred.user.uid,authGateSequence);
               } catch(e) {await auth.signOut();throw new Error('계정은 생성되었지만 프로필 저장에 실패했습니다. 관리자에게 문의하세요. '+errorText(e));}
-              alert('회원가입 완료! 로그인 아이디와 게임 닉네임은 서로 독립적입니다.');
+              alert('가입 신청이 완료되었습니다. 관리자가 승인한 후 이용할 수 있습니다.');
               isRegisterMode=false;
             } else {
               await auth.setPersistence(document.getElementById('auto-login-check').checked?firebase.auth.Auth.Persistence.LOCAL:firebase.auth.Auth.Persistence.SESSION);
@@ -1559,7 +1560,10 @@ const subscriptions={
               if(!doc.exists){await auth.signOut();throw new Error('회원 정보가 없거나 탈퇴 처리된 계정입니다.');}
                                                                                       
               const verified=await store.doc('users/'+cred.user.uid).get({source:'server'});
-              if(verified.exists && cloudUser?.uid===cred.user.uid) {
+              if(verified.exists && verified.data().approved===false) {
+                showAuthError('관리자 가입 승인을 기다리는 계정입니다. 승인 후 다시 로그인해 주세요.');
+              }
+              if(verified.exists && verified.data().approved!==false && cloudUser?.uid===cred.user.uid) {
                 startCloudAfterVerifiedProfile(cred.user.uid,authGateSequence);
               }
             }
@@ -6076,5 +6080,162 @@ html body #class-pages > .class-page[data-page="items"] #class-item-slot #tier-l
   background:#fff7e7!important; border-color:#ead8b7!important; border-left:5px solid #b68a39!important;
 }
 </style>
+<style id="class-v144-management-style">
+#class-v144-admin-tools{border:1px solid #dfc7ad;border-radius:13px;padding:14px;margin:12px 0;background:#fff8ee;color:#412b1c}
+#class-v144-admin-tools button,.class-v144-action{background:#65432c;color:#fff;padding:8px 12px;border-radius:8px;font-weight:700;font-size:12px;margin:3px}
+#class-v144-admin-tools .danger{background:#a33535}
+#class-v144-editor{position:fixed;inset:0;z-index:9990;background:#0009;display:flex;align-items:center;justify-content:center;padding:12px}
+#class-v144-editor[hidden]{display:none!important}
+#class-v144-editor .v144-card{background:#fffaf5;border:1px solid #d7b89e;border-radius:16px;color:#392719;width:min(850px,100%);max-height:88vh;overflow:auto;padding:18px}
+#class-v144-editor .v144-row{display:grid;grid-template-columns:110px 1fr;gap:8px;border-bottom:1px solid #ead9c8;padding:8px;align-items:start}
+#class-v144-editor .v144-checks{display:flex;gap:8px;flex-wrap:wrap}
+#class-v144-editor label{font-size:12px;display:inline-flex;align-items:center;gap:4px;background:#f4e8dd;border-radius:7px;padding:7px}
+#class-v144-editor input{accent-color:#68462f}
+#class-v144-editor button{padding:9px 14px;border-radius:9px;background:#61432d;color:white;margin:5px}
+#class-v144-editor button:disabled{opacity:.5}
+#class-v144-editor .v144-danger{background:#a33535}
+@media(max-width:600px){#class-v144-editor .v144-row{grid-template-columns:1fr}}
+</style>
+<div id="class-v144-editor" hidden role="dialog" aria-modal="true">
+  <div class="v144-card"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+    <h3 id="class-v144-editor-title" style="font-size:19px;font-weight:800">보스 참여 관리</h3><button onclick="classV144CloseEditor()">닫기 ×</button></div>
+    <div id="class-v144-editor-info" style="font-size:12px;margin:10px 0;color:#765138"></div>
+    <div id="class-v144-editor-rows"></div>
+    <div style="text-align:right"><button onclick="classV144CloseEditor()">취소</button><button id="class-v144-editor-save" onclick="classV144SaveScore()">변경사항 서버 저장</button></div>
+  </div>
+</div>
+<script id="class-v144-approval-and-score">
+// V144: 가입 승인 및 관리자 보스기록 관리. 권한의 최종 검증은 Firestore 보안규칙에서 수행해야 합니다.
+let classV144EditorUid=null, classV144EditorWeek=null, classV144EditorBaseline=null;
+const classV144Manager=()=>Boolean(cloudUser && profileDocs.get(cloudUser.uid)?.approved!==false && ['web_admin','master','staff'].includes(profileDocs.get(cloudUser.uid)?.role));
+const classV144Master=()=>Boolean(cloudUser && profileDocs.get(cloudUser.uid)?.approved!==false && ['web_admin','master'].includes(profileDocs.get(cloudUser.uid)?.role));
+const classV144Admin=()=>Boolean(cloudUser?.uid===ADMIN_UID && profileDocs.get(cloudUser.uid)?.role==='web_admin' && profileDocs.get(cloudUser.uid)?.approved!==false);
+function classV144EnsureTools(){
+  const panel=document.getElementById('user-manage-list');
+  if(!panel || !classV144Manager())return;
+  let tools=document.getElementById('class-v144-admin-tools');
+  if(!tools){tools=document.createElement('section');tools.id='class-v144-admin-tools';panel.before(tools);}
+  const pending=classV144Master()?[...profileDocs].filter(([uid,d])=>d.approved===false && d.role!=='web_admin'):[];
+  tools.innerHTML=(classV144Master()?'<strong style="display:block;margin-bottom:7px">가입 승인 대기 ('+pending.length+'명)</strong>':'') +
+    (classV144Master()?(pending.length?pending.map(([uid,d])=>'<div style="padding:9px 0;border-bottom:1px solid #ead5bf">'+escapeHtml(d.nickname||uid)+' <small>('+escapeHtml(d.loginId||uid)+', '+escapeHtml(d.class||'')+', 전투력 '+Number(d.power||0).toLocaleString()+')</small><div><button data-v144-approve="'+escapeAttribute(uid)+'">가입 승인</button><button class="danger" data-v144-reject="'+escapeAttribute(uid)+'">가입 거절</button></div></div>').join(''):'<div style="font-size:12px">현재 대기 중인 신청이 없습니다.</div>'):'')+
+    '<div style="margin-top:10px;font-size:12px">아래 승인 회원의 [보스 점수 관리] 버튼으로 개별 체크를 수정합니다.</div>'+
+    (classV144Admin()?'<div style="border-top:1px solid #d9c1a6;margin-top:10px;padding-top:10px"><button class="danger" id="class-v144-reset" type="button">테스트 참여 기록 초기화 (배포 전 1회)</button><div style="font-size:11px;margin-top:5px">모든 보스 체크·쟁/공성전 주간 점수·주차 보관 기록을 초기화합니다. 회원 및 보스 일정은 유지합니다.</div></div>':'');
+  tools.querySelectorAll('[data-v144-approve]').forEach(b=>b.addEventListener('click',()=>classV144Decide(b.dataset.v144Approve,true)));
+  tools.querySelectorAll('[data-v144-reject]').forEach(b=>b.addEventListener('click',()=>classV144Decide(b.dataset.v144Reject,false)));
+  tools.querySelector('#class-v144-reset')?.addEventListener('click',classV144ResetTest);
+  for(const [uid,d] of profileDocs){
+    if(d.approved===false)continue;
+    const member=(db.users||[]).find(u=>u.uid===uid);
+    if(!member)continue;
+    const row=Array.from(panel.children).find(el=>el.querySelector('span')?.textContent===member.id);
+    if(row && !row.querySelector('[data-v144-score]')){
+      const b=document.createElement('button');b.type='button';b.className='class-v144-action';b.textContent='보스 점수 관리';b.dataset.v144Score=uid;
+      b.addEventListener('click',()=>classV144OpenEditor(uid));row.appendChild(b);
+    }
+  }
+}
+const classV144OriginalOpenUsers=openUserManageModal;
+openUserManageModal=function(){classV144OriginalOpenUsers();classV144EnsureTools();};
+async function classV144Decide(uid,approved){
+ if(!classV144Master())return alert('마스터 이상 권한이 필요합니다.');
+ const d=profileDocs.get(uid);if(!d||d.role==='web_admin'||d.approved!==false)return alert('처리할 승인 대기 계정이 없습니다.');
+ if(!confirm((d.nickname||uid)+' 님의 가입 신청을 '+(approved?'승인':'거절')+'할까요?'))return;
+ try{
+  await store.runTransaction(async tx=>{
+   const ref=store.doc('users/'+uid),snap=await tx.get(ref);
+   if(!snap.exists||snap.data().approved!==false||snap.data().role==='web_admin')throw new Error('신청 상태가 변경되었습니다.');
+   tx.update(ref,{approved:!!approved,approvalDecidedAt:firebase.firestore.FieldValue.serverTimestamp(),approvalDecidedBy:cloudUser.uid});
+  });
+  alert(approved?'가입 승인이 완료되었습니다.':'가입 거절 상태로 변경했습니다.');
+  openUserManageModal();
+ }catch(e){alert('처리 실패: '+errorText(e));}
+}
+function classV144CloseEditor(){document.getElementById('class-v144-editor').hidden=true;classV144EditorUid=null;classV144EditorBaseline=null;}
+async function classV144OpenEditor(uid){
+ if(!classV144Manager())return alert('운영진 이상 권한이 필요합니다.');
+ const member=profileDocs.get(uid);if(!member||member.approved===false)return alert('승인된 회원만 관리할 수 있습니다.');
+ try{
+  const snap=await store.doc('bossRecords/'+uid).get({source:'server'});
+  const entries=snap.exists?clone(snap.data().entries||{}):{};
+  classV144EditorUid=uid;classV144EditorWeek=currentWeekKey();classV144EditorBaseline=entries;
+  const monday=kstDateFromKey(classV144EditorWeek,12),rows=[];
+  for(let offset=0;offset<7;offset++){
+    const day=new Date(monday.getTime()+offset*86400000);
+    const stamp=localDateKey(day),short=['일','월','화','수','목','금','토'][kstCalendarDate(day).getUTCDay()];
+    const boxes=[];
+    for(let i=0;i<db.bossListDef.length;i++){
+      const boss=db.bossListDef[i];
+      const slots=getBossOccurrencesForDay(boss,day);
+      slots.forEach((slot,slotIndex)=>{
+        const key='slot_'+stamp+'_'+boss.name+'_'+slot.label;
+        const legacy=short+'_'+boss.name+'_'+i;
+        const checked=entries[key]===true||(entries[key]===undefined&&slotIndex===0&&entries[legacy]===true);
+        const score=Number(db.bossScores[boss.name]||0);
+        boxes.push('<label><input type="checkbox" data-v144-key="'+escapeAttribute(key)+'" data-v144-legacy="'+escapeAttribute(legacy)+'" '+(checked?'checked':'')+'> '+escapeHtml(boss.name)+' '+escapeHtml(String(slot.label))+' ('+score+'점)</label>');
+      });
+    }
+    rows.push('<div class="v144-row"><strong>'+escapeHtml(stamp)+' ('+short+')</strong><div class="v144-checks">'+(boxes.join('')||'등록 가능한 일정 없음')+'</div></div>');
+  }
+  document.getElementById('class-v144-editor-title').textContent=(member.nickname||uid)+' · 이번 주 보스 참여 수정';
+  document.getElementById('class-v144-editor-info').textContent='주차: '+classV144EditorWeek+' / 각 체크박스의 참여 여부를 수정합니다. 저장 시 해당 회원의 이번 주 기록만 변경됩니다.';
+  document.getElementById('class-v144-editor-rows').innerHTML=rows.join('');
+  document.getElementById('class-v144-editor').hidden=false;
+ }catch(e){alert('기록 읽기 실패: '+errorText(e));}
+}
+async function classV144SaveScore(){
+ if(!classV144Manager()||!classV144EditorUid||!classV144EditorBaseline)return;
+ if(!classRegistrationAllowed())return alert('현재 주차가 마감되어 수정할 수 없습니다.');
+ const uid=classV144EditorUid,baseline=classV144EditorBaseline;
+ const inputs=[...document.querySelectorAll('#class-v144-editor-rows input[data-v144-key]')];
+ const changes={};
+ for(const input of inputs){
+  const key=input.dataset.v144Key,legacy=input.dataset.v144Legacy;
+  const prior=baseline[key]===true||(baseline[key]===undefined&&baseline[legacy]===true);
+  if(input.checked!==prior)changes[key]=input.checked;
+ }
+ if(!Object.keys(changes).length)return alert('변경된 체크 기록이 없습니다.');
+ if(!confirm('변경된 '+Object.keys(changes).length+'개 체크 기록을 서버에 저장할까요?'))return;
+ const button=document.getElementById('class-v144-editor-save');button.disabled=true;
+ try{
+  await store.runTransaction(async tx=>{
+    const ref=store.doc('bossRecords/'+uid),snap=await tx.get(ref),remote=snap.exists?(snap.data().entries||{}):{};
+    const updated={...remote};
+    for(const [key,value] of Object.entries(changes)){
+      const input=inputs.find(i=>i.dataset.v144Key===key),legacy=input?.dataset.v144Legacy;
+      const prev=baseline[key]===true||(baseline[key]===undefined&&baseline[legacy]===true);
+      const now=remote[key]===true||(remote[key]===undefined&&remote[legacy]===true);
+      if(prev!==now)throw new Error('다른 기기에서 해당 기록을 수정했습니다. 다시 열어 확인해 주세요.');
+      updated[key]=value;
+      if(legacy && Object.prototype.hasOwnProperty.call(updated,legacy))delete updated[legacy];
+    }
+    tx.set(ref,{entries:updated},{merge:true});
+  });
+  classV144CloseEditor();alert('회원 보스 기록을 수정했습니다.');
+ }catch(e){alert('저장 실패: '+errorText(e));}finally{button.disabled=false;}
+}
+async function classV144ResetTest(){
+ if(!classV144Admin())return alert('웹 관리자 전용입니다.');
+ if(!cloudReady||!sharedDataLoaded)return alert('서버 로딩을 완료한 뒤 다시 시도하세요.');
+ if(!confirm('주의: 모든 회원의 보스 참여 체크, 쟁/공성전 참여 데이터, 주차별 보관 기록을 삭제합니다. 회원 계정·전투력·보스 시간표는 유지합니다. 계속할까요?'))return;
+ const phrase=prompt('실제 삭제하려면 다음 문구를 정확히 입력하세요.\n테스트기록초기화');
+ if(phrase!=='테스트기록초기화')return alert('취소했습니다.');
+ try{
+  await waitForPendingSaves();
+  const collections=await Promise.all([store.collection('bossRecords').get({source:'server'}),store.collection('guildPrivate').get({source:'server'})]);
+  const sharedRef=store.doc('guildData/main'),sharedSnap=await sharedRef.get({source:'server'});
+  const originalShared=sharedSnap.exists?sharedSnap.data():{};
+  const backup={backupAt:new Date().toISOString(),purpose:'V144 deployment reset',bossRecords:collections[0].docs.map(d=>({uid:d.id,data:d.data()})),guildPrivate:collections[1].docs.map(d=>({id:d.id,data:d.data()})),participationSystem:originalShared.participationSystem||null,guildDiamondsByWeek:originalShared.guildDiamondsByWeek||null,activeWeekKey:originalShared.activeWeekKey||null,registrationGate:originalShared.registrationGate||null};
+  const blob=new Blob([JSON.stringify(backup,(key,value)=>value&&typeof value.toDate==='function'?value.toDate().toISOString():value,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='CLASS_test_backup_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);
+  if(!confirm('테스트 백업 JSON 파일 다운로드를 확인했나요? 확인을 누르면 서버에서 실제로 삭제합니다.'))return;
+  const refs=[...collections[0].docs.map(d=>d.ref),...collections[1].docs.filter(d=>d.id==='archives'||d.id.startsWith('archiveBackup_')).map(d=>d.ref)];
+  // Batch size is kept below Firestore's 500-write limit. Deletion remains irreversible without backup restore tooling.
+  for(let i=0;i<refs.length;i+=400){const batch=store.batch();refs.slice(i,i+400).forEach(ref=>batch.delete(ref));await batch.commit();}
+  await sharedRef.set({participationSystem:{ratios:originalShared.participationSystem?.ratios||{reserve:5,operations:20,war:55,boss:20},weeks:{}},guildDiamondsByWeek:{},activeWeekKey:calendarWeekKey(),registrationGate:{weekKey:calendarWeekKey(),closed:false,resetAt:firebase.firestore.FieldValue.serverTimestamp(),resetBy:cloudUser.uid}},{merge:true});
+  alert('초기화 완료. 보스 체크/주간 참여/보관 기록이 정리되었습니다. 새로고침하여 확인하세요.');
+  location.reload();
+ }catch(e){alert('초기화 일부 또는 전체 실패: '+errorText(e)+'\n백업 파일을 보관하고 Firebase 데이터를 확인해 주세요.');}
+}
+</script>
 </body>
 </html>

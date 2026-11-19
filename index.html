@@ -516,8 +516,10 @@ html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!impor
 #class-v150-item-modal label{display:block;font-size:13px;font-weight:750;color:#59402e;margin:9px 0}
 #class-v150-item-modal input,#class-v150-item-modal select{display:block;width:100%;padding:11px 12px;margin-top:5px;box-sizing:border-box;border-radius:9px;border:1px solid #d6c3b1;background:#fff;color:#35271e}
 #class-v150-item-modal .class-v150-buttons{display:flex;gap:9px;margin-top:19px}
-#class-v150-item-modal .class-v150-buttons button{flex:1;padding:11px;border-radius:9px;background:#eee1d2;color:#4a3020;font-size:13px;font-weight:800}
-#class-v150-item-modal .class-v150-buttons button[type=submit]{background:#63422e;color:#fff}
+#class-v150-item-modal .class-v150-buttons button{flex:1;padding:11px;border-radius:9px;background:#fff!important;color:#202124!important;border:1px solid #aeb4bd!important;font-size:13px;font-weight:800;box-shadow:none!important}
+#class-v150-item-modal .class-v150-buttons button[type=submit]{background:#24272d!important;color:#fff!important;border:1px solid #24272d!important}
+#class-v150-item-modal .class-v150-buttons button[type=button]:hover{background:#f1f2f4!important}
+#class-v150-item-modal .class-v150-buttons button[type=submit]:hover{background:#111318!important}
 #class-v150-item-modal button:disabled{opacity:.55;cursor:wait}
 </style>
 
@@ -6437,7 +6439,7 @@ async function classV144ResetTest(){
       <label>등급<select id="class-v150-grade"><option value="">없음</option><option>일반</option><option>고급</option><option>희귀</option><option>영웅</option><option>전설</option></select></label>
       <label>기준가 (다이아)<input id="class-v150-price" type="number" min="0" step="1" required></label>
       <label>분배 상태<select id="class-v150-status"><option value="waiting">분배 대기</option><option value="completed">분배완료</option></select></label>
-      <div class="class-v150-buttons"><button type="button" onclick="classV150CloseItemEdit()">취소</button><button id="class-v150-submit" type="submit">수정 저장</button></div>
+      <div class="class-v150-buttons"><button type="button" onclick="classV150CloseItemEdit()">취소</button><button id="class-v150-submit" type="submit">저장</button></div>
     </form>
   </div>
 </div>

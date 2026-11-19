@@ -458,6 +458,20 @@ html body #class-pages > .class-page[data-page="admin"] > .class-card{
 #tier-manage-modal .class-tier-order-button:hover:not(:disabled){background:#eedbc9!important}
 #tier-manage-modal .class-tier-order-button:disabled{opacity:.35;cursor:not-allowed}
 </style>
+<style id="class-v147-visible-tier-order">
+.class-v147-dist-admin-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+#tier-list-view .class-v147-tier-card{display:flex!important;align-items:center;gap:10px;justify-content:space-between}
+#tier-list-view .class-v147-tier-content{flex:1;min-width:0;overflow-wrap:anywhere}
+#tier-list-view .class-v147-tier-controls{display:flex;gap:5px;align-items:center;flex-shrink:0}
+#tier-list-view .class-v147-tier-controls button{
+ display:inline-flex!important;align-items:center;justify-content:center;width:32px;height:31px;
+ border:1px solid #c7a98b!important;background:#fffaf5!important;color:#5f422f!important;
+ border-radius:7px;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 1px 3px #0001
+}
+#tier-list-view .class-v147-tier-controls button:hover:not(:disabled){background:#ecddce!important}
+#tier-list-view .class-v147-tier-controls button:disabled{opacity:.33;cursor:not-allowed}
+@media(max-width:650px){.class-v147-dist-admin-actions{gap:5px}.class-v147-dist-admin-actions .class-section-manage-btn{font-size:11px!important;padding:7px 9px!important}#tier-list-view .class-v147-tier-controls button{width:29px;height:29px}}
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
 
@@ -648,7 +662,10 @@ html body #class-pages > .class-page[data-page="admin"] > .class-card{
                         <h2 id="panel-title-3" class="text-lg font-bold text-amber-400 flex items-center">
                             <i class="fa-solid fa-coins mr-2"></i> 분배 관리
                         </h2>
-                        <button type="button" class="class-section-manage-btn" id="class-item-manage-trigger" onclick="window.classV84OpenItemManagement()" style="display:none" aria-label="분배 아이템 등록 및 수정"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> 분배 아이템 등록 및 수정</button>
+                        <div class="class-v147-dist-admin-actions">
+                            <button type="button" class="class-section-manage-btn" id="class-tier-manage-trigger" onclick="openTierManageModal()" style="display:none" aria-label="분배 기준 수정"><i class="fa-solid fa-list-check" aria-hidden="true"></i> 분배 기준 수정</button>
+                            <button type="button" class="class-section-manage-btn" id="class-item-manage-trigger" onclick="window.classV84OpenItemManagement()" style="display:none" aria-label="분배 아이템 등록 및 수정"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> 아이템 등록</button>
+                        </div>
                     </div>
                     <div class="flex space-x-2 mb-4">
                         <button onclick="switchTab('dist-기준', '3')" id="btn-tab-dist-기준-3" data-default-label="분배 기준" class="flex-1 py-1.5 text-xs font-bold rounded-lg bg-amber-500 text-slate-950 transition cursor-pointer">분배 기준</button>
@@ -912,7 +929,7 @@ html body #class-pages > .class-page[data-page="admin"] > .class-card{
                     <input id="new-tier-note" placeholder="분배 방식 / 비고 (선택)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
                     <button onclick="addTier()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-lg text-sm">분배 기준 등록</button>
                 </div>
-                <p class="text-xs text-slate-400">▲ ▼ 버튼으로 같은 분류(장비는 무기·방어구·장신구별) 안에서 순서를 변경합니다. 변경 즉시 서버에 저장되어 길드원에게 동일하게 표시됩니다. 항목의 내용 수정은 [수정 저장]을 사용하세요.</p>
+                <p class="text-xs text-slate-400">기준 순서 변경은 분배 관리 → 분배 기준의 실제 목록에서 ▲ ▼ 버튼을 눌러 진행하세요. 이 창에서는 기준의 이름·등급·가격·비고를 수정할 수 있습니다.</p>
                 <div id="admin-tier-list" class="space-y-2"></div>
             </div>
         </div>
@@ -1917,6 +1934,7 @@ const subscriptions={
             } finally {
                 tierReorderSaving = false;
                 renderAdminTierList();
+                renderTiers();
             }
         }
         function renderAdminTierList() {
@@ -1933,14 +1951,7 @@ const subscriptions={
                         <input id="tier-price-${index}" type="number" min="0" placeholder="미정은 비워두기" value="${tier.price == null ? '' : Number(tier.price)}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
                         <input id="tier-note-${index}" placeholder="분배 방식/비고" value="${escapeAttribute(tier.note||'')}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
                     </div>
-                    <div class="flex items-center justify-between gap-2 flex-wrap">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs text-slate-400">표시 순서</span>
-                            <button type="button" aria-label="${escapeAttribute(tier.name)} 순서 위로" title="같은 분류에서 위로" onclick="moveTier(${index},-1)" ${tierReorderSaving || !db.tiers.slice(0,index).some(t=>tierReorderGroup(t)===tierReorderGroup(tier))?'disabled':''} class="class-tier-order-button">▲</button>
-                            <button type="button" aria-label="${escapeAttribute(tier.name)} 순서 아래로" title="같은 분류에서 아래로" onclick="moveTier(${index},1)" ${tierReorderSaving || !db.tiers.slice(index+1).some(t=>tierReorderGroup(t)===tierReorderGroup(tier))?'disabled':''} class="class-tier-order-button">▼</button>
-                        </div>
-                        <div class="flex items-center gap-2"><button type="button" onclick="saveTier(${index})" class="bg-amber-500 text-slate-950 font-bold px-3 py-2 rounded text-xs">수정 저장</button><button type="button" onclick="deleteTier(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
-                    </div>
+                    <div class="flex justify-end gap-2"><button type="button" onclick="saveTier(${index})" class="bg-amber-500 text-slate-950 font-bold px-3 py-2 rounded text-xs">수정 저장</button><button type="button" onclick="deleteTier(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
                 </div>`).join('') || '<p class="text-slate-400 text-sm">등록된 기준이 없습니다.</p>';
         }
         function addTier() {
@@ -2190,13 +2201,21 @@ const subscriptions={
                     ).join('');
                 }
             }
-            const rows = db.tiers.filter(t => t.category === activeTierCategory && (
-                activeTierCategory !== '장비' || String(t.name||'').includes(activeEquipmentType)
+            // Keep the visible order exactly aligned with the persisted db.tiers order.
+            const rows = db.tiers.map((tier,index) => ({tier,index})).filter(({tier}) => tier.category === activeTierCategory && (
+                activeTierCategory !== '장비' || String(tier.name||'').includes(activeEquipmentType)
             ));
-            document.getElementById('tier-list-view').innerHTML = rows.map(t =>
-                `<div class="tier-price-card ${tierRarityClass(t)} bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 text-sm">
-                    <div class="tier-price-line"><span class="class-tier-rarity-name font-bold ${tierRarityClass(t)}" style="color:${tierRarityColor(t)} !important;-webkit-text-fill-color:${tierRarityColor(t)} !important">${escapeHtml(t.name)}</span><span class="class-tier-separator" aria-hidden="true">·</span><span class="class-tier-price font-bold">${t.price == null ? '미정 / 별도 기준' : Number(t.price).toLocaleString()+' 다이아'}</span></div>
-                    ${t.note ? `<div class="text-slate-400 mt-1 text-xs">${escapeHtml(t.note)}</div>` : ''}
+            const canReorder = isCurrentAdmin();
+            document.getElementById('tier-list-view').innerHTML = rows.map(({tier:t,index},position) =>
+                `<div class="tier-price-card class-v147-tier-card ${tierRarityClass(t)} bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 text-sm">
+                    <div class="class-v147-tier-content">
+                        <div class="tier-price-line"><span class="class-tier-rarity-name font-bold ${tierRarityClass(t)}" style="color:${tierRarityColor(t)} !important;-webkit-text-fill-color:${tierRarityColor(t)} !important">${escapeHtml(t.name)}</span><span class="class-tier-separator" aria-hidden="true">·</span><span class="class-tier-price font-bold">${t.price == null ? '미정 / 별도 기준' : Number(t.price).toLocaleString()+' 다이아'}</span></div>
+                        ${t.note ? `<div class="text-slate-400 mt-1 text-xs">${escapeHtml(t.note)}</div>` : ''}
+                    </div>
+                    ${canReorder ? `<div class="class-v147-tier-controls" aria-label="${escapeAttribute(t.name)} 순서 이동">
+                        <button type="button" title="위로 이동" aria-label="${escapeAttribute(t.name)} 위로 이동" onclick="moveTier(${index},-1)" ${position===0 || tierReorderSaving?'disabled':''}>▲</button>
+                        <button type="button" title="아래로 이동" aria-label="${escapeAttribute(t.name)} 아래로 이동" onclick="moveTier(${index},1)" ${position===rows.length-1 || tierReorderSaving?'disabled':''}>▼</button>
+                    </div>` : ''}
                 </div>`).join('') || '<p class="text-slate-400 text-sm py-3">등록된 분배 기준이 없습니다.</p>';
         }
 
@@ -5101,7 +5120,7 @@ body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color
   function showAdminButtons(){
     try {
       const allowed = typeof isCurrentAdmin === 'function' && isCurrentAdmin();
-      for(const id of ['class-boss-manage-trigger','class-item-manage-trigger']){
+      for(const id of ['class-boss-manage-trigger','class-item-manage-trigger','class-tier-manage-trigger']){
         const el=document.getElementById(id);
         if(el) el.style.display=allowed?'inline-flex':'none';
       }

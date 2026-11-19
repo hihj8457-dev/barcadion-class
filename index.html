@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261119_V141_MEMBER_OWN_WAR_INPUT">
+    <meta name="class-build-id" content="CLASS_BUILD_20261119_V142_WAR_HISTORY_DELETE_FIX">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -4222,38 +4222,61 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
   ${manager()?`<details class="class-v140-history"><summary>▼ 쟁 점수 등록 내역 (${historyRows.length}건) · 눌러서 펼치기</summary><div class="class-v140-history-list">${historyRows.length?historyRows.join(''):'등록된 내역이 없습니다.'}</div>${historyRows.length?'<div class="class-v141-history-footer"><button type="button" class="class-v141-history-delete-all" onclick="classV141DeleteAllWarHistory(this)">현재 주차 등록 내역 전체 삭제</button></div>':''}</details>`:''}
 `;
  }
- // v141: The log is informational. Removing it MUST NOT alter the accumulated war scores.
- function classV141HistoryCopy(){
-   const log=weekData()?.warHistory;
-   return Array.isArray(log)?JSON.parse(JSON.stringify(log)):[];
+ // v142: Delete history against a fresh server snapshot. Never modify accumulated scores.
+ function classV142HistorySnapshot(){
+   const history=weekData()?.warHistory;
+   return Array.isArray(history)?JSON.parse(JSON.stringify(history)):[];
  }
- async function classV141CommitWarHistory(nextHistory,expectedHistory,targetWeek,button){
+ function classV142SameEntry(a,b){
+   if(!a||!b)return false;
+   const fields=['uid','name','points','from','to'];
+   return fields.every(k=>String(a[k]??'')===String(b[k]??''));
+ }
+ function classV142SameRecord(a,b){
+   if(!a||!b)return false;
+   return ['at','by','editorUid','type'].every(k=>String(a[k]??'')===String(b[k]??''));
+ }
+ async function classV142CommitHistory(action,button){
    if(!manager())return alert('운영진 이상만 등록 내역을 삭제할 수 있습니다.');
    if(!cloudReady||!store)return alert('서버 연결을 확인하세요.');
    if(button?.disabled)return;
    if(button)button.disabled=true;
    try{
      const ref=store.doc('guildData/main');
+     let committed=[];
      await store.runTransaction(async tx=>{
        const snap=await tx.get(ref);
        if(!snap.exists)throw new Error('길드 데이터를 찾을 수 없습니다.');
        const server=snap.data()||{};
-       if(server.activeWeekKey!==targetWeek)throw new Error('현재 주차가 변경되었습니다. 다시 확인해 주세요.');
-       const system=server.participationSystem||{};
-       const weeks=system.weeks||{};
-       const target=weeks[targetWeek]||{};
-       const current=Array.isArray(target.warHistory)?target.warHistory:[];
-       // Refuse stale views; a new registration or another staff edit may have changed the log.
-       if(JSON.stringify(current)!==JSON.stringify(expectedHistory))throw new Error('다른 사용자가 내역을 변경했습니다. 최신 목록을 확인하고 다시 시도해 주세요.');
-       const updated=JSON.parse(JSON.stringify(system));
-       updated.weeks=updated.weeks||{};
-       updated.weeks[targetWeek]=updated.weeks[targetWeek]||{};
-       updated.weeks[targetWeek].warHistory=nextHistory;
-       tx.set(ref,{participationSystem:updated},{merge:true});
+       if(server.activeWeekKey!==action.weekKey)throw new Error('현재 주차가 변경되었습니다. 화면을 갱신해 주세요.');
+       const weekDataRemote=server.participationSystem?.weeks?.[action.weekKey]||{};
+       const current=Array.isArray(weekDataRemote.warHistory)?weekDataRemote.warHistory:[];
+       const updated=current.map(record=>({...record,entries:Array.isArray(record.entries)?[...record.entries]:[]}));
+       if(action.type==='one'){
+         let hIndex=action.hIndex,eIndex=action.eIndex;
+         const valid=(h,i)=>classV142SameRecord(updated[h],action.record)&&classV142SameEntry(updated[h]?.entries?.[i],action.entry);
+         if(!valid(hIndex,eIndex)){
+           const matches=[];
+           updated.forEach((h,hi)=>{
+             if(!classV142SameRecord(h,action.record))return;
+             h.entries.forEach((e,ei)=>{if(classV142SameEntry(e,action.entry))matches.push([hi,ei]);});
+           });
+           if(matches.length!==1)throw new Error('대상 등록 내역이 변경되었거나 중복됩니다. 목록을 갱신해 주세요.');
+           [hIndex,eIndex]=matches[0];
+         }
+         updated[hIndex].entries.splice(eIndex,1);
+         if(!updated[hIndex].entries.length)updated.splice(hIndex,1);
+       }else{
+         const count=current.reduce((n,h)=>n+(Array.isArray(h.entries)?h.entries.length:0),0);
+         if(count!==action.expectedCount)throw new Error('삭제 확인 중 새 내역이 등록되었습니다. 목록을 갱신하고 다시 확인해 주세요.');
+         updated.length=0;
+       }
+       // Update only the target week's history field; preserve scores and all other weeks.
+       tx.update(ref,new firebase.firestore.FieldPath('participationSystem','weeks',action.weekKey,'warHistory'),updated);
+       committed=updated;
      });
-     // Keep the current view synchronized until the Firestore listener delivers an update.
      const local=weekData();
-     if(JSON.stringify(local.warHistory||[])===JSON.stringify(expectedHistory))local.warHistory=nextHistory;
+     local.warHistory=JSON.parse(JSON.stringify(committed));
      renderWar();
      alert('등록 내역을 삭제했습니다. 누적 쟁 점수는 변경되지 않았습니다.');
    }catch(e){console.error('쟁 점수 등록 내역 삭제 실패',e);alert('삭제 실패: '+(e.message||e));}
@@ -4261,25 +4284,21 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
  }
  window.classV141DeleteWarHistoryEntry=async function(hIndex,eIndex,button){
    if(!manager())return alert('운영진 이상만 삭제할 수 있습니다.');
-   const history=classV141HistoryCopy();
-   const entry=history[hIndex]?.entries?.[eIndex];
+   const history=classV142HistorySnapshot();
+   const record=history[hIndex],entry=record?.entries?.[eIndex];
    if(!entry)return alert('삭제할 내역을 찾지 못했습니다. 화면을 다시 열어 주세요.');
    const targetWeek=week();
-   const name=entry.name||entry.uid||'회원';
-   if(!confirm(`${weekLabel(targetWeek)}의 ${name} 쟁 점수 등록 내역 1건을 삭제할까요?\n누적 쟁 점수는 그대로 유지됩니다.`))return;
-   const updated=JSON.parse(JSON.stringify(history));
-   updated[hIndex].entries.splice(eIndex,1);
-   if(!updated[hIndex].entries.length)updated.splice(hIndex,1);
-   await classV141CommitWarHistory(updated,history,targetWeek,button);
+   if(!confirm(`${weekLabel(targetWeek)}의 ${entry.name||entry.uid||'회원'} 쟁 점수 등록 내역 1건을 삭제할까요?\n누적 쟁 점수는 그대로 유지됩니다.`))return;
+   await classV142CommitHistory({type:'one',weekKey:targetWeek,hIndex,eIndex,record,entry},button);
  };
  window.classV141DeleteAllWarHistory=async function(button){
    if(!manager())return alert('운영진 이상만 삭제할 수 있습니다.');
-   const history=classV141HistoryCopy();
+   const history=classV142HistorySnapshot();
    const count=history.reduce((n,h)=>n+(Array.isArray(h.entries)?h.entries.length:0),0);
    if(!count)return alert('삭제할 등록 내역이 없습니다.');
    const targetWeek=week();
    if(!confirm(`${weekLabel(targetWeek)} 쟁 점수 등록 내역 ${count}건을 모두 삭제할까요?\n실제 누적 쟁 점수와 보관 기록은 변경되지 않습니다.`))return;
-   await classV141CommitWarHistory([],history,targetWeek,button);
+   await classV142CommitHistory({type:'all',weekKey:targetWeek,expectedCount:count},button);
  };
  function renderSiege(){
   const el=$('class-siege-system');if(!el||typeof db==='undefined')return;

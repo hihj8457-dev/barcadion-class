@@ -438,6 +438,26 @@ html body [hidden] { display:none!important; }
 html body #app-container #class-pages #class-war-system table.class-v45-table tbody tr.class-war-own-row > td{background-color:#fbf0df!important;background-image:none!important}
 #class-war-system .class-v45-table tbody tr.class-war-own-row td:first-child{box-shadow:inset 4px 0 0 #b58a50!important}
 </style>
+<style id="class-v146-panel-background-and-tier-sort">
+/* Member tab's original warm ivory-blush background: #fffaf6 to #fcf4ec. */
+html body #class-pages > .class-page:is([data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]){
+  background:linear-gradient(180deg,#fffaf6 0%,#fcf4ec 100%)!important;
+}
+html body #class-pages > .class-page:is([data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]) .class-panel-slot > .dashboard-panel,
+html body #class-pages > .class-page:is([data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]) .class-panel-slot > .class-card,
+html body #class-pages > .class-page[data-page="items"] #class-item-slot > .dashboard-panel,
+html body #class-pages > .class-page[data-page="admin"] #class-admin-slot > .dashboard-panel,
+html body #class-pages > .class-page[data-page="admin"] > .class-card{
+  background:linear-gradient(180deg,#fffaf6 0%,#fcf4ec 100%)!important;
+}
+#tier-manage-modal .class-tier-order-button{
+  display:inline-flex;align-items:center;justify-content:center;min-width:33px;height:30px;
+  border-radius:7px;border:1px solid #cdb49e;background:#fffaf5!important;
+  color:#5a3826!important;font-weight:850;font-size:12px;cursor:pointer;
+}
+#tier-manage-modal .class-tier-order-button:hover:not(:disabled){background:#eedbc9!important}
+#tier-manage-modal .class-tier-order-button:disabled{opacity:.35;cursor:not-allowed}
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
 
@@ -892,6 +912,7 @@ html body #app-container #class-pages #class-war-system table.class-v45-table tb
                     <input id="new-tier-note" placeholder="분배 방식 / 비고 (선택)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
                     <button onclick="addTier()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-lg text-sm">분배 기준 등록</button>
                 </div>
+                <p class="text-xs text-slate-400">▲ ▼ 버튼으로 같은 분류(장비는 무기·방어구·장신구별) 안에서 순서를 변경합니다. 변경 즉시 서버에 저장되어 길드원에게 동일하게 표시됩니다. 항목의 내용 수정은 [수정 저장]을 사용하세요.</p>
                 <div id="admin-tier-list" class="space-y-2"></div>
             </div>
         </div>
@@ -1864,6 +1885,40 @@ const subscriptions={
         function tierRarityColor(tier) {
             return ({'일반':'#374151','고급':'#15803d','희귀':'#2563eb','영웅':'#dc2626','전설':'#a97700'})[tierGrade(tier)];
         }
+        // The public distribution view filters equipment by subtype; reorder within the same visible group.
+        function tierReorderGroup(tier) {
+            const category = tier?.category || '기타';
+            if (category !== '장비') return category;
+            const name = String(tier?.name || '');
+            const type = ['무기','방어구','장신구'].find(s => name.includes(s)) || '기타 장비';
+            return category + ':' + type;
+        }
+        let tierReorderSaving = false;
+        async function moveTier(index, step) {
+            if (!isCurrentAdmin()) return alert('관리자 권한이 필요합니다.');
+            if (tierReorderSaving) return;
+            if (!Number.isInteger(index) || index < 0 || index >= db.tiers.length || ![-1,1].includes(step)) return;
+            const group = tierReorderGroup(db.tiers[index]);
+            const sameGroupIndexes = db.tiers.map((tier,i) => tierReorderGroup(tier) === group ? i : -1).filter(i => i >= 0);
+            const position = sameGroupIndexes.indexOf(index);
+            const targetIndex = sameGroupIndexes[position + step];
+            if (targetIndex === undefined) return;
+            const prior = db.tiers.slice();
+            tierReorderSaving = true;
+            // Swap only the items that appear together in the public view.
+            [db.tiers[index],db.tiers[targetIndex]] = [db.tiers[targetIndex],db.tiers[index]];
+            renderAdminTierList(); renderTiers();
+            try {
+                await saveDB();
+            } catch (e) {
+                db.tiers = prior;
+                renderTiers();
+                alert('기준 순서를 저장하지 못했습니다. 서버 상태를 확인해 주세요.');
+            } finally {
+                tierReorderSaving = false;
+                renderAdminTierList();
+            }
+        }
         function renderAdminTierList() {
             document.getElementById('admin-tier-list').innerHTML = db.tiers.map((tier,index) => `
                 <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 space-y-2">
@@ -1878,7 +1933,14 @@ const subscriptions={
                         <input id="tier-price-${index}" type="number" min="0" placeholder="미정은 비워두기" value="${tier.price == null ? '' : Number(tier.price)}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
                         <input id="tier-note-${index}" placeholder="분배 방식/비고" value="${escapeAttribute(tier.note||'')}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
                     </div>
-                    <div class="flex justify-end gap-2"><button onclick="saveTier(${index})" class="bg-amber-500 text-slate-950 font-bold px-3 py-2 rounded text-xs">수정 저장</button><button onclick="deleteTier(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
+                    <div class="flex items-center justify-between gap-2 flex-wrap">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-slate-400">표시 순서</span>
+                            <button type="button" aria-label="${escapeAttribute(tier.name)} 순서 위로" title="같은 분류에서 위로" onclick="moveTier(${index},-1)" ${tierReorderSaving || !db.tiers.slice(0,index).some(t=>tierReorderGroup(t)===tierReorderGroup(tier))?'disabled':''} class="class-tier-order-button">▲</button>
+                            <button type="button" aria-label="${escapeAttribute(tier.name)} 순서 아래로" title="같은 분류에서 아래로" onclick="moveTier(${index},1)" ${tierReorderSaving || !db.tiers.slice(index+1).some(t=>tierReorderGroup(t)===tierReorderGroup(tier))?'disabled':''} class="class-tier-order-button">▼</button>
+                        </div>
+                        <div class="flex items-center gap-2"><button type="button" onclick="saveTier(${index})" class="bg-amber-500 text-slate-950 font-bold px-3 py-2 rounded text-xs">수정 저장</button><button type="button" onclick="deleteTier(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
+                    </div>
                 </div>`).join('') || '<p class="text-slate-400 text-sm">등록된 기준이 없습니다.</p>';
         }
         function addTier() {

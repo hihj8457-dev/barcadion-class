@@ -2107,7 +2107,7 @@ const subscriptions={
                 activeTierCategory !== '장비' || String(t.name||'').includes(activeEquipmentType)
             ));
             document.getElementById('tier-list-view').innerHTML = rows.map(t =>
-                `<div class="tier-price-card bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 text-sm">
+                `<div class="tier-price-card ${itemRarityClass(t)} bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 text-sm">
                     <div class="tier-price-line"><span class="class-tier-rarity-name font-bold ${itemRarityClass(t)}" style="color:${itemRarityColor(t)} !important;-webkit-text-fill-color:${itemRarityColor(t)} !important">${escapeHtml(t.name)}</span><span class="class-tier-separator" aria-hidden="true">·</span><span class="class-tier-price font-bold">${t.price == null ? '미정 / 별도 기준' : Number(t.price).toLocaleString()+' 다이아'}</span></div>
                     ${t.note ? `<div class="text-slate-400 mt-1 text-xs">${escapeHtml(t.note)}</div>` : ''}
                 </div>`).join('') || '<p class="text-slate-400 text-sm py-3">등록된 분배 기준이 없습니다.</p>';
@@ -2171,7 +2171,20 @@ const subscriptions={
             const filtered = (currentItemCategory === '전체' ? db.items : db.items.filter(i => i.category === currentItemCategory))
                 .filter(i => itemStatusFilter === '전체' || (itemStatusFilter === '분배 대기' ? !i.distributed : !!i.distributed))
                 .filter(i => !itemSearchText || String(i.name||'').toLowerCase().includes(itemSearchText))
-                .slice().sort((a,b) => Number(!!a.distributed) - Number(!!b.distributed));
+                .slice().sort((a,b) => {
+                    const statusOrder = Number(!!a.distributed) - Number(!!b.distributed);
+                    if (statusOrder) return statusOrder;
+                    const getRegisteredTime = item => {
+                        const id = String(item.id ?? '');
+                        const timestamp = id.match(/^(\d{13})(?:-|$)/);
+                        return timestamp ? Number(timestamp[1]) : Number(item.createdAtMs || item.createdAt || 0) || 0;
+                    };
+                    const timeA = getRegisteredTime(a), timeB = getRegisteredTime(b);
+                    if (timeA !== timeB) return timeB - timeA;
+                    const idA = String(a.id ?? ''), idB = String(b.id ?? '');
+                    if (/^\d+$/.test(idA) && /^\d+$/.test(idB)) return Number(idB) - Number(idA);
+                    return db.items.indexOf(b) - db.items.indexOf(a);
+                });
             const perPage = getItemsPerPage();
             const pages = Math.max(1, Math.ceil(filtered.length / perPage));
             itemPage = Math.max(1, Math.min(itemPage, pages));
@@ -5947,6 +5960,20 @@ html body #class-pages > .class-page[data-page="items"] #class-item-slot #item-m
   background:#fff1f1!important; border-color:#edcccc!important; border-left:5px solid #d65a5a!important;
 }
 html body #class-pages > .class-page[data-page="items"] #class-item-slot #item-market-list .class-item-row.class-rarity-legendary {
+  background:#fff7e7!important; border-color:#ead8b7!important; border-left:5px solid #b68a39!important;
+}
+</style>
+<style id="class-v142-tier-rarity-surface">
+html body #class-pages > .class-page[data-page="items"] #class-item-slot #tier-list-view .tier-price-card.class-rarity-advanced {
+  background:#eff9f1!important; border-color:#c5dfcb!important; border-left:5px solid #45945f!important;
+}
+html body #class-pages > .class-page[data-page="items"] #class-item-slot #tier-list-view .tier-price-card.class-rarity-rare {
+  background:#f0f6ff!important; border-color:#c5d9f5!important; border-left:5px solid #4b82cb!important;
+}
+html body #class-pages > .class-page[data-page="items"] #class-item-slot #tier-list-view .tier-price-card.class-rarity-heroic {
+  background:#fff1f1!important; border-color:#edcccc!important; border-left:5px solid #d65a5a!important;
+}
+html body #class-pages > .class-page[data-page="items"] #class-item-slot #tier-list-view .tier-price-card.class-rarity-legendary {
   background:#fff7e7!important; border-color:#ead8b7!important; border-left:5px solid #b68a39!important;
 }
 </style>

@@ -1200,6 +1200,10 @@ html body #class-pages > .class-page[data-page="admin"] > .class-card{
                userCloudStop=store.collection('users').onSnapshot({includeMetadataChanges:true},s=>{
                  profileDocs=new Map(s.docs.map(d=>[d.id,d.data()]));
                  allUsersLoaded=!s.metadata.fromCache;
+                 // 회원 관리 모달이 열려 있으면 실시간 스냅샷에 맞춰 대기 명단을 갱신합니다.
+                 if(!document.getElementById('user-manage-modal')?.classList.contains('hidden')) {
+                   classV144EnsureTools();
+                 }
                  if(!profileDocs.has(cloudUser?.uid)||profileDocs.get(cloudUser.uid)?.approved===false){cloudReady=false;checkLoginState();showAuthError('계정 승인 상태를 확인하세요.');return;}
                  scheduleCloudView();checkForcedPasswordChange();syncCloudSections();
                },e=>showAuthError('회원 정보 조회 실패: '+errorText(e)));
@@ -1537,7 +1541,7 @@ const subscriptions={
                                                                                 
                                                                     
             if(!s.exists || s.metadata.fromCache || s.metadata.hasPendingWrites)return;
-            if(s.data().approved===false){showAuthError('가입 승인 대기 중입니다. 관리자가 승인하면 자동으로 접속됩니다.');return;}
+            if(s.data().approved===false){showAuthError(s.data().approvalDecidedAt?'가입 신청이 거절된 계정입니다. 관리자에게 문의하세요.':'가입 승인 대기 중입니다. 관리자가 승인하면 자동으로 접속됩니다.');return;}
             startCloudAfterVerifiedProfile(uid, sequence);
           },e=>{
             if(sequence===authGateSequence)showAuthError('회원 정보 확인 실패: '+errorText(e));
@@ -1602,7 +1606,7 @@ const subscriptions={
                                                                                       
               const verified=await store.doc('users/'+cred.user.uid).get({source:'server'});
               if(verified.exists && verified.data().approved===false) {
-                showAuthError('관리자 가입 승인을 기다리는 계정입니다. 승인 후 다시 로그인해 주세요.');
+                showAuthError(verified.data().approvalDecidedAt?'가입 신청이 거절된 계정입니다. 관리자에게 문의하세요.':'관리자 가입 승인을 기다리는 계정입니다. 승인 후 다시 로그인해 주세요.');
               }
               if(verified.exists && verified.data().approved!==false && cloudUser?.uid===cred.user.uid) {
                 startCloudAfterVerifiedProfile(cred.user.uid,authGateSequence);
@@ -6216,7 +6220,7 @@ function classV144EnsureTools(){
   if(!panel || !classV144Manager())return;
   let tools=document.getElementById('class-v144-admin-tools');
   if(!tools){tools=document.createElement('section');tools.id='class-v144-admin-tools';panel.before(tools);}
-  const pending=classV144Master()?[...profileDocs].filter(([uid,d])=>d.approved===false && d.role!=='web_admin'):[];
+  const pending=classV144Master()?[...profileDocs].filter(([uid,d])=>d.approved===false && !d.approvalDecidedAt && d.role!=='web_admin'):[];
   tools.innerHTML=(classV144Master()?'<strong style="display:block;margin-bottom:7px">가입 승인 대기 ('+pending.length+'명)</strong>':'') +
     (classV144Master()?(pending.length?pending.map(([uid,d])=>'<div style="padding:9px 0;border-bottom:1px solid #ead5bf">'+escapeHtml(d.nickname||uid)+' <small>('+escapeHtml(d.loginId||uid)+', '+escapeHtml(d.class||'')+', 전투력 '+Number(d.power||0).toLocaleString()+')</small><div><button data-v144-approve="'+escapeAttribute(uid)+'">가입 승인</button><button class="danger" data-v144-reject="'+escapeAttribute(uid)+'">가입 거절</button></div></div>').join(''):'<div style="font-size:12px">현재 대기 중인 신청이 없습니다.</div>'):'')+
     '<div style="margin-top:10px;font-size:12px">아래 승인 회원의 [보스 점수 관리] 버튼으로 개별 체크를 수정합니다.</div>'+
@@ -6239,16 +6243,24 @@ const classV144OriginalOpenUsers=openUserManageModal;
 openUserManageModal=function(){classV144OriginalOpenUsers();classV144EnsureTools();};
 async function classV144Decide(uid,approved){
  if(!classV144Master())return alert('마스터 이상 권한이 필요합니다.');
- const d=profileDocs.get(uid);if(!d||d.role==='web_admin'||d.approved!==false)return alert('처리할 승인 대기 계정이 없습니다.');
+ const d=profileDocs.get(uid);if(!d||d.role==='web_admin'||d.approved!==false||d.approvalDecidedAt)return alert('처리할 승인 대기 계정이 없습니다.');
  if(!confirm((d.nickname||uid)+' 님의 가입 신청을 '+(approved?'승인':'거절')+'할까요?'))return;
  try{
   await store.runTransaction(async tx=>{
    const ref=store.doc('users/'+uid),snap=await tx.get(ref);
-   if(!snap.exists||snap.data().approved!==false||snap.data().role==='web_admin')throw new Error('신청 상태가 변경되었습니다.');
+   if(!snap.exists||snap.data().approved!==false||snap.data().approvalDecidedAt||snap.data().role==='web_admin')throw new Error('신청 상태가 변경되었습니다.');
    tx.update(ref,{approved:!!approved,approvalDecidedAt:firebase.firestore.FieldValue.serverTimestamp(),approvalDecidedBy:cloudUser.uid});
   });
-  alert(approved?'가입 승인이 완료되었습니다.':'가입 거절 상태로 변경했습니다.');
+  // 서버 커밋이 성공한 뒤 로컬 승인 목록도 갱신하여 모달이 즉시 최신 상태를 표시합니다.
+  // 다른 운영진이 동시에 처리한 경우에도 서버값을 우선합니다.
+  const fresh=await store.doc('users/'+uid).get({source:'server'});
+  if(fresh.exists)profileDocs.set(uid,fresh.data());else profileDocs.delete(uid);
+  if(approved){
+    // 승인된 회원이 기존 명단에 나타나도록 최신 클라우드 뷰를 갱신합니다.
+    buildCloudView();
+  }
   openUserManageModal();
+  alert(approved?'가입 승인이 완료되었습니다.':'가입이 거절되었습니다. 대기자 명단에서 제외했습니다.');
  }catch(e){alert('처리 실패: '+errorText(e));}
 }
 function classV144CloseEditor(){document.getElementById('class-v144-editor').hidden=true;classV144EditorUid=null;classV144EditorBaseline=null;}

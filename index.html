@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261120_V145_LOGIN_CROWN_TIER_GRADE">
+    <meta name="class-build-id" content="CLASS_BUILD_20261120_V150_ITEM_INLINE_EDIT_WALNUT_UI">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -471,6 +471,54 @@ html body #class-pages > .class-page[data-page="admin"] > .class-card{
 #tier-list-view .class-v147-tier-controls button:hover:not(:disabled){background:#ecddce!important}
 #tier-list-view .class-v147-tier-controls button:disabled{opacity:.33;cursor:not-allowed}
 @media(max-width:650px){.class-v147-dist-admin-actions{gap:5px}.class-v147-dist-admin-actions .class-section-manage-btn{font-size:11px!important;padding:7px 9px!important}#tier-list-view .class-v147-tier-controls button{width:29px;height:29px}}
+</style>
+
+<style id="class-v150-refinements">
+/* Compact tier ordering controls, visible only when the existing permission check permits them. */
+html body #tier-list-view .class-v147-tier-controls{gap:3px!important}
+html body #tier-list-view .class-v147-tier-controls button{
+  box-sizing:border-box!important;width:23px!important;min-width:23px!important;height:23px!important;
+  min-height:23px!important;padding:0!important;border-radius:5px!important;
+  font-size:9px!important;line-height:1!important;box-shadow:none!important;
+  background:#fcf7f1!important;border:1px solid #d5bca4!important;color:#775642!important
+}
+@media(max-width:600px){html body #tier-list-view .class-v147-tier-controls button{width:22px!important;min-width:22px!important;height:22px!important;min-height:22px!important}}
+/* Give normal-grade rules the same tinted-card treatment as other grades. */
+html body #class-pages > .class-page[data-page="items"] #class-item-slot #tier-list-view .tier-price-card.class-rarity-default{
+  background:#f2f3f5!important;border:1px solid #d7dbe0!important;border-left:5px solid #a5aab3!important;
+}
+/* Neutral, elegant member combat-power color. */
+html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-power .class-member-power-value,
+html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-power{
+  color:#74533e!important;-webkit-text-fill-color:#74533e!important;text-shadow:none!important;
+}
+/* Sidebar active state: walnut brown and muted antique gold instead of blue. */
+html body #class-nav button.active{
+  background:linear-gradient(135deg,#765139,#62412f)!important;border:1px solid #ad865f!important;
+  color:#fff9f0!important;-webkit-text-fill-color:#fff9f0!important;
+  box-shadow:inset 0 1px rgba(255,244,225,.15),0 2px 8px rgba(17,10,6,.12)!important;
+}
+html body #class-nav button.active i,html body #class-nav button.active span{color:#fff9f0!important;-webkit-text-fill-color:#fff9f0!important}
+/* Inline per-item editor button, separate from members' application action. */
+html body #item-market-list .class-item-action{display:inline-flex!important;gap:7px!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:wrap!important}
+html body #item-market-list .class-v150-edit-item{
+  appearance:none;background:#fff9f2!important;color:#684831!important;-webkit-text-fill-color:#684831!important;
+  border:1px solid #c9a98a!important;border-radius:7px!important;
+  padding:6px 10px!important;font-size:12px!important;font-weight:800!important;
+  line-height:1.2!important;min-width:52px!important;cursor:pointer!important;
+}
+html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!important}
+@media(max-width:650px){html body #item-market-list .class-item-action{width:auto!important;min-width:0!important} html body #item-market-list .class-v150-edit-item{min-width:45px!important;padding:6px!important}}
+#class-v150-item-modal[hidden]{display:none!important}
+#class-v150-item-modal{position:fixed;inset:0;z-index:10050;background:rgba(20,12,9,.74);display:flex;justify-content:center;align-items:center;padding:14px}
+#class-v150-item-modal .class-v150-dialog{width:min(500px,100%);max-height:90vh;overflow:auto;background:#fffaf5;border:1px solid #ccac8a;border-radius:17px;padding:22px;color:#35271e;box-shadow:0 18px 50px #0005}
+#class-v150-item-modal h3{font-size:19px;font-weight:850;color:#482f1d;margin-bottom:13px}
+#class-v150-item-modal label{display:block;font-size:13px;font-weight:750;color:#59402e;margin:9px 0}
+#class-v150-item-modal input,#class-v150-item-modal select{display:block;width:100%;padding:11px 12px;margin-top:5px;box-sizing:border-box;border-radius:9px;border:1px solid #d6c3b1;background:#fff;color:#35271e}
+#class-v150-item-modal .class-v150-buttons{display:flex;gap:9px;margin-top:19px}
+#class-v150-item-modal .class-v150-buttons button{flex:1;padding:11px;border-radius:9px;background:#eee1d2;color:#4a3020;font-size:13px;font-weight:800}
+#class-v150-item-modal .class-v150-buttons button[type=submit]{background:#63422e;color:#fff}
+#class-v150-item-modal button:disabled{opacity:.55;cursor:wait}
 </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
@@ -2317,7 +2365,9 @@ const subscriptions={
                     } else {
                         btnHtml = `<button data-item-action="apply" data-item-id="${escapeAttribute(item.id)}" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg font-bold cursor-pointer">신청</button>`;
                     }
-                    const adminBtn = '';  
+                    const adminBtn = isCurrentAdmin()
+                        ? `<button type="button" class="class-v150-edit-item" data-item-action="edit" data-item-id="${escapeAttribute(item.id)}" aria-label="${escapeAttribute(item.name)} 수정"><i class="fa-solid fa-pen" aria-hidden="true"></i> 수정</button>`
+                        : '';
                     html += `
                         <div class="class-item-row ${itemRarityClass(item)} ${item.distributed ? 'class-item-completed' : ''} bg-slate-900/60 p-3 rounded-xl border ${item.distributed ? 'border-emerald-500/40' : 'border-slate-700/50'}">
                             ${item.distributed ? '<div class="class-item-completed-overlay" aria-label="분배완료"><span>분배완료</span></div>' : ''}
@@ -2328,13 +2378,12 @@ const subscriptions={
                                     <span class="class-item-name font-bold ${itemRarityClass(item)}" style="color:${itemRarityColor(item)} !important;-webkit-text-fill-color:${itemRarityColor(item)} !important">${escapeDistributionText(itemDisplayName(item.name))}</span>
                                     <span class="class-item-price">기준가: ${Number(item.price || 0).toLocaleString()} 다이아</span>
                                 </div>
-                                <span class="class-item-action">${item.distributed ? '' : btnHtml}</span>
+                                <span class="class-item-action">${adminBtn}${item.distributed ? '' : btnHtml}</span>
                             </div>
                             <details class="class-item-applicants border-t border-slate-700/60 pt-2">
                                 <summary class="cursor-pointer text-slate-400">신청자 ${item.applicants.length}명 · 펼쳐보기</summary>
                                 <div class="class-item-applicant-names leading-6 mt-2">${applicantsHtml}</div>
                             </details>
-                            ${adminBtn ? `<div class="flex justify-end">${adminBtn}</div>` : ''}
                         </div>`;
                 });
             }
@@ -2349,6 +2398,7 @@ const subscriptions={
             if (!button) return;
             event.preventDefault();
             const id = button.dataset.itemId;
+            if (button.dataset.itemAction === 'edit') { classV150OpenItemEdit(id); return; }
             if (button.dataset.itemAction === 'apply') applyItem(id);
             if (button.dataset.itemAction === 'cancel') cancelItem(id);
         });
@@ -3943,6 +3993,7 @@ const kstWeek=calendarWeekKey();
             renderAdminItemList(); renderItems();
         }
         function editAdminItem(itemId) {
+            if (!isCurrentAdmin()) return alert('운영진 이상만 수정할 수 있습니다.');
             const item = db.items.find(i => String(i.id) === String(itemId)); if (!item) return;
             const name = prompt('아이템 이름 수정', item.name); if (name === null) return;
             const category = prompt('카테고리 입력 (장비 / 스킬북 / 편린 / 기타)', item.category); if (category === null) return;
@@ -6350,6 +6401,76 @@ async function classV144ResetTest(){
   location.reload();
  }catch(e){alert('초기화 일부 또는 전체 실패: '+errorText(e)+'\n백업 파일을 보관하고 Firebase 데이터를 확인해 주세요.');}
 }
+</script>
+
+<div id="class-v150-item-modal" hidden role="dialog" aria-modal="true" aria-labelledby="class-v150-item-title">
+  <div class="class-v150-dialog">
+    <h3 id="class-v150-item-title">분배 아이템 수정</h3>
+    <form id="class-v150-item-form" onsubmit="classV150SaveItemEdit(event)">
+      <label>아이템 이름<input id="class-v150-name" maxlength="180" required></label>
+      <label>분류<select id="class-v150-category"><option>장비</option><option>스킬북</option><option>편린</option><option>기타</option></select></label>
+      <label>등급<select id="class-v150-grade"><option value="">없음</option><option>일반</option><option>고급</option><option>희귀</option><option>영웅</option><option>전설</option></select></label>
+      <label>기준가 (다이아)<input id="class-v150-price" type="number" min="0" step="1" required></label>
+      <label>분배 상태<select id="class-v150-status"><option value="waiting">분배 대기</option><option value="completed">분배완료</option></select></label>
+      <div class="class-v150-buttons"><button type="button" onclick="classV150CloseItemEdit()">취소</button><button id="class-v150-submit" type="submit">수정 저장</button></div>
+    </form>
+  </div>
+</div>
+<script id="class-v150-item-editor-script">
+let classV150EditingItemId = null;
+let classV150EditingSaving = false;
+function classV150OpenItemEdit(itemId){
+  if(typeof isCurrentAdmin!=='function'||!isCurrentAdmin()){alert('운영진 이상만 수정할 수 있습니다.');return;}
+  const item=db.items.find(i=>String(i.id)===String(itemId));
+  if(!item){alert('아이템을 찾을 수 없습니다.');return;}
+  classV150EditingItemId=String(item.id);
+  document.getElementById('class-v150-name').value=itemDisplayName(item.name);
+  document.getElementById('class-v150-category').value=['장비','스킬북','편린','기타'].includes(item.category)?item.category:'기타';
+  document.getElementById('class-v150-grade').value=item.grade||itemRarity(item.name)||'';
+  document.getElementById('class-v150-price').value=Number(item.price||0);
+  document.getElementById('class-v150-status').value=item.distributed?'completed':'waiting';
+  document.getElementById('class-v150-item-modal').hidden=false;
+}
+function classV150CloseItemEdit(){
+  if(classV150EditingSaving)return;
+  document.getElementById('class-v150-item-modal').hidden=true;
+  classV150EditingItemId=null;
+}
+async function classV150SaveItemEdit(ev){
+  ev.preventDefault();
+  if(classV150EditingSaving)return;
+  if(typeof isCurrentAdmin!=='function'||!isCurrentAdmin()){alert('운영진 이상만 수정할 수 있습니다.');return;}
+  const item=db.items.find(i=>String(i.id)===classV150EditingItemId);
+  if(!item){alert('아이템을 찾지 못했습니다.');return;}
+  const name=document.getElementById('class-v150-name').value.trim();
+  const category=document.getElementById('class-v150-category').value;
+  const grade=document.getElementById('class-v150-grade').value;
+  const price=Number(document.getElementById('class-v150-price').value);
+  const status=document.getElementById('class-v150-status').value;
+  if(!name||!['장비','스킬북','편린','기타'].includes(category)||!['','일반','고급','희귀','영웅','전설'].includes(grade)||!Number.isSafeInteger(price)||price<0){alert('이름, 분류, 등급 및 기준가를 확인해 주세요.');return;}
+  const previous={name:item.name,category:item.category,grade:item.grade,price:item.price,distributed:item.distributed,distributedAtMs:item.distributedAtMs};
+  const previouslyDistributed=!!item.distributed;
+  item.name=name;item.category=category;item.grade=grade;item.price=price;
+  item.distributed=status==='completed';
+  item.distributedAtMs=item.distributed?(previouslyDistributed?(Number(previous.distributedAtMs)||Date.now()):Date.now()):0;
+  classV150EditingSaving=true;
+  const submit=document.getElementById('class-v150-submit');submit.disabled=true;
+  classSaveIndicator('아이템 수정 저장 중');
+  try{
+    await saveDB();
+    classSaveIndicator('아이템 수정 저장 완료');
+    classV150EditingSaving=false;
+    classV150CloseItemEdit();
+    renderItems();renderAdminItemList();
+  }catch(err){
+    Object.assign(item,previous);
+    classSaveIndicator('아이템 수정 저장 실패',true);
+    alert('아이템 수정 저장에 실패했습니다. 서버 연결 및 권한을 확인해 주세요.');
+    if(typeof classRestoreLastServerView==='function')classRestoreLastServerView();
+    renderItems();
+  }finally{classV150EditingSaving=false;submit.disabled=false;}
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('class-v150-item-modal')?.hidden===false)classV150CloseItemEdit();});
 </script>
 </body>
 </html>

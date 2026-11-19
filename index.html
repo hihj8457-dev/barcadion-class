@@ -520,6 +520,8 @@ html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!impor
 #class-v150-item-modal .class-v150-buttons button[type=submit]{background:#63422e;color:#fff}
 #class-v150-item-modal button:disabled{opacity:.55;cursor:wait}
 </style>
+
+
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
 
@@ -3860,7 +3862,7 @@ const kstWeek=calendarWeekKey();
                                 <option value="운영진" ${u.role === '운영진' ? 'selected' : ''}>운영진</option>
                                 <option value="길드원" ${u.role === '길드원' ? 'selected' : ''}>길드원</option>
                             </select>`}
-                            ${!u.isGuest && u.uid && isMasterOrWebAdministrator() && u.uid!==cloudUser?.uid && (isWebAdministrator() ? u.role!=='웹 관리자' : !['웹 관리자','마스터'].includes(u.role)) ? `<button type="button" onclick="openPasswordReset('${escapeAttribute(u.uid)}')" class="text-orange-300 hover:text-orange-200 px-2 py-1 text-xs border border-orange-700 rounded">비밀번호 초기화</button>` : ''}
+                            ${!u.isGuest && u.uid && isMasterOrWebAdministrator() && u.uid!==cloudUser?.uid && (isWebAdministrator() ? u.role!=='웹 관리자' : !['웹 관리자','마스터'].includes(u.role)) ? `<button type="button" onclick="openPasswordReset('${escapeAttribute(u.uid)}')" class="class-v151-password-warning px-2 py-1 text-xs border rounded">비밀번호 초기화</button>` : ''}
                             ${u.isGuest || (isMasterOrWebAdministrator() && (isWebAdministrator() ? u.role !== '웹 관리자' : !['웹 관리자','마스터'].includes(u.role)))?`<button onclick="deleteUser('${escapeAttribute(u.id)}')" class="text-red-400 hover:text-red-300 px-2 py-1 cursor-pointer"><i class="fa-solid fa-trash"></i></button>`:''}
                         </div>
                     </div>
@@ -6267,6 +6269,25 @@ const classV144Manager=()=>Boolean(cloudUser && profileDocs.get(cloudUser.uid)?.
 const classV144Master=()=>Boolean(cloudUser && profileDocs.get(cloudUser.uid)?.approved!==false && ['web_admin','master'].includes(profileDocs.get(cloudUser.uid)?.role));
 const classV149Approval=()=>classV144Manager(); // 운영진 이상은 가입 승인 및 거절 처리 가능
 const classV144Admin=()=>Boolean(cloudUser?.uid===ADMIN_UID && profileDocs.get(cloudUser.uid)?.role==='web_admin' && profileDocs.get(cloudUser.uid)?.approved!==false);
+let classV151ResetAvailable=false;
+let classV151ResetChecking=false;
+let classV151ResetBusy=false;
+async function classV151RefreshResetAvailability(){
+  if(!classV144Admin() || classV151ResetChecking || !store)return;
+  classV151ResetChecking=true;
+  try{
+    const snapshot=await store.doc('guildData/main').get({source:'server'});
+    const data=snapshot.exists?snapshot.data():{};
+    // v144~v150에서 이미 초기화를 했다면 다시 실행할 수 없습니다.
+    classV151ResetAvailable=!(data.testResetCompletedAt || data.registrationGate?.resetAt);
+  }catch(error){
+    console.error('초기화 사용 기록을 확인할 수 없습니다.',error);
+    classV151ResetAvailable=false;
+  }finally{
+    classV151ResetChecking=false;
+    classV144EnsureTools();
+  }
+}
 function classV144EnsureTools(){
   const panel=document.getElementById('user-manage-list');
   if(!panel || !classV144Manager())return;
@@ -6275,24 +6296,15 @@ function classV144EnsureTools(){
   const pending=classV149Approval()?[...profileDocs].filter(([uid,d])=>d.approved===false && !d.approvalDecidedAt && d.role!=='web_admin'):[];
   tools.innerHTML=(classV149Approval()?'<strong style="display:block;margin-bottom:7px">가입 승인 대기 ('+pending.length+'명)</strong>':'') +
     (classV149Approval()?(pending.length?pending.map(([uid,d])=>'<div style="padding:9px 0;border-bottom:1px solid #ead5bf">'+escapeHtml(d.nickname||uid)+' <small>('+escapeHtml(d.loginId||uid)+', '+escapeHtml(d.class||'')+', 전투력 '+Number(d.power||0).toLocaleString()+')</small><div><button data-v144-approve="'+escapeAttribute(uid)+'">가입 승인</button><button class="danger" data-v144-reject="'+escapeAttribute(uid)+'">가입 거절</button></div></div>').join(''):'<div style="font-size:12px">현재 대기 중인 신청이 없습니다.</div>'):'')+
-    '<div style="margin-top:10px;font-size:12px">아래 승인 회원의 [보스 점수 관리] 버튼으로 개별 체크를 수정합니다.</div>'+
-    (classV144Admin()?'<div style="border-top:1px solid #d9c1a6;margin-top:10px;padding-top:10px"><button class="danger" id="class-v144-reset" type="button">테스트 참여 기록 초기화 (배포 전 1회)</button><div style="font-size:11px;margin-top:5px">모든 보스 체크·쟁/공성전 주간 점수·주차 보관 기록을 초기화합니다. 회원 및 보스 일정은 유지합니다.</div></div>':'');
+    (classV144Admin() && classV151ResetAvailable?'<div style="border-top:1px solid #d9c1a6;margin-top:10px;padding-top:10px"><button class="danger" id="class-v144-reset" type="button">테스트 참여 기록 초기화 (배포 전 1회)</button><div style="font-size:11px;margin-top:5px">모든 보스 체크·쟁/공성전 주간 점수·주차 보관 기록을 초기화합니다. 회원 및 보스 일정은 유지합니다.</div></div>':'');
   tools.querySelectorAll('[data-v144-approve]').forEach(b=>b.addEventListener('click',()=>classV144Decide(b.dataset.v144Approve,true)));
   tools.querySelectorAll('[data-v144-reject]').forEach(b=>b.addEventListener('click',()=>classV144Decide(b.dataset.v144Reject,false)));
   tools.querySelector('#class-v144-reset')?.addEventListener('click',classV144ResetTest);
-  for(const [uid,d] of profileDocs){
-    if(d.approved===false)continue;
-    const member=(db.users||[]).find(u=>u.uid===uid);
-    if(!member)continue;
-    const row=Array.from(panel.children).find(el=>el.querySelector('span')?.textContent===member.id);
-    if(row && !row.querySelector('[data-v144-score]')){
-      const b=document.createElement('button');b.type='button';b.className='class-v144-action';b.textContent='보스 점수 관리';b.dataset.v144Score=uid;
-      b.addEventListener('click',()=>classV144OpenEditor(uid));row.appendChild(b);
-    }
-  }
+  // V151: 개별 회원의 보스 점수 관리 버튼을 표시하지 않습니다.
+  panel.querySelectorAll('[data-v144-score]').forEach(button=>button.remove());
 }
 const classV144OriginalOpenUsers=openUserManageModal;
-openUserManageModal=function(){classV144OriginalOpenUsers();classV144EnsureTools();};
+openUserManageModal=function(){classV144OriginalOpenUsers();classV144EnsureTools();void classV151RefreshResetAvailability();};
 async function classV144Decide(uid,approved){
  if(!classV149Approval())return alert('운영진 이상 권한이 필요합니다.');
  const d=profileDocs.get(uid);if(!d||d.role==='web_admin'||d.approved!==false||d.approvalDecidedAt)return alert('처리할 승인 대기 계정이 없습니다.');
@@ -6380,15 +6392,27 @@ async function classV144SaveScore(){
 }
 async function classV144ResetTest(){
  if(!classV144Admin())return alert('웹 관리자 전용입니다.');
+ if(classV151ResetBusy)return;
  if(!cloudReady||!sharedDataLoaded)return alert('서버 로딩을 완료한 뒤 다시 시도하세요.');
+ try{
+   const current=await store.doc('guildData/main').get({source:'server'});
+   const existing=current.exists?current.data():{};
+   if(existing.testResetCompletedAt || existing.registrationGate?.resetAt){
+     classV151ResetAvailable=false;classV144EnsureTools();
+     return alert('테스트 기록 초기화는 이미 사용 완료되어 다시 실행할 수 없습니다.');
+   }
+ }catch(error){return alert('초기화 사용 여부를 서버에서 확인하지 못했습니다. 다시 시도해 주세요.');}
  if(!confirm('주의: 모든 회원의 보스 참여 체크, 쟁/공성전 참여 데이터, 주차별 보관 기록을 삭제합니다. 회원 계정·전투력·보스 시간표는 유지합니다. 계속할까요?'))return;
  const phrase=prompt('실제 삭제하려면 다음 문구를 정확히 입력하세요.\n테스트기록초기화');
  if(phrase!=='테스트기록초기화')return alert('취소했습니다.');
+ classV151ResetBusy=true;
  try{
   await waitForPendingSaves();
   const collections=await Promise.all([store.collection('bossRecords').get({source:'server'}),store.collection('guildPrivate').get({source:'server'})]);
   const sharedRef=store.doc('guildData/main'),sharedSnap=await sharedRef.get({source:'server'});
   const originalShared=sharedSnap.exists?sharedSnap.data():{};
+  if(originalShared.testResetCompletedAt || originalShared.registrationGate?.resetAt)
+    throw new Error('이미 테스트 초기화를 사용한 서버입니다.');
   const backup={backupAt:new Date().toISOString(),purpose:'V144 deployment reset',bossRecords:collections[0].docs.map(d=>({uid:d.id,data:d.data()})),guildPrivate:collections[1].docs.map(d=>({id:d.id,data:d.data()})),participationSystem:originalShared.participationSystem||null,guildDiamondsByWeek:originalShared.guildDiamondsByWeek||null,activeWeekKey:originalShared.activeWeekKey||null,registrationGate:originalShared.registrationGate||null};
   const blob=new Blob([JSON.stringify(backup,(key,value)=>value&&typeof value.toDate==='function'?value.toDate().toISOString():value,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='CLASS_test_backup_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);
@@ -6396,10 +6420,11 @@ async function classV144ResetTest(){
   const refs=[...collections[0].docs.map(d=>d.ref),...collections[1].docs.filter(d=>d.id==='archives'||d.id.startsWith('archiveBackup_')).map(d=>d.ref)];
   // Batch size is kept below Firestore's 500-write limit. Deletion remains irreversible without backup restore tooling.
   for(let i=0;i<refs.length;i+=400){const batch=store.batch();refs.slice(i,i+400).forEach(ref=>batch.delete(ref));await batch.commit();}
-  await sharedRef.set({participationSystem:{ratios:originalShared.participationSystem?.ratios||{reserve:5,operations:20,war:55,boss:20},weeks:{}},guildDiamondsByWeek:{},activeWeekKey:calendarWeekKey(),registrationGate:{weekKey:calendarWeekKey(),closed:false,resetAt:firebase.firestore.FieldValue.serverTimestamp(),resetBy:cloudUser.uid}},{merge:true});
-  alert('초기화 완료. 보스 체크/주간 참여/보관 기록이 정리되었습니다. 새로고침하여 확인하세요.');
+  await sharedRef.set({participationSystem:{ratios:originalShared.participationSystem?.ratios||{reserve:5,operations:20,war:55,boss:20},weeks:{}},guildDiamondsByWeek:{},activeWeekKey:calendarWeekKey(),registrationGate:{weekKey:calendarWeekKey(),closed:false,resetAt:firebase.firestore.FieldValue.serverTimestamp(),resetBy:cloudUser.uid},testResetCompletedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+  classV151ResetAvailable=false;classV144EnsureTools();
+  alert('초기화 완료. 이 초기화 버튼은 이후 다시 표시되지 않습니다. 새로고침하여 확인하세요.');
   location.reload();
- }catch(e){alert('초기화 일부 또는 전체 실패: '+errorText(e)+'\n백업 파일을 보관하고 Firebase 데이터를 확인해 주세요.');}
+ }catch(e){alert('초기화 일부 또는 전체 실패: '+errorText(e)+'\n백업 파일을 보관하고 Firebase 데이터를 확인해 주세요.');}finally{classV151ResetBusy=false;}
 }
 </script>
 
@@ -6472,5 +6497,36 @@ async function classV150SaveItemEdit(ev){
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('class-v150-item-modal')?.hidden===false)classV150CloseItemEdit();});
 </script>
+<style id="class-v151-final-styles">
+/* Guild member combat power: override the later v95 member-specific blue accent. */
+html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card .class-member-power .class-member-power-value{
+  color:#795943!important;-webkit-text-fill-color:#795943!important;text-shadow:none!important;font-weight:800!important;
+}
+/* Item action buttons aligned in a single horizontal line, including narrow layouts. */
+html body #item-market-list .class-item-row .class-item-line{grid-template-columns:minmax(0,1fr) auto!important;column-gap:8px!important;}
+html body #item-market-list .class-item-row .class-item-action{
+  display:inline-flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-end!important;
+  flex-wrap:nowrap!important;gap:6px!important;width:auto!important;min-width:0!important;max-width:none!important;
+}
+html body #item-market-list .class-item-row .class-item-action button{
+  width:auto!important;min-width:61px!important;height:31px!important;white-space:nowrap!important;
+  margin:0!important;padding:6px 11px!important;font-size:12px!important;line-height:1.2!important;
+}
+html body #item-market-list .class-item-row .class-item-action .class-v150-edit-item{
+  background:#25282e!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
+  border:1px solid #25282e!important;border-radius:7px!important;box-shadow:none!important;
+}
+html body #item-market-list .class-item-row .class-item-action .class-v150-edit-item:hover{background:#42392f!important;border-color:#42392f!important;}
+@media(max-width:600px){
+ html body #item-market-list .class-item-row .class-item-action{gap:4px!important;}
+ html body #item-market-list .class-item-row .class-item-action button{min-width:47px!important;padding:5px 6px!important;font-size:11px!important;}
+}
+/* High contrast warning appearance for reset-password action. */
+html body #user-manage-modal .class-v151-password-warning,
+html body #user-manage-list .class-v151-password-warning{
+ color:#ba1c27!important;-webkit-text-fill-color:#ba1c27!important;font-weight:900!important;
+ border-color:#e6b1b3!important;background:#fff4f4!important;
+}
+</style>
 </body>
 </html>

@@ -87,7 +87,7 @@
         .guild-class-icon img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; filter: brightness(1.25) contrast(1.13) drop-shadow(0 0 3px rgba(147,197,253,.65)); }
 #member-list-view .class-member-participation-text{color:#d5deef!important;font-weight:500;line-height:1.55}
 
-/* v113: 회원가입 필드 가독성 보정 (아이보리 테마) */
+                                    
 #auth-modal #register-nickname-wrap > label,
 #auth-modal #register-fields label {
   color:#432b1e !important;
@@ -225,8 +225,8 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
 </style>
 
 <style id="class-v107-archive-neutral">
-/* Archive only: neutral surfaces to replace legacy slate backgrounds.
-   Preserve the charcoal titlebar, structure and checkbox/event behavior. */
+                                                                      
+                                                                            
 #weekly-archive-modal > div:first-child{
   background:#ffffff!important;
   border-color:#d6dae0!important;
@@ -266,7 +266,7 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
 #weekly-archive-list .border-violet-500\/40{
   border-color:#d5dae2!important;
 }
-/* Legible labels on the newly light surfaces (no broad typography changes). */
+                                                                               
 #weekly-archive-list :is(.text-white,.text-slate-200,.text-slate-300,.text-slate-400,.text-amber-400,.text-amber-300,.text-violet-200){
   color:#303742!important;
   -webkit-text-fill-color:#303742!important;
@@ -291,7 +291,7 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
 </style>
 
 <style id="class-v109-archive-and-mobile-pagination">
-/* The sidebar and the separate black/white dialogs keep their existing design. */
+                                                                                  
 #weekly-archive-list .class-archive-meta {
   color:#a56a00!important;-webkit-text-fill-color:#a56a00!important;
   font-weight:600;
@@ -307,7 +307,7 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
 #weekly-archive-list .class-archive-completion span {
   color:#202936!important;-webkit-text-fill-color:#202936!important;
 }
-/* Unselected numbers are white with charcoal numerals. Selected stays charcoal/white. */
+                                                                                         
 html body #item-pagination {display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:6px!important;min-height:36px;align-items:center}
 html body #item-pagination button.class-page-number {
   background:#fff!important;border:1px solid #cbd1d9!important;
@@ -334,7 +334,7 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
 </style>
 <style id="class-v120-archive-actions">
 
-/* 보관함 3종 버튼 행 통일: 기록 데이터와 다른 화면에는 영향 없음 */
+                                           
 #weekly-archive-list .class-archive-actions {
   display:flex; align-items:center; justify-content:flex-start;
   flex-wrap:wrap; gap:8px; margin-bottom:8px;
@@ -345,7 +345,7 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
 }
 </style>
 <style id="class-v122-online-style">
-/* Fixed to the lower right of the existing profile card; no other layout modified. */
+                                                                                      
 #class-profile-wrap #class-online-count {
  position:absolute!important;right:3px!important;top:calc(100% + 5px)!important;
  display:inline-flex!important;align-items:center!important;justify-content:flex-end!important;
@@ -379,7 +379,7 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
 @media(max-width:820px){#class-pages .class-page[data-page="admin"] .class-v132-ratio-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 <style id="class-v134-refinements">
-/* Compact ratios: labels above input, visually aligned with guild total diamond input. */
+                                                                                          
 #class-pages .class-page[data-page="admin"] .class-v132-ratio-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:0}
 #class-pages .class-page[data-page="admin"] .class-v134-ratio-field{min-width:0;padding:0!important;margin:0!important;background:transparent!important;border:0!important;box-shadow:none!important;display:flex;flex-direction:column;align-items:stretch;gap:5px}
 #class-pages .class-page[data-page="admin"] .class-v134-ratio-field>label{display:block;font-size:12px;font-weight:650;color:#555;margin:0;line-height:1.45}
@@ -388,7 +388,7 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
 #class-pages .class-page[data-page="admin"] .class-v134-ratio-input span{flex:none;color:#555;font-size:13px}
 #class-pages .class-page[data-page="admin"] .class-v134-ratio-note{margin:10px 0 3px!important;font-size:11px!important;line-height:1.55}
 #class-pages .class-page[data-page="admin"] #class-week-control-panel button.class-week-recover{background:#f6f6f6!important;color:#444!important;border:1px dashed #999!important}
-/* Shared archive list typography and checkbox layout for all three archive types. */
+                                                                                     
 #weekly-archive-list .class-v134-archive-member{font-size:12px!important;line-height:1.55!important;align-items:center!important;min-height:40px}
 #weekly-archive-list .class-v134-archive-member-text{min-width:0;flex:1 1 350px;overflow-wrap:anywhere}
 #weekly-archive-list .class-v134-archive-member .class-archive-nickname{font-size:13px!important;line-height:1.5!important}
@@ -398,7 +398,7 @@ html body #item-pagination button.class-page-number-active:hover {background:#35
 @media(max-width:800px){#class-pages .class-page[data-page="admin"] .class-v132-ratio-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 <style id="class-v136-silver-icon-assets">
-/* Only the four embedded profession logos were replaced. Preserve their metallic contrast. */
+                                                                                              
 .guild-class-icon img,
 #member-list-view .guild-class-icon img,
 #class-member-slot #member-list-view .guild-class-icon img,
@@ -409,14 +409,14 @@ html body #class-pages > .class-page[data-page="members"] #member-list-view .cla
 </style>
 
 <style id="class-v138-member-search-visibility-fix">
-/* Keep the search result hidden even though the member-layout CSS forces display:grid.
-   Only search-filtered cards are affected; all other member styling stays unchanged. */
+                                                                                       
+                                                                                        
 html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card[hidden] {
   display:none!important;
 }
 </style>
 <style id="class-v139-visibility-safety">
-/* Display safety: hidden is authoritative even when legacy components force display !important. */
+                                                                                                   
 html body [hidden] { display:none!important; }
 </style>
 <style id="class-v140-war-self-register">
@@ -424,7 +424,7 @@ html body [hidden] { display:none!important; }
 #class-war-system .class-v140-history summary{font-size:13px;font-weight:700;cursor:pointer}
 #class-war-system .class-v140-history-list{max-height:220px;overflow:auto;margin-top:12px;font-size:12px;line-height:1.65}
 #class-war-system .class-v140-history-row{padding:7px 0;border-bottom:1px solid #e7d0bb}
-/* v141: staff-only log cleanup controls; scores remain untouched. */
+                                                                     
 #class-war-system .class-v141-history-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 #class-war-system .class-v141-history-row-text{min-width:0;overflow-wrap:anywhere}
 #class-war-system .class-v141-history-delete{flex:none;border:1px solid #e1aaaa;border-radius:6px;padding:4px 8px;background:#fff7f7;color:#a52d36;font-size:11px;font-weight:700;cursor:pointer}
@@ -471,7 +471,7 @@ html body [hidden] { display:none!important; }
         <div class="flex gap-2"><button onclick="closePasswordReset()" class="flex-1 bg-slate-600 rounded-lg p-3">취소</button><button id="class-reset-submit" onclick="confirmPasswordReset()" disabled class="flex-1 bg-red-700 rounded-lg p-3 font-bold disabled:opacity-40">비밀번호 초기화</button></div>
       </div>
     </div>
-    <!-- 관리자 전용: 보스 배점 안내문 수정 -->
+                                 
     <div id="boss-guide-editor-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-[80] p-4" role="dialog" aria-modal="true" aria-labelledby="boss-guide-editor-title">
         <div class="bg-slate-800 border border-purple-500/50 rounded-2xl w-full max-w-xl p-5 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between gap-3">
@@ -1035,8 +1035,8 @@ html body [hidden] { display:none!important; }
             ]
         };
 
-        // Realtime Database 콘솔에 표시되는 URL을 그대로 입력하세요 (Firestore 설정은 그대로 유지).
-        // 예: https://YOUR-DATABASE-URL.firebasedatabase.app
+                                                                            
+                                                            
         const CLASS_REALTIME_DATABASE_URL = 'https://barcadion-class-default-rtdb.asia-southeast1.firebasedatabase.app';
         const FIREBASE_CONFIG = {
           apiKey: "AIzaSyDttsNfHyl602vtx3AGTFW03jUoWEhS7pI",
@@ -1068,7 +1068,7 @@ html body [hidden] { display:none!important; }
         function cloudManager() {return cloudUser && ['web_admin','master','staff'].includes(profileDocs.get(cloudUser.uid)?.role) ;}
         function cloudAdmin() {return cloudUser && profileDocs.get(cloudUser.uid)?.role==='web_admin' ;}
         function cloudMaster() {return cloudUser && ['web_admin','master'].includes(profileDocs.get(cloudUser.uid)?.role);}
-        // v118: Keep only the data needed by the visible page subscribed for regular members.
+                                                                                              
         const optionalCloudStops = new Map();
          const optionalCloudLoaded = new Set();
          const optionalCloudReleaseTimers = new Map();
@@ -1091,7 +1091,7 @@ html body [hidden] { display:none!important; }
           const gate=classWeekGate();
           if(gate.weekKey!==week)return false;
            if(gate.closed===true)return true;
-           // Compatibility for a closure saved by v131 before the v132 migration.
+                                                                                  
           const until=gate.closedUntil;
           const millis=typeof until?.toMillis==='function'?until.toMillis():
             Number(until?.seconds||0)*1000;
@@ -1132,16 +1132,16 @@ html body [hidden] { display:none!important; }
           const role=profileDocs.get(cloudUser.uid)?.role;
           const manager=['web_admin','master','staff'].includes(role);
           const page=classCurrentPage();
-                     // Subscribe by visible page for both members and staff. Rollover temporarily
-           // loads the complete snapshot so that no partial/empty weekly archive is saved.
+                                                                                                  
+                                                                                           
            const rollover=rolloverPending();
            const membersPage=['members','war','siege'].includes(page);
            const adminPage=manager && page==='admin';
            const archiveOpen=manager && archiveModalVisible();
            const requireUsers=membersPage || adminPage || page==='items' || rollover || archiveOpen;
            const scope=requireUsers?'all':'own';
-           // Briefly retain the all-users subscription while the user switches tabs.
-           // Without this, every home -> members -> home round-trip rereads the full list.
+                                                                                     
+                                                                                           
            if(scope==='own' && userCloudScope==='all' && !allowUserScopeDowngrade){
              if(userCloudReleaseTimer===null)userCloudReleaseTimer=setTimeout(()=>{
                userCloudReleaseTimer=null;allowUserScopeDowngrade=true;
@@ -1183,8 +1183,8 @@ const subscriptions={
             applications:()=>store.collection('applications').where('active','==',true).onSnapshot(s=>{applicationDocs=new Map(s.docs.map(d=>[d.id,d.data().active===true]));optionalCloudLoaded.add('applications');scheduleCloudView();},e=>console.error('신청 내역 조회 실패',e)),
             archives:()=>store.doc('guildPrivate/archives').onSnapshot({includeMetadataChanges:true},s=>{window.__archiveData=s.exists?s.data():{};if(!s.metadata.fromCache)optionalCloudLoaded.add('archives');scheduleCloudView();},e=>{window.__archiveData={};console.error('보관함 조회 실패',e);})
           };
-          // Keep unused listeners for 30s to avoid a full re-read on quick tab changes.
-          // A record scope change must be immediate: own and all must never be conflated.
+                                                                                        
+                                                                                          
           for(const [key,want] of Object.entries(wants)){
             if(want){
               if(optionalCloudReleaseTimers.has(key)){clearTimeout(optionalCloudReleaseTimers.get(key));optionalCloudReleaseTimers.delete(key);}
@@ -1229,8 +1229,8 @@ const subscriptions={
           });
           next.weeklyArchives=clone(window.__archiveData?.weeklyArchives||[]);
           if(pendingSaves.size || bossEditDirty){ deferredCloudView=true; return; }
-          // Firestore can emit metadata-only snapshots with identical data.
-          // Skip expensive full-screen re-rendering unless the data actually changed.
+                                                                            
+                                                                                      
           const incomingSignature=stable(next)+'|gate:'+String(window.__sharedData?.registrationGate?.weekKey||'')+':'+String(window.__sharedData?.registrationGate?.closed===true)+':'+String(window.__sharedData?.registrationGate?.closedUntil?.toMillis?.()||0);
           if(cloudReady && incomingSignature===lastRenderedCloudState)return;
           lastRenderedCloudState=incomingSignature;
@@ -1248,8 +1248,8 @@ const subscriptions={
             if(archiveModal && !archiveModal.classList.contains('hidden')) renderWeeklyArchives();
           } catch(e){console.error(e);}
         }
-        // Firestore delivers several independent initial snapshots in quick succession.
-        // Coalesce them to prevent repeated full DOM rebuilds during login.
+                                                                                        
+                                                                            
         let cloudViewTimer=null;
         function scheduleCloudView(){
           if(cloudViewTimer!==null)return;
@@ -1257,15 +1257,15 @@ const subscriptions={
         }
         function subscribeCloud() {
           detachCloud();
-          // Start own profile or member list and page-specific listeners. Guild-wide settings
-          // remain live because home notices, patch notes, boss times and ratios use them.
+                                                                                              
+                                                                                           
           cloudSubscriptionsStarted=true;
           syncCloudSections();
           cloudUnsubs.push(store.doc('guildData/main').onSnapshot({includeMetadataChanges:true},s=>{
             if(s.metadata && s.metadata.fromCache && !sharedDataLoaded)return;
             window.__sharedData=s.exists?s.data():{};
             sharedDataLoaded=true;
-            // v132: the week pointer is changed ONLY by the staff Start Week button.
+                                                                                     
             syncCloudSections();
             scheduleCloudView();
           },e=>{console.error('길드 공용 데이터 조회 실패',e);showAuthError('길드 공용 데이터 조회 실패: '+errorText(e));}));
@@ -1347,14 +1347,14 @@ const subscriptions={
             if(changed.length || removed.length){if(!classRegistrationAllowed())throw new Error('등록이 마감되었습니다.'); ops.push(queueBossWrite(uid, async()=>{
               const ref=store.doc('bossRecords/'+uid);
                
-              // One update per user (rather than one write per checkbox).
-              // Dot-containing keys are addressed with FieldPath, never string field paths.
+                                                                          
+                                                                                            
               const patch=[];
               for(const key of changed)patch.push(new firebase.firestore.FieldPath('entries',key),newEntries[key]);
               for(const key of removed)patch.push(new firebase.firestore.FieldPath('entries',key),firebase.firestore.FieldValue.delete());
               if(!patch.length)return;
-              // A missing document must first be created. A transaction makes the
-              // create/update decision consistent under simultaneous writes.
+                                                                                  
+                                                                             
               await store.runTransaction(async tx=>{
                 const snap=await tx.get(ref);
                 if(!snap.exists){
@@ -1402,7 +1402,7 @@ const subscriptions={
         function saveDB() {
           if(!cloudReady)return Promise.reject(new Error('서버 데이터 로딩 중입니다.'));
           const after=clone(db);
-          // Serialize writes: a second edit cannot race the first snapshot or overwrite it.
+                                                                                            
           const task=saveChain.catch(()=>{}).then(async()=>{
             const before=lastSnapshot;
             await persistCloudChanges(before,after);
@@ -1414,21 +1414,21 @@ const subscriptions={
           task.then(()=>{if(cloudManager())classSaveIndicator('서버 저장 완료');}).catch(()=>{if(cloudManager())classSaveIndicator('서버 저장 실패 · 다시 확인해 주세요',true);});
           task.catch(e=>{
             console.error(e);alert('서버 저장 실패: '+errorText(e));
-            // With no newer saves, return optimistic admin UI to the last confirmed state.
+                                                                                           
             setTimeout(()=>{if(!pendingSaves.size)classRestoreLastServerView();},0);
           })
             .finally(()=>{
               pendingSaves.delete(task);
               if(!pendingSaves.size){
-                // Firestore's existing live listener reflects committed writes. Avoid a
-                // second forced server read after each save. Never drop the queued snapshot.
+                                                                                        
+                                                                                             
                 if(deferredCloudView && !bossEditDirty){deferredCloudView=false;buildCloudView();}
               }
             });
           return task;
         }
-        // v131: Cleanup runs only when a manager has the items subscription.
-        // With no server scheduler, 24h is an eligibility threshold, not a guaranteed exact delete time.
+                                                                             
+                                                                                                         
         const CLASS_ITEM_TTL=24*60*60*1000;
         const classItemCleanupBusy=new Set();
         let classItemCleanupLastSweep=0;
@@ -1443,7 +1443,7 @@ const subscriptions={
             try{
               const ref=store.doc('items/'+id);
               if(!stamp){
-                // Existing completed items: conservatively begin a fresh 24h interval.
+                                                                                       
                 await store.runTransaction(async tx=>{
                   const snap=await tx.get(ref);
                   if(snap.exists&&snap.data().distributed&&!Number(snap.data().distributedAtMs))
@@ -1467,8 +1467,8 @@ const subscriptions={
           }
         }
         setInterval(()=>{void classCleanupDistributedItems();},5*60*1000);
-        // A newly created Firebase Auth user does not yet have a Firestore profile.
-        // Wait for /users/{uid} to exist before starting protected collection listeners.
+                                                                                    
+                                                                                         
         let ownProfileGateUnsub = null;
         let authGateSequence = 0;
         let cloudSubscriptionsStarted = false;
@@ -1489,14 +1489,14 @@ const subscriptions={
           const uid=user.uid;
           const stop=store.doc('users/'+uid).onSnapshot(s=>{
             if(sequence!==authGateSequence || cloudUser?.uid!==uid)return;
-            // A local cache/optimistic write is not enough for Firestore rules.
-            // Wait until the backend has acknowledged /users/{uid}.
+                                                                                
+                                                                    
             if(!s.exists || s.metadata.fromCache || s.metadata.hasPendingWrites)return;
             startCloudAfterVerifiedProfile(uid, sequence);
           },e=>{
             if(sequence===authGateSequence)showAuthError('회원 정보 확인 실패: '+errorText(e));
           });
-          // onSnapshot callback is asynchronous in the Firebase browser SDK.
+                                                                             
           if(sequence===authGateSequence && cloudUser?.uid===uid)ownProfileGateUnsub=stop;
           else stop();
         });
@@ -1553,7 +1553,7 @@ const subscriptions={
               const cred=await auth.signInWithEmailAndPassword(email,pw);
               const doc=await store.doc('users/'+cred.user.uid).get();
               if(!doc.exists){await auth.signOut();throw new Error('회원 정보가 없거나 탈퇴 처리된 계정입니다.');}
-              // Force a backend-confirmed profile before opening protected listeners.
+                                                                                      
               const verified=await store.doc('users/'+cred.user.uid).get({source:'server'});
               if(verified.exists && cloudUser?.uid===cred.user.uid) {
                 startCloudAfterVerifiedProfile(cred.user.uid,authGateSequence);
@@ -1565,7 +1565,7 @@ const subscriptions={
           }finally{btn.disabled=false;}
         }
 
-        // 비밀번호 변경: Firebase 재인증 후 본인 계정만 변경합니다.
+                                                
         let classPasswordForced=false, classResetUid=null;
         function openPasswordChange(forced=false){
           classPasswordForced=!!forced;
@@ -1590,7 +1590,7 @@ const subscriptions={
             const credential=firebase.auth.EmailAuthProvider.credential(user.email,old);
             await user.reauthenticateWithCredential(credential);
             await user.updatePassword(next);
-            // 초기화 상태 해제는 서버가 최근 인증된 사용자를 검증한 후 처리합니다.
+                                                      
             if(classPasswordForced){
               try{await classFunctions.httpsCallable('completePasswordReset')({});}
               catch(e){error.textContent='비밀번호는 변경되었지만 초기화 완료 기록 처리에 실패했습니다. 관리자에게 문의하세요. '+errorText(e);return;}
@@ -2113,8 +2113,8 @@ const subscriptions={
         let currentItemCategory = '전체';
         let itemPage = 1;
         function getItemsPerPage() {
-            // A page's row content can change its container height. Never derive the
-            // page size from that height or pagination may disappear on mobile.
+                                                                                     
+                                                                                
             return window.matchMedia('(max-width: 600px)').matches ? 6 : 10;
         }
         function goToItemPage(page) { itemPage = page; renderItems(); }
@@ -2144,8 +2144,8 @@ const subscriptions={
         }
 
         function itemRarity(name) {
-            // 분배 기준에는 '찢어진 영웅 ...'처럼 등급 앞에 다른 단어가 올 수도 있다.
-            // 등급이 이름 앞/중간에 있거나 [등급] 형태인 경우 모두 판별한다.
+                                                           
+                                                    
             const nameText = String(name || '').trim();
             return nameText.match(/\[(고급|희귀|영웅|전설)\]/)?.[1]
                 || nameText.match(/(?:^|\s)(고급|희귀|영웅|전설)(?=\s|$)/)?.[1]
@@ -4015,7 +4015,7 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
 })();
 </script>
 <script id="class-v122-online-count">
-/* Only Realtime Database presence: no Firestore reads/writes are added. */
+                                                                           
 (function(){
   const indicator=document.createElement('div');
   indicator.id='class-online-count';
@@ -4050,7 +4050,7 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
     onlineUsers.clear();
     activeUid=null;activeRef=null;connectedRef=null;presenceRef=null;connectionListener=null;presenceListener=null;presenceChangedListener=null;presenceRemovedListener=null;started=false;
     setCount('--명');
-    // Explicit logout removes our own tab now; onDisconnect covers abrupt close/network loss.
+                                                                                              
     if(oldRef){try{await oldRef.remove();await oldRef.onDisconnect().cancel();}catch(e){console.warn('접속 상태 삭제는 연결 종료 시 자동 처리될 수 있습니다.',e);}}
   }
   window.classPresenceStop=stop;
@@ -4059,14 +4059,14 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
     if(!user?.uid) return;
     if(activeUid===user.uid&&started)return;
     const realdb=startDB();if(!realdb)return;
-    // An auth session gets one own node per browser tab, but is counted once per UID.
+                                                                                      
     const token=++generation;
     if(started){void stop().then(()=>window.classPresenceStart?.(user));return;}
     started=true;activeUid=user.uid;
     const session=realdb.ref('presence/'+user.uid+'/'+sessionId);
     activeRef=session;
     presenceRef=realdb.ref('presence');
-    // child events send only the changed account's sessions, not all presence data.
+                                                                                    
     const updateUser=snapshot=>{
       if(token!==generation)return;
       const sessions=snapshot.val();
@@ -4084,7 +4084,7 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
     connectedRef=realdb.ref('.info/connected');
     connectionListener=function(snap){
       if(token!==generation||snap.val()!==true)return;
-      // Register removal on the server BEFORE writing online state.
+                                                                    
       session.onDisconnect().remove().then(()=>{
         if(token!==generation)return;
         return session.set({online:true});
@@ -4092,7 +4092,7 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
     };
     connectedRef.on('value',connectionListener);
   };
-  // A logout elsewhere (e.g. failed sign-up) must also tear down the listener.
+                                                                               
   firebase.auth().onAuthStateChanged(u=>{if(!u && started)void stop();});
 })();
 </script>
@@ -4123,10 +4123,10 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
       if(!response.ok)return;
       const html=await response.text();
       const match=html.match(/<meta\s+name=["']class-build-id["']\s+content=["']([^"']+)["']/i);
-      // Old deployments without a version marker are ignored to avoid false positives.
+                                                                                       
       if(match && currentVersion){
         const deployedVersion = Number(match[1].match(/_V(\d+)(?:_|$)/i)?.[1] || 0);
-        // Only notify for a genuinely newer deployed version. Never flag an older cached deployment.
+                                                                                                     
         if(deployedVersion > currentVersion || (deployedVersion === currentVersion && match[1] !== CURRENT_BUILD)){updateFound=true;banner();}
       }
     }catch(e){console.debug('업데이트 확인 실패',e);}
@@ -4135,7 +4135,7 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
   setInterval(check,60000);
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')check();});
   window.addEventListener('focus',check);
-  // Give Cloudflare deployment a moment to settle before the first check.
+                                                                          
   setTimeout(check,12000);
 })();
 </script>
@@ -4222,7 +4222,7 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
   ${manager()?`<details class="class-v140-history"><summary>▼ 쟁 점수 등록 내역 (${historyRows.length}건) · 눌러서 펼치기</summary><div class="class-v140-history-list">${historyRows.length?historyRows.join(''):'등록된 내역이 없습니다.'}</div>${historyRows.length?'<div class="class-v141-history-footer"><button type="button" class="class-v141-history-delete-all" onclick="classV141DeleteAllWarHistory(this)">현재 주차 등록 내역 전체 삭제</button></div>':''}</details>`:''}
 `;
  }
- // v142: Delete history against a fresh server snapshot. Never modify accumulated scores.
+                                                                                          
  function classV142HistorySnapshot(){
    const history=weekData()?.warHistory;
    return Array.isArray(history)?JSON.parse(JSON.stringify(history)):[];
@@ -4271,7 +4271,7 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
          if(count!==action.expectedCount)throw new Error('삭제 확인 중 새 내역이 등록되었습니다. 목록을 갱신하고 다시 확인해 주세요.');
          updated.length=0;
        }
-       // Update only the target week's history field; preserve scores and all other weeks.
+                                                                                           
        tx.update(ref,new firebase.firestore.FieldPath('participationSystem','weeks',action.weekKey,'warHistory'),updated);
        committed=updated;
      });
@@ -4554,7 +4554,7 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
 
 
 <style id="class-v80-unified-home">
-/* v80: unified production layout. Legacy intermediate dashboard style blocks removed above. */
+                                                                                               
 :root{--class-ivory:#fbf5ef;--class-paper:#fffaf6;--class-brown:#392217;--class-brown2:#4b2d1d;--class-ink:#35241b;--class-gold:#d7ad73;--class-line:#e3cbb6}
 html,body{background:#fbf5ef!important}
 #app-container{background:var(--class-ivory)!important;color:var(--class-ink)!important;max-width:none!important;margin:0!important;padding:0 27px 35px 255px!important;min-height:100vh!important;isolation:isolate}
@@ -4648,7 +4648,7 @@ html,body{background:#fbf5ef!important}
 @media(max-width:800px){#app-container{padding:0 14px 25px!important}#class-nav{position:relative!important;top:auto!important;bottom:auto!important;left:auto!important;width:100%!important;max-width:none!important;min-width:0!important;min-height:0!important;height:auto!important;padding:10px!important;margin-bottom:14px!important;flex-direction:row!important;flex-wrap:wrap!important;overflow:visible!important}#class-sidebar-brand{display:none!important}#class-nav button{width:auto!important;min-height:42px!important;font-size:13px!important;padding:10px 12px!important}#class-nav #class-admin-link{margin:0!important;padding:10px 12px!important;border-top:0!important}#app-container>header{height:75px!important;min-height:75px!important;margin-bottom:5px!important}#class-home .class-announcements{grid-template-columns:1fr!important}#class-home #class-boss-list.class-bosses{grid-template-columns:1fr 1fr!important}#class-home #class-boss-list>.class-boss-primary{grid-column:1/-1!important}#class-home #class-home-ratio-chart{gap:25px!important;padding:12px!important}#class-home .class-dist-legend{width:auto!important;min-width:0!important;flex:1!important}}
 @media(max-width:570px){#class-home #class-boss-list.class-bosses{grid-template-columns:1fr!important}#class-home #class-boss-list>.class-boss{grid-column:1!important}#class-home #class-boss-list>.class-boss-primary{grid-template-columns:83px minmax(0,1fr)!important;grid-template-rows:auto auto!important;min-height:230px!important;height:auto!important;gap:10px!important}#class-home #class-boss-list>.class-boss-primary .class-boss-portrait{height:115px!important}#class-home #class-boss-list>.class-boss-primary .class-boss-art{height:115px!important}#class-home #class-boss-list>.class-boss-primary .class-boss-clock{grid-column:1/-1!important;grid-row:2!important;border-left:0!important;border-top:1px solid #a58056!important;padding:9px 0 0!important}#class-home #class-boss-list>.class-boss-next{min-height:125px!important;height:125px!important}#class-home .class-notice-half,#class-home .class-patch-half{grid-template-columns:1fr!important;height:auto!important;min-height:80px!important;max-height:none!important}#class-home .class-mini-heading{border-right:0!important}#class-home #class-home-ratio-chart{flex-direction:column!important;gap:16px!important}#class-home .class-dist-legend{width:100%!important}#class-home .class-boss-card>.class-actions h2{font-size:19px!important}#class-home .class-boss-register{font-size:12px!important;padding:9px!important}#class-home .class-dist-donut{width:198px!important;height:198px!important}}
 
-/* V81 — approved home design corrections; no data or Firebase changes. */
+                                                                          
 @media(min-width:801px){
   #class-home .class-home-top,
   #class-home .class-home-top>.class-card.class-announcements{
@@ -4663,7 +4663,7 @@ html,body{background:#fbf5ef!important}
     min-width:0!important;width:100%!important;
   }
 }
-/* Upcoming two bosses: same dark walnut / warm gold as the primary boss. */
+                                                                            
 #class-home #class-boss-list>.class-boss-next{
   display:grid!important;
   grid-template-columns:minmax(75px,.83fr) minmax(0,1.17fr)!important;
@@ -4718,7 +4718,7 @@ html,body{background:#fbf5ef!important}
   color:#f5d49e!important;font-size:clamp(15px,1.45vw,23px)!important;
   letter-spacing:0!important;font-weight:800!important;
 }
-/* Clearer class art in the unchanged top-right compact profile control. */
+                                                                           
 #class-profile-crest{
   width:44px!important;height:44px!important;min-width:44px!important;
   background:transparent!important;
@@ -4729,7 +4729,7 @@ html,body{background:#fbf5ef!important}
   filter:brightness(.68) contrast(1.85) saturate(1.3) drop-shadow(0 1px 0 #4a271a40)!important;
   image-rendering:auto!important;
 }
-/* Left aligned, rather than centered, existing diamond allocation chart and legend. */
+                                                                                       
 #class-home #class-home-ratio-chart{
   justify-content:flex-start!important;gap:clamp(28px,4vw,70px)!important;
   padding-left:clamp(20px,3.5vw,60px)!important;
@@ -4755,7 +4755,7 @@ html,body{background:#fbf5ef!important}
 </style>
 
 <style id="class-v82-member-list">
-/* 길드원 목록: 기존 홈의 아이보리/월넛/골드 팔레트에 맞춘 독립 스타일. */
+                                              
 .class-page[data-page="members"]{color:#39281e!important}
 .class-page[data-page="members"] .class-panel-slot{width:100%!important;min-width:0!important}
 #class-member-slot .dashboard-panel{background:linear-gradient(180deg,#fffaf6 0%,#fcf4ec 100%)!important;border:1px solid #e5cbb3!important;border-radius:16px!important;box-shadow:0 5px 18px #4c2c1716!important;color:#39281e!important;padding:22px!important;min-height:400px!important;height:auto!important}
@@ -4819,7 +4819,7 @@ html,body{background:#fbf5ef!important}
 </script>
 
 <style id="class-v83-member-management-button">
-/* 길드원 탭 제목 우측: 운영진 이상에만 표시되는 관리 버튼 */
+                                      
 #class-member-slot #class-member-manage-trigger{
   align-items:center!important;justify-content:center!important;gap:7px!important;
   min-height:35px!important;padding:7px 13px!important;flex-shrink:0!important;
@@ -4833,7 +4833,7 @@ html,body{background:#fbf5ef!important}
 @media(max-width:500px){#class-member-slot #class-member-manage-trigger{font-size:11px!important;padding:7px 10px!important}}
 </style>
 <style id="class-v84-unified-subpages-and-modals">
-/* Shared light cream/walnut secondary page styling — independent of homepage. */
+                                                                                 
 .class-page:is([data-page="boss"],[data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]){color:#392a20!important}
 .class-page:is([data-page="boss"],[data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]) :is(.class-card,.dashboard-panel){
   color:#3d2a1d!important;background:#fffaf6!important;
@@ -4851,7 +4851,7 @@ html,body{background:#fbf5ef!important}
 .class-page:is([data-page="boss"],[data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]) :is(input,textarea)::placeholder{color:#947d6b!important;opacity:1!important}
 .class-page:is([data-page="boss"],[data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]) :is(input,select,textarea):focus{outline:2px solid #b98952!important;outline-offset:1px!important}
 .class-page:is([data-page="boss"],[data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]) button{border-radius:9px!important;box-shadow:none!important}
-/* Legacy solid buttons: walnut action or subtle cream secondary; preserve selected tab / warn color. */
+                                                                                                        
 .class-page:is([data-page="boss"],[data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]) button:is(.bg-slate-700,.bg-slate-600,.bg-slate-800){background:#eee1d5!important;border:1px solid #d8bba0!important;color:#573821!important}
 .class-page:is([data-page="boss"],[data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]) button:is(.bg-blue-600,.bg-amber-500,.bg-indigo-600){background:linear-gradient(140deg,#795235,#4c301f)!important;color:#fff5e8!important;border:1px solid #a77b4e!important}
 .class-page:is([data-page="boss"],[data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]) :is(.text-red-400,.text-red-500){color:#b5453d!important}
@@ -4863,10 +4863,10 @@ html,body{background:#fbf5ef!important}
 .class-section-manage-btn{display:none;align-items:center;justify-content:center;gap:7px;min-height:36px;padding:8px 13px!important;white-space:nowrap;border:1px solid #b98b59!important;border-radius:10px!important;background:linear-gradient(155deg,#805637,#4d3020)!important;color:#fff8ee!important;font-size:12px!important;font-weight:750!important}
 .class-section-manage-btn i{color:#ffe0ae!important}
 .class-page[data-page="admin"] .class-actions{margin-bottom:16px!important;color:#493020!important}
-/* War/siege panels generate their content dynamically; apply light theme to all nested containers. */
+                                                                                                      
 .class-page:is([data-page="war"],[data-page="siege"],[data-page="admin"]) :is(.bg-slate-950,.bg-slate-950\/50,.bg-slate-900\/80,.bg-slate-800\/80,.bg-gray-900,.bg-gray-800){background:#f7eee5!important;color:#39291f!important}
 .class-page:is([data-page="war"],[data-page="siege"],[data-page="admin"]) :is(.text-slate-500,.text-gray-400,.text-gray-500){color:#85664e!important}
-/* All dialogs (manager, profile, signup, distribution, edit, archive etc.): uniformly bright, readable. */
+                                                                                                           
 body > div[id$="-modal"]:not(#auth-modal):not(.class-login-overlay),body > div[id$="-overlay"]:not(.class-login-overlay){--class-modal-bg:#fffaf6;--class-modal-fg:#402d20}
 body > div[id$="-modal"]:not(#auth-modal):not(.class-login-overlay) > div:first-child{background:#fffaf6!important;color:#402d20!important;border:1px solid #d7b89e!important;border-radius:17px!important;box-shadow:0 24px 75px #25130e55!important}
 body > div[id$="-modal"]:not(#auth-modal) :is(.bg-slate-900,.bg-slate-800,.bg-slate-700,.bg-slate-900\/60,.bg-slate-900\/50,.bg-slate-800\/80,.bg-slate-800\/50,.bg-slate-700\/50,.bg-purple-950\/40,.bg-purple-900\/30){background:#f5ebdf!important;color:#402d20!important}
@@ -4879,14 +4879,14 @@ body > div[id$="-modal"]:not(#auth-modal) input::placeholder,body > div[id$="-mo
 body > div[id$="-modal"]:not(#auth-modal) button:is(.bg-slate-700,.bg-slate-600,.bg-slate-800){background:#ecdfd2!important;color:#493426!important;border:1px solid #d6b89d!important}
 body > div[id$="-modal"]:not(#auth-modal) button:is(.bg-blue-600,.bg-amber-500,.bg-indigo-600){background:linear-gradient(150deg,#795235,#4d3020)!important;color:#fff5e8!important;border:1px solid #a87c50!important}
 body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color:#af443c!important}
-/* Some modal roots are nested in the app tree; target known roots as well. */
+                                                                              
 :is(#my-profile-modal,#class-password-modal,#class-reset-modal,#boss-guide-editor-modal,#weekly-archive-modal,#boss-reg-modal,#user-manage-modal,#item-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#maintenance-modal,#boss-manage-modal)>div:first-child{background:#fffaf6!important;color:#402d20!important;border-color:#d7b89e!important;box-shadow:0 22px 65px #21130c44!important}
 :is(#my-profile-modal,#class-password-modal,#class-reset-modal,#boss-guide-editor-modal,#weekly-archive-modal,#boss-reg-modal,#user-manage-modal,#item-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#maintenance-modal,#boss-manage-modal) :is(.bg-slate-900,.bg-slate-800,.bg-slate-700,.bg-slate-900\/60,.bg-slate-900\/50,.bg-slate-800\/70,.bg-slate-800\/50,.bg-purple-900\/30){background:#f6ece1!important;color:#493426!important}
 :is(#my-profile-modal,#class-password-modal,#class-reset-modal,#boss-guide-editor-modal,#weekly-archive-modal,#boss-reg-modal,#user-manage-modal,#item-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#maintenance-modal,#boss-manage-modal) :is(.text-white,.text-slate-100,.text-slate-200,.text-slate-300,.text-slate-400,.text-amber-400){color:#493426!important}
 :is(#my-profile-modal,#class-password-modal,#class-reset-modal,#boss-guide-editor-modal,#weekly-archive-modal,#boss-reg-modal,#user-manage-modal,#item-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#maintenance-modal,#boss-manage-modal) input:not([type="checkbox"]):not([type="radio"]),:is(#my-profile-modal,#class-password-modal,#class-reset-modal,#boss-guide-editor-modal,#weekly-archive-modal,#boss-reg-modal,#user-manage-modal,#item-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#maintenance-modal,#boss-manage-modal) select,:is(#my-profile-modal,#class-password-modal,#class-reset-modal,#boss-guide-editor-modal,#weekly-archive-modal,#boss-reg-modal,#user-manage-modal,#item-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#maintenance-modal,#boss-manage-modal) textarea{background:#fffefd!important;border-color:#d6b69a!important;color:#38291e!important}
 :is(#my-profile-modal,#class-password-modal,#class-reset-modal,#boss-guide-editor-modal,#weekly-archive-modal,#boss-reg-modal,#user-manage-modal,#item-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#maintenance-modal,#boss-manage-modal) :is(.border-slate-700,.border-slate-600,.border-slate-700\/50,.border-purple-700){border-color:#dec2a7!important}
 :is(#my-profile-modal,#class-password-modal,#class-reset-modal,#boss-guide-editor-modal,#weekly-archive-modal,#boss-reg-modal,#user-manage-modal,#item-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#maintenance-modal,#boss-manage-modal) button:is(.bg-slate-700,.bg-slate-600,.bg-slate-800){background:#ecdfd2!important;border-color:#d6b89d!important;color:#493426!important}
-/* Restore detail/role icon silhouettes from original transparent sources. */
+                                                                             
 .guild-class-icon{width:28px!important;height:34px!important;flex-basis:28px!important;overflow:visible!important}
 .guild-class-icon img{display:block!important;width:28px!important;height:32px!important;max-width:none!important;max-height:none!important;object-fit:contain!important;filter:contrast(1.45) brightness(.82) drop-shadow(0 1px 0 #241a16aa)!important;opacity:1!important;image-rendering:auto!important}
 #member-list-view .guild-class-icon img{filter:contrast(1.75) brightness(.72)!important}
@@ -4921,7 +4921,7 @@ body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color
 })();
 </script>
 <style id="class-v85-readable-interiors-and-boss-schedule">
-/* v85: 모든 서브페이지 내부의 진한 카드 배경을 아이보리로 전환 */
+                                          
 .class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) :is(div,section,article,aside,ul,li)[class*="bg-slate-"],
 .class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) :is(div,section,article,aside,ul,li)[class*="bg-gray-"],
 .class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) :is(div,section,article,aside,ul,li)[class*="bg-purple-"]{
@@ -4937,7 +4937,7 @@ body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color
 .class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) [class*="text-yellow-"]{color:#8c5325!important}
 .class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) :is(button,[role="button"])[class*="bg-slate-"]{background:#eaddcf!important;color:#4a3022!important;border-color:#d1ad87!important}
 .class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card) :is(button,[role="button"])[class*="bg-purple-"]{background:#69452e!important;color:#fff6e9!important;border-color:#ad7d4d!important}
-/* 보스 스케줄 리스트: 밝은 카드와 선명한 보스 이름·시간·경고 */
+                                        
 .class-page[data-page="boss"] #next-boss-preview{max-height:none!important;overflow:visible!important;background:#fff9f3!important;border-color:#dec3a7!important}
 .class-page[data-page="boss"] #next-boss-preview>div{background:#fffaf5!important;border:1px solid #dec3a7!important;border-radius:12px!important;padding:15px!important;box-shadow:0 2px 7px #4a2c1510!important}
 .class-page[data-page="boss"] #next-boss-preview .font-bold{color:#422b1d!important}
@@ -4955,14 +4955,14 @@ body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color
 .class-v85-score-guide #boss-guide-text{color:#634b38!important;font-size:12px;line-height:1.7;max-height:98px;overflow-y:auto}
 .class-v85-guide-edit{background:#f2e0cc!important;color:#634127!important;border:1px solid #cfaa86!important;border-radius:8px!important;padding:5px 10px;font-weight:700;font-size:11px}
 @media(max-width:760px){.class-v85-boss-tools{grid-template-columns:1fr}}
-/* 공지/모달 등에서 과거 다크 배경색 클래스 잔존 최소화 */
+                                    
 :is(#boss-manage-modal,#boss-guide-editor-modal,#boss-reg-modal,#my-profile-modal,#site-settings-modal,#item-manage-modal,#user-manage-modal) :is(div,section,article)[class*="bg-slate-"],
 :is(#boss-manage-modal,#boss-guide-editor-modal,#boss-reg-modal,#my-profile-modal,#site-settings-modal,#item-manage-modal,#user-manage-modal) :is(div,section,article)[class*="bg-gray-"]{background:#f7ede2!important;color:#493426!important;border-color:#d9bea1!important}
 </style>
 <style id="class-v86-readable-all-areas">
-/* v86 - fill in dedicated legacy modules omitted by v84-v85 overrides. */
+                                                                          
 :root{--class-ivory:#fffaf6;--class-panel:#f7ede2;--class-border:#dfc5ad;--class-ink:#412c20;--class-muted:#745741;--class-walnut:#68432d}
-/* War, siege, and admin-specific renderer components use custom classes rather than tailwind background classes. */
+                                                                                                                    
 #class-war-system,#class-siege-system,#class-ratio-system,#class-admin-system,#class-profile-weekly{color:var(--class-ink)!important}
 #class-war-system .class-v45-panel,#class-siege-system .class-v45-panel,#class-ratio-system .class-v45-panel,
 #class-war-system .class-v45-grid>.class-v45-panel,#class-siege-system .class-v45-grid>.class-v45-panel,
@@ -4979,7 +4979,7 @@ body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color
 .class-v45-profile-summary,#class-profile-weekly{background:#fff5e9!important;color:#4b3223!important;border:1px solid #dfc1a2!important;border-radius:12px!important}
 .class-v45-profile-summary div,#class-profile-weekly div{color:#503929!important}
 .class-v45-profile-summary strong,#class-profile-weekly strong{color:#684128!important}
-/* Boss participation modal: previously navy entries with unreadable dark labels. */
+                                                                                    
 #boss-reg-modal .boss-reg-group{background:#f7eade!important;border:1px solid #d9b89d!important;border-radius:10px!important;color:#3d291d!important;min-height:48px!important}
 #boss-reg-modal .boss-reg-name{color:#3f281b!important;font-weight:800!important}
 #boss-reg-modal .boss-reg-slot,#boss-reg-modal .boss-reg-slot span{color:#684429!important;font-weight:700!important}
@@ -4991,7 +4991,7 @@ body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color
 #boss-reg-modal .bg-slate-900\/80,#boss-reg-modal .bg-slate-900\/70,#boss-reg-modal .bg-slate-900\/60,#boss-reg-modal .bg-slate-900\/50{background:#f6e7d8!important;color:#483123!important;border-color:#d9b89d!important}
 #boss-reg-modal .text-sky-300,#boss-reg-modal .text-sky-200{color:#775232!important}
 #boss-reg-modal .text-amber-400{color:#8c5721!important}
-/* Boss schedule: card background, date and cut status legibility. */
+                                                                     
 .class-page[data-page="boss"] #next-boss-preview>div,.class-page[data-page="boss"] #next-boss-preview>article{background:#fff9f3!important;border-color:#d9b89e!important;color:#463022!important}
 .class-page[data-page="boss"] #next-boss-preview :is(.text-white,.text-slate-100,.text-slate-200,.text-slate-300,.text-slate-400,.text-slate-500){color:#644631!important}
 .class-page[data-page="boss"] #next-boss-preview .font-bold{color:#3e281a!important}
@@ -5000,11 +5000,11 @@ body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color
 .class-page[data-page="boss"] #next-boss-preview button.bg-rose-500:not(:disabled){background:#ad3548!important;border:1px solid #8b2435!important;color:#fff!important;font-weight:900!important;opacity:1!important;min-width:34px!important}
 .class-page[data-page="boss"] #next-boss-preview button.bg-rose-500:disabled{background:#e2c8c7!important;color:#775a58!important;border:1px solid #c6a09d!important;opacity:1!important}
 .class-page[data-page="boss"] #next-boss-preview button.bg-blue-600{background:#775036!important;color:#fff9f0!important;border:1px solid #9d704e!important}
-/* Alert and maintenance card (was muddy purple-gray on cream). */
+                                                                  
 .class-page[data-page="boss"] [class*="bg-purple-"],.class-page[data-page="boss"] [class*="bg-violet-"]:not(button){background:#f4e8dc!important;color:#462f21!important;border-color:#d9b797!important}
 .class-page[data-page="boss"] .text-purple-200,.class-page[data-page="boss"] .text-purple-300{color:#62412e!important}
 #maintenance-schedule-list,#maintenance-schedule-list *{color:#70533d!important}
-/* Global dialog surfaces, even dark custom controls and dynamically generated children. */
+                                                                                           
 [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(div,section,article,aside,li,label)[class*="bg-slate-"],
 [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(div,section,article,aside,li,label)[class*="bg-purple-"],
 [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(div,section,article,aside,li,label)[class*="bg-violet-"],
@@ -5018,7 +5018,7 @@ body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color
 [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) select,
 [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) textarea{background:#fffefa!important;color:#39281e!important;border-color:#cba888!important}
 [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) input[type="checkbox"]{accent-color:#875a38!important}
-/* Dynamic war/siege content: avoid dark override from old injected style attributes. */
+                                                                                        
 #class-war-system .class-v45-panel,#class-siege-system .class-v45-panel{background:#fffaf5!important}
 #class-war-system :is(p,span,summary,td,th,label),#class-siege-system :is(p,span,summary,td,th,label){text-shadow:none!important}
 #class-war-system [style*="color:#a5b4fc"]{color:#795333!important}
@@ -5026,9 +5026,9 @@ body > div[id$="-modal"]:not(#auth-modal) :is(.text-red-400,.text-red-500){color
 
 </style>
 <style id="class-v88-dialog-black-white">
-/* v88: all auxiliary dialogs use neutral monochrome; keep login + main pages unchanged. */
+                                                                                           
 :root {--dlg-ink:#161a20;--dlg-muted:#555e6c;--dlg-line:#c7ced8;--dlg-faint:#f2f4f7;--dlg-charcoal:#22262e;}
-/* Scoped to the real modal roots, explicitly not the login overlay. */
+                                                                       
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never):not(.class-login-overlay) {
   background:rgba(12,15,20,.64)!important; color:var(--dlg-ink)!important;
 }
@@ -5036,7 +5036,7 @@ html body [id$="-modal"]:not(#auth-modal):not(#v88-never):not(.class-login-overl
   background:#fff!important; color:var(--dlg-ink)!important; border:1px solid #d2d7de!important;
   box-shadow:0 24px 70px rgba(0,0,0,.24)!important;
 }
-/* Every card/pane generated in modals: undo legacy purple/navy AND old cream/wood fills. */
+                                                                                            
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(div,section,article,aside,li)[class*="bg-"],
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(.class-v45-panel,.class-v45-profile-summary,.class-v45-table,.boss-reg-group,.boss-reg-slot),
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(div,section,article)[style*="background"] {
@@ -5046,16 +5046,16 @@ html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(div,section,articl
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(.class-v45-table tr,.class-v45-table td,.class-v45-table th) {
   background:transparent!important;color:#21252d!important;border-color:#d6dae2!important;
 }
-/* Explicitly keep the modal's outer content surface pure white. */
+                                                                   
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) > div {background:#fff!important;}
-/* Consistent charcoal header; apply only to actual dialog headings, not list row headers. */
+                                                                                             
 html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal,#boss-guide-editor-modal):not(#v88-never) > div > div:first-child.flex {
   background:#22262e!important;color:#fff!important;border-bottom:1px solid #3a404a!important;
 }
 html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal,#boss-guide-editor-modal):not(#v88-never) > div > div:first-child.flex :is(h1,h2,h3,h4,button,i,span) {
   color:#fff!important;background:transparent!important;border-color:transparent!important;
 }
-/* Some dialogs are simple padded cards, with an in-flow header row. */
+                                                                       
 html body :is(#my-profile-modal,#class-password-modal,#class-reset-modal,#maintenance-modal):not(#v88-never) > div > :is(h2,h3,.flex:first-child) {
   color:#181c22!important;
 }
@@ -5071,9 +5071,9 @@ html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(p,small,li,span,td
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(.text-white,.text-slate-100,.text-slate-200,.text-amber-300,.text-amber-400,.text-purple-200,.text-purple-300,.text-sky-300,.text-blue-300) {
   color:#20252e!important;
 }
-/* Restore white heading and white button text after neutralizing old text utility classes. */
+                                                                                              
 html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal,#boss-guide-editor-modal):not(#v88-never) > div > div:first-child.flex :is(h1,h2,h3,h4,button,i,span) {color:#fff!important;}
-/* Inputs and their interactive state. */
+                                         
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea) {
   background:#fff!important; color:#131820!important;border:1px solid #aeb7c4!important;
   -webkit-text-fill-color:#131820!important;box-shadow:none!important;
@@ -5081,7 +5081,7 @@ html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(input:not([type="c
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(input,textarea)::placeholder {color:#6b7480!important;opacity:1!important;}
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(input,select,textarea):focus {outline:2px solid #9fb3cf!important;outline-offset:1px;border-color:#637c9d!important;}
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) input:is([type="checkbox"],[type="radio"]) {accent-color:#262c35!important;}
-/* Primary actions, including controls with inline/tailwind legacy colors. */
+                                                                             
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) button:is([class*="bg-amber-"],[class*="bg-purple-"],[class*="bg-violet-"],[class*="bg-indigo-"],[class*="bg-blue-"],[class*="bg-emerald-"],[class*="bg-green-"],[class*="bg-slate-800"],[class*="bg-slate-900"]),
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) button[style*="background"]:not([class*="red"]):not([class*="rose"]) {
   background:#262b34!important;color:#fff!important;border:1px solid #262b34!important;
@@ -5095,26 +5095,26 @@ html body [id$="-modal"]:not(#auth-modal):not(#v88-never) button:is([class*="tex
 }
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) :is(.text-red-300,.text-red-400,.text-red-500,.text-red-600,.text-rose-400){color:#af283d!important;}
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never) button:hover:not(:disabled){filter:brightness(.95)!important;}
-/* Rendered rows in member management and registered users. */
+                                                              
 html body #user-manage-list > *,html body #maintenance-editor-list > * {
   background:#f4f5f7!important;border:1px solid #cbd1da!important;color:#21252d!important;
 }
 html body #user-manage-list :is(.text-white,.text-amber-300,.text-amber-400,.text-slate-300,.text-slate-400){color:#222831!important;}
 html body #class-profile-weekly {background:#f4f5f7!important;color:#232832!important;border-color:#cbd1da!important;}
 html body #class-profile-weekly :is(div,p,small,span,strong){color:#242932!important;}
-/* Underlying pages stay wood-toned. Don't make the fullscreen overlay itself opaque. */
+                                                                                        
 @media(max-width:640px){html body [id$="-modal"]:not(#auth-modal):not(#v88-never)>div{max-height:calc(100dvh - 20px)!important;overflow-y:auto;}}
 
-/* The outer dialog surface must remain white even when it has legacy bg-slate-800. */
+                                                                                      
 html body [id$="-modal"]:not(#auth-modal):not(#v88-never):not(#v88-dialog-surface) > div {background:#ffffff!important;color:#161a20!important;}
 </style>
 
 <style id="class-v89-modal-text-neutral">
-/* v89: final neutral contrast layer scoped to dialogs only. Keep the walnut pages intact. */
+                                                                                             
 html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) {
   --modal-title:#161a21;--modal-body:#303743;--modal-muted:#5d6774;--modal-border:#cbd2dc;
 }
-/* Undo walnut, amber and purple foregrounds in generated popup content. */
+                                                                           
 html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(p,span,small,em,strong,b,li,dt,dd,td,th,label,summary,legend,time,output)[class*="text-"],
 html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(p,span,small,em,strong,b,li,dt,dd,td,th,label,summary,legend,time,output)[style*="color:"] {
   color:#374151!important;-webkit-text-fill-color:#374151!important;text-shadow:none!important;
@@ -5122,7 +5122,7 @@ html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(p,span,s
 html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) :is(h1,h2,h3,h4,h5,h6,legend,summary) {
   color:#191e26!important;-webkit-text-fill-color:#191e26!important;text-shadow:none!important;
 }
-/* Restore white text inside dark action buttons, and neutral for secondary buttons. */
+                                                                                       
 html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) button[style*="background"]:not([class*="red"]):not([class*="rose"]),
 html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) button:is([class*="bg-amber"],[class*="bg-purple"],[class*="bg-violet"],[class*="bg-indigo"],[class*="bg-blue"],[class*="bg-emerald"],[class*="bg-green"],[class*="bg-slate-800"],[class*="bg-slate-900"]) {
   background:#272c35!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#272c35!important;
@@ -5133,7 +5133,7 @@ html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) button:is([c
 html body [id$="-modal"]:not(#auth-modal):not(.class-login-overlay) button:is([class*="text-red"],[class*="bg-red"],[class*="text-rose"],[class*="bg-rose"]) {
   color:#b4233c!important;-webkit-text-fill-color:#b4233c!important;background:#fff!important;border-color:#d8a9b3!important;
 }
-/* Specific boss participation rows: previously had hardcoded walnut title, slot and point colors. */
+                                                                                                     
 html body #boss-reg-modal .boss-reg-group {
   background:#f6f7f9!important;color:#232933!important;border-color:#d2d8e1!important;
 }
@@ -5168,7 +5168,7 @@ html body #boss-reg-modal #accordion-days-container > div > div:first-child .tex
 html body #boss-reg-modal :is(.text-sky-200,.text-sky-300,.text-amber-300,.text-amber-400,.text-amber-500,.text-orange-300,.text-orange-400) {
   color:#465161!important;-webkit-text-fill-color:#465161!important;
 }
-/* Weekly profile, war/siege records and other dynamic cards within dialogs. */
+                                                                               
 html body [id$="-modal"]:not(#auth-modal) :is(.class-v45-panel,.class-v45-profile-summary,.class-v45-table,.class-v45-table tr,.class-v45-table td,.class-v45-table th) {
   color:#2e3642!important;-webkit-text-fill-color:#2e3642!important;border-color:#d4dae2!important;
 }
@@ -5178,17 +5178,17 @@ html body [id$="-modal"]:not(#auth-modal) :is(.class-v45-panel,.class-v45-profil
 html body [id$="-modal"]:not(#auth-modal) :is(.class-v45-panel,.class-v45-profile-summary) :is(span,small,p,b,strong,li) {
   color:#3e4856!important;-webkit-text-fill-color:#3e4856!important;
 }
-/* Readable action text on dark buttons even when buttons contain nested icons/spans. */
+                                                                                        
 html body [id$="-modal"]:not(#auth-modal) button:is([class*="bg-amber"],[class*="bg-purple"],[class*="bg-violet"],[class*="bg-indigo"],[class*="bg-blue"],[class*="bg-emerald"],[class*="bg-green"],[class*="bg-slate-800"],[class*="bg-slate-900"]) :is(span,strong,i) {
   color:#fff!important;-webkit-text-fill-color:#fff!important;
 }
-/* Actual charcoal header text stays white, regardless of shared label rules. */
+                                                                                
 html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage-modal,#boss-score-edit-modal,#site-settings-modal,#tier-manage-modal,#weekly-archive-modal,#boss-guide-editor-modal) > div > div:first-child.flex :is(h1,h2,h3,h4,span,button,i,strong) {
   color:#fff!important;-webkit-text-fill-color:#fff!important;
 }
 </style>
 <style id="class-v90-unified-boss-and-neutral-content">
-/* V90 — readable black/gray typography for ALL main content tabs. Buttons keep their own palette. */
+                                                                                                     
 .class-page:not([data-page="home"]){--read-ink:#22252b;--read-muted:#535b66;--read-line:#e1d3c6;color:var(--read-ink)!important}
 .class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel,.class-v45-panel){color:var(--read-ink)!important}
 .class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel,.class-v45-panel) :is(h1,h2,h3,h4,h5,h6,p,span,small,strong,b,label,time,li,td,th,dt,dd,summary,legend,output):not(button):not([role="button"]):not(.class-v85-count-highlight){
@@ -5198,9 +5198,9 @@ html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage
 .class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel,.class-v45-panel) :is(p,span,small)[class*="text-slate-"]{
  color:var(--read-muted)!important;
 }
-/* Keep primary actions as existing wood buttons; neutralize ordinary text only. */
+                                                                                   
 .class-page:not([data-page="home"]) :is(input,textarea,select){color:#23272e!important}
-/* Boss page top-level mirrors the members list card. */
+                                                        
 .class-page[data-page="boss"] #class-boss-slot{width:100%!important;min-width:0!important}
 .class-page[data-page="boss"] #class-boss-slot>.dashboard-panel,
 .class-page[data-page="boss"] #class-boss-slot .dashboard-panel{
@@ -5217,12 +5217,12 @@ html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage
 }
 .class-page[data-page="boss"] #class-boss-slot #panel-title-2 i{color:#8d6242!important}
 .class-page[data-page="boss"] #content-boss-sched-2{gap:12px!important}
-/* Registration action more compact; score guide quiet and aligned. */
+                                                                      
 .class-page[data-page="boss"] .class-v85-boss-tools{grid-template-columns:minmax(165px,.30fr) minmax(0,1fr)!important;gap:12px!important}
 .class-page[data-page="boss"] .class-v85-participate{min-height:76px!important}
 .class-page[data-page="boss"] .class-v85-score-guide{background:#f7f6f5!important;border-color:#ded7d0!important;color:#22252b!important}
 .class-page[data-page="boss"] .class-v85-score-guide #boss-guide-text{color:#535b66!important}
-/* Server maintenance status is another light sub-card, not tinted wood. */
+                                                                           
 .class-page[data-page="boss"] #content-boss-sched-2>div[class*="bg-slate-900"]{
  background:#f5f5f6!important;border:1px solid #d9dce2!important;
  color:#292e36!important;
@@ -5230,7 +5230,7 @@ html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage
 .class-page[data-page="boss"] #content-boss-sched-2>div[class*="bg-slate-900"] :is(strong,span,div):not(button){color:#313741!important}
 .class-page[data-page="boss"] #maintenance-schedule-list,
 .class-page[data-page="boss"] #maintenance-schedule-list *{color:#525a66!important}
-/* Boss live list — neutral cards like guild members, with calm separators. */
+                                                                              
 .class-page[data-page="boss"] #next-boss-preview{
  background:transparent!important;border:0!important;box-shadow:none!important;
  padding:0!important;max-height:none!important;overflow:visible!important;
@@ -5245,7 +5245,7 @@ html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage
 .class-page[data-page="boss"] #next-boss-preview>div>div:first-child{display:flex!important;align-items:center!important;gap:8px!important}
 .class-page[data-page="boss"] #next-boss-preview .font-bold.text-white{color:#23272d!important;font-size:15px!important}
 .class-page[data-page="boss"] #next-boss-preview .text-slate-400{color:#626b77!important}
-/* Countdown is the only highlighted text. Distinguish upcoming vs. already spawned. */
+                                                                                       
 .class-page[data-page="boss"] #next-boss-preview>div>div.text-lg{
  display:inline-flex!important;align-items:center!important;gap:7px!important;
  width:max-content!important;max-width:100%!important;overflow-wrap:anywhere!important;
@@ -5262,28 +5262,28 @@ html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage
 .class-page[data-page="boss"] #next-boss-preview>div>div.text-lg.text-slate-400{
  color:#5e6874!important;background:#eff1f4!important;border:1px solid #dbe0e6!important;
 }
-/* Protect the bold action text in wood buttons from old/global contrast overrides. */
+                                                                                      
 .class-page[data-page="boss"] #next-boss-preview button,
 .class-page[data-page="boss"] .class-v85-participate,
 .class-page[data-page="boss"] .class-section-manage-btn{font-weight:750!important}
 .class-page[data-page="boss"] #next-boss-preview button.bg-blue-600,
 .class-page[data-page="boss"] #next-boss-preview button.bg-rose-500:not(:disabled){color:#fff!important}
-/* War, siege, items & admin: titles and body always dark neutral, not amber/chocolate. */
+                                                                                          
 .class-page:is([data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"],[data-page="members"]) :is(.class-card,.dashboard-panel,.class-v45-panel) :is(h2,h3,h4,strong,th,td,p,span,small):not(button){color:#252a32!important}
 .class-page:is([data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"],[data-page="members"]) :is(.class-v45-muted,.text-slate-400,.text-xs):not(button){color:#58616c!important}
-/* Role badges and validated status markers retain their semantic colors. */
+                                                                            
 .class-page:not([data-page="home"]) :is(.text-red-500,.text-red-600,.text-rose-500,.text-green-600,.text-emerald-600):not(button){color:inherit}
 @media(max-width:860px){.class-page[data-page="boss"] .class-v85-boss-tools{grid-template-columns:1fr!important}}
 @media(max-width:600px){.class-page[data-page="boss"] #class-boss-slot .dashboard-panel{padding:13px!important}.class-page[data-page="boss"] #next-boss-preview>div{padding:12px!important}}
 </style>
 
 <style id="class-v91-five-targeted-fixes">
-/* 1: Guild member manage action: readable label on existing walnut button. */
+                                                                              
 #class-member-manage-trigger,
 #class-member-manage-trigger span,
 #class-member-manage-trigger i {color:#fff!important;font-weight:800!important;-webkit-text-fill-color:#fff!important}
 
-/* 2: Boss schedule action text and stronger, calmer time highlights. */
+                                                                        
 .class-page[data-page="boss"] #next-boss-preview button.bg-blue-600,
 .class-page[data-page="boss"] #next-boss-preview button.bg-blue-600 * {
   color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:800!important;
@@ -5296,14 +5296,14 @@ html body :is(#user-manage-modal,#item-manage-modal,#boss-reg-modal,#boss-manage
   color:#a12b3a!important;background:#ffe5e8!important;border:1px solid #e9a7b1!important;
 }
 
-/* 4: Guild diamond save action: force white bold on dark background. */
+                                                                        
 button[onclick="saveGuildDiamonds()"] {
   color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:800!important;
   background:#303136!important;
 }
 
-/* 5: Distribution panel follows the member panel's neutral cards.
-   Dark/selected controls have WHITE text; inactive controls are neutral with DARK text. */
+                                                                  
+                                                                                           
 .class-page[data-page="items"] #class-item-slot .dashboard-panel,
 .class-page[data-page="items"] #class-item-slot .class-card {
   background:#fffaf6!important;border:1px solid #e5cbb4!important;
@@ -5332,21 +5332,21 @@ button[onclick="saveGuildDiamonds()"] {
 </style>
 
 <style id="class-v92-white-canvas-font-and-pagination">
-/* V92: Only the right-hand app canvas changes; sidebar and login keep their palette. */
+                                                                                        
 html body #app-container,
 html body #app-container #class-pages,
 html body #app-container #class-pages > .class-page {
   background-color:#ffffff!important;
 }
 html body #app-container {color:#16191d!important;}
-/* The layout retains the original cream bordered cards and walnut controls. */
+                                                                               
 html body #app-container #class-pages > .class-page:not([data-page="home"]){color:#15191f!important;}
 html body #app-container #class-pages > .class-page:not([data-page="home"])
  :is(.class-card,.dashboard-panel,.class-v45-panel) :is(h1,h2,h3,h4,h5,h6,p,span,small,strong,b,label,time,li,td,th,dt,dd,summary,legend,output):not(button):not([role="button"]):not(.class-v85-count-highlight){
  color:#15191f!important;text-shadow:none!important;
 }
-/* Consistent readable Korean sans-serif across text, controls and dialogs.
-   Keep the decorative CLASS lettermark and the homepage boss countdown numerals intact. */
+                                                                           
+                                                                                           
 html body :is(h1,h2,h3,h4,h5,h6,p,span,small,strong,b,label,time,li,td,th,dt,dd,summary,legend,output,button,input,select,textarea,a){
  font-family:'Pretendard','Malgun Gothic','Apple SD Gothic Neo',sans-serif!important;
 }
@@ -5355,7 +5355,7 @@ html body #class-home .class-boss-countdown,
 html body #class-home .class-boss-countdown * {
  font-family:Georgia,'Noto Serif KR',serif!important;
 }
-/* Pagination buttons remain readable both selected and unselected. */
+                                                                      
 html body #item-pagination button {
  background:#65422d!important;border:1px solid #8c6345!important;
  color:#fff!important;-webkit-text-fill-color:#fff!important;
@@ -5370,11 +5370,11 @@ html body #item-pagination button:focus-visible{outline:2px solid #222!important
 </style>
 <style id="class-v94-modern-monochrome">
 
-/* V94: neutral black-and-white content, approved walnut sidebar left intact. */
+                                                                                
 :root{--v94-white:#fff;--v94-canvas:#fff;--v94-line:#d9dce1;--v94-ink:#171a1f;--v94-muted:#525b66;--v94-charcoal:#262a30;--v94-soft:#f5f6f8}
 html body #class-main,html body #class-main-content,html body .class-page:not([data-page="home"]){background:#fff!important}
 html body .class-page:not([data-page="home"]){color:var(--v94-ink)!important}
-/* Shared main panel: not the hidden dialog/modal DOM. */
+                                                         
 html body .class-page:not([data-page="home"]) .class-panel-slot>.dashboard-panel,
 html body .class-page:not([data-page="home"]) .class-panel-slot .dashboard-panel{
  background:#fff!important;border:1px solid #e0e2e6!important;box-shadow:0 3px 14px rgba(20,24,30,.055)!important;
@@ -5386,13 +5386,13 @@ html body .class-page:not([data-page="home"]) .class-panel-slot :is(h1,h2,h3,h4,
 html body .class-page:not([data-page="home"]) .class-panel-slot :is(.text-xs,.text-slate-400,.text-slate-500,.class-v45-muted):not(button){color:#59616b!important}
 html body .class-page:not([data-page="home"]) .class-panel-slot :is(input,textarea,select){background:#fff!important;color:#202329!important;border-color:#cdd2da!important;box-shadow:none!important}
 html body .class-page:not([data-page="home"]) .class-panel-slot :is(input,textarea)::placeholder{color:#7a828e!important}
-/* Clear active vs inactive action buttons without brown washes. Exclude inline modal triggers' content. */
+                                                                                                           
 html body .class-page:not([data-page="home"]) .class-panel-slot :is(.class-section-manage-btn,.class-member-manage-trigger,.class-v85-participate){
  background:linear-gradient(#393d44,#1f2228)!important;border:1px solid #2c3036!important;color:#fff!important;box-shadow:0 3px 8px rgba(0,0,0,.1)!important;
  font-weight:800!important
 }
 html body .class-page:not([data-page="home"]) .class-panel-slot :is(.class-section-manage-btn,.class-v85-participate) :is(span,i,svg){color:#fff!important}
-/* Members listing: two columns, neutral-gray cards and naturally contrasting labels. */
+                                                                                        
 html body .class-page[data-page="members"] #class-member-slot .dashboard-panel,
 html body .class-page[data-page="members"] #class-member-slot .dashboard-panel #content-member-1{background:#fff!important;color:#171a1f!important}
 html body .class-page[data-page="members"] #class-member-slot #panel-title-1{color:#121418!important;font-size:23px!important;font-weight:850!important}
@@ -5418,7 +5418,7 @@ html body .class-page[data-page="members"] #class-member-manage-trigger *{
  color:#fff!important;-webkit-text-fill-color:#fff!important;font-weight:800!important
 }
 html body .class-page[data-page="members"] #class-member-manage-trigger{background:linear-gradient(#393d44,#1e2126)!important;border:1px solid #2c3036!important}
-/* Boss management header: same light visual language as member listing. */
+                                                                           
 html body .class-page[data-page="boss"] #class-boss-slot>.dashboard-panel,
 html body .class-page[data-page="boss"] #class-boss-slot .dashboard-panel{background:#fff!important;border-color:#dedfe3!important;box-shadow:0 3px 14px #15191f0c!important}
 html body .class-page[data-page="boss"] #panel-title-2,
@@ -5458,13 +5458,13 @@ html body .class-page[data-page="boss"] .class-section-manage-btn{
 html body .class-page[data-page="boss"] #next-boss-preview button:disabled{
  background:#f1f2f4!important;color:#5f6875!important;-webkit-text-fill-color:#5f6875!important;border-color:#cdd1d7!important
 }
-/* Consistent monochrome for other main pages without altering separate overlays. */
+                                                                                    
 html body .class-page:is([data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]) .class-panel-slot :is(.class-card,.class-v45-panel,.class-v45-table,.boss-reg-group),
 html body .class-page:is([data-page="war"],[data-page="siege"],[data-page="items"],[data-page="admin"]) .class-panel-slot :is(.bg-slate-900,.bg-slate-800,.bg-gray-900){
  background:#f8f9fa!important;border-color:#d9dde3!important;color:#202329!important
 }
 
-/* Final high-specificity corrections for legacy V82/V90 selectors. */
+                                                                      
 html body .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card{background:#fff!important;border-color:#d9dde3!important;color:#1b1f25!important;box-shadow:0 3px 8px #191d220b!important}
 html body .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card :is(.guild-member-name,.class-member-power){color:#171a1f!important}
 html body .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-participation-text{color:#3e4650!important}
@@ -5473,21 +5473,21 @@ html body .class-page[data-page="boss"] #class-boss-slot #next-boss-preview>div{
 html body .class-page[data-page="boss"] #class-boss-slot #next-boss-preview>div>div.text-lg.text-amber-400{background:#292d33!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#292d33!important}
 html body .class-page[data-page="boss"] #class-boss-slot #next-boss-preview>div>div.text-lg.text-rose-400{background:#edf0f3!important;color:#262c35!important;-webkit-text-fill-color:#262c35!important;border-color:#ccd1d9!important}
 
-/* Keep all dialogs independently black-and-white; no global changes to their selectors. */
+                                                                                           
 @media(max-width:860px){html body .class-page[data-page="boss"] .class-v85-boss-tools{grid-template-columns:1fr!important}}
 
 </style>
 
 <style id="class-v95-all-tabs-unified">
-/* V95 — one shared design language for all MAIN pages except home.
-   Scope deliberately excludes side navigation, auth UI, and modal/popover overlays. */
+                                                                   
+                                                                                       
 :root{--ui95-bg:#ffffff;--ui95-card:#ffffff;--ui95-sub:#f7f8fa;--ui95-line:#dde1e6;--ui95-ink:#171b21;--ui95-muted:#545d68;--ui95-action:#262a30;--ui95-accent:#2563eb}
 html body #class-pages > .class-page:not([data-page="home"]){
  background:var(--ui95-bg)!important;color:var(--ui95-ink)!important;
  font-family:Pretendard,"Noto Sans KR",system-ui,-apple-system,BlinkMacSystemFont,sans-serif!important;
  font-size:14px!important;line-height:1.55!important;
 }
-/* Page-level cards: member/boss/war/siege/items/admin use matching surface and spacing. */
+                                                                                           
 html body #class-pages > .class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card,.class-v45-panel){
  background:var(--ui95-card)!important;color:var(--ui95-ink)!important;
  border:1px solid var(--ui95-line)!important;border-radius:14px!important;
@@ -5505,14 +5505,14 @@ html body #class-pages > .class-page:not([data-page="home"]) :is(#panel-title-1,
  border-bottom:1px solid var(--ui95-line)!important;
 }
 html body #class-pages > .class-page:not([data-page="home"]) :is(.class-v45-panel,.class-card,.dashboard-panel) :is(h3,h4){font-size:16px!important;font-weight:750!important}
-/* Readable typography; do not touch buttons or input controls here. */
+                                                                       
 html body #class-pages > .class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel,.class-v45-panel) :is(p,span,small,strong,b,label,li,td,th,summary,legend,output):not(button):not([class*="count-highlight"]):not(.class-member-power-value):not(.class-member-role){
  color:var(--ui95-ink)!important;text-shadow:none!important;font-family:inherit!important;
 }
 html body #class-pages > .class-page:not([data-page="home"]) :is(.class-v45-muted,.class-member-participation-text,.class-member-toolbar-meta,.text-slate-400,.text-slate-500){
  color:var(--ui95-muted)!important;font-size:12px!important;
 }
-/* A single appearance for form fields on all main tabs. */
+                                                           
 html body #class-pages > .class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel,.class-v45-panel) :is(input:not([type="checkbox"]):not([type="radio"]),textarea,select){
  background:#fff!important;color:var(--ui95-ink)!important;
  border:1px solid #cbd1d9!important;border-radius:9px!important;
@@ -5520,7 +5520,7 @@ html body #class-pages > .class-page:not([data-page="home"]) :is(.class-card,.da
  box-shadow:none!important;
 }
 html body #class-pages > .class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel,.class-v45-panel) :is(input,textarea)::placeholder{color:#7a828e!important}
-/* Existing interactions remain; color/weight/sizing are unified for actual action controls. */
+                                                                                               
 html body #class-pages > .class-page:not([data-page="home"]) :is(.class-v45-btn,.class-btn,.class-section-manage-btn,.class-member-manage-trigger,.class-v85-participate,button[class*="bg-amber"],button[class*="bg-yellow"]){
  background:var(--ui95-action)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
  border:1px solid #262a30!important;border-radius:9px!important;
@@ -5531,14 +5531,14 @@ html body #class-pages > .class-page:not([data-page="home"]) :is(.class-v45-btn,
  color:inherit!important;-webkit-text-fill-color:inherit!important;
 }
 html body #class-pages > .class-page:not([data-page="home"]) button:disabled{opacity:.55!important;box-shadow:none!important;cursor:not-allowed!important}
-/* Repeated list rows and tables (including war, siege and item distribution). */
+                                                                                 
 html body #class-pages > .class-page:not([data-page="home"]) :is(.class-v45-table,.class-v45-table tr,.class-v45-table td,.class-v45-table th){
  background-color:transparent!important;color:var(--ui95-ink)!important;border-color:var(--ui95-line)!important;font-family:inherit!important;font-size:13px!important;
 }
 html body #class-pages > .class-page:not([data-page="home"]) :is(.boss-reg-group,.class-v85-score-guide,[class*="bg-slate-900"],[class*="bg-slate-800"]):not(button){
  background:var(--ui95-sub)!important;color:var(--ui95-ink)!important;border-color:var(--ui95-line)!important;
 }
-/* All member cards match the boss and item surface. */
+                                                       
 html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card{
  background:#fff!important;border:1px solid var(--ui95-line)!important;border-radius:12px!important;
  box-shadow:0 2px 8px rgba(18,24,32,.045)!important;padding:14px 16px!important;
@@ -5548,7 +5548,7 @@ html body #class-pages > .class-page[data-page="members"] #class-member-slot #me
 html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-power{
  font-size:12px!important;font-weight:750!important;color:var(--ui95-ink)!important;
 }
-/* Only the combat-power numeric VALUE gets the unique blue accent. */
+                                                                      
 html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-power .class-member-power-label{
  color:var(--ui95-ink)!important;-webkit-text-fill-color:var(--ui95-ink)!important;
 }
@@ -5556,7 +5556,7 @@ html body #class-pages > .class-page[data-page="members"] #class-member-slot #me
  color:var(--ui95-accent)!important;-webkit-text-fill-color:var(--ui95-accent)!important;font-weight:850!important;
  font-variant-numeric:tabular-nums!important;
 }
-/* Neutral supporting info and compact tabs in item distribution/boss/war/siege. */
+                                                                                   
 html body #class-pages > .class-page:not([data-page="home"]) :is(.class-card,.dashboard-panel) :is(.class-tabs,.class-nav){font-family:inherit!important}
 html body #class-pages > .class-page:not([data-page="home"]) #next-boss-preview>div{
  background:#fff!important;border:1px solid var(--ui95-line)!important;border-radius:12px!important;
@@ -5568,7 +5568,7 @@ html body #class-pages > .class-page[data-page="boss"] #next-boss-preview>div>di
 html body #class-pages > .class-page[data-page="boss"] #next-boss-preview>div>div.text-lg.text-rose-400{
  background:#eef0f3!important;color:#242a33!important;-webkit-text-fill-color:#242a33!important;border:1px solid #d3d8df!important;
 }
-/* Preserve modal overlays' own black/white design; no generic body/button rules here. */
+                                                                                         
 @media(max-width:700px){
  html body #class-pages > .class-page:not([data-page="home"]) :is(.dashboard-panel,.class-card){padding:14px!important}
  html body #class-pages > .class-page:not([data-page="home"]) :is(#panel-title-1,#panel-title-2,#panel-title-3,#panel-title-4,.class-card>h2){font-size:19px!important}
@@ -5576,8 +5576,8 @@ html body #class-pages > .class-page[data-page="boss"] #next-boss-preview>div>di
 </style>
 
 <style id="class-v96-item-and-member-polish">
-/* v96: Distribution page follows the same neutral palette and geometry as member/boss pages.
-   Scope intentionally excludes popups and the home screen. */
+                                                                                             
+                                                              
 html body #class-pages > .class-page[data-page="items"] #class-item-slot .dashboard-panel,
 html body #class-pages > .class-page[data-page="items"] #class-item-slot .class-card{
   background:#fff!important;color:#171b21!important;border:1px solid #dde1e6!important;
@@ -5601,7 +5601,7 @@ html body #class-pages > .class-page[data-page="items"] #class-item-slot :is(.ti
 html body #class-pages > .class-page[data-page="items"] #class-item-slot :is(.tier-price-card,.class-item-row) :is(.text-amber-400,.tier-price-line>span:last-child){
   font-weight:750!important;
 }
-/* Main category/secondary categories: charcoal active, white inactive. */
+                                                                          
 html body #class-pages > .class-page[data-page="items"] #class-item-slot :is(#btn-tab-dist-기준-3,#btn-tab-dist-신청-3,#tier-category-tabs button,#tier-equipment-tabs button,.item-cat-btn){
   border:1px solid #d7dce2!important;border-radius:9px!important;
   font-family:inherit!important;font-size:13px!important;font-weight:750!important;
@@ -5624,7 +5624,7 @@ html body #class-pages > .class-page[data-page="items"] #class-item-slot .class-
 html body #class-pages > .class-page[data-page="items"] #class-item-slot #item-pagination button{
   font-family:inherit!important;font-weight:750!important;
 }
-/* Member rows: icon takes the full two-line height; both text lines share one start edge. */
+                                                                                             
 html body #class-pages > .class-page[data-page="members"] #member-list-view .class-member-card{
   display:grid!important;grid-template-columns:44px minmax(0,1fr)!important;
   align-items:center!important;column-gap:12px!important;row-gap:0!important;
@@ -5660,7 +5660,7 @@ html body #class-pages > .class-page[data-page="members"] #member-list-view .cla
 </style>
 
 <style id="class-v97-admin-tab-neutral">
-/* v97: ADMIN MAIN TAB ONLY; leave modals, left sidebar, login, and other pages intact. */
+                                                                                          
 html body #class-pages > .class-page[data-page="admin"]{
   background:#fff!important;color:#171b21!important;
   font:14px/1.55 Pretendard,"Noto Sans KR",system-ui,sans-serif!important;
@@ -5678,7 +5678,7 @@ html body #class-pages > .class-page[data-page="admin"] > .class-card{
   box-shadow:0 3px 12px rgba(18,24,32,.045)!important;
   color:#171b21!important;padding:20px!important;
 }
-/* Dark boxes retained from the old theme are ONLY cleared within the admin tab. */
+                                                                                   
 html body #class-pages > .class-page[data-page="admin"] #class-admin-slot [class*="bg-slate-"],
 html body #class-pages > .class-page[data-page="admin"] #class-admin-slot #diamond-summary-panel,
 html body #class-pages > .class-page[data-page="admin"] #class-admin-slot #admin-control-panel,
@@ -5706,7 +5706,7 @@ html body #class-pages > .class-page[data-page="admin"] :is(#class-admin-slot,#c
 html body #class-pages > .class-page[data-page="admin"] :is(#class-admin-slot,#class-ratio-system) :is(input,textarea)::placeholder{
   color:#7a828e!important;-webkit-text-fill-color:#7a828e!important;
 }
-/* Admin actions share the same charcoal-and-white button language as other tabs. */
+                                                                                    
 html body #class-pages > .class-page[data-page="admin"] :is(#class-admin-slot,#class-ratio-system) button:not(:disabled),
 html body #class-pages > .class-page[data-page="admin"] > .class-actions > button{
   background:#262a30!important;color:#fff!important;-webkit-text-fill-color:#fff!important;
@@ -5732,7 +5732,7 @@ html body #class-pages > .class-page[data-page="admin"] #panel-title-4{
 </style>
 
 <style id="class-v100-focused-fixes">
-/* Member icons all occupy same two-line visual footprint; clean fighter image embedded above. */
+                                                                                                 
 html body #class-pages .class-page[data-page="members"] #member-list-view .class-member-card > .guild-class-icon {
  width:44px!important;height:52px!important;flex:0 0 44px!important;overflow:hidden!important;
  display:flex!important;align-items:center!important;justify-content:center!important;
@@ -5742,7 +5742,7 @@ html body #class-pages .class-page[data-page="members"] #member-list-view .class
  object-fit:contain!important;object-position:center!important;vertical-align:middle!important;
  filter:contrast(1.25) brightness(.88)!important;
 }
-/* Schedule countdown: emphasis comes only from text color, no colored box or border. */
+                                                                                        
 html body #class-pages .class-page[data-page="boss"] #next-boss-preview .class-schedule-count-plain {
  display:inline-block!important;width:auto!important;min-width:0!important;
  background:transparent!important;background-image:none!important;
@@ -5759,12 +5759,12 @@ html body #class-pages .class-page[data-page="boss"] #next-boss-preview .class-s
 html body #class-pages .class-page[data-page="boss"] #next-boss-preview .class-schedule-count-plain.is-unknown {
  color:#636b78!important;-webkit-text-fill-color:#636b78!important;
 }
-/* A softer, more compact reset button. */
+                                          
 html body #class-pages .class-page[data-page="boss"] #next-boss-preview button.class-schedule-reset {
  font-size:11px!important;font-weight:600!important;line-height:1.25!important;
  padding:6px 9px!important;min-height:0!important;letter-spacing:0!important;
 }
-/* Keep original desktop sidebar exactly as is. Mobile becomes a left-hand drawer. */
+                                                                                     
 #class-mobile-nav-toggle,#class-mobile-nav-shade{display:none!important}
 @media(max-width:800px){
  html body #class-mobile-nav-toggle{
@@ -5807,7 +5807,7 @@ html body #class-pages .class-page[data-page="boss"] #next-boss-preview button.c
  html body #class-pages .class-page[data-page="members"] #member-list-view .class-member-card > .guild-class-icon img {width:36px!important;height:44px!important;max-width:36px!important;max-height:44px!important}
 }
 
-/* v100: Items-only alignment, rarity colors and completed state. */
+                                                                    
 #admin-notice-edit-box.hidden { display:none!important; }
 #item-market-list .class-item-row { position:relative!important; overflow:hidden; }
 #item-market-list .class-item-line { display:block!important; min-width:0; }
@@ -5828,7 +5828,7 @@ html body #class-pages .class-page[data-page="boss"] #next-boss-preview button.c
 </style>
 
 <style id="class-v100-item-alignment-rarity">
-/* The action occupies a fixed trailing column, regardless of item name length. */
+                                                                                  
 html body #item-market-list .class-item-row .class-item-line {
   display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
   align-items:center!important;column-gap:14px!important;min-width:0!important;
@@ -5846,7 +5846,7 @@ html body #item-market-list .class-item-row .class-item-action button {
   width:100%!important;min-width:0!important;white-space:nowrap!important;
   text-align:center!important;
 }
-/* Rarity is determined by the saved item grade; the text is colored on render. */
+                                                                                  
 html body #item-market-list .class-item-name.class-rarity-advanced {color:#15803d!important;-webkit-text-fill-color:#15803d!important}
 html body #item-market-list .class-item-name.class-rarity-rare {color:#2563eb!important;-webkit-text-fill-color:#2563eb!important}
 html body #item-market-list .class-item-name.class-rarity-heroic {color:#dc2626!important;-webkit-text-fill-color:#dc2626!important}
@@ -5857,7 +5857,7 @@ html body #item-market-list .class-item-name.class-rarity-legendary {color:#a977
  html body #item-market-list .class-item-row .class-item-action button {font-size:11px!important;padding:5px 4px!important}
 }
 
-/* v102: 아이템 신청 및 분배 기준에 동일한 등급별 이름색 적용 */
+                                          
 #tier-list-view .class-tier-rarity-name,
 #item-market-list .class-item-name { font-weight:700!important; }
 #tier-list-view .class-tier-price { color:#374151!important; -webkit-text-fill-color:#374151!important; }
@@ -5870,23 +5870,23 @@ html body #item-market-list .class-item-name.class-rarity-legendary {color:#a977
 #tier-list-view .class-tier-rarity-name.class-rarity-legendary,
 #item-market-list .class-item-name.class-rarity-legendary { color:#a97700!important; -webkit-text-fill-color:#a97700!important; }
 
-/* v102: item grade label always uses the same rarity hue as the item name. */
+                                                                              
 #item-market-list .class-item-grade.class-rarity-advanced{color:#15803d!important;-webkit-text-fill-color:#15803d!important}
 #item-market-list .class-item-grade.class-rarity-rare{color:#2563eb!important;-webkit-text-fill-color:#2563eb!important}
 #item-market-list .class-item-grade.class-rarity-heroic{color:#dc2626!important;-webkit-text-fill-color:#dc2626!important}
 #item-market-list .class-item-grade.class-rarity-legendary{color:#a97700!important;-webkit-text-fill-color:#a97700!important}
 
-/* v103: 신청자 명단은 박스 없이 닉네임만 점으로 구분 */
+                                     
 .class-item-applicant-names{color:#374151!important;font-weight:500!important;font-size:13px!important;line-height:1.8!important;overflow-wrap:anywhere!important;}
-/* v116: A regular member must never see the admin navigation.
-   Specificity and !important override the earlier sidebar display:flex!important rule. */
+                                                              
+                                                                                          
 html body #app-container #class-nav #class-admin-link.class-role-denied,
 html body #app-container #class-nav #class-admin-link[hidden] {
   display:none!important;
   visibility:hidden!important;
 }
 
-/* v117: profile dropdown chevron only — no other UI or feature changes. */
+                                                                           
 #class-profile-wrap {
   border-color:#dbbb8b!important;
   border-radius:17px!important;

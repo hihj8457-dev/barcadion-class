@@ -515,6 +515,9 @@ html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!impor
 #class-v150-item-modal h3{font-size:19px;font-weight:850;color:#482f1d;margin-bottom:13px}
 #class-v150-item-modal label{display:block;font-size:13px;font-weight:750;color:#59402e;margin:9px 0}
 #class-v150-item-modal input,#class-v150-item-modal select{display:block;width:100%;padding:11px 12px;margin-top:5px;box-sizing:border-box;border-radius:9px;border:1px solid #d6c3b1;background:#fff;color:#35271e}
+/* V154: 수정 창 입력값만 일반 굵기, 목록/라벨/버튼은 유지 */
+#class-v150-item-modal #class-v150-item-form input,
+#class-v150-item-modal #class-v150-item-form select {font-weight:400!important;}
 #class-v150-item-modal .class-v150-buttons{display:flex;gap:9px;margin-top:19px}
 #class-v150-item-modal .class-v150-buttons button{flex:1;padding:11px;border-radius:9px;background:#fff!important;color:#202124!important;border:1px solid #aeb4bd!important;font-size:13px;font-weight:800;box-shadow:none!important}
 #class-v150-item-modal .class-v150-buttons button[type=submit]{background:#24272d!important;color:#fff!important;border:1px solid #24272d!important}
@@ -1069,7 +1072,7 @@ html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!impor
                 tabLabels: { notice: '공지사항', members: '길드원 명단', bossReg: '참여 등록', bossSched: '스케줄 보기', distStandard: '분배 기준', distApply: '아이템 신청' },
                 bossGuide: '40, 50, 60보스 : 1점\n\n70보스 : 3점\n\n75보스 : 6점\n\n80보스 : 10점\n\n85보스 : 15점\n\n90보스 : 20점\n\n99보스 : 25점\n\n툴칸 : 10점\n\n라세리엔 : 5점\n\n발락 : 30점'
             },
-            notice: "안녕하세요 바르카디온3 클래스 길드원 여러분.\n1. 보스 참여는 매주 성실히 체크해주세요.\n2. 분배 신청은 본인 명의로만 가능합니다.",
+            notice: "안녕하세요 바르카디온3 클래스 길드원 여러분.\n1. 보스 참여는 매주 성실히 체크해주세요.\n2. 분배 신청은 본인 아이디로만 가능합니다.",
             tiers: [
                 {"category": "장비", "name": "전설 0티어 무기", "price": 150000, "note": ""},
                 {"category": "장비", "name": "전설 0티어 방어구", "price": 70000, "note": ""},
@@ -2444,7 +2447,7 @@ const subscriptions={
           normalizeDistributionItem(item);
           if(item.distributed)return alert('이미 분배완료된 아이템입니다.');
           if(item.applicants.includes(db.currentUser))return alert('이미 신청한 아이템입니다.');
-          if(!confirm(`[${item.name}] 아이템을 본인 명의(${db.currentUser})로 신청하시겠습니까?`))return;
+          if(!confirm(`[${item.name}] 아이템을 ${db.currentUser}로 신청하시겠습니까?`))return;
           const nickname=db.currentUser;
           item.applicants.push(nickname);item.applicant=item.applicants[0]||null;
           renderItems();classSaveIndicator('아이템 신청 저장 중');

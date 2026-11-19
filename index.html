@@ -524,6 +524,18 @@ html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!impor
 </style>
 
 
+<style id="class-v153-boss-quick-controls">
+/* Compact monochrome tools for the boss schedule */
+#next-boss-preview .class-v153-boss-actions{display:inline-flex;flex-wrap:nowrap;align-items:center;justify-content:flex-end;gap:5px;flex-shrink:0}
+#next-boss-preview .class-v153-boss-actions button{display:inline-flex!important;align-items:center;justify-content:center;white-space:nowrap!important;min-height:25px!important;height:25px!important;padding:3px 9px!important;border-radius:6px!important;border:1px solid #555a62!important;background:#25282e!important;color:#fff!important;font-size:11px!important;font-weight:750!important;line-height:1.1!important;box-shadow:none!important}
+#next-boss-preview .class-v153-boss-actions button.class-v153-boss-edit{background:#fff!important;color:#25282e!important;border-color:#aab0b9!important}
+#next-boss-preview .class-v153-boss-actions button:disabled{opacity:.40!important;cursor:not-allowed!important}
+#next-boss-preview .class-v153-boss-actions button:not(:disabled){cursor:pointer}
+#next-boss-preview .class-v153-boss-actions button:not(:disabled):hover{filter:brightness(.92)}
+#app-container #class-pages .class-v153-maintenance-button{display:inline-flex;align-items:center;justify-content:center;padding:6px 11px!important;min-height:29px;font-size:12px!important;font-weight:750!important;line-height:1.3;border-radius:7px!important;background:#25282e!important;color:#fff!important;border:1px solid #25282e!important;box-shadow:none!important}
+#app-container #class-pages .class-v153-maintenance-button.hidden{display:none!important}
+@media(max-width:500px){#next-boss-preview .class-v153-boss-actions{gap:4px}#next-boss-preview .class-v153-boss-actions button{padding:3px 7px!important;font-size:10px!important}}
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
 
@@ -697,7 +709,7 @@ html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!impor
                             </div>
                         </div>
                         <div class="bg-slate-900/70 border border-purple-500/40 rounded-xl p-3 space-y-2">
-                            <div class="flex justify-between items-center gap-2"><strong class="text-sm text-purple-200">서버 점검 예약 · 주기형 보스 초기화</strong><button type="button" onclick="openMaintenanceEditor()" class="admin-only hidden text-xs px-3 py-1.5 rounded-lg bg-purple-800 border border-purple-400">점검 관리</button></div>
+                            <div class="flex justify-between items-center gap-2"><strong class="text-sm text-purple-200">서버 점검 예약 · 주기형 보스 초기화</strong><button type="button" onclick="openMaintenanceEditor()" class="admin-only hidden class-v153-maintenance-button">점검 관리</button></div>
                             <div id="maintenance-schedule-list" class="text-xs text-slate-300">등록된 점검 없음</div>
                         </div>
                         <div class="text-xs text-slate-400 flex justify-between items-center">
@@ -3098,13 +3110,40 @@ const subscriptions={
                 const spawned = !!(status && status.spawned);
                 const countdown = next === null ? '출현 기준 시간 미설정' : spawned ? formatBossElapsed(nowMs - next) : formatBossCountdown(next - nowMs);
                 const nextText = next === null ? '관리자가 기준 시각을 입력해야 합니다' : bossDateLabel(next);
-                const adminButton = admin && Number(boss.cycleHours) > 0 ? `<div class="flex flex-wrap gap-1 justify-end"><button type="button" onclick="markBossCut(decodeURIComponent('${nameArg}'))" ${spawned ? '' : 'disabled title="보스 등장 후 활성화됩니다"'} class="text-xs px-2 py-1 rounded bg-rose-500 text-white font-bold ${spawned ? '' : 'opacity-40 cursor-not-allowed'}">컷</button></div>` : '';
+                const adminButton = admin && Number(boss.cycleHours) > 0 ? `<div class="class-v153-boss-actions"><button type="button" onclick="markBossCut(decodeURIComponent('${nameArg}'))" ${spawned ? '' : 'disabled title="보스 등장 후 활성화됩니다"'} class="class-v153-boss-cut ${spawned ? '' : 'opacity-40 cursor-not-allowed'}">컷</button><button type="button" class="class-v153-boss-edit" onclick="openBossQuickTimeEdit(decodeURIComponent('${nameArg}'), ${Number(next)})">시간 수정</button></div>` : '';
                 return `<div class="bg-slate-900/70 border border-slate-700/60 rounded-xl p-3 space-y-2">
                     <div class="flex items-center justify-between gap-2"><div class="font-bold text-white">${name} <span class="text-xs text-slate-400 font-normal">${rule} · ${score}점</span></div>${adminButton}</div>
                     <div class="class-schedule-count-plain ${next === null ? 'is-unknown' : spawned ? 'is-elapsed' : 'is-upcoming'}">${countdown}</div>
                     <div class="text-xs text-slate-400">${nextText}</div>
                 </div>`;
             }).join('') || '<p class="text-slate-400 text-sm">오늘 남은 보스 일정이 없습니다.</p>';
+        }
+
+        // V153: Reuse the existing shared schedule editor and its save path; never
+        // write a separate clock value that could diverge from registration slots.
+        function openBossQuickTimeEdit(name, scheduledTime) {
+            if (!cloudManager() || !cloudReady || !isCurrentAdmin()) {
+                alert('운영진 이상 권한 및 서버 연결이 필요합니다.'); return;
+            }
+            const boss=db.bossListDef.find(b=>b.name===name);
+            if(!boss || !(Number(boss.cycleHours)>0)) {
+                alert('시간 수정은 주기형 보스에 사용할 수 있습니다.'); return;
+            }
+            if(!Number.isFinite(Number(scheduledTime)) || Number(scheduledTime)<=0) return;
+            openBossManageModal();
+            switchBossManageTab('slots');
+            const dayInput=document.getElementById('boss-slot-date');
+            const bossInput=document.getElementById('boss-slot-boss');
+            if(!dayInput || !bossInput) return;
+            dayInput.value=localDateKey(new Date(Number(scheduledTime)));
+            bossInput.value=name;
+            renderBossSlotEditor();
+            const source=document.getElementById('boss-schedule-original');
+            if(source && Array.from(source.options).some(o=>o.value===String(scheduledTime))) {
+                source.value=String(scheduledTime);
+                classSelectBossScheduleSource();
+            }
+            document.getElementById('boss-schedule-new')?.focus();
         }
 
         function markBossCut(name) {

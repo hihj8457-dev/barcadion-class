@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261120_V144_APPROVAL_ADMIN_SCORE_RESET">
+    <meta name="class-build-id" content="CLASS_BUILD_20261120_V145_LOGIN_CROWN_TIER_GRADE">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -201,7 +201,7 @@ body{background:#f6eee6!important;color:var(--ink)!important;font-family:Pretend
 .class-login-overlay{background:#faf3ec!important;color:#3a261c!important}
 .class-login-layout{width:min(690px,100%);margin:auto}
 .class-login-brand{display:flex;flex-direction:column;align-items:center;gap:2px;color:#3d2618;font-family:Georgia,serif;text-align:center;margin-bottom:24px}
-.class-login-shield{width:56px;height:64px;display:grid;place-items:center;border:3px solid #b68c55;background:#4c3021;clip-path:polygon(50% 0,95% 17%,91% 70%,50% 99%,9% 70%,5% 17%);color:#eec98e;font-size:32px}
+.class-login-shield{width:auto;height:auto;display:block;border:0;background:none;clip-path:none;color:#8b5b2e;font-family:Georgia,serif;font-size:64px;line-height:1;letter-spacing:0;text-shadow:0 2px 3px #4c302126}
 .class-login-brand strong{font-size:57px;letter-spacing:6px;line-height:1.2;font-weight:500}.class-login-brand span{letter-spacing:5px;font-size:15px}
 .class-login-card{background:linear-gradient(#fffaf5,#f8eee5);border:1px solid #dec5ad;border-radius:27px;box-shadow:0 16px 36px #72513a29;padding:35px 42px 30px;color:#352218}
 .class-login-card h2{text-align:center;font-size:44px;font-weight:850;margin:9px 0 38px;font-family:Georgia,'Malgun Gothic',serif}
@@ -493,7 +493,7 @@ html body #app-container #class-pages #class-war-system table.class-v45-table tb
 
     <div id="auth-modal" class="class-login-overlay" style="position:fixed;inset:0;display:flex;justify-content:center;align-items:center;overflow-y:auto;z-index:9999;padding:24px 12px">
       <div class="class-login-layout">
-        <div class="class-login-brand"><div class="class-login-shield">♛</div><strong>CLASS</strong><span>GUILD MANAGEMENT</span></div>
+        <div class="class-login-brand"><div class="class-login-shield" aria-label="CLASS 왕관 로고" role="img">♛</div><strong>CLASS</strong><span>GUILD MANAGEMENT</span></div>
         <div class="class-login-card">
           <h2 id="auth-title">로그인</h2>
           <div id="auth-error" style="display:none;background:#fff0ee;border:1px solid #d59582;color:#872d20;padding:11px;border-radius:10px;margin-bottom:12px"></div>
@@ -797,7 +797,7 @@ html body #app-container #class-pages #class-war-system table.class-v45-table tb
                     <input type="text" id="new-item-name" placeholder="아이템 이름" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
                     <label class="block text-xs text-slate-300">아이템 등급
                         <select id="new-item-grade" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
-                            <option value="">등급 없음</option><option value="고급">고급</option><option value="희귀">희귀</option><option value="영웅">영웅</option><option value="전설">전설</option>
+                            <option value="">등급 없음</option><option value="일반">일반</option><option value="고급">고급</option><option value="희귀">희귀</option><option value="영웅">영웅</option><option value="전설">전설</option>
                         </select>
                     </label>
                     <div class="grid grid-cols-2 gap-2">
@@ -884,6 +884,9 @@ html body #app-container #class-pages #class-war-system table.class-v45-table tb
             <div class="p-5 overflow-y-auto space-y-3 flex-1">
                 <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 space-y-2">
                     <select id="new-tier-category" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"><option>장비</option><option>스킬북</option><option>권능</option><option>기타</option></select>
+                    <label class="block text-xs text-slate-300">아이템 등급
+                        <select id="new-tier-grade" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white"><option value="일반">일반</option><option value="고급">고급</option><option value="희귀">희귀</option><option value="영웅">영웅</option><option value="전설">전설</option></select>
+                    </label>
                     <input id="new-tier-name" placeholder="아이템/분배 기준 이름" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
                     <input id="new-tier-price" type="number" placeholder="기준가 (다이아)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
                     <input id="new-tier-note" placeholder="분배 방식 / 비고 (선택)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-sm text-white">
@@ -1848,6 +1851,19 @@ const subscriptions={
             document.getElementById('tier-manage-modal').classList.remove('hidden');
         }
         function closeTierManageModal() { document.getElementById('tier-manage-modal').classList.add('hidden'); renderTiers(); }
+        function tierGrade(tier) {
+            if (tier && Object.prototype.hasOwnProperty.call(tier, 'grade')) {
+                return ['일반','고급','희귀','영웅','전설'].includes(tier.grade) ? tier.grade : '일반';
+            }
+            // 기존 V144 저장 기록 호환: 등급 필드가 없을 때만 기존 명칭으로 초기 선택값을 결정.
+            return itemRarity(tier?.name) || '일반';
+        }
+        function tierRarityClass(tier) {
+            return ({'일반':'class-rarity-default','고급':'class-rarity-advanced','희귀':'class-rarity-rare','영웅':'class-rarity-heroic','전설':'class-rarity-legendary'})[tierGrade(tier)];
+        }
+        function tierRarityColor(tier) {
+            return ({'일반':'#374151','고급':'#15803d','희귀':'#2563eb','영웅':'#dc2626','전설':'#a97700'})[tierGrade(tier)];
+        }
         function renderAdminTierList() {
             document.getElementById('admin-tier-list').innerHTML = db.tiers.map((tier,index) => `
                 <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 space-y-2">
@@ -1855,6 +1871,9 @@ const subscriptions={
                         <select id="tier-category-${index}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">${['장비','스킬북','권능','기타'].map(c=>`<option ${tier.category===c?'selected':''}>${c}</option>`).join('')}</select>
                         <input id="tier-name-${index}" value="${escapeAttribute(tier.name)}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
                     </div>
+                    <label class="block text-xs text-slate-300">아이템 등급
+                        <select id="tier-grade-${index}" class="mt-1 w-full bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">${['일반','고급','희귀','영웅','전설'].map(g=>`<option value="${g}" ${tierGrade(tier)===g?'selected':''}>${g}</option>`).join('')}</select>
+                    </label>
                     <div class="grid grid-cols-2 gap-2">
                         <input id="tier-price-${index}" type="number" min="0" placeholder="미정은 비워두기" value="${tier.price == null ? '' : Number(tier.price)}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
                         <input id="tier-note-${index}" placeholder="분배 방식/비고" value="${escapeAttribute(tier.note||'')}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white">
@@ -1869,7 +1888,8 @@ const subscriptions={
             if (!name || (price !== null && (!Number.isFinite(price) || price < 0))) { alert('이름과 올바른 기준가를 입력하세요.'); return; }
             const category = document.getElementById('new-tier-category').value;
             const note = document.getElementById('new-tier-note').value.trim();
-            db.tiers.push({name,price,category,note}); saveDB();
+            const grade = document.getElementById('new-tier-grade').value;
+            db.tiers.push({name,price,category,note,grade}); saveDB();
             ['new-tier-name','new-tier-price','new-tier-note'].forEach(id=>document.getElementById(id).value='');
             renderAdminTierList(); renderTiers();
         }
@@ -1878,7 +1898,7 @@ const subscriptions={
             const raw = document.getElementById(`tier-price-${index}`).value.trim();
             const price = raw === '' ? null : Number(raw);
             if (!name || (price !== null && (!Number.isFinite(price) || price < 0))) { alert('이름과 올바른 기준가를 입력하세요.'); return; }
-            db.tiers[index] = {name,price,category:document.getElementById(`tier-category-${index}`).value,note:document.getElementById(`tier-note-${index}`).value.trim()};
+            db.tiers[index] = {name,price,grade:document.getElementById(`tier-grade-${index}`).value,category:document.getElementById(`tier-category-${index}`).value,note:document.getElementById(`tier-note-${index}`).value.trim()};
             saveDB(); renderAdminTierList(); renderTiers();
         }
         function deleteTier(index) {
@@ -2112,8 +2132,8 @@ const subscriptions={
                 activeTierCategory !== '장비' || String(t.name||'').includes(activeEquipmentType)
             ));
             document.getElementById('tier-list-view').innerHTML = rows.map(t =>
-                `<div class="tier-price-card ${itemRarityClass(t)} bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 text-sm">
-                    <div class="tier-price-line"><span class="class-tier-rarity-name font-bold ${itemRarityClass(t)}" style="color:${itemRarityColor(t)} !important;-webkit-text-fill-color:${itemRarityColor(t)} !important">${escapeHtml(t.name)}</span><span class="class-tier-separator" aria-hidden="true">·</span><span class="class-tier-price font-bold">${t.price == null ? '미정 / 별도 기준' : Number(t.price).toLocaleString()+' 다이아'}</span></div>
+                `<div class="tier-price-card ${tierRarityClass(t)} bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 text-sm">
+                    <div class="tier-price-line"><span class="class-tier-rarity-name font-bold ${tierRarityClass(t)}" style="color:${tierRarityColor(t)} !important;-webkit-text-fill-color:${tierRarityColor(t)} !important">${escapeHtml(t.name)}</span><span class="class-tier-separator" aria-hidden="true">·</span><span class="class-tier-price font-bold">${t.price == null ? '미정 / 별도 기준' : Number(t.price).toLocaleString()+' 다이아'}</span></div>
                     ${t.note ? `<div class="text-slate-400 mt-1 text-xs">${escapeHtml(t.note)}</div>` : ''}
                 </div>`).join('') || '<p class="text-slate-400 text-sm py-3">등록된 분배 기준이 없습니다.</p>';
         }
@@ -3799,7 +3819,7 @@ const kstWeek=calendarWeekKey();
                             <span class="text-amber-400">[${item.category}]</span>
                             <span class="font-bold text-white ml-1">${item.name}</span>
                             <span class="text-slate-400 ml-2">(${Number(item.price || 0).toLocaleString()}다이아)</span>
-                            <div class="mt-1 text-slate-400">등급: <select aria-label="아이템 등급" data-item-action="grade" data-item-id="${escapeAttribute(item.id)}" class="bg-slate-950 border border-slate-600 text-white rounded px-1 py-1">${['','고급','희귀','영웅','전설'].map(g=>`<option value="${g}" ${(item.grade || itemRarity(item.name) || '')===g?'selected':''}>${g||'없음'}</option>`).join('')}</select></div>
+                            <div class="mt-1 text-slate-400">등급: <select aria-label="아이템 등급" data-item-action="grade" data-item-id="${escapeAttribute(item.id)}" class="bg-slate-950 border border-slate-600 text-white rounded px-1 py-1">${['','일반','고급','희귀','영웅','전설'].map(g=>`<option value="${g}" ${(item.grade || itemRarity(item.name) || '')===g?'selected':''}>${g||'없음'}</option>`).join('')}</select></div>
                             <div class="mt-1 text-slate-400">신청자 ${item.applicants.length}명: ${names}</div>
                             <div class="mt-1 ${item.distributed ? 'text-emerald-400' : 'text-sky-400'}">${item.distributed ? '분배완료' : '분배 대기'}</div>
                         </div>
@@ -3841,10 +3861,10 @@ const kstWeek=calendarWeekKey();
             const item = db.items.find(i => String(i.id) === String(itemId)); if (!item) return;
             const name = prompt('아이템 이름 수정', item.name); if (name === null) return;
             const category = prompt('카테고리 입력 (장비 / 스킬북 / 편린 / 기타)', item.category); if (category === null) return;
-            const gradeText = prompt('등급 선택: 고급 / 희귀 / 영웅 / 전설 / 없음', item.grade || itemRarity(item.name) || '없음');
+            const gradeText = prompt('등급 선택: 일반 / 고급 / 희귀 / 영웅 / 전설 / 없음', item.grade || itemRarity(item.name) || '없음');
             if (gradeText === null) return;
             const grade = gradeText.trim() === '없음' ? '' : gradeText.trim();
-            if (grade && !['고급','희귀','영웅','전설'].includes(grade)) return alert('등급은 고급, 희귀, 영웅, 전설, 없음 중에서 선택하세요.');
+            if (grade && !['일반','고급','희귀','영웅','전설'].includes(grade)) return alert('등급은 일반, 고급, 희귀, 영웅, 전설, 없음 중에서 선택하세요.');
             const priceText = prompt('기준가(다이아) 수정', item.price); if (priceText === null) return;
             const price = Number(priceText);
             if (!name.trim() || !['장비','스킬북','편린'].includes(category.trim()) || !Number.isFinite(price) || price < 0) { alert('아이템 이름, 카테고리, 기준가를 올바르게 입력하세요.'); return; }

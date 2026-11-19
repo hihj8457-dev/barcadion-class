@@ -6214,15 +6214,16 @@ html body #class-pages > .class-page[data-page="items"] #class-item-slot #tier-l
 let classV144EditorUid=null, classV144EditorWeek=null, classV144EditorBaseline=null;
 const classV144Manager=()=>Boolean(cloudUser && profileDocs.get(cloudUser.uid)?.approved!==false && ['web_admin','master','staff'].includes(profileDocs.get(cloudUser.uid)?.role));
 const classV144Master=()=>Boolean(cloudUser && profileDocs.get(cloudUser.uid)?.approved!==false && ['web_admin','master'].includes(profileDocs.get(cloudUser.uid)?.role));
+const classV149Approval=()=>classV144Manager(); // 운영진 이상은 가입 승인 및 거절 처리 가능
 const classV144Admin=()=>Boolean(cloudUser?.uid===ADMIN_UID && profileDocs.get(cloudUser.uid)?.role==='web_admin' && profileDocs.get(cloudUser.uid)?.approved!==false);
 function classV144EnsureTools(){
   const panel=document.getElementById('user-manage-list');
   if(!panel || !classV144Manager())return;
   let tools=document.getElementById('class-v144-admin-tools');
   if(!tools){tools=document.createElement('section');tools.id='class-v144-admin-tools';panel.before(tools);}
-  const pending=classV144Master()?[...profileDocs].filter(([uid,d])=>d.approved===false && !d.approvalDecidedAt && d.role!=='web_admin'):[];
-  tools.innerHTML=(classV144Master()?'<strong style="display:block;margin-bottom:7px">가입 승인 대기 ('+pending.length+'명)</strong>':'') +
-    (classV144Master()?(pending.length?pending.map(([uid,d])=>'<div style="padding:9px 0;border-bottom:1px solid #ead5bf">'+escapeHtml(d.nickname||uid)+' <small>('+escapeHtml(d.loginId||uid)+', '+escapeHtml(d.class||'')+', 전투력 '+Number(d.power||0).toLocaleString()+')</small><div><button data-v144-approve="'+escapeAttribute(uid)+'">가입 승인</button><button class="danger" data-v144-reject="'+escapeAttribute(uid)+'">가입 거절</button></div></div>').join(''):'<div style="font-size:12px">현재 대기 중인 신청이 없습니다.</div>'):'')+
+  const pending=classV149Approval()?[...profileDocs].filter(([uid,d])=>d.approved===false && !d.approvalDecidedAt && d.role!=='web_admin'):[];
+  tools.innerHTML=(classV149Approval()?'<strong style="display:block;margin-bottom:7px">가입 승인 대기 ('+pending.length+'명)</strong>':'') +
+    (classV149Approval()?(pending.length?pending.map(([uid,d])=>'<div style="padding:9px 0;border-bottom:1px solid #ead5bf">'+escapeHtml(d.nickname||uid)+' <small>('+escapeHtml(d.loginId||uid)+', '+escapeHtml(d.class||'')+', 전투력 '+Number(d.power||0).toLocaleString()+')</small><div><button data-v144-approve="'+escapeAttribute(uid)+'">가입 승인</button><button class="danger" data-v144-reject="'+escapeAttribute(uid)+'">가입 거절</button></div></div>').join(''):'<div style="font-size:12px">현재 대기 중인 신청이 없습니다.</div>'):'')+
     '<div style="margin-top:10px;font-size:12px">아래 승인 회원의 [보스 점수 관리] 버튼으로 개별 체크를 수정합니다.</div>'+
     (classV144Admin()?'<div style="border-top:1px solid #d9c1a6;margin-top:10px;padding-top:10px"><button class="danger" id="class-v144-reset" type="button">테스트 참여 기록 초기화 (배포 전 1회)</button><div style="font-size:11px;margin-top:5px">모든 보스 체크·쟁/공성전 주간 점수·주차 보관 기록을 초기화합니다. 회원 및 보스 일정은 유지합니다.</div></div>':'');
   tools.querySelectorAll('[data-v144-approve]').forEach(b=>b.addEventListener('click',()=>classV144Decide(b.dataset.v144Approve,true)));
@@ -6242,7 +6243,7 @@ function classV144EnsureTools(){
 const classV144OriginalOpenUsers=openUserManageModal;
 openUserManageModal=function(){classV144OriginalOpenUsers();classV144EnsureTools();};
 async function classV144Decide(uid,approved){
- if(!classV144Master())return alert('마스터 이상 권한이 필요합니다.');
+ if(!classV149Approval())return alert('운영진 이상 권한이 필요합니다.');
  const d=profileDocs.get(uid);if(!d||d.role==='web_admin'||d.approved!==false||d.approvalDecidedAt)return alert('처리할 승인 대기 계정이 없습니다.');
  if(!confirm((d.nickname||uid)+' 님의 가입 신청을 '+(approved?'승인':'거절')+'할까요?'))return;
  try{

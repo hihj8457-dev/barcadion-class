@@ -1158,7 +1158,7 @@ html body #app-container #class-pages #class-war-system table.class-v45-table tb
           optionalCloudStops.forEach(stop=>stop());optionalCloudStops.clear();optionalCloudLoaded.clear();bossRecordScope='';allUsersLoaded=false;
           if(userCloudReleaseTimer!==null){clearTimeout(userCloudReleaseTimer);userCloudReleaseTimer=null;}
           if(userCloudStop){userCloudStop();userCloudStop=null;}userCloudScope='';
-          cloudReady=false; sharedDataLoaded=false; window.__sharedData=null; window.__archiveData=null; lastRenderedCloudState=null;
+          cloudReady=false; sharedDataLoaded=false; window.__sharedData=null; window.__archiveData=null; lastRenderedCloudState=null; window.__classRankDataReady=false;
           profileDocs.clear();recordDocs.clear();itemDocs.clear();applicationDocs.clear();guestDocs.clear();lastSnapshot=null;
         }
         function classCurrentPage(){return document.querySelector('#class-pages .class-page.active')?.dataset.page||'home';}
@@ -1172,7 +1172,7 @@ html body #app-container #class-pages #class-war-system table.class-v45-table tb
                                                                                                   
                                                                                            
            const rollover=rolloverPending();
-           const membersPage=['members','war','siege'].includes(page);
+           const membersPage=['home','members','war','siege'].includes(page);
            const adminPage=manager && page==='admin';
            const archiveOpen=manager && archiveModalVisible();
            const requireUsers=membersPage || adminPage || page==='items' || rollover || archiveOpen;
@@ -1268,10 +1268,12 @@ const subscriptions={
           if(pendingSaves.size || bossEditDirty){ deferredCloudView=true; return; }
                                                                             
                                                                                       
-          const incomingSignature=stable(next)+'|gate:'+String(window.__sharedData?.registrationGate?.weekKey||'')+':'+String(window.__sharedData?.registrationGate?.closed===true)+':'+String(window.__sharedData?.registrationGate?.closedUntil?.toMillis?.()||0);
+          const rankDataReady = allUsersLoaded && optionalCloudLoaded.has('records') && optionalCloudLoaded.has('guests');
+          const incomingSignature=stable(next)+'|rankReady:'+String(rankDataReady)+'|gate:'+String(window.__sharedData?.registrationGate?.weekKey||'')+':'+String(window.__sharedData?.registrationGate?.closed===true)+':'+String(window.__sharedData?.registrationGate?.closedUntil?.toMillis?.()||0);
           if(cloudReady && incomingSignature===lastRenderedCloudState)return;
           lastRenderedCloudState=incomingSignature;
           db=next; lastSnapshot=clone(next); cloudReady=true;
+          window.__classRankDataReady = rankDataReady;
           if(typeof window.classInvalidateBossTimer==='function')window.classInvalidateBossTimer();
           try {
             ensureWeeklyRollover();checkLoginState();classRenderWeekControls();
@@ -3841,6 +3843,7 @@ function page(name){if(name==='admin'&&!isCurrentAdmin())name='home';document.qu
 function renderClassContentRank(){
  const el=document.getElementById('class-content-rank-list');
  if(!el||typeof db==='undefined'||!db)return;
+ if(window.__classRankDataReady!==true){el.innerHTML='<div class="class-content-rank-empty">이번 주 참여도 불러오는 중...</div>';return;}
  const members=Array.isArray(db.users)?db.users.filter(u=>u&&(u.uid||u.isGuest)):[];
  const wk=currentWeekKey();
  const boss=weeklyScores(wk);

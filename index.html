@@ -2268,7 +2268,7 @@ const subscriptions={
           normalizeDistributionItem(item);
           if(item.distributed)return alert('이미 분배완료된 아이템입니다.');
           if(item.applicants.includes(db.currentUser))return alert('이미 신청한 아이템입니다.');
-          if(!confirm(`[${item.name}] 아이템을 본인 명의(${db.currentUser})로 신청하시겠습니까?`))return;
+          if(!confirm(`[${item.name}] 아이템을 신청하시겠습니까?`))return;
           const nickname=db.currentUser;
           item.applicants.push(nickname);item.applicant=item.applicants[0]||null;
           renderItems();classSaveIndicator('아이템 신청 저장 중');

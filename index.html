@@ -438,6 +438,32 @@ html body [hidden] { display:none!important; }
 html body #app-container #class-pages #class-war-system table.class-v45-table tbody tr.class-war-own-row > td{background-color:#fbf0df!important;background-image:none!important}
 #class-war-system .class-v45-table tbody tr.class-war-own-row td:first-child{box-shadow:inset 4px 0 0 #b58a50!important}
 </style>
+<style id="class-content-rank-style">
+#class-home .class-home-bottom{display:grid;grid-template-columns:minmax(0,1fr) 340px;align-items:stretch;gap:18px;margin-top:0}
+#class-home .class-home-bottom>.class-weekly-card{min-width:0}
+#class-home .class-content-rank-card{box-sizing:border-box;min-width:0;padding:19px 18px!important;border-radius:17px!important;background:#fffaf6!important;border:1px solid #e4cfba!important;box-shadow:0 6px 16px #59372019!important;color:#442c1c!important}
+#class-home .class-content-rank-card>h2{font-size:19px!important;line-height:1.4!important;color:#442c1c!important;border-bottom:1px solid #e8d4c2!important;margin:0 0 12px!important;padding:0 0 11px!important;display:flex;align-items:center;justify-content:space-between;gap:7px}
+#class-home .class-content-rank-card>h2 span{font-size:11px;color:#906e47;font-weight:700;white-space:nowrap}
+#class-content-rank-list{display:flex;flex-direction:column;gap:5px}
+#class-content-rank-list .class-content-rank-row{display:flex;flex-direction:column;align-items:stretch;gap:5px;min-width:0;min-height:50px;border-bottom:1px solid #efe1d1;padding:6px 1px}
+#class-content-rank-list .class-content-rank-line{display:flex;align-items:center;gap:6px;min-width:0;width:100%}
+#class-content-rank-list .class-content-rank-meter{height:5px;width:100%;background:#eae2d8;border-radius:99px;overflow:hidden}
+#class-content-rank-list .class-content-rank-meter-fill{height:100%;border-radius:99px;background:#af9477}
+#class-content-rank-list .class-content-rank-row:first-child .class-content-rank-meter-fill{background:#bc8c3a}
+#class-content-rank-list .class-content-rank-number{flex:0 0 18px;text-align:center;font-size:12px;font-weight:850;color:#957351}
+#class-content-rank-list .class-content-rank-row:nth-child(1) .class-content-rank-number{color:#b18431}
+#class-content-rank-list .class-content-rank-row:nth-child(2) .class-content-rank-number{color:#84909c}
+#class-content-rank-list .class-content-rank-row:nth-child(3) .class-content-rank-number{color:#a47650}
+#class-content-rank-list .class-content-rank-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 27px;width:27px;height:30px;overflow:hidden}
+#class-content-rank-list .class-content-rank-icon img{width:27px;height:30px;object-fit:contain}
+#class-content-rank-list .class-content-rank-name{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:750;color:#412d22}
+#class-content-rank-list .class-content-rank-power{flex:0 0 auto;font-size:10px;font-weight:650;white-space:nowrap;color:#806148;text-align:left}
+#class-content-rank-list .class-content-rank-score{flex:0 0 auto;margin-left:auto;font-size:12px;color:#8b5d25;text-align:right;font-weight:800;white-space:nowrap}
+#class-content-rank-list .class-content-rank-empty{padding:18px 3px;color:#806e5d;font-size:13px}
+#class-home .class-content-rank-card .class-content-rank-note{font-size:10px;color:#967b62;margin-top:10px;line-height:1.5}
+@media(max-width:1250px){#class-home .class-home-bottom{grid-template-columns:minmax(0,1fr)}#class-home .class-content-rank-card{max-width:none}}
+@media(max-width:600px){#class-home .class-home-bottom{gap:12px}#class-home .class-content-rank-card{padding:16px 14px!important}}
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
 
@@ -606,7 +632,7 @@ html body #app-container #class-pages #class-war-system table.class-v45-table tb
                         <div class="class-v85-boss-tools">
                             <button type="button" onclick="openBossModal()" class="class-v85-participate"><i class="fa-solid fa-square-check" aria-hidden="true"></i> 보스 참여 등록</button>
                             <div class="class-v85-score-guide">
-                                <div class="class-v85-guide-heading"><strong><i class="fa-solid fa-circle-info" aria-hidden="true"></i> 기본 보스 배점</strong><button type="button" onclick="openBossGuideEditor()" class="admin-only hidden class-v85-guide-edit"><i class="fa-solid fa-pen" aria-hidden="true"></i></button></div>
+                                <div class="class-v85-guide-heading"><strong><i class="fa-solid fa-circle-info" aria-hidden="true"></i> 기본 보스 배점</strong><button type="button" onclick="openBossGuideEditor()" class="admin-only hidden class-v85-guide-edit"><i class="fa-solid fa-pen" aria-hidden="true"></i> 수정</button></div>
                                 <p id="boss-guide-text" style="white-space:pre-line"></p>
                             </div>
                         </div>
@@ -3812,6 +3838,35 @@ const kstWeek=calendarWeekKey();
 (function(){
 const $=id=>document.getElementById(id);
 function page(name){if(name==='admin'&&!isCurrentAdmin())name='home';document.querySelectorAll('.class-page').forEach(x=>x.classList.toggle('active',x.dataset.page===name));document.querySelectorAll('.class-nav button').forEach(x=>x.classList.toggle('active',x.dataset.target===name));if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections();window.scrollTo({top:0,behavior:'instant'});if(name==='home')refreshHome();if(typeof window.classV45Refresh==='function')window.classV45Refresh();}
+function renderClassContentRank(){
+ const el=document.getElementById('class-content-rank-list');
+ if(!el||typeof db==='undefined'||!db)return;
+ const members=Array.isArray(db.users)?db.users.filter(u=>u&&(u.uid||u.isGuest)):[];
+ const wk=currentWeekKey();
+ const boss=weeklyScores(wk);
+ const current=db.participationSystem?.weeks?.[wk]||{};
+ const war=current.war||{};
+ const siege=current.siege?.participants||{};
+ const safeNumber=value=>Math.max(0,Number(value)||0);
+ const rows=members.map(u=>{
+   const key=u.uid||('guest:'+String(u.guestId||u.id));
+   const bossPoints=safeNumber(boss[u.id]);
+   const warPoints=safeNumber(war[key]);
+   return {u,score:bossPoints+warPoints,siege:siege[key]===true};
+ }).sort((a,b)=>b.score-a.score||Number(b.siege)-Number(a.siege)||safeNumber(b.u.power)-safeNumber(a.u.power)||String(a.u.id||'').localeCompare(String(b.u.id||''),'ko')).slice(0,5);
+ if(!rows.length){el.innerHTML='<div class="class-content-rank-empty">표시할 길드원이 없습니다.</div>';return;}
+ const escapeText=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+ const icons=window.classProfileIconSources||{};
+ const topScore=Math.max(1,rows[0]?.score||0);
+ el.innerHTML=rows.map((r,i)=>{
+   const cls=String(r.u.class||'');
+   const src=icons[cls];
+   const icon=src?`<img src="${src}" alt="${escapeText(cls)}" loading="lazy">`:`<span style="font-size:10px;color:#8e7764">${escapeText(cls||'직업')}</span>`;
+   const rankMark=i<3?`<span class="class-content-rank-number" aria-label="${i+1}등" title="${i+1}등"><i class="fas fa-medal" style="color:${['#bf922e','#8d99a7','#b67952'][i]};font-size:17px" aria-hidden="true"></i></span>`:`<span class="class-content-rank-number">${i+1}</span>`;
+   const percent=Math.max(0,Math.min(100,r.score/topScore*100));
+   return `<div class="class-content-rank-row" title="보스·쟁 합계 ${r.score.toLocaleString('ko-KR')}점${r.siege?' · 공성 참여':''}"><div class="class-content-rank-line">${rankMark}<span class="class-content-rank-icon">${icon}</span><span class="class-content-rank-name">${escapeText(r.u.id)}</span><span class="class-content-rank-power">⚔ ${safeNumber(r.u.power).toLocaleString('ko-KR')}</span><span class="class-content-rank-score">${r.score.toLocaleString('ko-KR')}점</span></div><div class="class-content-rank-meter" aria-hidden="true"><div class="class-content-rank-meter-fill" style="width:${percent.toFixed(2)}%"></div></div></div>`;
+ }).join('');
+}
 function renderClassHomeRatios(){
  const el=document.getElementById('class-home-ratio-chart');if(!el||typeof db==='undefined'||!db)return;
  const r=db.participationSystem?.ratios||{reserve:5,operations:20,war:55,boss:20};
@@ -3884,6 +3939,7 @@ function refreshHome(){
  try{
  updateClassBossTimer();
  renderClassHomeRatios();
+ renderClassContentRank();
  const managerAccess=isCurrentAdmin();
   const adminLink=$('class-admin-link');
   if(adminLink){adminLink.classList.toggle('class-role-denied',!managerAccess);adminLink.hidden=!managerAccess;adminLink.style.display=managerAccess?'flex':'none';adminLink.setAttribute('aria-hidden',String(!managerAccess));}
@@ -3956,7 +4012,7 @@ function init(){const app=$('app-container'),grid=$('dashboard-grid');if(!app||!
  document.getElementById('app-container').appendChild(mobileShade);
  document.body.appendChild(mobileToggle);
 
- const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div class="class-home-top"><div class="class-card class-announcements"><div class="class-notice-half"><div class="class-mini-heading"><h2>📢 공지사항</h2><button type="button" class="class-notice-pencil" id="class-notice-edit-trigger" title="공지사항 수정" onclick="classToggleNoticeEditor()" style="display:none">✎</button></div><div id="class-notice-slot"></div></div><div class="class-patch-half"><div class="class-mini-heading"><h2>📄 패치노트</h2><button id="class-patch-add" type="button" class="class-btn" style="display:none" onclick="classAddPatchNote()" title="패치노트 등록">✎</button></div><div id="class-patch-list" class="class-patch-list"><div class="text-slate-400">등록된 패치노트가 없습니다.</div></div></div></div></div><div class="class-card class-boss-card"><div class="class-actions"><h2 style="margin:0">⚔ 보스 타이머</h2><button class="class-btn class-boss-register" id="class-all-bosses">＋ 보스 참여 등록</button></div><div class="class-bosses" id="class-boss-list"></div></div><div class="class-card class-weekly-card"><h2>💎 분배 요약</h2><div id="class-home-ratio-chart" class="class-v46-ratio-chart"></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="war"><div class="class-card"><h2>쟁 참여 관리</h2><div id="class-war-system"></div></div></section><section class="class-page" data-page="siege"><div class="class-card"><h2>공성전</h2><div id="class-siege-system"></div></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div id="class-week-control-panel" style="display:none"></div><div class="class-panel-slot" id="class-admin-slot"></div></section>`;
+ const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div class="class-home-top"><div class="class-card class-announcements"><div class="class-notice-half"><div class="class-mini-heading"><h2>📢 공지사항</h2><button type="button" class="class-notice-pencil" id="class-notice-edit-trigger" title="공지사항 수정" onclick="classToggleNoticeEditor()" style="display:none">✎</button></div><div id="class-notice-slot"></div></div><div class="class-patch-half"><div class="class-mini-heading"><h2>📄 패치노트</h2><button id="class-patch-add" type="button" class="class-btn" style="display:none" onclick="classAddPatchNote()" title="패치노트 등록">✎</button></div><div id="class-patch-list" class="class-patch-list"><div class="text-slate-400">등록된 패치노트가 없습니다.</div></div></div></div></div><div class="class-card class-boss-card"><div class="class-actions"><h2 style="margin:0">⚔ 보스 타이머</h2><button class="class-btn class-boss-register" id="class-all-bosses">＋ 보스 참여 등록</button></div><div class="class-bosses" id="class-boss-list"></div></div><div class="class-home-bottom"><div class="class-card class-weekly-card"><h2>💎 분배 요약</h2><div id="class-home-ratio-chart" class="class-v46-ratio-chart"></div></div><div class="class-card class-content-rank-card"><h2>🏆 콘텐츠 참여도 순위 <span>TOP 5</span></h2><div id="class-content-rank-list" aria-live="polite"></div></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="war"><div class="class-card"><h2>쟁 참여 관리</h2><div id="class-war-system"></div></div></section><section class="class-page" data-page="siege"><div class="class-card"><h2>공성전</h2><div id="class-siege-system"></div></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div id="class-week-control-panel" style="display:none"></div><div class="class-panel-slot" id="class-admin-slot"></div></section>`;
  $('class-all-bosses').onclick=()=>openBossModal();$('class-admin-back').onclick=()=>page('home');
  $('class-member-slot').append(panels[0]);$('class-boss-slot').append(panels[1]);$('class-item-slot').append(panels[2]);$('class-admin-slot').append(panels[3]);
  const ratioHost=document.createElement('div');ratioHost.id='class-ratio-system';
@@ -4559,6 +4615,7 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
  window.classV45SaveRatios=window.classV132SaveDiamondAndRatios;
  function refresh(){
   if(typeof db==='undefined'||!cloudReady)return;
+  if(document.querySelector('.class-page.active[data-page="home"]'))renderClassContentRank();
   const active=document.querySelector('.class-page.active')?.dataset.page;
   if(active==='war' && !document.querySelector('#class-war-system input:focus'))renderWar();
   if(active==='siege' && !document.querySelector('#class-siege-system input:focus'))renderSiege();

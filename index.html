@@ -1449,12 +1449,22 @@ const subscriptions={
           }
           // V156: Never replace the entire bossSpawnEvents map from a possibly stale UI snapshot.
           // Update only the bosses changed locally, with an optimistic Firestore transaction.
+          // V157: Firestore may return map properties in a different order than the browser
+          // originally inserted them. Compare canonical values rather than JSON insertion order.
+          const canonicalBossEvent = value => {
+            if(Array.isArray(value))return value.map(canonicalBossEvent);
+            if(value && typeof value==='object')return Object.fromEntries(
+              Object.keys(value).sort().map(key=>[key,canonicalBossEvent(value[key])])
+            );
+            return value;
+          };
+          const stableBossEvents = value => JSON.stringify(canonicalBossEvent(value));
           const previousBossEvents=before.bossSpawnEvents||{};
           const proposedBossEvents=after.bossSpawnEvents||{};
-          if(stable(previousBossEvents)!==stable(proposedBossEvents)){
+          if(stableBossEvents(previousBossEvents)!==stableBossEvents(proposedBossEvents)){
             if(!cloudManager())throw new Error('보스 일정 변경은 운영진 이상만 가능합니다.');
             const names=[...new Set([...Object.keys(previousBossEvents),...Object.keys(proposedBossEvents)])]
-              .filter(name=>stable(previousBossEvents[name])!==stable(proposedBossEvents[name]));
+              .filter(name=>stableBossEvents(previousBossEvents[name])!==stableBossEvents(proposedBossEvents[name]));
             ops.push(store.runTransaction(async tx=>{
               const ref=store.doc('guildData/main');
               const snap=await tx.get(ref);
@@ -1466,7 +1476,7 @@ const subscriptions={
                 const desired=proposedBossEvents[name];
                 const server=live[name];
                 // A newer Discord cut or another administrator change must not be overwritten.
-                if(stable(server)!==stable(base)){
+                if(stableBossEvents(server)!==stableBossEvents(base)){
                   throw new Error(name+' 일정이 다른 곳에서 변경됐습니다. 새로고침 후 다시 수정해 주세요.');
                 }
                 const field=new firebase.firestore.FieldPath('bossSpawnEvents',name);
@@ -2771,7 +2781,7 @@ const subscriptions={
                 classSaveIndicator('보스 출현 시간 변경 저장 완료');
             }catch(e){
                 db.bossSpawnEvents=savedEvents;classSaveIndicator('보스 시간 저장 실패',true);
-                alert('서버 저장 실패: '+errorText(e));
+                // saveDB() already displays a detailed error to the user.
                 renderBossSlotEditor();
             }finally{btn.disabled=false;}
         }

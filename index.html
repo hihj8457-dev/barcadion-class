@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261120_V158_LEGACY_BOSS_POINT_FIX">
+    <meta name="class-build-id" content="CLASS_BUILD_20261121_V159_SPAWN_UNTIL_CUT">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -538,6 +538,25 @@ html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!impor
 #app-container #class-pages .class-v153-maintenance-button{display:inline-flex;align-items:center;justify-content:center;padding:6px 11px!important;min-height:29px;font-size:12px!important;font-weight:750!important;line-height:1.3;border-radius:7px!important;background:#25282e!important;color:#fff!important;border:1px solid #25282e!important;box-shadow:none!important}
 #app-container #class-pages .class-v153-maintenance-button.hidden{display:none!important}
 @media(max-width:500px){#next-boss-preview .class-v153-boss-actions{gap:4px}#next-boss-preview .class-v153-boss-actions button{padding:3px 7px!important;font-size:10px!important}}
+</style>
+<style id="class-v159-spawned-style">
+/* V159: unified warm red/orange state, for both the schedule and home timer. */
+html body #class-pages .class-page[data-page="boss"] #next-boss-preview .class-schedule-count-plain.is-elapsed {
+  color:#d44922!important;-webkit-text-fill-color:#d44922!important;
+  font-weight:900!important;letter-spacing:.015em!important;
+}
+html body #class-home #class-boss-list .class-boss.class-boss-spawned {
+  border-color:#df7836!important;
+  box-shadow:0 0 0 1px rgba(219,86,32,.18),0 6px 18px rgba(165,60,23,.18)!important;
+}
+html body #class-home #class-boss-list .class-boss.class-boss-spawned .class-boss-countdown {
+  color:#f46e35!important;-webkit-text-fill-color:#f46e35!important;
+  font-weight:900!important;text-shadow:0 1px 8px rgba(115,34,15,.16)!important;
+  font-family:'Pretendard','Malgun Gothic',sans-serif!important;
+}
+html body #class-home #class-boss-list .class-boss.class-boss-spawned.class-boss-primary .class-boss-countdown {
+  color:#ff9a5c!important;-webkit-text-fill-color:#ff9a5c!important;
+}
 </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
@@ -3048,31 +3067,28 @@ const subscriptions={
                     ? resetTime : lastEvent && lastEvent.type === 'manual' && Number.isFinite(lastEvent.spawnTime)
                         ? lastEvent.spawnTime : activeAnchor + cycleMs;
                 if (nowMs < spawn) return {time:spawn, spawned:false};
-                // Every recurring occurrence has its own one-hour cut window.
-                // Without a cut, keep the original schedule (12:00 -> 20:00).
-                // With a cut at 12:02, the next occurrence starts at 20:02.
-                const cyclesPassed = Math.floor((nowMs - spawn) / cycleMs);
-                const latestSpawn = spawn + cyclesPassed * cycleMs;
-                if (nowMs - latestSpawn < 3600000) return {time:latestSpawn, spawned:true};
-                return {time:latestSpawn + cycleMs, spawned:false};
+                // V159: Keep the original spawn marked active indefinitely until
+                // an actual cut, an explicit manual correction, or maintenance reset.
+                // Do not roll it forward after one hour or after a full cycle.
+                return {time:spawn, spawned:true};
             }
             const anchor = Number((db.bossSpawnAnchors || {})[boss.name]);
             if (!(anchor > 0)) {
-                // No saved anchor/cut: inspect the last hour as well as future
-                // occurrences. Looking only after now skips a just-spawned boss.
-                const recent = bossPeriodicTimes(boss, nowMs - 3600000 + 1, nowMs + 1);
+                // V159: without a saved anchor, retain the earliest unresolved
+                // scheduled occurrence in the current lookback window. The fallback
+                // exists for configurations not yet initialized by a manual event.
+                const recent = bossPeriodicTimes(boss, nowMs - 15 * 86400000, nowMs + 1);
                 const latestSpawn = recent.length ? recent[recent.length - 1] : null;
-                if (latestSpawn !== null && nowMs - latestSpawn < 3600000)
-                    return {time:latestSpawn, spawned:true};
+                if (latestSpawn !== null) return {time:latestSpawn, spawned:true};
                 const next = bossPeriodicTimes(boss, nowMs + 1, nowMs + 15 * 86400000)[0];
                 return next ? {time:next, spawned:false} : null;
             }
             // The original anchor represents a scheduled spawn, not a cut.
             const elapsed = nowMs - anchor;
             if (elapsed < 0) return {time:anchor, spawned:false};
-            const lastSpawn = anchor + Math.floor(elapsed / cycleMs) * cycleMs;
-            if (nowMs - lastSpawn < 3600000) return {time:lastSpawn, spawned:true};
-            return {time:lastSpawn + cycleMs, spawned:false};
+            // V159: the anchor is a spawn, not a cut. It stays active until
+            // a real cut, manual correction, or maintenance reset is recorded.
+            return {time:anchor, spawned:true};
         }
         // 점검 예약은 기존 주기보다 우선한다. 시작 전에도 예정된 종료 시각을
         // 계산에 반영하고, 점검 중에는 과거 출현(컷 대기)을 표시하지 않는다.
@@ -3150,7 +3166,7 @@ const subscriptions={
                 const rule = Number(boss.cycleHours) > 0 ? `${Number(boss.cycleHours)}시간 주기` : `고정 ${escapeHtml(boss.fixedTime || '미설정')}`;
                 const status = Number(boss.cycleHours) > 0 ? periodicBossStatus(boss, nowMs) : null;
                 const spawned = !!(status && status.spawned);
-                const countdown = next === null ? '출현 기준 시간 미설정' : spawned ? formatBossElapsed(nowMs - next) : formatBossCountdown(next - nowMs);
+                const countdown = next === null ? '출현 기준 시간 미설정' : spawned ? '출현 중' : formatBossCountdown(next - nowMs);
                 const nextText = next === null ? '관리자가 기준 시각을 입력해야 합니다' : bossDateLabel(next);
                 const adminButton = admin && Number(boss.cycleHours) > 0 ? `<div class="class-v153-boss-actions"><button type="button" onclick="markBossCut(decodeURIComponent('${nameArg}'))" ${spawned ? '' : 'disabled title="보스 등장 후 활성화됩니다"'} class="class-v153-boss-cut ${spawned ? '' : 'opacity-40 cursor-not-allowed'}">컷</button><button type="button" class="class-v153-boss-edit" onclick="openBossQuickTimeEdit(decodeURIComponent('${nameArg}'), ${Number(next)})">시간 수정</button></div>` : '';
                 return `<div class="bg-slate-900/70 border border-slate-700/60 rounded-xl p-3 space-y-2">
@@ -4182,14 +4198,13 @@ function updateClassBossTimer(){
   if(!defs.some(b=>b.name==='카시엘'))defs.push({name:'카시엘',fixedTime:'22:00',days:['금']});
   defs.forEach(b=>{
    try{
-    let next=bossNextTime(b,now);
-    if(Number(b.cycleHours)>0 && Number.isFinite(next) && next<=now){
-      const cycle=Number(b.cycleHours)*3600000;
-      if(cycle>0)next+=Math.ceil((now-next+1)/cycle)*cycle;
-    }
-    if(!Number.isFinite(next)||next<=now)return;
+    const periodic=Number(b.cycleHours)>0;
+    const status=periodic?periodicBossStatus(b,now):null;
+    const next=status?status.time:bossNextTime(b,now);
+    const spawned=!!(status&&status.spawned);
+    if(!Number.isFinite(next)||(!spawned&&next<=now))return;
     const prev=byName.get(b.name);
-    if(!prev||next<prev.next)byName.set(b.name,{name:b.name,next});
+    if(!prev||next<prev.next)byName.set(b.name,{name:b.name,next,spawned});
    }catch(err){console.warn('보스 일정 계산 실패',b?.name,err);}
   });
   classBossTimerCache=[...byName.values()].sort((a,b)=>a.next-b.next).slice(0,3);
@@ -4200,16 +4215,16 @@ function updateClassBossTimer(){
    const level=match?match[1]:'';
    const bossName=match?match[2]:title;
    const image=classBossImages[b.name]||'';
-   return `<article class="class-boss ${i===0?'class-boss-primary':'class-boss-next'}">
+   return `<article class="class-boss ${i===0?'class-boss-primary':'class-boss-next'} ${b.spawned?'class-boss-spawned':''}">
      <div class="class-boss-portrait">${image?`<img class="class-boss-art" src="${image}" alt="${escapeHtml(bossName)}" loading="eager" decoding="async">`:''}</div>
      <div class="class-boss-details"><div class="class-boss-heading">${level?`<span class="class-boss-level">${escapeHtml(level)}</span>`:''}<strong>${escapeHtml(bossName)}</strong></div><small>▦ ${bossDateLabel(b.next)}</small></div>
-     <div class="class-boss-clock"><label>${i===0?'남은 시간':''}</label><span class="class-boss-countdown" data-target="${b.next}"></span>${i===0?'<span class="class-clock-units">시　　　　 분　　　　초</span>':''}</div>
+     <div class="class-boss-clock"><label>${b.spawned?'현재 상태':i===0?'남은 시간':''}</label><span class="class-boss-countdown" data-target="${b.next}" data-spawned="${b.spawned?'true':'false'}"></span>${i===0&&!b.spawned?'<span class="class-clock-units">시　　　　 분　　　　초</span>':''}</div>
     </article>`;
   }).join('')||'<div class="class-boss-empty">예정된 보스 일정이 없습니다.</div>';
  }
  box.querySelectorAll('.class-boss-countdown').forEach((node,i)=>{
   const b=classBossTimerCache[i];
-  if(b)node.textContent=formatClassDigitalCountdown(b.next-now);
+  if(b)node.textContent=b.spawned?'출현 중':formatClassDigitalCountdown(b.next-now);
  });
 }
 function refreshHome(){
@@ -4317,7 +4332,7 @@ setInterval(()=>{
   const now=Date.now();
   nodes.forEach(el=>{
    const target=Number(el.dataset.target);
-   if(Number.isFinite(target))el.textContent=formatClassDigitalCountdown(target-now);
+   if(Number.isFinite(target)){const active=el.dataset.spawned==='true'||target<=now;el.textContent=active?'출현 중':formatClassDigitalCountdown(target-now);el.closest('.class-boss')?.classList.toggle('class-boss-spawned',active);}
   });
   if($('class-boss-list')&&(!classBossTimerLast||now-classBossTimerLast>30000))updateClassBossTimer();
  }catch(e){console.warn('카운트다운 갱신',e)}

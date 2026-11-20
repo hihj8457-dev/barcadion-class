@@ -1072,7 +1072,7 @@ html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!impor
                 tabLabels: { notice: '공지사항', members: '길드원 명단', bossReg: '참여 등록', bossSched: '스케줄 보기', distStandard: '분배 기준', distApply: '아이템 신청' },
                 bossGuide: '40, 50, 60보스 : 1점\n\n70보스 : 3점\n\n75보스 : 6점\n\n80보스 : 10점\n\n85보스 : 15점\n\n90보스 : 20점\n\n99보스 : 25점\n\n툴칸 : 10점\n\n라세리엔 : 5점\n\n발락 : 30점'
             },
-            notice: "안녕하세요 바르카디온3 클래스 길드원 여러분.\n1. 보스 참여는 매주 성실히 체크해주세요.\n2. 분배 신청은 본인 아이디로만 가능합니다.",
+            notice: "안녕하세요 바르카디온3 클래스 길드원 여러분.\n1. 보스 참여는 매주 성실히 체크해주세요.\n2. 분배 신청은 본인 명의로만 가능합니다.",
             tiers: [
                 {"category": "장비", "name": "전설 0티어 무기", "price": 150000, "note": ""},
                 {"category": "장비", "name": "전설 0티어 방어구", "price": 70000, "note": ""},
@@ -1447,8 +1447,37 @@ const subscriptions={
               await classStoreArchivedWeeks(tx,ref,merged);
             }));
           }
+          // V156: Never replace the entire bossSpawnEvents map from a possibly stale UI snapshot.
+          // Update only the bosses changed locally, with an optimistic Firestore transaction.
+          const previousBossEvents=before.bossSpawnEvents||{};
+          const proposedBossEvents=after.bossSpawnEvents||{};
+          if(stable(previousBossEvents)!==stable(proposedBossEvents)){
+            if(!cloudManager())throw new Error('보스 일정 변경은 운영진 이상만 가능합니다.');
+            const names=[...new Set([...Object.keys(previousBossEvents),...Object.keys(proposedBossEvents)])]
+              .filter(name=>stable(previousBossEvents[name])!==stable(proposedBossEvents[name]));
+            ops.push(store.runTransaction(async tx=>{
+              const ref=store.doc('guildData/main');
+              const snap=await tx.get(ref);
+              if(!snap.exists)throw new Error('길드 공용 문서가 없습니다.');
+              const live=snap.data().bossSpawnEvents||{};
+              const patch=[];
+              for(const name of names){
+                const base=previousBossEvents[name];
+                const desired=proposedBossEvents[name];
+                const server=live[name];
+                // A newer Discord cut or another administrator change must not be overwritten.
+                if(stable(server)!==stable(base)){
+                  throw new Error(name+' 일정이 다른 곳에서 변경됐습니다. 새로고침 후 다시 수정해 주세요.');
+                }
+                const field=new firebase.firestore.FieldPath('bossSpawnEvents',name);
+                patch.push(field,Object.prototype.hasOwnProperty.call(proposedBossEvents,name)
+                  ? clone(desired) : firebase.firestore.FieldValue.delete());
+              }
+              if(patch.length)tx.update(ref,...patch);
+            }));
+          }
           const delta={};
-          sharedKeys.forEach(k=>{if(stable(before[k])!==stable(after[k]))delta[k]=clone(after[k]??null);});
+          sharedKeys.filter(k=>k!=='bossSpawnEvents').forEach(k=>{if(stable(before[k])!==stable(after[k]))delta[k]=clone(after[k]??null);});
           if(Object.keys(delta).length){if(!cloudManager()) throw new Error('관리자 권한이 필요한 작업입니다.');ops.push(store.doc('guildData/main').set(delta,{merge:true}));}
           const oldRec=before.bossRecords||{},newRec=after.bossRecords||{};
           for(const name of new Set([...Object.keys(oldRec),...Object.keys(newRec)])){
@@ -2447,7 +2476,7 @@ const subscriptions={
           normalizeDistributionItem(item);
           if(item.distributed)return alert('이미 분배완료된 아이템입니다.');
           if(item.applicants.includes(db.currentUser))return alert('이미 신청한 아이템입니다.');
-          if(!confirm(`[${item.name}] 아이템을 ${db.currentUser}로 신청하시겠습니까?`))return;
+          if(!confirm(`[${item.name}] 아이템을 본인 명의(${db.currentUser})로 신청하시겠습니까?`))return;
           const nickname=db.currentUser;
           item.applicants.push(nickname);item.applicant=item.applicants[0]||null;
           renderItems();classSaveIndicator('아이템 신청 저장 중');

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261120_V150_ITEM_INLINE_EDIT_WALNUT_UI">
+    <meta name="class-build-id" content="CLASS_BUILD_20261120_V158_LEGACY_BOSS_POINT_FIX">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -2898,7 +2898,7 @@ const subscriptions={
                         const key = `slot_${dayStamp}_${boss.name}_${slot.label}`;
                          
                         const legacyKey = `${dayKey}_${boss.name}_${idx}`;
-                        const checked = records[key] === true || (records[key] === undefined && slot === occurrences[0] && records[legacyKey] === true);
+                        const checked = records[key] === true; // Exact dated slot only; legacy weekday keys must never auto-award current points.
                         dayMaxScore+=score; maxPossibleScore+=score;
                         if (checked) {dayScore+=score;totalScore+=score;}
                         rows.push({bossName:boss.name,time:slot.time,label:slot.label,key,legacyKey,checked,score,html:`<label class="flex items-center gap-2 bg-slate-900/80 p-2 rounded-lg border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition"><input type="checkbox" data-user="${escapeAttribute(targetUser)}" data-key="${escapeAttribute(key)}" data-legacy="${escapeAttribute(legacyKey)}" ${checked?'checked':''} onchange="onBossCheckChange(this)" class="w-4 h-4 accent-amber-500"><span class="text-xs text-white font-medium">${escapeHtml(boss.name)}</span><span class="text-xs text-sky-300">${slot.label}</span><span class="text-[10px] text-amber-400 ml-auto">+${score}점</span></label>`});
@@ -3300,7 +3300,7 @@ const subscriptions={
                         const key=`slot_${dateKey}_${boss.name}_${slot.label}`;
                         const oldKey=`${short}_${boss.name}_${index}`;
                         for(const [user,records] of Object.entries(db.bossRecords||{})){
-                            const checked=records?.[key]===true || (records?.[key]===undefined && slotIndex===0 && records?.[oldKey]===true);
+                            const checked=records?.[key]===true; // Ignore undated legacy weekday records.
                             if(checked){if(!result[user])result[user]=[0,0,0,0,0,0,0];result[user][offset]+=Number(db.bossScores[boss.name]||0);}
                         }
                     });
@@ -3323,7 +3323,7 @@ const subscriptions={
                         const key = `slot_${dateKey}_${boss.name}_${slot.label}`;
                         const oldKey = `${dayShort}_${boss.name}_${index}`;
                         for (const [user, records] of Object.entries(db.bossRecords)) {
-                            const checked = records?.[key] === true || (records?.[key] === undefined && slotIndex === 0 && records?.[oldKey] === true);
+                            const checked = records?.[key] === true; // Ignore undated legacy weekday records.
                             if (checked) totals[user] = (totals[user] || 0) + Number(db.bossScores[boss.name] || 0);
                         }
                     });
@@ -6429,7 +6429,7 @@ async function classV144OpenEditor(uid){
       slots.forEach((slot,slotIndex)=>{
         const key='slot_'+stamp+'_'+boss.name+'_'+slot.label;
         const legacy=short+'_'+boss.name+'_'+i;
-        const checked=entries[key]===true||(entries[key]===undefined&&slotIndex===0&&entries[legacy]===true);
+        const checked=entries[key]===true; // Admin view must match dated participation records.
         const score=Number(db.bossScores[boss.name]||0);
         boxes.push('<label><input type="checkbox" data-v144-key="'+escapeAttribute(key)+'" data-v144-legacy="'+escapeAttribute(legacy)+'" '+(checked?'checked':'')+'> '+escapeHtml(boss.name)+' '+escapeHtml(String(slot.label))+' ('+score+'점)</label>');
       });
@@ -6450,7 +6450,7 @@ async function classV144SaveScore(){
  const changes={};
  for(const input of inputs){
   const key=input.dataset.v144Key,legacy=input.dataset.v144Legacy;
-  const prior=baseline[key]===true||(baseline[key]===undefined&&baseline[legacy]===true);
+  const prior=baseline[key]===true;
   if(input.checked!==prior)changes[key]=input.checked;
  }
  if(!Object.keys(changes).length)return alert('변경된 체크 기록이 없습니다.');
@@ -6462,8 +6462,8 @@ async function classV144SaveScore(){
     const updated={...remote};
     for(const [key,value] of Object.entries(changes)){
       const input=inputs.find(i=>i.dataset.v144Key===key),legacy=input?.dataset.v144Legacy;
-      const prev=baseline[key]===true||(baseline[key]===undefined&&baseline[legacy]===true);
-      const now=remote[key]===true||(remote[key]===undefined&&remote[legacy]===true);
+      const prev=baseline[key]===true;
+      const now=remote[key]===true;
       if(prev!==now)throw new Error('다른 기기에서 해당 기록을 수정했습니다. 다시 열어 확인해 주세요.');
       updated[key]=value;
       if(legacy && Object.prototype.hasOwnProperty.call(updated,legacy))delete updated[legacy];

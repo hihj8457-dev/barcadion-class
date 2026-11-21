@@ -2616,79 +2616,9 @@ const subscriptions={
             }
             return [...new Set(times)].sort((a,b)=>a-b).map(time=>{const d=new Date(time);return {time,label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};});
         }
-        // Shared participation slots are independent of the boss timer. Overrides are
-        // date+boss specific, and stored in guildData/main for all members.
-        function bossSlotOverrideKey(date,bossName) { return localDateKey(date)+'::'+bossName; }
-        function bossSlotWeekEnd(day) {
-            const monday=getWeekMonday(day);
-            monday.setDate(monday.getDate()+7);
-            return monday.getTime();
-        }
-        function bossSlotAnchorForDate(boss,day) {
-            const saved=(db.bossSlotAutoAnchors||{})[boss.name];
-            const dayStart=new Date(day);dayStart.setHours(0,0,0,0);
-            const weekStart=getWeekMonday(dayStart).getTime();
-            const dayEnd=new Date(dayStart);dayEnd.setDate(dayEnd.getDate()+1);
-            const entries=Array.isArray(saved)?saved:(Number(saved)>0?[{time:Number(saved)}]:[]);
-            // Latest anchor within this week, on or before the requested day.
-            return entries.map(e=>Number(typeof e==='number'?e:e.time))
-                .filter(t=>Number.isFinite(t)&&t>0&&t>=weekStart&&t<dayEnd.getTime())
-                .sort((x,y)=>y-x)[0]||0;
-        }
+        // Single source of truth for participation slots: boss schedule.
         function getSharedBossOccurrences(boss,date) {
-            // v143: the boss timer is the single source of truth for future registration slots.
-            // Legacy bossSlotOverrides/AutoAnchors must not mask a corrected boss schedule.
             return getBossOccurrencesForDay(boss,date);
-            const key=bossSlotOverrideKey(date,boss.name);
-            const overrides=db.bossSlotOverrides||{};
-            const day=new Date(date);day.setHours(0,0,0,0);
-            const end=new Date(day);end.setDate(end.getDate()+1);
-            const parseTime=label=>{const [h,m]=label.split(':').map(Number);const d=new Date(day);d.setHours(h,m,0,0);return d.getTime();};
-            const toSlots=times=>[...new Set(times)].filter(Number.isFinite).sort((a,b)=>a-b)
-                .map(time=>{const d=new Date(time);return {time,label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};});
-            const cycle=Number(boss.cycleHours)*3600000;
-            // First calculate the existing manual / weekly-anchor schedule. This is
-            // still authoritative for dates and occurrences BEFORE maintenance.
-            let originalTimes;
-            if(Object.prototype.hasOwnProperty.call(overrides,key)) {
-                originalTimes=(Array.isArray(overrides[key])?overrides[key]:[])
-                    .filter(t=>/^([01]\d|2[0-3]):[0-5]\d$/.test(t)).map(parseTime);
-            } else {
-                const anchor=bossSlotAnchorForDate(boss,day);
-                if(!(anchor>0)||!(cycle>0)) {
-                    originalTimes=getBossOccurrencesForDay(boss,date).map(slot=>slot.time);
-                } else {
-                    const weekEnd=bossSlotWeekEnd(day);
-                    const events=periodicBossEvents(boss).filter(e=>e.type==='cut'&&e.time>=anchor&&e.time<=Date.now()&&e.time<weekEnd)
-                        .sort((a,b)=>a.time-b.time);
-                    originalTimes=[];
-                    let next=anchor,cursor=0;
-                    for(let i=0;i<5000&&next<Math.min(end.getTime(),weekEnd);i++){
-                        while(cursor<events.length&&events[cursor].time<next)cursor++;
-                        const cut=events[cursor];
-                        if(next>=day.getTime()&&next<end.getTime())originalTimes.push(next);
-                        if(cut&&cut.time>=next&&cut.time<next+cycle){next=cut.time+cycle;cursor++;}
-                        else next+=cycle;
-                    }
-                }
-            }
-            if(!(cycle>0))return toSlots(originalTimes);
-
-            // Maintenance ends the previous periodic-boss cycle and forces every
-            // periodic boss to spawn together at the maintenance END (09:00 in
-            // the user's example). Old weekly auto-anchors or date overrides
-            // must not resurrect 08:10/08:12 during maintenance or after reset.
-            // Keep pre-maintenance slots, and use the SAME reset-aware periodic
-            // schedule as the live boss timer for everything after the reset.
-            const weekStart=getWeekMonday(day).getTime();
-            const reset=bossMaintenanceWindows()
-                .filter(w=>w.end>=weekStart&&w.end<end.getTime())
-                .at(-1);
-            if(!reset)return toSlots(originalTimes);
-            const prior=originalTimes.filter(t=>t<reset.start);
-            const after=bossPeriodicTimes(boss,day.getTime(),end.getTime())
-                .filter(t=>t>=reset.end);
-            return toSlots([...prior,...after]);
         }
         function switchBossManageTab(tab) {
             const allowed=cloudManager();if(!allowed)return;
@@ -2715,7 +2645,7 @@ const subscriptions={
             const boss=db.bossListDef.find(b=>b.name===name);
             if(!boss||!/^\d{4}-\d{2}-\d{2}$/.test(dayStr))return null;
             const day=new Date(dayStr+'T12:00:00');if(isNaN(day.getTime())||localDateKey(day)!==dayStr)return null;
-            return {day,boss,key:bossSlotOverrideKey(day,name)};
+            return {day,boss};
         }
         function classDateTimeLocal(ms){
             const d=new Date(ms+9*3600000),pad=n=>String(n).padStart(2,'0');
@@ -2784,93 +2714,6 @@ const subscriptions={
                 // saveDB() already displays a detailed error to the user.
                 renderBossSlotEditor();
             }finally{btn.disabled=false;}
-        }
-        function sharedSlotEditable() {if(!cloudManager()||!cloudReady){alert('운영진 이상 권한 및 서버 연결이 필요합니다.');return false;}return true;}
-        function editableSharedSlotTimes(chosen) {return [...new Set(getSharedBossOccurrences(chosen.boss,chosen.day).map(x=>x.label))].sort();}
-        async function commitSharedBossSlots(chosen,times) {
-            db.bossSlotOverrides=db.bossSlotOverrides||{};
-            db.bossSlotOverrides[chosen.key]=[...new Set(times)].sort();
-            renderBossSlotEditor();
-            const regModal=document.getElementById('boss-reg-modal');
-            if(regModal && !regModal.classList.contains('hidden'))loadUserBossRecords(true);
-            try{await saveDB();}catch(e){alert('저장에 실패했습니다. 새로고침 후 다시 확인하세요.');}
-        }
-        async function enableBossSlotAutoCalculation() {
-            if(!sharedSlotEditable())return;
-            const chosen=selectedSharedBossSlot();if(!chosen)return;
-            if(!(Number(chosen.boss.cycleHours)>0))return alert('주기형 보스에만 사용할 수 있습니다.');
-            const btn=document.getElementById('boss-slot-auto-button');
-            if(btn?.disabled)return;
-            // Read the selected date once. Never use the previous week's anchor as a
-            // second-stage input when the button is clicked again.
-            const manual=(db.bossSlotOverrides||{})[chosen.key];
-            const current=Array.isArray(manual)&&manual.length
-                ? [...new Set(manual)].sort()
-                : editableSharedSlotTimes(chosen);
-            if(!current.length)return alert('기준이 될 출현 시간이 없습니다. 먼저 시간을 추가하세요.');
-            const [h,m]=current[0].split(':').map(Number);
-            const first=new Date(chosen.day);first.setHours(h,m,0,0);
-            if(!confirm(`${chosen.boss.name}의 선택 날짜 ${localDateKey(chosen.day)} ${current[0]}부터 해당 주 일요일까지 ${chosen.boss.cycleHours}시간마다 자동 계산할까요?\n이 보스의 수동 체크박스 목록은 자동 계산으로 전환됩니다. 이후 컷 시각에 따라 미래 체크박스가 교체되며, 과거 참여 기록은 보존됩니다.`))return;
-            if(btn){btn.disabled=true;btn.textContent='자동 계산 적용 중…';}
-            try {
-            db.bossSlotAutoAnchors=db.bossSlotAutoAnchors||{};
-            const old=db.bossSlotAutoAnchors[chosen.boss.name];
-            const anchors=Array.isArray(old)?old.slice():(Number(old)>0?[{time:Number(old)}]:[]);
-            const from=first.getTime(), weekEnd=bossSlotWeekEnd(chosen.day);
-            // Preserve previous dates, but replace any anchor at or after the selected date in this week.
-            db.bossSlotAutoAnchors[chosen.boss.name]=anchors.filter(e=>{
-                const t=Number(typeof e==='number'?e:e.time);
-                return t<new Date(chosen.day).setHours(0,0,0,0)||t>=weekEnd;
-            }).concat([{time:from}]).sort((a,b)=>Number(a.time)-Number(b.time));
-            db.bossSlotOverrides=db.bossSlotOverrides||{};
-            // Remove date-specific manual overrides from this date forward; otherwise
-            // they would continue masking cut-driven automatic future slots.
-            const datePrefix=localDateKey(chosen.day);
-            const weekLast=new Date(bossSlotWeekEnd(chosen.day)-1);
-            const weekLastKey=localDateKey(weekLast);
-            for(const key of Object.keys(db.bossSlotOverrides)) {
-                const split=key.lastIndexOf('::');
-                if(split>=0 && key.slice(split+2)===chosen.boss.name && key.slice(0,split)>=datePrefix && key.slice(0,split)<=weekLastKey)delete db.bossSlotOverrides[key];
-            }
-            // Recompute all dates in the selected week immediately, not after a
-            // Firestore round trip or another button click.
-            const calculated=[];
-            for(let t=new Date(chosen.day);t.getTime()<weekEnd;t.setDate(t.getDate()+1)){
-                calculated.push({date:localDateKey(t),slots:getSharedBossOccurrences(chosen.boss,t).map(v=>v.label)});
-            }
-            renderBossSlotEditor();
-            const preview=document.getElementById('boss-slot-next-preview');
-            if(preview)preview.textContent='이번 주 자동 계산: '+calculated.map(v=>`${v.date} ${v.slots.join(', ')||'없음'}`).join(' · ');
-            const regModal=document.getElementById('boss-reg-modal');
-            if(regModal && !regModal.classList.contains('hidden'))loadUserBossRecords(true);
-            await saveDB();
-            }catch(e){console.error(e);alert('자동 계산 저장에 실패했습니다. 서버 연결과 권한을 확인하세요.');}
-            finally{if(btn){btn.disabled=false;btn.textContent='가장 빠른 시간 기준 자동 계산 · 컷 연동';}}
-        }
-        function addSharedBossSlot() {
-            if(!sharedSlotEditable())return;const chosen=selectedSharedBossSlot();if(!chosen)return;
-            const t=document.getElementById('boss-slot-new-time').value;
-            if(!/^([01]\d|2[0-3]):[0-5]\d$/.test(t))return alert('추가할 시간을 선택하세요.');
-            const times=editableSharedSlotTimes(chosen);
-            if(times.includes(t))return alert('이미 등록된 시간입니다.');
-            commitSharedBossSlots(chosen,[...times,t]);
-        }
-        function removeSharedBossSlot(t) {
-            if(!sharedSlotEditable())return;const chosen=selectedSharedBossSlot();if(!chosen)return;
-            if(!confirm(`${localDateKey(chosen.day)} ${chosen.boss.name} ${t} 체크박스를 모든 회원 화면에서 제거할까요?\n기존 참여 기록은 삭제하지 않지만 해당 시간의 점수는 현재 계산에서 제외됩니다.`))return;
-            commitSharedBossSlots(chosen,editableSharedSlotTimes(chosen).filter(x=>x!==t));
-        }
-        function clearSharedBossSlots() {
-            if(!sharedSlotEditable())return;const chosen=selectedSharedBossSlot();if(!chosen)return;
-            if(!confirm(`${localDateKey(chosen.day)} ${chosen.boss.name}의 체크박스를 전부 제거할까요?\n모든 회원에게 적용되며 기존 참여 기록은 보존됩니다.`))return;
-            commitSharedBossSlots(chosen,[]);
-        }
-        async function resetSharedBossSlots() {
-            if(!sharedSlotEditable())return;const chosen=selectedSharedBossSlot();if(!chosen)return;
-            if(!confirm('이 날짜/보스의 수동 목록을 삭제하고 자동 생성 목록으로 되돌릴까요? 중복 시간이 다시 생길 수 있습니다.'))return;
-            db.bossSlotOverrides=db.bossSlotOverrides||{};
-            delete db.bossSlotOverrides[chosen.key];renderBossSlotEditor();
-            try{await saveDB();}catch(e){alert('저장에 실패했습니다.');}
         }
         function loadUserBossRecords(preserveOpenDays = false) {
             const openDays = preserveOpenDays

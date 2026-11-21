@@ -905,7 +905,7 @@ html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!impor
                 <div class="space-y-2" id="accordion-days-container"></div>
             </div>
             <div class="p-4 border-t border-slate-700 bg-slate-900/50 flex justify-between items-center">
-                <span class="text-xs text-slate-400">체크박스는 실시간 반영됩니다.</span>
+                <span class="text-xs text-slate-400">체크 후 [참여 기록 저장]을 눌러야 서버에 반영됩니다.</span>
                 <button onclick="saveBossRecords()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-6 py-2.5 rounded-xl transition cursor-pointer">참여 기록 저장</button>
             </div>
         </div>
@@ -2583,13 +2583,26 @@ const subscriptions={
         function openBossModal() {
             if(!classAssertRegistrationOpen())return;
             if (!db.currentUser || !sharedDataLoaded) return alert('보스 일정 로딩 중입니다. 잠시 후 다시 시도하세요.');
+            if(bossEditSaving)return;
+            bossEditUser=db.currentUser;
+            bossEditDraft=clone(db.bossRecords[bossEditUser]||{});
+            bossEditDirty=false;
             const user = db.users.find(u => u.id === db.currentUser);
             document.getElementById('modal-target-user').textContent = db.currentUser;
             document.getElementById('boss-reg-modal').classList.remove('hidden');
+            setBossSaveStatus('저장 버튼을 눌러야 반영됩니다');
             if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections();
             loadUserBossRecords();
         }
-        function closeBossModal() { if(bossEditDirty)void flushBossDraftSave().catch(e=>console.error('보스 기록 저장 실패',e)); document.getElementById('boss-reg-modal').classList.add('hidden'); if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections(); }
+        function closeBossModal() {
+            if(bossEditSaving)return;
+            if(bossEditDirty && !confirm('저장하지 않은 참여 체크 기록을 폐기하고 닫을까요?'))return;
+            bossEditDraft=null;bossEditUser=null;bossEditDirty=false;
+            document.getElementById('boss-reg-modal').classList.add('hidden');
+            setBossSaveStatus('');
+            if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections();
+            if(deferredCloudView){deferredCloudView=false;scheduleCloudView();}
+        }
 
         // A scheduled maintenance is a hard reset only for periodic bosses.
         // Cut events retain previous occurrences, while changing subsequent intervals.
@@ -2710,7 +2723,14 @@ const subscriptions={
                     }
                 }
             }
-            return [...new Set(times)].sort((a,b)=>a-b).map(time=>{const d=new Date(time);return {time,label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};});
+            // V169: 참여 키는 HH:mm 단위다. 서버 이벤트(초 포함)와 저장된 체크 키(:00)가
+            // 같은 분에 있으면 한 슬롯만 렌더링/점수 계산한다.
+            const uniqueMinutes = new Map();
+            for (const time of times.sort((a,b)=>a-b)) {
+                const minute = Math.floor(time / 60000);
+                if (!uniqueMinutes.has(minute)) uniqueMinutes.set(minute, time);
+            }
+            return [...uniqueMinutes.values()].map(time=>{const d=new Date(time);return {time,label:`${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};});
         }
         // Single source of truth for participation slots: boss schedule.
         function getSharedBossOccurrences(boss,date) {
@@ -2819,8 +2839,8 @@ const subscriptions={
                 : [];
             const targetUser = db.currentUser;
             if (!targetUser) return;
-            if (!db.bossRecords[targetUser]) db.bossRecords[targetUser] = {};
-            const records = db.bossRecords[targetUser];
+            // V170: The modal renders its unsaved local draft; Firestore stays unchanged.
+            const records = bossEditDraft && bossEditUser===targetUser ? bossEditDraft : (db.bossRecords[targetUser]||{});
             const monday=kstDateFromKey(currentWeekKey(),12);
             let containerHtml = '', totalScore = 0, maxPossibleScore = 0;
             for (let offset=0; offset<7; offset++) {
@@ -2896,16 +2916,21 @@ const subscriptions={
                 const monday = kstDateFromKey(currentWeekKey(),12);
                 const sunday = new Date(monday); sunday.setDate(monday.getDate()+7);
                 const start = localDateKey(monday), end = localDateKey(sunday);
-                for (const key of Object.keys(db.bossRecords[targetUser] || {})) {
-                    if (key.startsWith('slot_') && key.slice(5,15) >= start && key.slice(5,15) < end) delete db.bossRecords[targetUser][key];
+                if(!bossEditDraft || bossEditUser!==targetUser)return;
+                for (const key of Object.keys(bossEditDraft)) {
+                    if (key.startsWith('slot_') && key.slice(5,15) >= start && key.slice(5,15) < end) delete bossEditDraft[key];
                 }
-                saveDB();
-                loadUserBossRecords();
+                bossEditDirty=stable(bossEditDraft)!==stable(db.bossRecords[targetUser]||{});
+                setBossSaveStatus(bossEditDirty?'변경사항 있음 · 저장 버튼을 눌러주세요':'변경사항 없음');
+                loadUserBossRecords(true);
             }
         }
-        let bossEditTimer=null;
+        // V170: Participation checkboxes edit a local draft only.
+        // No Firestore write, debounce timer, or implicit close-save is allowed.
         let bossEditDirty=false;
-        let bossEditFlush=Promise.resolve();
+        let bossEditSaving=false;
+        let bossEditUser=null;
+        let bossEditDraft=null;
         function setBossSaveStatus(message){
           let el=document.getElementById('class-boss-save-status');
           if(!el){
@@ -2918,70 +2943,62 @@ const subscriptions={
           el.textContent=message;
         }
         window.addEventListener('beforeunload',e=>{
-          if(bossEditDirty || pendingSaves.size){e.preventDefault();e.returnValue='';}
+          if(bossEditDirty || bossEditSaving || pendingSaves.size){e.preventDefault();e.returnValue='';}
         });
-        function queueBossDraftSave(){
-          bossEditDirty=true;
-          setBossSaveStatus('저장 대기 중');
-          if(bossEditTimer!==null)clearTimeout(bossEditTimer);
-          bossEditTimer=setTimeout(()=>{bossEditTimer=null;void flushBossDraftSave().catch(e=>console.error('보스 기록 자동 저장 실패',e));},750);
-        }
-        let bossSaveAttemptId=0;
-        async function flushBossDraftSave(){
-          if(bossEditDirty && !classRegistrationAllowed()){
-            if(bossEditTimer!==null){clearTimeout(bossEditTimer);bossEditTimer=null;}
-            bossEditDirty=false;setBossSaveStatus('마감으로 저장 불가');
-            throw new Error('등록이 마감되었습니다.');
-          }
-          if(bossEditTimer!==null){clearTimeout(bossEditTimer);bossEditTimer=null;}
-          if(!bossEditDirty)return bossEditFlush;
-          bossEditDirty=false;
-          const attemptId=++bossSaveAttemptId;
-          setBossSaveStatus('서버 저장 중');
-          // Only the most recent save attempt may change the visible save state.
-          // A later queued save contains the complete draft, so an older failure
-          // must not mark a successfully saved newer draft as dirty.
-          bossEditFlush=saveDB().then(()=>{
-            if(attemptId===bossSaveAttemptId && !bossEditDirty)setBossSaveStatus('저장 완료');
-          },err=>{
-            if(attemptId===bossSaveAttemptId){
-              bossEditDirty=true;
-              setBossSaveStatus('저장 실패 · 다시 저장해 주세요');
-            }
-            throw err;
-          });
-          return bossEditFlush;
-        }
         function onBossCheckChange(checkbox) {
             if(!classAssertRegistrationOpen()){checkbox.checked=!checkbox.checked;return;}
             const user = db.currentUser;
-            if (!user || checkbox.getAttribute('data-user') !== user) { alert('본인 기록만 수정할 수 있습니다.'); loadUserBossRecords(); return; }
-            const key = checkbox.getAttribute('data-key');
+            if (!user || checkbox.getAttribute('data-user') !== user || bossEditUser!==user || !bossEditDraft) {
+                alert('본인 기록만 수정할 수 있습니다.');loadUserBossRecords();return;
+            }
+            if(bossEditSaving){checkbox.checked=!checkbox.checked;return;}
+            const key=checkbox.getAttribute('data-key');
             const boss=db.bossListDef.find(b=>b.name===checkbox.getAttribute('data-boss-name'));
             const slotTime=Number(checkbox.getAttribute('data-slot-time'));
             if(!boss||!classBossSlotConfirmedAt(boss,slotTime)){
-                checkbox.checked=false;
-                loadUserBossRecords(true);
-                alert('실제 컷이 확인된 보스만 참여 등록할 수 있습니다.');
-                return;
+                checkbox.checked=false;loadUserBossRecords(true);
+                alert('실제 컷이 확인된 보스만 참여 등록할 수 있습니다.');return;
             }
-            if (!db.bossRecords[user]) db.bossRecords[user] = {};
-            db.bossRecords[user][key] = checkbox.checked;
-            const legacy = checkbox.getAttribute('data-legacy');
-            if (legacy && Object.prototype.hasOwnProperty.call(db.bossRecords[user], legacy)) delete db.bossRecords[user][legacy];
-            queueBossDraftSave();
+            bossEditDraft[key]=checkbox.checked;
+            const legacy=checkbox.getAttribute('data-legacy');
+            if(legacy && Object.prototype.hasOwnProperty.call(bossEditDraft,legacy))delete bossEditDraft[legacy];
+            bossEditDirty=stable(bossEditDraft)!==stable(db.bossRecords[user]||{});
+            setBossSaveStatus(bossEditDirty?'변경사항 있음 · 저장 버튼을 눌러주세요':'변경사항 없음');
             loadUserBossRecords(true);
-            renderDiamondSummary();
         }
         async function saveBossRecords() {
+            if(bossEditSaving)return;
+            if(!bossEditUser || !bossEditDraft || db.currentUser!==bossEditUser)return alert('참여 기록 창을 다시 열어 주세요.');
+            if(!bossEditDirty){closeBossModal();return;}
+            if(!classRegistrationAllowed())return alert('등록이 마감되어 저장할 수 없습니다.');
+            bossEditSaving=true;
+            const btn=document.querySelector('#boss-reg-modal button[onclick="saveBossRecords()"]');
+            if(btn)btn.disabled=true;
+            const user=bossEditUser;
+            const draft=clone(bossEditDraft);
+            setBossSaveStatus('서버 저장 중');
+            let before=null;
             try {
-                await flushBossDraftSave();
                 await waitForPendingSaves();
+                // Only stage the edited user's record during an explicit save click.
+                before=clone(db.bossRecords[user]||{});
+                db.bossRecords[user]=clone(draft);
+                await saveDB();
+                bossEditDirty=false;bossEditDraft=null;bossEditUser=null;
+                setBossSaveStatus('저장 완료');
+                document.getElementById('boss-reg-modal').classList.add('hidden');
+                if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections();
+                if(deferredCloudView){deferredCloudView=false;scheduleCloudView();}
                 alert('참여 기록이 서버에 저장되었습니다.');
-                closeBossModal();
-                renderBossPreview();
+                renderBossPreview();renderDiamondSummary();
             } catch(e) {
+                if(before!==null)db.bossRecords[user]=before;
+                bossEditDirty=true;
+                setBossSaveStatus('저장 실패 · 다시 저장해 주세요');
                 alert('서버 저장을 확인하지 못했습니다: '+errorText(e));
+            } finally {
+                bossEditSaving=false;
+                if(btn)btn.disabled=false;
             }
         }
 
@@ -3389,7 +3406,7 @@ const subscriptions={
         async function classArchiveCurrentWeek(closeWeek=false,serverOnly=false){
           if(!cloudManager()||!cloudReady)throw new Error('운영진 이상 권한으로 로그인해야 합니다.');
           if(!readyForRollover())throw new Error('보관에 필요한 회원·기록·보관함이 아직 로딩 중입니다.');
-          if(bossEditDirty)await flushBossDraftSave();
+          if(bossEditDirty || bossEditSaving)throw new Error('저장하지 않은 보스 참여 변경사항이 있습니다. 참여 기록 저장 또는 취소 후 다시 진행하세요.');
           await waitForPendingSaves();
           const week=currentWeekKey();
           const sharedRef=store.doc('guildData/main');

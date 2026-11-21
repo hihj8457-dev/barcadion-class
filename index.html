@@ -4163,9 +4163,9 @@ function renderClassHomeRatios(){
 const CLASS_ROTATION_START=Date.UTC(2026,10,21);
 const CLASS_ROTATION_END=Date.UTC(2027,0,1);
 const CLASS_ROTATION_BOSSES=[
-  {name:'핏빛 라세리엔',start:Date.UTC(2026,10,23),days:3},
+  {name:'라세리엔',start:Date.UTC(2026,10,23),days:3},
   {name:'툴칸',start:Date.UTC(2026,10,22),days:21},
-  {name:'발락 헤이즈',start:Date.UTC(2026,10,22),days:21}
+  {name:'발락헤이즈',start:Date.UTC(2026,10,22),days:21}
 ];
 const CLASS_ROTATION_ZONES=[
   {start:'2026-11-22T22:00:00+09:00',end:'2026-11-29T22:00:00+09:00',zone:'3시 방향'},
@@ -4204,7 +4204,7 @@ function renderClassRouting(force=false,epoch=Date.now()){
   const minute=Math.floor(epoch/60000);if(!force&&minute===classRoutingLastMinute)return;
   classRoutingLastMinute=minute;
   const r=classRoutingAt(epoch);
-  const nextBoss=r.nextBoss.length?`${classRoutingDateLabel(r.nextBossDay)} ${r.nextBoss.join(' · ')}`:'12월 이후 배정표 갱신 필요';
+  const nextBoss=r.nextBoss.length?`${classRoutingDateLabel(r.nextBossDay)} ${r.nextBoss.join(' / ')}`:'12월 이후 배정표 갱신 필요';
   const bossText=!r.known?'배정표 확인 필요':r.today.length?r.today.map(n=>`<span class="class-routing-boss-name">${n}</span>`).join(''):'루팅 보스 없음';
   let place='배정표 갱신 필요', period='12/27 22:00 이후 새 자리표 필요', nextZone='';
   if(r.zone){

@@ -4204,8 +4204,8 @@ function renderClassRouting(force=false,epoch=Date.now()){
   const minute=Math.floor(epoch/60000);if(!force&&minute===classRoutingLastMinute)return;
   classRoutingLastMinute=minute;
   const r=classRoutingAt(epoch);
-  const nextBoss=r.nextBoss.length?`${classRoutingDateLabel(r.nextBossDay)} ${r.nextBoss.join(' / ')}`:'12월 이후 배정표 갱신 필요';
-  const bossText=!r.known?'배정표 확인 필요':r.today.length?r.today.map(n=>`<span class="class-routing-boss-name">${n}</span>`).join(''):'루팅 보스 없음';
+  const nextBoss=r.nextBoss.length?`${classRoutingDateLabel(r.nextBossDay)} ${r.nextBoss.join(' · ')}`:'12월 이후 배정표 갱신 필요';
+  const bossText=!r.known?'배정표 확인 필요':r.today.length?r.today.map(n=>`<span class="class-routing-boss-name">${n}</span>`).join(' · '):'루팅 보스 없음';
   let place='배정표 갱신 필요', period='12/27 22:00 이후 새 자리표 필요', nextZone='';
   if(r.zone){
     place=r.zone.zone;

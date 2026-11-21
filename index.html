@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261121_V168_CUT_CONFIRMED_PARTICIPATION_SAFE_SAVES">
+    <meta name="class-build-id" content="CLASS_BUILD_20261121_V171_PAST_BOSS_SLOTS_UNLOCKED">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -2596,7 +2596,7 @@ const subscriptions={
         }
         function closeBossModal() {
             if(bossEditSaving)return;
-            if(bossEditDirty && !confirm('저장하지 않은 참여 체크 기록을 폐기하고 닫을까요?'))return;
+            if(bossEditDirty && !confirm('기록을 저장하지 않았습니다. 정말 닫으시겠습니까?'))return;
             bossEditDraft=null;bossEditUser=null;bossEditDirty=false;
             document.getElementById('boss-reg-modal').classList.add('hidden');
             setBossSaveStatus('');
@@ -2679,7 +2679,13 @@ const subscriptions={
             return null;
         }
         function classBossSlotConfirmedAt(boss,slotTime,now=Date.now()) {
-            if(!Number.isFinite(slotTime)||slotTime>now)return false;
+            if(!Number.isFinite(slotTime)||!Number.isFinite(now)||slotTime>now)return false;
+            // V171: 지나간 KST 날짜는 참여 기록을 사후 정정할 수 있도록 허용한다.
+            // 오늘의 주기형 보스만 실제 컷 확인을 요구한다. 미래 날짜/시간은 잠근다.
+            // 단순 시간 수정 이벤트(type=manual, source 없음)는 오늘 컷으로 인정하지 않는다.
+            const slotKstDay = new Date(slotTime + 9*3600000).toISOString().slice(0,10);
+            const todayKstDay = new Date(now + 9*3600000).toISOString().slice(0,10);
+            if(slotKstDay < todayKstDay)return true;
             // 고정시각 보스에는 별도 컷 이벤트가 없다. 예정시각이 지나면 등록 허용.
             if(!(Number(boss.cycleHours)>0))return true;
             return periodicBossEvents(boss).some(e=>
@@ -2957,7 +2963,7 @@ const subscriptions={
             const slotTime=Number(checkbox.getAttribute('data-slot-time'));
             if(!boss||!classBossSlotConfirmedAt(boss,slotTime)){
                 checkbox.checked=false;loadUserBossRecords(true);
-                alert('실제 컷이 확인된 보스만 참여 등록할 수 있습니다.');return;
+                alert('미래 보스 또는 아직 컷이 확인되지 않은 오늘의 보스는 참여 등록할 수 없습니다.');return;
             }
             bossEditDraft[key]=checkbox.checked;
             const legacy=checkbox.getAttribute('data-legacy');
@@ -3122,7 +3128,11 @@ const subscriptions={
                 const spawned = !!(status && status.spawned);
                 const countdown = next === null ? '출현 기준 시간 미설정' : spawned ? '출현 중' : formatBossCountdown(next - nowMs);
                 const nextText = next === null ? '관리자가 기준 시각을 입력해야 합니다' : bossDateLabel(next);
-                const adminButton = admin && Number(boss.cycleHours) > 0 ? `<div class="class-v153-boss-actions"><button type="button" onclick="markBossCut(decodeURIComponent('${nameArg}'))" ${spawned ? '' : 'disabled title="보스 등장 후 활성화됩니다"'} class="class-v153-boss-cut ${spawned ? '' : 'opacity-40 cursor-not-allowed'}">컷</button><button type="button" class="class-v153-boss-edit" onclick="openBossQuickTimeEdit(decodeURIComponent('${nameArg}'), ${Number(next)})">시간 수정</button></div>` : '';
+                // V172: [컷]은 계정 소유 웹 관리자만 노출. [시간 수정]은 기존 운영진 이상 권한 유지.
+                const cutButton = cloudUser?.uid === ADMIN_UID && cloudAdmin() && profileDocs.get(cloudUser.uid)?.approved !== false
+                    ? `<button type="button" onclick="markBossCut(decodeURIComponent('${nameArg}'))" ${spawned ? '' : 'disabled title="보스 등장 후 활성화됩니다"'} class="class-v153-boss-cut ${spawned ? '' : 'opacity-40 cursor-not-allowed'}">컷</button>`
+                    : '';
+                const adminButton = admin && Number(boss.cycleHours) > 0 ? `<div class="class-v153-boss-actions">${cutButton}<button type="button" class="class-v153-boss-edit" onclick="openBossQuickTimeEdit(decodeURIComponent('${nameArg}'), ${Number(next)})">시간 수정</button></div>` : '';
                 return `<div class="bg-slate-900/70 border border-slate-700/60 rounded-xl p-3 space-y-2">
                     <div class="flex items-center justify-between gap-2"><div class="font-bold text-white">${name} <span class="text-xs text-slate-400 font-normal">${rule} · ${score}점</span></div>${adminButton}</div>
                     <div class="class-schedule-count-plain ${next === null ? 'is-unknown' : spawned ? 'is-elapsed' : 'is-upcoming'}">${countdown}</div>
@@ -3159,7 +3169,7 @@ const subscriptions={
         }
 
         async function markBossCut(name) {
-            if (!isCurrentAdmin()) return alert('보스 컷 기록은 관리자만 수정할 수 있습니다.');
+            if (!(cloudUser?.uid === ADMIN_UID && cloudAdmin() && profileDocs.get(cloudUser.uid)?.approved !== false)) return alert('보스 컷 기록은 웹 관리자 전용입니다.');
             const boss = db.bossListDef.find(b => b.name === name);
             if (!boss || !(Number(boss.cycleHours)>0)) return;
             const cutTime = Date.now();
@@ -6493,7 +6503,7 @@ async function classV144SaveScore(){
   const prior=baseline[key]===true;
   if(input.checked!==prior){
     const boss=db.bossListDef.find(b=>b.name===input.dataset.v144Boss);
-    if(!boss||!classBossSlotConfirmedAt(boss,Number(input.dataset.v144Time)))return alert('컷 미확인 보스 참여는 수정할 수 없습니다.');
+    if(!boss||!classBossSlotConfirmedAt(boss,Number(input.dataset.v144Time)))return alert('미래 보스 또는 아직 컷이 확인되지 않은 오늘의 보스는 수정할 수 없습니다.');
     changes[key]=input.checked;
   }
  }

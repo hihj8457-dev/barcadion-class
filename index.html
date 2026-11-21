@@ -3806,7 +3806,7 @@ const kstWeek=calendarWeekKey();
                     <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 flex justify-between items-center text-xs">
                         <div>
                             <span class="font-bold text-white text-sm">${escapeHtml(u.id)}</span>${u.isGuest?'<span class="text-sky-300 ml-2">[비가입]</span>':''}
-                            <span class="text-slate-400 ml-2">[${u.class} / 전력: ${u.power.toLocaleString()}]</span>
+                            <span class="text-slate-400 ml-2">[${u.class} / 전투력: ${u.power.toLocaleString()}]</span>
                             <div class="flex flex-wrap gap-1 mt-2">
                                 <select id="manage-class-${escapeAttribute(u.id)}" class="w-28 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white">${['레인저','소서리스','파이터','어쌔신'].map(c => `<option value="${c}" ${u.class === c ? 'selected' : ''}>${c}</option>`).join('')}</select>
                                 <input id="manage-power-${escapeAttribute(u.id)}" type="number" value="${Number(u.power)||0}" placeholder="전투력" class="w-24 bg-slate-900 border border-slate-700 rounded p-1 text-xs text-white">

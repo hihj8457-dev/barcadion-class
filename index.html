@@ -2995,7 +2995,7 @@ const subscriptions={
                 if(before!==null)db.bossRecords[user]=before;
                 bossEditDirty=true;
                 setBossSaveStatus('저장 실패 · 다시 저장해 주세요');
-                alert('서버 저장을 확인하지 못했습니다: '+errorText(e));
+                alert('저장에 실패하였습니다. 다시 저장해 주세요.: '+errorText(e));
             } finally {
                 bossEditSaving=false;
                 if(btn)btn.disabled=false;

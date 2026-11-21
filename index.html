@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261121_V160_SIMPLE_SPAWN_STATUS">
+    <meta name="class-build-id" content="CLASS_BUILD_20261121_V168_CUT_CONFIRMED_PARTICIPATION_SAFE_SAVES">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -573,6 +573,15 @@ html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!impor
 #class-home .class-routing-next-boss{color:#6b4b35!important;font-size:13px!important;font-weight:700!important;line-height:1.5!important;}
 @media(max-width:1250px){#class-home .class-home-lower-grid{grid-template-columns:1fr;}#class-home .class-home-lower-grid #class-home-ratio-chart{gap:26px!important;justify-content:center!important;}#class-home .class-home-lower-grid .class-dist-donut{width:190px!important;height:190px!important;}#class-home .class-home-lower-grid .class-dist-legend{flex:0 1 460px!important;}#class-home .class-home-lower-grid .class-dist-row{font-size:14px!important;}}
 @media(max-width:650px){#class-home .class-home-lower-grid{gap:13px;}#class-home .class-home-lower-grid .class-weekly-card,#class-home .class-home-lower-grid .class-routing-card{padding:14px!important;}#class-home .class-home-lower-grid #class-home-ratio-chart{flex-wrap:wrap!important;gap:15px!important;}#class-home .class-home-lower-grid .class-dist-donut{width:170px!important;height:170px!important;}#class-home .class-home-lower-grid .class-dist-legend{flex:1 1 100%!important;}#class-home .class-routing-card>h2{font-size:20px!important;}}
+</style>
+<style id="class-v168-cut-locked-style">
+/* V168: 출현 예상 시각이 아닌 실제 컷 확인 후에만 참여 체크 가능. */
+#boss-reg-modal .boss-reg-slot input[type="checkbox"]:disabled,
+#boss-reg-modal input[data-key]:disabled,
+#class-v144-editor-rows input[data-v144-key]:disabled {
+  opacity:.35!important;cursor:not-allowed!important;filter:grayscale(1)!important;
+}
+#boss-reg-modal .boss-reg-slot:has(input:disabled){cursor:not-allowed!important;opacity:.7!important;}
 </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
@@ -1451,17 +1460,17 @@ const subscriptions={
               if(uid!==cloudUser.uid && !cloudMaster())throw new Error('다른 회원 정보는 마스터 이상만 수정할 수 있습니다.');
               if(uid!==cloudUser.uid && !cloudAdmin() && (old?.role==='웹 관리자'||old?.role==='마스터'||u.role==='웹 관리자'||u.role==='마스터'))throw new Error('마스터는 웹 관리자·마스터 계정의 권한을 변경할 수 없습니다.');
               if(uid===cloudUser.uid && !cloudAdmin() && old && (data.role!==cloudProfile(old).role||data.approved!==cloudProfile(old).approved)) throw new Error('본인의 권한은 변경할 수 없습니다.');
-              ops.push(store.doc('users/'+uid).update(data));
+              ops.push(()=>store.doc('users/'+uid).update(data));
             }
           }
           for(const [uid,u] of prevUsers) if(!newUsers.has(uid)) {
             if(!cloudMaster() || uid===ADMIN_UID || (!cloudAdmin() && ['웹 관리자','마스터'].includes(u.role))) throw new Error('마스터는 운영진·길드원 계정만 추방할 수 있습니다.');
-            ops.push(store.doc('users/'+uid).delete());
+            ops.push(()=>store.doc('users/'+uid).delete());
           }
           const sharedKeys=['settings','notice','tiers','bossScores','bossListDef','bossSpawnAnchors','bossSpawnEvents','bossMaintenance','bossSlotOverrides','bossSlotAutoAnchors','guildDiamondsByWeek','participationSystem','activeWeekKey'];
           if(stable(before.weeklyArchives)!==stable(after.weeklyArchives)){
             if(!cloudManager())throw new Error('보관함은 운영진 이상만 수정할 수 있습니다.');
-            ops.push(store.runTransaction(async tx=>{
+            ops.push(()=>store.runTransaction(async tx=>{
               const ref=store.doc('guildPrivate/archives');const snap=await tx.get(ref);
               const server=clone(snap.exists?(snap.data().weeklyArchives||[]):[]);
               const base=before.weeklyArchives||[],target=after.weeklyArchives||[];
@@ -1500,7 +1509,7 @@ const subscriptions={
             if(!cloudManager())throw new Error('보스 일정 변경은 운영진 이상만 가능합니다.');
             const names=[...new Set([...Object.keys(previousBossEvents),...Object.keys(proposedBossEvents)])]
               .filter(name=>stableBossEvents(previousBossEvents[name])!==stableBossEvents(proposedBossEvents[name]));
-            ops.push(store.runTransaction(async tx=>{
+            ops.push(()=>store.runTransaction(async tx=>{
               const ref=store.doc('guildData/main');
               const snap=await tx.get(ref);
               if(!snap.exists)throw new Error('길드 공용 문서가 없습니다.');
@@ -1523,7 +1532,18 @@ const subscriptions={
           }
           const delta={};
           sharedKeys.filter(k=>k!=='bossSpawnEvents').forEach(k=>{if(stable(before[k])!==stable(after[k]))delta[k]=clone(after[k]??null);});
-          if(Object.keys(delta).length){if(!cloudManager()) throw new Error('관리자 권한이 필요한 작업입니다.');ops.push(store.doc('guildData/main').set(delta,{merge:true}));}
+          if(Object.keys(delta).length){if(!cloudManager()) throw new Error('관리자 권한이 필요한 작업입니다.');ops.push(()=>store.runTransaction(async tx=>{
+              const ref=store.doc('guildData/main'),snap=await tx.get(ref);
+              if(!snap.exists)throw new Error('길드 공용 데이터가 없습니다.');
+              const live=snap.data()||{};
+              const canon=v=>Array.isArray(v)?v.map(canon):v&&typeof v==='object'?
+                Object.fromEntries(Object.keys(v).sort().map(k=>[k,canon(v[k])])):v;
+              for(const key of Object.keys(delta)){
+                if(JSON.stringify(canon(live[key]??null))!==JSON.stringify(canon(before[key]??null)))
+                  throw new Error(key+' 데이터가 다른 이용자에 의해 변경되었습니다. 새로고침 후 다시 시도하세요.');
+              }
+              tx.set(ref,delta,{merge:true});
+            }));}
           const oldRec=before.bossRecords||{},newRec=after.bossRecords||{};
           for(const name of new Set([...Object.keys(oldRec),...Object.keys(newRec)])){
             if(stable(oldRec[name]||{})===stable(newRec[name]||{}))continue;
@@ -1534,7 +1554,7 @@ const subscriptions={
             const oldEntries=oldRec[name]||{}, newEntries=newRec[name]||{};
             const changed=Object.keys(newEntries).filter(key=>stable(oldEntries[key])!==stable(newEntries[key]));
             const removed=Object.keys(oldEntries).filter(key=>!Object.prototype.hasOwnProperty.call(newEntries,key));
-            if(changed.length || removed.length){if(!classRegistrationAllowed())throw new Error('등록이 마감되었습니다.'); ops.push(queueBossWrite(uid, async()=>{
+            if(changed.length || removed.length){if(!classRegistrationAllowed())throw new Error('등록이 마감되었습니다.'); ops.push(()=>queueBossWrite(uid, async()=>{
               const ref=store.doc('bossRecords/'+uid);
                
                                                                           
@@ -1547,6 +1567,14 @@ const subscriptions={
                                                                              
               await store.runTransaction(async tx=>{
                 const snap=await tx.get(ref);
+                const remote=snap.exists?(snap.data().entries||{}):{};
+                for(const key of [...changed,...removed]){
+                  const expected=oldEntries[key]===true;
+                  const current=remote[key]===true;
+                  const desired=newEntries[key]===true;
+                  if(current!==expected && current!==desired)
+                    throw new Error('동일한 참여 체크박스가 다른 기기에서 변경됐습니다. 새로고침 후 확인하세요.');
+                }
                 if(!snap.exists){
                   const entries={};for(const key of changed)entries[key]=newEntries[key];
                   tx.set(ref,{entries});
@@ -1559,7 +1587,7 @@ const subscriptions={
           for(const [id,item] of newItems){
             const old=oldItems.get(id);
             const base=x=>({name:x.name,category:x.category,grade:x.grade||itemRarity(x.name)||"",price:Number(x.price)||0,distributed:!!x.distributed,distributedAtMs:x.distributed?Number(x.distributedAtMs)||0:0});
-            if(!old||stable(base(old))!==stable(base(item))){if(!cloudManager())throw new Error('아이템 수정은 관리자만 가능합니다.');ops.push(store.doc('items/'+id).set(base(item)));}
+            if(!old||stable(base(old))!==stable(base(item))){if(!cloudManager())throw new Error('아이템 수정은 관리자만 가능합니다.');ops.push(()=>store.doc('items/'+id).set(base(item)));}
             const oldApplicants=new Set(old?.applicants||[]),newApplicants=new Set(item.applicants||[]);
             for(const nick of new Set([...oldApplicants,...newApplicants])){
               if(oldApplicants.has(nick)===newApplicants.has(nick))continue;
@@ -1567,21 +1595,26 @@ const subscriptions={
               if(!uid)continue;
               if(uid!==cloudUser.uid&&!cloudManager())throw new Error('본인 신청만 수정할 수 있습니다.');
               const key=id+'::'+uid;
-              ops.push(store.doc('applications/'+key).set({itemId:id,userId:uid,active:newApplicants.has(nick)}));
+              ops.push(()=>store.doc('applications/'+key).set({itemId:id,userId:uid,active:newApplicants.has(nick)}));
             }
           }
           for(const id of oldItems.keys())if(!newItems.has(id)){
             if(!cloudManager())throw new Error('관리자만 아이템을 삭제할 수 있습니다.');
-            ops.push((async()=>{
+            ops.push(async()=>{
               const apps=await store.collection('applications').where('itemId','==',id).get();
               if(apps.size>430)throw new Error('관련 신청 기록이 너무 많아 아이템 삭제를 중단했습니다.');
               const batch=store.batch();
               batch.delete(store.doc('items/'+id));
               for(const entry of apps.docs)batch.delete(entry.ref);
               await batch.commit();
-            })());
+            });
           }
-          await Promise.all(ops);
+          // Validate the full change set before issuing any writes. Each operation
+          // reports its own completion; a cross-document write set is NOT atomic.
+          const results=await Promise.allSettled(ops.map(run=>run()));
+          const failures=results.filter(r=>r.status==='rejected');
+          if(failures.length)throw new Error(`서버 저장 ${failures.length}/${results.length}건 실패. 일부 변경은 반영되었을 수 있습니다. 새로고침하여 확인하세요. `+
+            failures.map(r=>errorText(r.reason)).join(' / '));
         }
         function classRestoreLastServerView(){
           if(!lastSnapshot || pendingSaves.size)return;
@@ -1835,7 +1868,7 @@ const subscriptions={
             if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections();
         }
         function closeMyProfileModal() { document.getElementById('my-profile-modal').classList.add('hidden'); if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections(); }
-        function saveMyProfile() {
+        async function saveMyProfile() {
             const u=db.users.find(x=>x.uid===cloudUser?.uid); if(!u)return;
             const nickname=document.getElementById('my-profile-id').value.trim();
             const power=Number(document.getElementById('my-profile-power').value);
@@ -1848,7 +1881,9 @@ const subscriptions={
               db.items.forEach(i=>{i.applicants=(i.applicants||[]).map(n=>n===old?nickname:n);});
               u.id=nickname;db.currentUser=nickname;
             }
-            u.power=power;u.class=cls;saveDB();closeMyProfileModal();initApp();
+            u.power=power;u.class=cls;
+            try{await saveDB();closeMyProfileModal();initApp();classSaveIndicator('내 회원정보 저장 완료');}
+            catch(e){classSaveIndicator('내 회원정보 저장 실패',true);classRestoreLastServerView();}
         }
         async function logout(){try{await window.classPresenceStop?.();}catch(e){console.warn("온라인 상태 종료 실패",e)}await auth.signOut();}
 
@@ -2166,7 +2201,7 @@ const subscriptions={
                 return el && el.checked;
             });
         }
-        function saveAllBossDefinitions() {
+        async function saveAllBossDefinitions() {
             if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
             const previous = db.bossListDef;
             const updated = [];
@@ -2213,8 +2248,8 @@ const subscriptions={
             }
             db.bossListDef = updated;
             db.bossScores = scores;
-            saveDB(); renderAdminBossList(); renderBossPreview();
-            alert('보스 설정을 모두 저장했습니다.');
+            try{await saveDB();renderAdminBossList();renderBossPreview();alert('보스 설정을 모두 저장했습니다.');}
+            catch(e){classSaveIndicator('보스 설정 저장 실패',true);classRestoreLastServerView();}
         }
         function addBossDefinition() {
             const name = document.getElementById('new-boss-name').value.trim();
@@ -2566,7 +2601,7 @@ const subscriptions={
         function periodicBossEvents(boss) {
             const events = (db.bossSpawnEvents || {})[boss.name] || [];
             return events.filter(e => Number.isFinite(Number(e.time)))
-                .map(e => ({time:Number(e.time), type:e.type || 'cut', spawnTime:Number(e.spawnTime)})).sort((a,b)=>a.time-b.time);
+                .map(e => ({time:Number(e.time), type:e.type || 'cut', spawnTime:Number(e.spawnTime), source:e.source || '', messageId:e.messageId || ''})).sort((a,b)=>a.time-b.time);
         }
         function bossPeriodicTimes(boss, fromMs, toMs, anchorOverride = null) {
             const cycleMs = Number(boss.cycleHours)*3600000;
@@ -2615,6 +2650,31 @@ const subscriptions={
             generate(toMs);
             return [...new Set(out)].sort((a,b)=>a-b);
         }
+        // V168: 참여 체크박스는 출현 예상만으로 열지 않는다.
+        // 홈페이지 [컷]과 보탐매니저 컷 확인 메시지만 확정 컷으로 인정한다.
+        // 관리자 [시간 수정](type=manual, source 없음)은 컷이 아니다.
+        function classBossConfirmedSpawnForEvent(boss, event) {
+            if(event.type==='cut') {
+                const spawn=Number(event.spawnTime);
+                if(Number.isFinite(spawn)&&spawn>0&&spawn<=event.time)return spawn;
+            }
+            if(event.type==='manual' && event.source==='discord_botam') {
+                // 컷 알림은 다음 출현시각만 제공하므로 알림 직전의 '출현 중' 시각을 확인한다.
+                const prior=periodicBossStatus(boss,event.time-1);
+                if(prior && prior.spawned && prior.time<=event.time)return prior.time;
+            }
+            return null;
+        }
+        function classBossSlotConfirmedAt(boss,slotTime,now=Date.now()) {
+            if(!Number.isFinite(slotTime)||slotTime>now)return false;
+            // 고정시각 보스에는 별도 컷 이벤트가 없다. 예정시각이 지나면 등록 허용.
+            if(!(Number(boss.cycleHours)>0))return true;
+            return periodicBossEvents(boss).some(e=>
+                e.time<=now && (e.type==='cut'||(e.type==='manual'&&e.source==='discord_botam')) &&
+                (()=>{const actual=classBossConfirmedSpawnForEvent(boss,e);
+                       return actual!==null && Math.floor(actual/60000)===Math.floor(slotTime/60000);})()
+            );
+        }
         function getBossOccurrencesForDay(boss, dayDate) {
             const dayStart=new Date(dayDate);dayStart.setHours(0,0,0,0);
             const dayEnd=new Date(dayStart);dayEnd.setDate(dayEnd.getDate()+1);
@@ -2634,8 +2694,9 @@ const subscriptions={
             if (Number(boss.cycleHours) > 0) {
                 const start = dayStart.getTime(), end = dayEnd.getTime(), now = Date.now();
                 for (const event of periodicBossEvents(boss)) {
-                    const spawn = Number(event.spawnTime);
-                    if (event.type === 'cut' && Number.isFinite(spawn) && spawn >= start && spawn < end && spawn <= now) times.push(spawn);
+                    if(event.time>now)continue;
+                    const spawn=classBossConfirmedSpawnForEvent(boss,event);
+                    if(spawn!==null && spawn >= start && spawn < end && spawn <= now) times.push(spawn);
                 }
                 const prefix = `slot_${localDateKey(dayStart)}_${boss.name}_`;
                 for (const userRecords of Object.values(db.bossRecords || {})) {
@@ -2776,10 +2837,11 @@ const subscriptions={
                         const key = `slot_${dayStamp}_${boss.name}_${slot.label}`;
                          
                         const legacyKey = `${dayKey}_${boss.name}_${idx}`;
-                        const checked = records[key] === true; // Exact dated slot only; legacy weekday keys must never auto-award current points.
+                        const unlocked=classBossSlotConfirmedAt(boss,slot.time);
+                        const checked=unlocked && records[key] === true; // 미컷/미출현 기록은 점수 미인정.
                         dayMaxScore+=score; maxPossibleScore+=score;
                         if (checked) {dayScore+=score;totalScore+=score;}
-                        rows.push({bossName:boss.name,time:slot.time,label:slot.label,key,legacyKey,checked,score,html:`<label class="flex items-center gap-2 bg-slate-900/80 p-2 rounded-lg border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition"><input type="checkbox" data-user="${escapeAttribute(targetUser)}" data-key="${escapeAttribute(key)}" data-legacy="${escapeAttribute(legacyKey)}" ${checked?'checked':''} onchange="onBossCheckChange(this)" class="w-4 h-4 accent-amber-500"><span class="text-xs text-white font-medium">${escapeHtml(boss.name)}</span><span class="text-xs text-sky-300">${slot.label}</span><span class="text-[10px] text-amber-400 ml-auto">+${score}점</span></label>`});
+                        rows.push({bossName:boss.name,time:slot.time,label:slot.label,key,legacyKey,checked,unlocked,score,html:`<label class="flex items-center gap-2 bg-slate-900/80 p-2 rounded-lg border border-slate-700/60 cursor-pointer hover:border-amber-500/50 transition"><input type="checkbox" data-user="${escapeAttribute(targetUser)}" data-key="${escapeAttribute(key)}" data-slot-time="${slot.time}" data-boss-name="${escapeAttribute(boss.name)}" ${unlocked?'':'disabled title="컷 확인 후 등록 가능"'} data-legacy="${escapeAttribute(legacyKey)}" ${checked?'checked':''} onchange="onBossCheckChange(this)" class="w-4 h-4 accent-amber-500"><span class="text-xs text-white font-medium">${escapeHtml(boss.name)}</span><span class="text-xs text-sky-300">${slot.label}</span><span class="text-[10px] text-amber-400 ml-auto">+${score}점</span></label>`});
                     });
                     if (!occurrences.length && !boss.fixedTime && (boss.days||[]).includes(dayKey) && !(Number((db.bossSpawnAnchors||{})[boss.name])>0)) {
                         rows.push({bossName:boss.name,time:Infinity,html:`<div class="text-xs text-slate-500 p-2">${escapeHtml(boss.name)} · 출현 기준 시간 미설정 (스케줄 관리에서 설정)</div>`});
@@ -2795,7 +2857,7 @@ const subscriptions={
                     const valid = slots.filter(slot => slot.label);
                     if (!valid.length) return `<div class="boss-reg-group boss-reg-unset">${slots.map(slot => slot.html).join('')}</div>`;
                     valid.sort((a,b)=>a.time-b.time);
-                    return `<div class="boss-reg-group"><div class="boss-reg-name">${escapeHtml(name)}</div><div class="boss-reg-slots">${valid.map(slot => `<label class="boss-reg-slot"><span>${slot.label}</span><input type="checkbox" data-user="${escapeAttribute(targetUser)}" data-key="${escapeAttribute(slot.key)}" data-legacy="${escapeAttribute(slot.legacyKey)}" ${slot.checked?'checked':''} onchange="onBossCheckChange(this)" aria-label="${escapeAttribute(name)} ${slot.label} 참여" /></label>`).join('')}</div><span class="boss-reg-points">+${valid[0].score}점/회</span></div>`;
+                    return `<div class="boss-reg-group"><div class="boss-reg-name">${escapeHtml(name)}</div><div class="boss-reg-slots">${valid.map(slot => `<label class="boss-reg-slot"><span>${slot.label}</span><input type="checkbox" data-user="${escapeAttribute(targetUser)}" data-key="${escapeAttribute(slot.key)}" data-legacy="${escapeAttribute(slot.legacyKey)}" ${slot.checked?'checked':''} ${slot.unlocked?'':'disabled title="컷 확인 후 등록 가능"'} data-boss-name="${escapeAttribute(name)}" data-slot-time="${slot.time}" onchange="onBossCheckChange(this)" aria-label="${escapeAttribute(name)} ${slot.label} 참여" /></label>`).join('')}</div><span class="boss-reg-points">+${valid[0].score}점/회</span></div>`;
                 }).join('');
                 containerHtml += `<div class="bg-slate-900/60 border border-slate-700 rounded-xl overflow-hidden"><div onclick="toggleAccordionDay(this)" class="flex justify-between items-center p-3.5 bg-slate-800/80 cursor-pointer"><span class="font-bold text-sm text-white">${dayFull} <span class="text-slate-400 text-xs">(${dayStamp})</span></span><span class="text-xs font-bold text-amber-400">${dayScore}점 / ${dayMaxScore}점</span></div><div class="accordion-body p-3 border-t border-slate-700/50">${groupedHtml||'<span class="text-slate-500 text-xs">출현 일정 없음</span>'}</div></div>`;
             }
@@ -2811,6 +2873,14 @@ const subscriptions={
                 openDays.forEach(index => { if (bodies[index]) bodies[index].style.display = 'block'; });
             }
         }
+
+        // No extra Firestore reads. Refresh currently-open participation UI when
+        // the local clock passes a fixed boss's scheduled time.
+        setInterval(()=>{
+            const modal=document.getElementById('boss-reg-modal');
+            if(modal && !modal.classList.contains('hidden') && !bossEditDirty && !pendingSaves.size)
+                loadUserBossRecords(true);
+        },60000);
 
         function toggleAccordionDay(headerEl) {
             const body = headerEl.nextElementSibling;
@@ -2887,6 +2957,14 @@ const subscriptions={
             const user = db.currentUser;
             if (!user || checkbox.getAttribute('data-user') !== user) { alert('본인 기록만 수정할 수 있습니다.'); loadUserBossRecords(); return; }
             const key = checkbox.getAttribute('data-key');
+            const boss=db.bossListDef.find(b=>b.name===checkbox.getAttribute('data-boss-name'));
+            const slotTime=Number(checkbox.getAttribute('data-slot-time'));
+            if(!boss||!classBossSlotConfirmedAt(boss,slotTime)){
+                checkbox.checked=false;
+                loadUserBossRecords(true);
+                alert('실제 컷이 확인된 보스만 참여 등록할 수 있습니다.');
+                return;
+            }
             if (!db.bossRecords[user]) db.bossRecords[user] = {};
             db.bossRecords[user][key] = checkbox.checked;
             const legacy = checkbox.getAttribute('data-legacy');
@@ -3063,7 +3141,7 @@ const subscriptions={
             document.getElementById('boss-schedule-new')?.focus();
         }
 
-        function markBossCut(name) {
+        async function markBossCut(name) {
             if (!isCurrentAdmin()) return alert('보스 컷 기록은 관리자만 수정할 수 있습니다.');
             const boss = db.bossListDef.find(b => b.name === name);
             if (!boss || !(Number(boss.cycleHours)>0)) return;
@@ -3076,7 +3154,8 @@ const subscriptions={
             if (!(Number(db.bossSpawnAnchors[name])>0)) db.bossSpawnAnchors[name]=cutTime;
             db.bossSpawnEvents=db.bossSpawnEvents||{};
             db.bossSpawnEvents[name]=[...(db.bossSpawnEvents[name]||[]),{time:cutTime,type:'cut',spawnTime:status.time}];
-            saveDB(); renderBossPreview();
+            try{await saveDB();}catch(e){classSaveIndicator('보스 컷 저장 실패',true);classRestoreLastServerView();return;}
+            renderBossPreview();
             if(document.getElementById('boss-manage-slots-pane') && !document.getElementById('boss-manage-slots-pane').classList.contains('hidden'))renderBossSlotEditor();
             const modal=document.getElementById('boss-reg-modal');
             if(modal && !modal.classList.contains('hidden')) loadUserBossRecords(true);
@@ -3172,6 +3251,7 @@ const subscriptions={
                 const short=['일','월','화','수','목','금','토'][kstCalendarDate(day).getUTCDay()];
                 db.bossListDef.forEach((boss,index)=>{
                     getBossOccurrencesForDay(boss,day).forEach((slot,slotIndex)=>{
+                        if(!classBossSlotConfirmedAt(boss,slot.time))return;
                         const key=`slot_${dateKey}_${boss.name}_${slot.label}`;
                         const oldKey=`${short}_${boss.name}_${index}`;
                         for(const [user,records] of Object.entries(db.bossRecords||{})){
@@ -3195,6 +3275,7 @@ const subscriptions={
                 db.bossListDef.forEach((boss,index) => {
                     const slots = getBossOccurrencesForDay(boss,day);
                     slots.forEach((slot,slotIndex) => {
+                        if(!classBossSlotConfirmedAt(boss,slot.time))return;
                         const key = `slot_${dateKey}_${boss.name}_${slot.label}`;
                         const oldKey = `${dayShort}_${boss.name}_${index}`;
                         for (const [user, records] of Object.entries(db.bossRecords)) {
@@ -3868,7 +3949,7 @@ const kstWeek=calendarWeekKey();
             try { await store.collection('guildGuests').add({nickname,class:className,power});openUserManageModal();renderMembers(); }
             catch(e){alert('명단 추가 실패: '+errorText(e));}
         }
-        function saveUserDetails(userId) {
+        async function saveUserDetails(userId) {
             if (!isCurrentAdmin()) { alert('관리자 권한이 필요합니다.'); return; }
             const user = db.users.find(u => u.id === userId); if (!user) return;
             const className = document.getElementById(`manage-class-${userId}`).value.trim();
@@ -3876,10 +3957,12 @@ const kstWeek=calendarWeekKey();
             const newPw = '';
             if (!className || !Number.isFinite(power) || power < 0) { alert('클래스와 올바른 전투력을 입력하세요.'); return; }
             user.class = className; user.power = power; 
-            if(user.isGuest){store.doc('guildGuests/'+user.guestId).update({class:className,power}).catch(e=>alert('저장 실패: '+errorText(e)));}
-            else saveDB();
-            openUserManageModal(); renderMembers();
-            alert(`${userId}님의 정보를 저장했습니다.`);
+            try {
+                if(user.isGuest)await store.doc('guildGuests/'+user.guestId).update({class:className,power});
+                else await saveDB();
+                openUserManageModal();renderMembers();
+                alert(`${userId}님의 정보를 저장했습니다.`);
+            }catch(e){classSaveIndicator('회원 정보 저장 실패',true);classRestoreLastServerView();alert('회원 정보 저장 실패: '+errorText(e));}
         }
         function changeUserRole(userId, newRole) {
             if (!isMasterOrWebAdministrator() || db.users.find(u=>u.id===userId)?.role === '웹 관리자' || !['마스터','운영진','길드원'].includes(newRole)) return;
@@ -6368,9 +6451,10 @@ async function classV144OpenEditor(uid){
       slots.forEach((slot,slotIndex)=>{
         const key='slot_'+stamp+'_'+boss.name+'_'+slot.label;
         const legacy=short+'_'+boss.name+'_'+i;
-        const checked=entries[key]===true; // Admin view must match dated participation records.
+        const unlocked=classBossSlotConfirmedAt(boss,slot.time);
+        const checked=unlocked && entries[key]===true;
         const score=Number(db.bossScores[boss.name]||0);
-        boxes.push('<label><input type="checkbox" data-v144-key="'+escapeAttribute(key)+'" data-v144-legacy="'+escapeAttribute(legacy)+'" '+(checked?'checked':'')+'> '+escapeHtml(boss.name)+' '+escapeHtml(String(slot.label))+' ('+score+'점)</label>');
+        boxes.push('<label><input type="checkbox" data-v144-key="'+escapeAttribute(key)+'" data-v144-legacy="'+escapeAttribute(legacy)+'" data-v144-boss="'+escapeAttribute(boss.name)+'" data-v144-time="'+slot.time+'" '+(checked?'checked':'')+' '+(unlocked?'':'disabled title="컷 확인 후 등록 가능"')+'> '+escapeHtml(boss.name)+' '+escapeHtml(String(slot.label))+' ('+score+'점)</label>');
       });
     }
     rows.push('<div class="v144-row"><strong>'+escapeHtml(stamp)+' ('+short+')</strong><div class="v144-checks">'+(boxes.join('')||'등록 가능한 일정 없음')+'</div></div>');
@@ -6390,7 +6474,11 @@ async function classV144SaveScore(){
  for(const input of inputs){
   const key=input.dataset.v144Key,legacy=input.dataset.v144Legacy;
   const prior=baseline[key]===true;
-  if(input.checked!==prior)changes[key]=input.checked;
+  if(input.checked!==prior){
+    const boss=db.bossListDef.find(b=>b.name===input.dataset.v144Boss);
+    if(!boss||!classBossSlotConfirmedAt(boss,Number(input.dataset.v144Time)))return alert('컷 미확인 보스 참여는 수정할 수 없습니다.');
+    changes[key]=input.checked;
+  }
  }
  if(!Object.keys(changes).length)return alert('변경된 체크 기록이 없습니다.');
  if(!confirm('변경된 '+Object.keys(changes).length+'개 체크 기록을 서버에 저장할까요?'))return;

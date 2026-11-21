@@ -583,6 +583,7 @@ html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!impor
 }
 #boss-reg-modal .boss-reg-slot:has(input:disabled){cursor:not-allowed!important;opacity:.7!important;}
 </style>
+<style id="class-v174-boss-order-style">#admin-boss-list .class-boss-order-btn{width:26px;height:25px;min-width:26px;padding:0;border:1px solid #64748b;border-radius:6px;background:#303744;color:#e5e7eb;font-size:10px;font-weight:750;line-height:1;cursor:pointer}#admin-boss-list .class-boss-order-btn:hover:not(:disabled){background:#485368}#admin-boss-list .class-boss-order-btn:disabled{opacity:.27;cursor:default}</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
 
@@ -2180,7 +2181,7 @@ const subscriptions={
                 const score = Number(db.bossScores[boss.name] || 1);
                 const days = ['월','화','수','목','금','토','일'];
                 const checkedDays = boss.days || [];
-                html += `<div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 space-y-2">
+                html += `<div data-boss-order-index="${index}" class="bg-slate-900/60 p-3 rounded-xl border border-slate-700 space-y-2">
                     <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
                         <input id="boss-name-${index}" value="${escapeAttribute(boss.name)}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white" aria-label="보스 이름">
                         <input id="boss-score-${index}" type="number" value="${score}" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white" aria-label="배점">
@@ -2188,10 +2189,24 @@ const subscriptions={
                         <input id="boss-cycle-${index}" type="number" value="${Number(boss.cycleHours)||''}" placeholder="주기 시간" class="bg-slate-900 border border-slate-700 rounded p-2 text-sm text-white" aria-label="주기 시간">
                     </div>
                     <div class="flex flex-wrap gap-2 text-xs text-slate-300">${days.map(day => `<label><input id="boss-day-${index}-${day}" type="checkbox" value="${day}" ${checkedDays.includes(day)?'checked':''}> ${day}</label>`).join('')}</div>
-                    <div class="flex justify-end gap-2"><button type="button" onclick="deleteBossDefinition(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
+                    <div class="flex justify-between items-center gap-2"><div class="flex gap-1"><button type="button" onclick="moveBossDefinition(${index},-1)" ${index===0?'disabled':''} class="class-boss-order-btn" aria-label="${escapeAttribute(boss.name)} 위로 이동" title="위로 이동">▲</button><button type="button" onclick="moveBossDefinition(${index},1)" ${index===db.bossListDef.length-1?'disabled':''} class="class-boss-order-btn" aria-label="${escapeAttribute(boss.name)} 아래로 이동" title="아래로 이동">▼</button></div><button type="button" onclick="deleteBossDefinition(${index})" class="bg-red-500/20 text-red-300 px-3 py-2 rounded text-xs">삭제</button></div>
                 </div>`;
             });
             document.getElementById('admin-boss-list').innerHTML = html || '<p class="text-slate-400 text-sm">오늘 남은 보스 일정이 없습니다.</p>';
+        }
+        function moveBossDefinition(index, direction) {
+            const list=document.getElementById('admin-boss-list');
+            const rows=Array.from(list.querySelectorAll('[data-boss-order-index]'));
+            const position=rows.findIndex(row=>Number(row.dataset.bossOrderIndex)===index);
+            const target=position+direction;
+            if(position<0||target<0||target>=rows.length)return;
+            if(direction<0)list.insertBefore(rows[position],rows[target]);
+            else list.insertBefore(rows[target],rows[position]);
+            list.querySelectorAll('[data-boss-order-index]').forEach((row,i)=>{
+                const buttons=row.querySelectorAll('.class-boss-order-btn');
+                if(buttons[0])buttons[0].disabled=i===0;
+                if(buttons[1])buttons[1].disabled=i===rows.length-1;
+            });
         }
         function getBossDaysFromForm(prefix, index) {
             const days = ['월','화','수','목','금','토','일'];
@@ -2207,14 +2222,19 @@ const subscriptions={
             const updated = [];
             const scores = { ...db.bossScores };
             const renames = [];
-            for (let i = 0; i < previous.length; i++) {
-                const name = document.getElementById(`boss-name-${i}`).value.trim();
-                const scoreText = document.getElementById(`boss-score-${i}`).value;
+            const bossOrder=Array.from(document.querySelectorAll('#admin-boss-list [data-boss-order-index]')).map(row=>Number(row.dataset.bossOrderIndex));
+            if(bossOrder.length!==previous.length||new Set(bossOrder).size!==previous.length||bossOrder.some(i=>!Number.isInteger(i)||i<0||i>=previous.length)){
+                alert('보스 목록 상태가 변경되었습니다. 설정 창을 다시 열어 주세요.');return;
+            }
+            for (let i = 0; i < bossOrder.length; i++) {
+                const sourceIndex=bossOrder[i];
+                const name = document.getElementById(`boss-name-${sourceIndex}`).value.trim();
+                const scoreText = document.getElementById(`boss-score-${sourceIndex}`).value;
                 const score = Number(scoreText);
-                const fixedTime = document.getElementById(`boss-time-${i}`).value;
-                const cycleText = document.getElementById(`boss-cycle-${i}`).value.trim();
+                const fixedTime = document.getElementById(`boss-time-${sourceIndex}`).value;
+                const cycleText = document.getElementById(`boss-cycle-${sourceIndex}`).value.trim();
                 const cycleHours = cycleText === '' ? 0 : Number(cycleText);
-                const days = getBossDaysFromForm('edit', i);
+                const days = getBossDaysFromForm('edit', sourceIndex);
                 if (!name || !Number.isFinite(score) || score < 0 || !days.length ||
                     (!fixedTime && !(cycleHours > 0)) || !Number.isFinite(cycleHours) || cycleHours < 0) {
                     alert(`${i+1}번째 보스의 이름, 배점, 요일, 시간 또는 주기를 확인하세요.`); return;
@@ -2224,10 +2244,10 @@ const subscriptions={
                 if (fixedTime) def.fixedTime = fixedTime;
                 if (cycleHours > 0) def.cycleHours = cycleHours;
                 updated.push(def);
-                if (previous[i].name !== name) renames.push([previous[i].name, name]);
+                if (previous[sourceIndex].name !== name) renames.push([previous[sourceIndex].name, name]);
                  
-                if (Number(previous[i].cycleHours || 0) !== Number(cycleHours) || (previous[i].fixedTime || '') !== fixedTime) {
-                    if (db.bossSpawnAnchors) delete db.bossSpawnAnchors[previous[i].name];
+                if (Number(previous[sourceIndex].cycleHours || 0) !== Number(cycleHours) || (previous[sourceIndex].fixedTime || '') !== fixedTime) {
+                    if (db.bossSpawnAnchors) delete db.bossSpawnAnchors[previous[sourceIndex].name];
                 }
                 scores[name] = score;
             }

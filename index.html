@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261123_V176_BOSS_RECORDS_READY_ON_LOGIN">
+    <meta name="class-build-id" content="CLASS_BUILD_20261123_V177_HOME_IMMEDIATE_BOSS_RECORDS_PRELOAD">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1373,7 +1373,7 @@ const subscriptions={
         }
         window.classSyncCloudSections=syncCloudSections;
         function buildCloudView() {
-          if (!cloudUser || !profileDocs.has(cloudUser.uid) || profileDocs.get(cloudUser.uid)?.approved===false || !sharedDataLoaded || !optionalCloudLoaded.has('records')) return;
+          if (!cloudUser || !profileDocs.has(cloudUser.uid) || profileDocs.get(cloudUser.uid)?.approved===false || !sharedDataLoaded) return;
           const own = profileDocs.get(cloudUser.uid);
           const shared = window.__sharedData || {};
           const next = clone(DEFAULT_DB);
@@ -2602,7 +2602,8 @@ const subscriptions={
 
         function openBossModal() {
             if(!classAssertRegistrationOpen())return;
-            if (!db.currentUser || !sharedDataLoaded || !optionalCloudLoaded.has('records')) return alert('본인 참여 기록을 서버에서 확인하는 중입니다. 잠시 후 다시 시도하세요.');
+            if (!db.currentUser || !sharedDataLoaded) return alert('보스 일정 로딩 중입니다. 잠시 후 다시 시도하세요.');
+            if(!optionalCloudLoaded.has('records') || !profileDocs.has(cloudUser?.uid) || !recordDocs.has(cloudUser.uid)) return alert('서버 기록을 불러오지 못했습니다. 보스 참여 등록을 다시 열어주세요.');
             if(bossEditSaving)return;
             bossEditUser=db.currentUser;
             bossEditDraft=clone(db.bossRecords[bossEditUser]||{});

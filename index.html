@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261121_V171_PAST_BOSS_SLOTS_UNLOCKED">
+    <meta name="class-build-id" content="CLASS_BUILD_20261123_V176_BOSS_RECORDS_READY_ON_LOGIN">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1332,7 +1332,7 @@ html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!impor
            }
            const wants={
              guests:membersPage || adminPage || archiveOpen || rollover,
-             records:membersPage || adminPage || archiveOpen || rollover ? 'all' : (classBossRegistrationVisible() || classProfileVisible() ? 'own' : false),
+             records:membersPage || adminPage || archiveOpen || rollover ? 'all' : 'own',
              items:page==='items' || adminPage,
              applications:page==='items' || adminPage,
              archives:archiveOpen || rollover
@@ -1373,7 +1373,7 @@ const subscriptions={
         }
         window.classSyncCloudSections=syncCloudSections;
         function buildCloudView() {
-          if (!cloudUser || !profileDocs.has(cloudUser.uid) || profileDocs.get(cloudUser.uid)?.approved===false || !sharedDataLoaded) return;
+          if (!cloudUser || !profileDocs.has(cloudUser.uid) || profileDocs.get(cloudUser.uid)?.approved===false || !sharedDataLoaded || !optionalCloudLoaded.has('records')) return;
           const own = profileDocs.get(cloudUser.uid);
           const shared = window.__sharedData || {};
           const next = clone(DEFAULT_DB);
@@ -1402,7 +1402,7 @@ const subscriptions={
             if(typeof window.classRefreshHome==='function') window.classRefreshHome();
             if(typeof window.classV45Refresh==='function')window.classV45Refresh();
             const bossModal=document.getElementById('boss-reg-modal');
-            if(bossModal && !bossModal.classList.contains('hidden')) loadUserBossRecords(true);
+            if(bossModal && !bossModal.classList.contains('hidden')) { if(!bossEditDirty && bossEditUser===db.currentUser) bossEditDraft=clone(db.bossRecords[bossEditUser]||{}); loadUserBossRecords(true); }
             const slotsPane=document.getElementById('boss-manage-slots-pane');
             if(slotsPane && !slotsPane.classList.contains('hidden')) renderBossSlotEditor();
             const archiveModal=document.getElementById('weekly-archive-modal');
@@ -2602,7 +2602,7 @@ const subscriptions={
 
         function openBossModal() {
             if(!classAssertRegistrationOpen())return;
-            if (!db.currentUser || !sharedDataLoaded) return alert('보스 일정 로딩 중입니다. 잠시 후 다시 시도하세요.');
+            if (!db.currentUser || !sharedDataLoaded || !optionalCloudLoaded.has('records')) return alert('본인 참여 기록을 서버에서 확인하는 중입니다. 잠시 후 다시 시도하세요.');
             if(bossEditSaving)return;
             bossEditUser=db.currentUser;
             bossEditDraft=clone(db.bossRecords[bossEditUser]||{});

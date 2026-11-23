@@ -4879,7 +4879,7 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
     record.warHistory=Array.isArray(record.warHistory)?record.warHistory:[];
     const nickname=users().find(u=>memberKey(u)===uid)?.id||'';
     record.warHistory.push({at:new Date().toLocaleString('ko-KR'),by:nickname,editorUid:uid,type:'self',entries:[{uid,name:nickname,points:add}]});
-    tx.set(ref,{participationSystem:remote},{merge:true});
+    tx.update(ref,new firebase.firestore.FieldPath('participationSystem','weeks',targetWeek,'war',uid),old+add,new firebase.firestore.FieldPath('participationSystem','weeks',targetWeek,'warHistory'),record.warHistory);
    });
    input.value='0';
    alert('본인 쟁 점수를 누적 저장했습니다.');

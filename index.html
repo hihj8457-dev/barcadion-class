@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261123_V177_HOME_IMMEDIATE_BOSS_RECORDS_PRELOAD">
+    <meta name="class-build-id" content="CLASS_BUILD_20261125_V181_DIAMOND_ICON_MAINTENANCE_CUT">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -2352,7 +2352,7 @@ const subscriptions={
                     : {war:0,siege:0};
                 const diamonds=window.classAllBossRecordsReady===true&&typeof window.classMemberDiamondSummary==='function'?window.classMemberDiamondSummary(u):null;
                 const participationItems=[`보스 ${points.toLocaleString()}점`,`쟁 ${Number(participation.war||0).toLocaleString()}점`,participation.siegeParticipated?'공성전 참여':'공성전 미참여'];
-                const diamondLabel=diamonds?`${Number(diamonds.total).toLocaleString()} 다이아`:'계산 중';
+                const diamondLabel=diamonds?`💎 ${Number(diamonds.total).toLocaleString()}`:'계산 중';
                 const participationDisplay=window.classAllBossRecordsReady===true?`${participationItems.join(' · ')} / ${diamondLabel}`:'보스 점수 및 예상 다이아 계산 중';
                 html += `
                     <div class="class-member-card bg-slate-900/60 rounded-xl border border-slate-700/50">
@@ -2635,7 +2635,7 @@ const subscriptions={
         function periodicBossEvents(boss) {
             const events = (db.bossSpawnEvents || {})[boss.name] || [];
             return events.filter(e => Number.isFinite(Number(e.time)))
-                .map(e => ({time:Number(e.time), type:e.type || 'cut', spawnTime:Number(e.spawnTime), source:e.source || '', messageId:e.messageId || ''})).sort((a,b)=>a.time-b.time);
+                .map(e => ({time:Number(e.time), type:e.type || 'cut', spawnTime:Number(e.spawnTime), suppressedSpawnTime:Number(e.suppressedSpawnTime), source:e.source || '', messageId:e.messageId || ''})).sort((a,b)=>a.time-b.time);
         }
         function bossPeriodicTimes(boss, fromMs, toMs, anchorOverride = null) {
             const cycleMs = Number(boss.cycleHours)*3600000;
@@ -2652,7 +2652,7 @@ const subscriptions={
             const events=periodicBossEvents(boss);
                                                                                         
                                                                                       
-            const changes=[...events.map(e=>({time:e.time,type:e.type,spawnTime:e.spawnTime})),...windows.map(w=>({time:w.end,type:'reset',start:w.start}))]
+            const changes=[...events.filter(e=>e.type!=='maintenance_cut').map(e=>({time:e.time,type:e.type,spawnTime:e.spawnTime})),...windows.map(w=>({time:w.end,type:'reset',start:w.start}))]
                 .sort((a,b)=>a.time-b.time || (a.type==='reset'?-1:1));
             const out=[];
             const add=(time)=>{if(time>=fromMs && time<toMs && validDays.includes(dayNames[new Date(time).getDay()]) && !windows.some(w=>time>=w.start && time<w.end))out.push(time);};
@@ -2692,7 +2692,7 @@ const subscriptions={
                 const spawn=Number(event.spawnTime);
                 if(Number.isFinite(spawn)&&spawn>0&&spawn<=event.time)return spawn;
             }
-            if(event.type==='manual' && event.source==='discord_botam') {
+            if((event.type==='manual' || event.type==='maintenance_cut') && event.source==='discord_botam') {
                                                                
                 const prior=periodicBossStatus(boss,event.time-1);
                 if(prior && prior.spawned && prior.time<=event.time)return prior.time;
@@ -2710,7 +2710,7 @@ const subscriptions={
                                                        
             if(!(Number(boss.cycleHours)>0))return true;
             return periodicBossEvents(boss).some(e=>
-                e.time<=now && (e.type==='cut'||(e.type==='manual'&&e.source==='discord_botam')) &&
+                e.time<=now && (e.type==='cut'||((e.type==='manual'||e.type==='maintenance_cut')&&e.source==='discord_botam')) &&
                 (()=>{const actual=classBossConfirmedSpawnForEvent(boss,e);
                        return actual!==null && Math.floor(actual/60000)===Math.floor(slotTime/60000);})()
             );
@@ -3034,7 +3034,7 @@ const subscriptions={
         function periodicBossStatus(boss, nowMs) {
             const cycleMs = Number(boss.cycleHours) * 3600000;
             if (!(cycleMs > 0)) return null;
-            const events = periodicBossEvents(boss).filter(e => e.time <= nowMs && (e.type === 'cut' || e.type === 'manual'));
+            const events = periodicBossEvents(boss).filter(e => e.time <= nowMs && (e.type === 'cut' || e.type === 'manual' || (e.type === 'maintenance_cut' && e.source === 'discord_botam')));
             const lastEvent = events.length ? events[events.length - 1] : null;
             const lastCut = lastEvent ? lastEvent.time : 0;
             const windows = bossMaintenanceWindows();
@@ -3044,6 +3044,12 @@ const subscriptions={
                                                                                       
                                                                    
             if (activeAnchor > 0) {
+                if (lastEvent && lastEvent.type === 'maintenance_cut' && lastCut >= resetTime) {
+                    const suppressed = Number(lastEvent.suppressedSpawnTime);
+                    const affected = windows.find(w => lastCut < w.start && suppressed >= w.start && suppressed < w.end);
+                    if (affected) return {time:affected.end, spawned:false};
+                    return {time:lastCut + cycleMs, spawned:false};
+                }
                 const spawn = activeAnchor === resetTime && resetTime > lastCut
                     ? resetTime : lastEvent && lastEvent.type === 'manual' && Number.isFinite(lastEvent.spawnTime)
                         ? lastEvent.spawnTime : activeAnchor + cycleMs;

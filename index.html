@@ -896,7 +896,7 @@ html body #app-container #class-pages #class-siege-system table.class-v45-table 
                     </div>
                     <div class="text-center border-l border-slate-700">
                         <span class="text-xs text-slate-400 block mb-1">예상 분배 다이아</span>
-                        <span id="modal-expected-score" class="text-lg font-extrabold text-white">0 다이아</span>
+                        <span id="modal-expected-score" class="text-lg font-extrabold text-white">계산 중</span>
                     </div>
                 </div>
                 <div>
@@ -1301,7 +1301,7 @@ html body #app-container #class-pages #class-siege-system table.class-v45-table 
            const membersPage=['members','war','siege'].includes(page);
            const adminPage=manager && page==='admin';
            const archiveOpen=manager && archiveModalVisible();
-           const requireUsers=membersPage || adminPage || page==='items' || rollover || archiveOpen;
+           const requireUsers=membersPage || adminPage || page==='items' || rollover || archiveOpen || classBossRegistrationVisible();
            const scope=requireUsers?'all':'own';
                                                                                      
                                                                                            
@@ -1317,7 +1317,7 @@ html body #app-container #class-pages #class-siege-system table.class-v45-table 
              if(scope==='all'){
                userCloudStop=store.collection('users').onSnapshot({includeMetadataChanges:true},s=>{
                  profileDocs=new Map(s.docs.map(d=>[d.id,d.data()]));
-                 allUsersLoaded=!s.metadata.fromCache;
+                 allUsersLoaded=!s.metadata.fromCache;if(classBossRegistrationVisible())classRefreshBossModalExpectedDiamond();
                                                               
                  if(!document.getElementById('user-manage-modal')?.classList.contains('hidden')) {
                    classV144EnsureTools();
@@ -1338,14 +1338,14 @@ html body #app-container #class-pages #class-siege-system table.class-v45-table 
            }
            const wants={
              guests:membersPage || adminPage || archiveOpen || rollover,
-             records:membersPage || adminPage || archiveOpen || rollover ? 'all' : 'own',
+             records:membersPage || adminPage || archiveOpen || rollover || classBossRegistrationVisible() ? 'all' : 'own',
              items:page==='items' || adminPage,
              applications:page==='items' || adminPage,
              archives:archiveOpen || rollover
            };
 const subscriptions={
             guests:()=>store.collection('guildGuests').onSnapshot({includeMetadataChanges:true},s=>{guestDocs=new Map(s.docs.map(d=>[d.id,d.data()]));if(!s.metadata.fromCache)optionalCloudLoaded.add('guests');scheduleCloudView();},e=>console.error('비가입 길드원 조회 실패',e)),
-            records:(scope)=>scope==='own' ? store.doc('bossRecords/'+cloudUser.uid).onSnapshot({includeMetadataChanges:true},s=>{recordDocs=new Map([[cloudUser.uid,s.exists?(s.data().entries||{}):{}]]);if(!s.metadata.fromCache)optionalCloudLoaded.add('records');scheduleCloudView();},e=>console.error('본인 보스 기록 조회 실패',e)) : store.collection('bossRecords').onSnapshot({includeMetadataChanges:true},s=>{recordDocs=new Map(s.docs.map(d=>[d.id,d.data().entries||{}]));if(!s.metadata.fromCache){optionalCloudLoaded.add('records');window.classAllBossRecordsReady=true;}scheduleCloudView();},e=>console.error('보스 기록 조회 실패',e)),
+            records:(scope)=>scope==='own' ? store.doc('bossRecords/'+cloudUser.uid).onSnapshot({includeMetadataChanges:true},s=>{recordDocs=new Map([[cloudUser.uid,s.exists?(s.data().entries||{}):{}]]);if(!s.metadata.fromCache)optionalCloudLoaded.add('records');scheduleCloudView();},e=>console.error('본인 보스 기록 조회 실패',e)) : store.collection('bossRecords').onSnapshot({includeMetadataChanges:true},s=>{recordDocs=new Map(s.docs.map(d=>[d.id,d.data().entries||{}]));if(!s.metadata.fromCache){optionalCloudLoaded.add('records');window.classAllBossRecordsReady=true;}scheduleCloudView();if(classBossRegistrationVisible())classRefreshBossModalExpectedDiamond();},e=>console.error('보스 기록 조회 실패',e)),
             items:()=>store.collection('items').onSnapshot(s=>{itemDocs=new Map(s.docs.map(d=>[d.id,d.data()]));optionalCloudLoaded.add('items');scheduleCloudView();if(cloudManager())setTimeout(()=>void classCleanupDistributedItems(),1000);},e=>console.error('아이템 조회 실패',e)),
             applications:()=>store.collection('applications').where('active','==',true).onSnapshot(s=>{applicationDocs=new Map(s.docs.map(d=>[d.id,d.data().active===true]));optionalCloudLoaded.add('applications');scheduleCloudView();},e=>console.error('신청 내역 조회 실패',e)),
             archives:()=>store.doc('guildPrivate/archives').onSnapshot({includeMetadataChanges:true},s=>{window.__archiveData=s.exists?s.data():{};if(!s.metadata.fromCache)optionalCloudLoaded.add('archives');scheduleCloudView();},e=>{window.__archiveData={};console.error('보관함 조회 실패',e);})
@@ -1395,7 +1395,7 @@ const subscriptions={
             return {...clone(d),id,applicants,applicant:applicants[0]||null};
           });
           next.weeklyArchives=clone(window.__archiveData?.weeklyArchives||[]);
-          if(pendingSaves.size || bossEditDirty){ deferredCloudView=true; return; }
+          if(pendingSaves.size || bossEditDirty){ deferredCloudView=true; if(classBossRegistrationVisible())classRefreshBossModalExpectedDiamond(); return; }
                                                                             
                                                                                       
           const incomingSignature=stable(next)+'|gate:'+String(window.__sharedData?.registrationGate?.weekKey||'')+':'+String(window.__sharedData?.registrationGate?.closed===true)+':'+String(window.__sharedData?.registrationGate?.closedUntil?.toMillis?.()||0);
@@ -2618,6 +2618,7 @@ const subscriptions={
             const user = db.users.find(u => u.id === db.currentUser);
             document.getElementById('modal-target-user').textContent = db.currentUser;
             document.getElementById('boss-reg-modal').classList.remove('hidden');
+            document.getElementById('modal-expected-score').textContent='계산 중';
             setBossSaveStatus('저장 버튼을 눌러야 반영됩니다');
             if(typeof window.classSyncCloudSections==='function')window.classSyncCloudSections();
             loadUserBossRecords();
@@ -2918,8 +2919,7 @@ const subscriptions={
             document.getElementById('accordion-days-container').innerHTML=containerHtml;
             const participationRate = maxPossibleScore ? 100 * totalScore / maxPossibleScore : 0;
             document.getElementById('modal-participation-rate').innerText = `${totalScore.toLocaleString()}점 ${participationRate.toFixed(1)}%`;
-            const unitDiamond = diamondCalculation(currentWeekKey()).unit;
-            document.getElementById('modal-expected-score').innerText = `${Math.floor(totalScore) * unitDiamond}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' 다이아';
+            classRefreshBossModalExpectedDiamond(totalScore);
              
             toggleAllAccordion(false);
             if (preserveOpenDays) {
@@ -3324,7 +3324,7 @@ const subscriptions={
             }
             return result;
         }
-        function weeklyScores(weekKey) {
+        function weeklyScores(weekKey, recordsOverride = db.bossRecords) {
             const monday = kstDateFromKey(weekKey,12);
             if (isNaN(monday.getTime())) return {};
             const totals = {};
@@ -3339,7 +3339,7 @@ const subscriptions={
                         if(!classBossSlotConfirmedAt(boss,slot.time))return;
                         const key = `slot_${dateKey}_${boss.name}_${slot.label}`;
                         const oldKey = `${dayShort}_${boss.name}_${index}`;
-                        for (const [user, records] of Object.entries(db.bossRecords)) {
+                        for (const [user, records] of Object.entries(recordsOverride)) {
                             const checked = records?.[key] === true;                                          
                             if (checked) totals[user] = (totals[user] || 0) + Number(db.bossScores[boss.name] || 0);
                         }
@@ -3347,6 +3347,26 @@ const subscriptions={
                 });
             }
             return totals;
+        }
+        function classRefreshBossModalExpectedDiamond(draftScore) {
+            const display=document.getElementById('modal-expected-score');
+            if(!display || !classBossRegistrationVisible())return;
+            if(userCloudScope!=='all' || !allUsersLoaded || bossRecordScope!=='all' ||
+               !optionalCloudLoaded.has('records') || window.classAllBossRecordsReady!==true){
+                display.textContent='계산 중';return;
+            }
+            const allRecords={};
+            recordDocs.forEach((entries,uid)=>{
+                const p=profileDocs.get(uid);
+                if(p && p.approved!==false && p.nickname)allRecords[p.nickname]=entries||{};
+            });
+            const currentNick=profileDocs.get(cloudUser?.uid)?.nickname;
+            if(!currentNick){display.textContent='계산 불가';return;}
+            if(bossEditUser===currentNick && bossEditDraft)allRecords[currentNick]=bossEditDraft;
+            const scores=weeklyScores(currentWeekKey(),allRecords);
+            const d=diamondCalculation(currentWeekKey(),scores);
+            const mine=Math.max(0,Number(scores[currentNick])||0);
+            display.textContent=(Math.floor(mine*d.unit)).toLocaleString('ko-KR')+' 다이아';
         }
         function diamondCalculation(weekKey, scores = weeklyScores(weekKey)) {
             const total=Math.max(0,Math.floor(Number(db.guildDiamondsByWeek[weekKey])||0));

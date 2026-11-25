@@ -2358,6 +2358,7 @@ const subscriptions={
                     : {war:0,siege:0};
                 const diamonds=window.classAllBossRecordsReady===true&&typeof window.classMemberDiamondSummary==='function'?window.classMemberDiamondSummary(u):null;
                 const participationItems=[`보스 ${points.toLocaleString()}점`,`쟁 ${Number(participation.war||0).toLocaleString()}점`,participation.siegeParticipated?'공성전 참여':'공성전 미참여'];
+                if(['마스터','운영진'].includes(u.role))participationItems.push('운영진 분배');
                 const diamondLabel=diamonds?`💎 ${Number(diamonds.total).toLocaleString()}`:'계산 중';
                 const participationDisplay=window.classAllBossRecordsReady===true?`${participationItems.join(' · ')} / ${diamondLabel}`:'보스 점수 및 예상 다이아 계산 중';
                 const ownMember = !!cloudUser?.uid && !!u.uid && u.uid === cloudUser.uid;

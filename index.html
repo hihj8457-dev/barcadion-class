@@ -584,6 +584,12 @@ html body #item-market-list .class-v150-edit-item:hover{background:#efdfce!impor
 #boss-reg-modal .boss-reg-slot:has(input:disabled){cursor:not-allowed!important;opacity:.7!important;}
 </style>
 <style id="class-v174-boss-order-style">#admin-boss-list .class-boss-order-btn{width:26px;height:25px;min-width:26px;padding:0;border:1px solid #64748b;border-radius:6px;background:#303744;color:#e5e7eb;font-size:10px;font-weight:750;line-height:1;cursor:pointer}#admin-boss-list .class-boss-order-btn:hover:not(:disabled){background:#485368}#admin-boss-list .class-boss-order-btn:disabled{opacity:.27;cursor:default}</style>
+<style id="class-v182-own-member-highlight">
+html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card.class-member-own-card,
+html body #class-pages > .class-page[data-page="members"] #class-member-slot #member-list-view .class-member-card.class-member-own-card:hover{background:#fbf0df!important;border-color:#e6d1bb!important;box-shadow:inset 4px 0 0 #b58a50,0 2px 8px rgba(18,24,32,.045)!important}
+html body #app-container #class-pages #class-siege-system table.class-v45-table tbody tr.class-siege-own-row > td{background-color:#fbf0df!important;background-image:none!important}
+html body #app-container #class-pages #class-siege-system table.class-v45-table tbody tr.class-siege-own-row > td:first-child{box-shadow:inset 4px 0 0 #b58a50!important}
+</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
 
@@ -2354,8 +2360,9 @@ const subscriptions={
                 const participationItems=[`보스 ${points.toLocaleString()}점`,`쟁 ${Number(participation.war||0).toLocaleString()}점`,participation.siegeParticipated?'공성전 참여':'공성전 미참여'];
                 const diamondLabel=diamonds?`💎 ${Number(diamonds.total).toLocaleString()}`:'계산 중';
                 const participationDisplay=window.classAllBossRecordsReady===true?`${participationItems.join(' · ')} / ${diamondLabel}`:'보스 점수 및 예상 다이아 계산 중';
+                const ownMember = !!cloudUser?.uid && !!u.uid && u.uid === cloudUser.uid;
                 html += `
-                    <div class="class-member-card bg-slate-900/60 rounded-xl border border-slate-700/50">
+                    <div class="class-member-card ${ownMember?'class-member-own-card':''} bg-slate-900/60 rounded-xl border border-slate-700/50">
                         ${guildClassIcon(u.class)}
                         <div class="class-member-details">
                           <div class="class-member-identity">
@@ -4821,7 +4828,7 @@ window.addEventListener('pageshow',()=>{window.classInvalidateBossTimer();update
   <p class="class-v45-muted" style="margin-top:8px">참여자 중 최고 전투력과 최저 전투력을 기준으로 제곱 곡선으로 계산합니다.</p>
   ${editable?`<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin:8px 0"><button type="button" class="class-v45-btn" style="padding:4px 8px;font-size:11px;line-height:1.3;min-height:0;width:auto;flex:none" onclick="classV51SetAllSiege(true)">전체 체크</button><button type="button" class="class-v45-btn" style="padding:4px 8px;font-size:11px;line-height:1.3;min-height:0;width:auto;flex:none" onclick="classV51SetAllSiege(false)">전체 해제</button><span class="class-v45-muted" id="class-v51-siege-selected"></span></div>`:''}
   <table class="class-v45-table"><thead><tr><th>참여</th><th>길드원</th><th>전투력</th><th>가중치</th><th>예상 다이아</th></tr></thead><tbody>
-  ${users().map(u=>`<tr><td><input type="checkbox" data-siege-uid="${esc(memberKey(u))}" ${w.siege?.participants?.[memberKey(u)]===true?'checked':''} ${editable?'':'disabled'}></td><td>${esc(u.id)}${u.isGuest?' (미가입)':''}</td><td>${num(u.power)}</td><td>${shares[memberKey(u)]?.weight.toFixed(2)||'-'}</td><td>💎 ${num(shares[memberKey(u)]?.amount||0)}</td></tr>`).join('')}</tbody></table>
+  ${users().map(u=>`<tr class="${cloudUser?.uid&&memberKey(u)===cloudUser.uid?'class-siege-own-row':''}"><td><input type="checkbox" data-siege-uid="${esc(memberKey(u))}" ${w.siege?.participants?.[memberKey(u)]===true?'checked':''} ${editable?'':'disabled'}></td><td>${esc(u.id)}${u.isGuest?' (미가입)':''}</td><td>${num(u.power)}</td><td>${shares[memberKey(u)]?.weight.toFixed(2)||'-'}</td><td>💎 ${num(shares[memberKey(u)]?.amount||0)}</td></tr>`).join('')}</tbody></table>
   ${editable?'<div style="text-align:right;margin-top:12px"><button class="class-v45-btn" onclick="classV45SaveSiege()">공성전 설정 저장</button></div>':''}</div>`;
   updateClassV51SiegeSelected();
  }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261126_V199_SKILL_TOOLTIPS">
+    <meta name="class-build-id" content="CLASS_BUILD_20261126_V200_CATEGORY_BACKGROUND">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -2647,7 +2647,7 @@ function renderClassRanking(){
                             ${item.distributed ? '<div class="class-item-completed-overlay" aria-label="분배완료"><span>분배완료</span></div>' : ''}
                             <div class="class-item-line">
                                 <div class="class-item-details">
-                                    <span class="bg-slate-800 text-amber-400 px-1.5 py-0.5 rounded text-xs">${escapeDistributionText(item.category)}</span>
+                                    <span class="class-item-category text-amber-400 px-1.5 py-0.5 rounded text-xs">${escapeDistributionText(item.category)}</span>
                                     ${item.grade || itemRarity(item.name) ? `<span class="class-item-grade text-xs font-bold ${itemRarityClass(item)}" style="color:${itemRarityColor(item)} !important;-webkit-text-fill-color:${itemRarityColor(item)} !important">[${escapeDistributionText(item.grade || itemRarity(item.name))}]</span>` : ''}
                                     <span class="class-item-name font-bold ${itemRarityClass(item)}" style="color:${itemRarityColor(item)} !important;-webkit-text-fill-color:${itemRarityColor(item)} !important">${classCatalogNameMarkup(item)}</span>
                                     <span class="class-item-price">기준가: ${Number(item.price || 0).toLocaleString()} 다이아</span>
@@ -6924,5 +6924,6 @@ html body #class-home .class-home-lower-grid .class-routing-zone-name,html body 
 @media(max-width:1200px) and (min-width:1051px){html body #class-home .class-home-lower-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)!important;grid-template-areas:"distribution ranking" "routing ranking"!important}html body #class-home .class-weekly-card{grid-area:distribution}html body #class-home .class-routing-card{grid-area:routing}html body #class-home .class-ranking-card{grid-area:ranking}}
 @media(max-width:1050px){html body #class-home .class-home-lower-grid{grid-template-columns:minmax(0,1fr)!important}html body #class-home .class-ranking-card{grid-column:auto!important}html body #class-home .class-home-lower-grid .class-dist-donut{width:155px!important;height:155px!important}}
 </style>
+<style id="class-v200-category-background">html body #class-pages > .class-page[data-page="items"] #class-item-slot #item-market-list .class-item-row .class-item-details > .class-item-category{background:transparent!important;box-shadow:none!important;}</style>
 </body>
 </html>

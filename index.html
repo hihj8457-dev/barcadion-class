@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261126_V196_ACCESSORY_SKILLS">
+    <meta name="class-build-id" content="CLASS_BUILD_20261126_V197_CATALOG_SEARCH">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1129,6 +1129,11 @@ function classCatalogMatch(item){
  const normalized=raw.replace(/^스킬북\s*[-–—]\s*/, '스킬북 - '); const exact=pool.filter(r=>r.name===normalized||r.skill===normalized); if(exact.length===1)return {r:exact[0],tail:''};
  const direct=pool.find(r=>normalized.startsWith(r.name)&&/^[\s(\-\/]/.test(normalized.slice(r.name.length)));
  if(direct)return {r:direct,tail:normalized.slice(direct.name.length).replace(/^\s*-?\s*(?:공격력|방어력|공|방|명중|이속)\s*\d+(?:\.\d+)?%?\s*/,'').trim()};
+ if(item.category==='스킬북'){
+ const clean=v=>classCatalogNorm(v).replace(/^스킬북[-–—]?/,'');
+ const key=clean(raw);const exactSkill=pool.filter(r=>clean(r.skill||r.name)===key);if(exactSkill.length===1)return {r:exactSkill[0],tail:''};
+ const memoMatch=raw.match(/^(.*?)\s*(\(.*)$/);if(memoMatch){const found=pool.filter(r=>clean(r.skill||r.name)===clean(memoMatch[1]));if(found.length===1)return {r:found[0],tail:memoMatch[2]};}
+ }
  const legacy=raw.match(/^(?:영웅\s*)?(한손검|대검|쌍단검|카타나|석궁|활|지팡이|마법구|투구|상의|하의|장갑|신발|망토)\s*-?\s*(?:공격력|방어력|공|방|명중|이속)\s*(\d+(?:\.\d+)?%?)(?![\d.])\s*(.*)$/);
  if(!legacy||grade!=='영웅'&&!raw.startsWith('영웅'))return null;
  const matches=pool.filter(r=>r.type===legacy[1]&&classCatalogValue(r).replace('%','')===legacy[2].replace('%',''));
@@ -1139,7 +1144,13 @@ function classCatalogNameMarkup(item){const m=classCatalogMatch(item);if(!m)retu
 function classCatalogFormName(id){const input=document.getElementById(id);const f=classCatalogForms.get(id);const name=input.value.trim();const memo=f?.memo.value.trim();return name+(memo?' '+memo:'');}
 function classCatalogReset(id){const f=classCatalogForms.get(id);if(f){f.memo.value='';f.results.hidden=true;f.status.textContent='';}}
 function classCatalogPrepareEdit(item){const f=classCatalogForms.get('class-v150-name');if(!f)return;classCatalogReset('class-v150-name');const m=classCatalogMatch(item);if(m){f.input.value=m.r.name;f.memo.value=m.tail;f.status.textContent='아이템 DB 연결 완료';}}
-function classCatalogMatches(q){const tokens=String(q||'').trim().split(/\s+/).filter(Boolean).map(classCatalogNorm);return classCatalogItems.filter(r=>{const hay=classCatalogNorm([r.name,r.type,r.grade,r.job||'',...r.stats,'공'+classCatalogValue(r),'방'+classCatalogValue(r),'이속'+classCatalogValue(r)].join(' '));return tokens.every(t=>hay.includes(t));});}
+function classCatalogMatches(q){
+ const query=classCatalogNorm(q).replace(/[-–—]/g,'');if(!query)return [];
+ const tokens=String(q||'').trim().split(/\s+/).filter(Boolean).map(classCatalogNorm).filter(t=>!/^[-–—]$/.test(t));
+ const ranked=[];for(const r of classCatalogItems){const name=classCatalogNorm(r.name).replace(/[-–—]/g,'');const short=classCatalogNorm(r.skill||r.name).replace(/[-–—]/g,'');const hay=classCatalogNorm([r.name,r.type,r.grade,r.job||'',...r.stats,'공'+classCatalogValue(r),'방'+classCatalogValue(r),'이속'+classCatalogValue(r)].join(' ')).replace(/[-–—]/g,'');
+ const rank=short===query||name===query?0:short.startsWith(query)?1:short.includes(query)||name.includes(query)?2:tokens.length&&tokens.every(t=>hay.includes(t))?3:99;if(rank<99)ranked.push({r,rank});}
+ return ranked.sort((a,b)=>a.rank-b.rank).map(x=>x.r);
+}
 function classCatalogInitForm(id,gradeId,categoryId,priceId){
  const input=document.getElementById(id);if(!input)return;
  const wrap=document.createElement('div');wrap.className='class-catalog-search';input.parentNode.insertBefore(wrap,input.nextSibling);
@@ -1151,9 +1162,9 @@ function classCatalogInitForm(id,gradeId,categoryId,priceId){
  if(classCatalogLoadError){status.textContent='DB 로드 실패 · 직접 입력 가능';results.hidden=true;return;}
  if(!classCatalogItems.length){status.textContent='아이템 DB 불러오는 중 · 직접 입력 가능';return;}
  const matches=classCatalogMatches(q);status.textContent=matches.length?`검색 결과 ${matches.length}개 · 선택하여 연결`:'DB에 없는 아이템 · 직접 등록 가능';results.hidden=!matches.length;
- for(const r of matches.slice(0,40)){const b=document.createElement('button');b.type='button';b.className='class-catalog-result';const img=document.createElement('img');img.src='./'+r.icon;img.alt='';const label=document.createElement('span');label.textContent=r.name;label.style.setProperty('color',itemRarityColor(r),'important');label.style.setProperty('-webkit-text-fill-color',itemRarityColor(r),'important');const small=document.createElement('small');small.textContent=r.job||r.stats[0]||r.type;b.append(img,label,small);b.addEventListener('click',()=>{input.value=r.name;document.getElementById(gradeId).value=r.grade;document.getElementById(categoryId).value=r.type==='스킬북'?'스킬북':'장비';status.textContent='아이템 DB 연결 완료';results.hidden=true;const price=document.getElementById(priceId);if(!price.value&&typeof db!=='undefined'){const tiers=(db.tiers||[]).filter(t=>itemDisplayName(t.name).trim()===r.name&&(!t.grade||t.grade===r.grade));if(tiers.length===1)price.value=Number(tiers[0].price)||0;} });results.append(b);}
+ for(const r of matches){const b=document.createElement('button');b.type='button';b.className='class-catalog-result';const img=document.createElement('img');img.src='./'+r.icon;img.alt='';const label=document.createElement('span');label.textContent=r.name;label.style.setProperty('color',itemRarityColor(r),'important');label.style.setProperty('-webkit-text-fill-color',itemRarityColor(r),'important');const small=document.createElement('small');small.textContent=r.job||r.stats[0]||r.type;b.append(img,label,small);b.addEventListener('click',()=>{input.value=r.name;document.getElementById(gradeId).value=r.grade;document.getElementById(categoryId).value=r.type==='스킬북'?'스킬북':'장비';status.textContent='아이템 DB 연결 완료';results.hidden=true;const price=document.getElementById(priceId);if(!price.value&&typeof db!=='undefined'){const tiers=(db.tiers||[]).filter(t=>itemDisplayName(t.name).trim()===r.name&&(!t.grade||t.grade===r.grade));if(tiers.length===1)price.value=Number(tiers[0].price)||0;} });results.append(b);}
  };
- input.addEventListener('input',refresh);input.addEventListener('focus',refresh);document.addEventListener('pointerdown',e=>{if(!wrap.contains(e.target)&&e.target!==input)results.hidden=true;});
+ classCatalogForms.get(id).refresh=refresh;input.addEventListener('compositionend',refresh);input.addEventListener('input',refresh);input.addEventListener('focus',refresh);document.addEventListener('pointerdown',e=>{if(!wrap.contains(e.target)&&e.target!==input)results.hidden=true;});
 }
 function classCatalogStart(){
  classCatalogInitForm('new-item-name','new-item-grade','new-item-cat','new-item-price');classCatalogInitForm('class-v150-name','class-v150-grade','class-v150-category','class-v150-price');
@@ -1166,7 +1177,7 @@ function classCatalogStart(){
  document.addEventListener('click',e=>{const el=trigger(e);if(el){if(active===el&&!tip.hidden&&matchMedia('(hover: none)').matches)close();else open(el);}else close();});
  document.addEventListener('focusin',e=>{const el=trigger(e);if(el)open(el);});document.addEventListener('focusout',e=>{if(trigger(e))close();});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();if((e.key==='Enter'||e.key===' ')&&trigger(e)){e.preventDefault();open(trigger(e));}});window.addEventListener('scroll',close,true);window.addEventListener('resize',close);
- fetch('./data/items.json?v=196',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('catalog');return r.json();}).then(rows=>{if(!Array.isArray(rows))throw Error('catalog format');classCatalogItems=rows.filter(r=>r.name&&Array.isArray(r.stats)&&r.icon);classCatalogByName=new Map(classCatalogItems.map(r=>[r.name,r]));if(typeof renderItems==='function'&&typeof db!=='undefined'&&Array.isArray(db.items))renderItems();}).catch(()=>{classCatalogLoadError=true;});
+ fetch('./data/items.json?v=197',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('catalog');return r.json();}).then(rows=>{if(!Array.isArray(rows))throw Error('catalog format');classCatalogItems=rows.filter(r=>r.name&&Array.isArray(r.stats)&&r.icon);classCatalogByName=new Map(classCatalogItems.map(r=>[r.name,r]));for(const f of classCatalogForms.values()){if(f.input===document.activeElement&&f.input.value.trim())f.refresh();}if(typeof renderItems==='function'&&typeof db!=='undefined'&&Array.isArray(db.items))renderItems();}).catch(()=>{classCatalogLoadError=true;});
 }
 document.addEventListener('DOMContentLoaded',classCatalogStart,{once:true});
 </script>

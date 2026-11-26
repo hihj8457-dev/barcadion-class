@@ -4301,5 +4301,1409 @@
     "source": "image(20261126-112500).webp",
     "row": 2,
     "review_required": false
+  },
+  {
+    "id": "hero_accessory_001",
+    "name": "왕의 무덤 반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_001.webp",
+    "stats": [
+      "피해 감소 무시 12"
+    ],
+    "source": "140453",
+    "row": 1
+  },
+  {
+    "id": "hero_accessory_002",
+    "name": "침묵의 유성 목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_002.webp",
+    "stats": [
+      "피해 감소 22"
+    ],
+    "source": "140453",
+    "row": 2
+  },
+  {
+    "id": "hero_accessory_003",
+    "name": "볼프하르트 송곳니 목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_003.webp",
+    "stats": [
+      "피해 감소 23"
+    ],
+    "source": "140453",
+    "row": 3
+  },
+  {
+    "id": "hero_accessory_004",
+    "name": "녹테르나 월쇄 드롭목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_004.webp",
+    "stats": [
+      "피해 감소 23"
+    ],
+    "source": "140453",
+    "row": 4
+  },
+  {
+    "id": "hero_accessory_005",
+    "name": "레오갈트 오사자 금패목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_005.webp",
+    "stats": [
+      "피해 감소 23"
+    ],
+    "source": "140453",
+    "row": 5
+  },
+  {
+    "id": "hero_accessory_006",
+    "name": "벨라투르 사자패 사슬목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_006.webp",
+    "stats": [
+      "피해 감소 23"
+    ],
+    "source": "140453",
+    "row": 6
+  },
+  {
+    "id": "hero_accessory_007",
+    "name": "금빛 서약 목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_007.webp",
+    "stats": [
+      "피해 감소 21"
+    ],
+    "source": "140453",
+    "row": 7
+  },
+  {
+    "id": "hero_accessory_008",
+    "name": "숙명의 펜릴 목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_008.webp",
+    "stats": [
+      "피해 감소 24"
+    ],
+    "source": "140453",
+    "row": 8
+  },
+  {
+    "id": "hero_accessory_009",
+    "name": "계시의 호르덴 목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_009.webp",
+    "stats": [
+      "피해 감소 24"
+    ],
+    "source": "140504",
+    "row": 1
+  },
+  {
+    "id": "hero_accessory_010",
+    "name": "섭리의 플로넬 목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_010.webp",
+    "stats": [
+      "피해 감소 24"
+    ],
+    "source": "140504",
+    "row": 2
+  },
+  {
+    "id": "hero_accessory_011",
+    "name": "맹세의 글루턴 목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_011.webp",
+    "stats": [
+      "피해 감소 22"
+    ],
+    "source": "140504",
+    "row": 3
+  },
+  {
+    "id": "hero_accessory_012",
+    "name": "서약의 로사르 목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_012.webp",
+    "stats": [
+      "피해 감소 22"
+    ],
+    "source": "140504",
+    "row": 4
+  },
+  {
+    "id": "hero_accessory_013",
+    "name": "필연의 실레르 목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_013.webp",
+    "stats": [
+      "피해 감소 22"
+    ],
+    "source": "140504",
+    "row": 5
+  },
+  {
+    "id": "hero_accessory_014",
+    "name": "꿇지 않은 자의 목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_014.webp",
+    "stats": [
+      "피해 감소 18"
+    ],
+    "source": "140504",
+    "row": 6
+  },
+  {
+    "id": "hero_accessory_015",
+    "name": "기울어진 운명의 목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_015.webp",
+    "stats": [
+      "피해 감소 16"
+    ],
+    "source": "140504",
+    "row": 7
+  },
+  {
+    "id": "hero_accessory_016",
+    "name": "마지막 비상의 목걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/hero_accessory_016.webp",
+    "stats": [
+      "피해 감소 13"
+    ],
+    "source": "140504",
+    "row": 8
+  },
+  {
+    "id": "hero_accessory_017",
+    "name": "암흑 성운 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_017.webp",
+    "stats": [
+      "최대 MP 1,600"
+    ],
+    "source": "140517",
+    "row": 1
+  },
+  {
+    "id": "hero_accessory_018",
+    "name": "볼프하르트 청옥 이빨 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_018.webp",
+    "stats": [
+      "최대 MP 1,664"
+    ],
+    "source": "140517",
+    "row": 2
+  },
+  {
+    "id": "hero_accessory_019",
+    "name": "녹테르나 초승달 드롭귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_019.webp",
+    "stats": [
+      "최대 MP 1,664"
+    ],
+    "source": "140517",
+    "row": 3
+  },
+  {
+    "id": "hero_accessory_020",
+    "name": "레오갈트 사자원패 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_020.webp",
+    "stats": [
+      "최대 MP 1,664"
+    ],
+    "source": "140517",
+    "row": 4
+  },
+  {
+    "id": "hero_accessory_021",
+    "name": "벨라투르 사자원메달 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_021.webp",
+    "stats": [
+      "최대 MP 1,664"
+    ],
+    "source": "140517",
+    "row": 5
+  },
+  {
+    "id": "hero_accessory_022",
+    "name": "금빛 서약 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_022.webp",
+    "stats": [
+      "최대 MP 1,504"
+    ],
+    "source": "140517",
+    "row": 6
+  },
+  {
+    "id": "hero_accessory_023",
+    "name": "숙명의 도르니카 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_023.webp",
+    "stats": [
+      "최대 MP 1,760"
+    ],
+    "source": "140517",
+    "row": 7
+  },
+  {
+    "id": "hero_accessory_024",
+    "name": "계시의 베네딜 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_024.webp",
+    "stats": [
+      "최대 MP 1,760"
+    ],
+    "source": "140517",
+    "row": 8
+  },
+  {
+    "id": "hero_accessory_025",
+    "name": "섭리의 아스렌 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_025.webp",
+    "stats": [
+      "최대 MP 1,760"
+    ],
+    "source": "140528",
+    "row": 1
+  },
+  {
+    "id": "hero_accessory_026",
+    "name": "맹세의 피렌사 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_026.webp",
+    "stats": [
+      "최대 MP 1,600"
+    ],
+    "source": "140528",
+    "row": 2
+  },
+  {
+    "id": "hero_accessory_027",
+    "name": "서약의 에스타른 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_027.webp",
+    "stats": [
+      "최대 MP 1,600"
+    ],
+    "source": "140528",
+    "row": 3
+  },
+  {
+    "id": "hero_accessory_028",
+    "name": "필연의 하일렌 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_028.webp",
+    "stats": [
+      "최대 MP 1,600"
+    ],
+    "source": "140528",
+    "row": 4
+  },
+  {
+    "id": "hero_accessory_029",
+    "name": "빠진 여사제의 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_029.webp",
+    "stats": [
+      "최대 MP 1,280"
+    ],
+    "source": "140528",
+    "row": 5
+  },
+  {
+    "id": "hero_accessory_030",
+    "name": "멸한 왕가의 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_030.webp",
+    "stats": [
+      "최대 MP 1,120"
+    ],
+    "source": "140528",
+    "row": 6
+  },
+  {
+    "id": "hero_accessory_031",
+    "name": "마지막 세공의 귀걸이",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/hero_accessory_031.webp",
+    "stats": [
+      "최대 MP 960"
+    ],
+    "source": "140528",
+    "row": 7
+  },
+  {
+    "id": "hero_accessory_032",
+    "name": "검은 태양 반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_032.webp",
+    "stats": [
+      "피해 감소 무시 20"
+    ],
+    "source": "140528",
+    "row": 8
+  },
+  {
+    "id": "hero_accessory_033",
+    "name": "볼프하르트 켈틱매듭 반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_033.webp",
+    "stats": [
+      "피해 감소 무시 21"
+    ],
+    "source": "140541",
+    "row": 1
+  },
+  {
+    "id": "hero_accessory_034",
+    "name": "녹테르나 초승달 자수정반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_034.webp",
+    "stats": [
+      "피해 감소 무시 21"
+    ],
+    "source": "140541",
+    "row": 2
+  },
+  {
+    "id": "hero_accessory_035",
+    "name": "레오갈트 사자문 인장반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_035.webp",
+    "stats": [
+      "피해 감소 무시 21"
+    ],
+    "source": "140541",
+    "row": 3
+  },
+  {
+    "id": "hero_accessory_036",
+    "name": "벨라투르 포효 각인 반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_036.webp",
+    "stats": [
+      "피해 감소 무시 21"
+    ],
+    "source": "140541",
+    "row": 4
+  },
+  {
+    "id": "hero_accessory_037",
+    "name": "금빛 서약 반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_037.webp",
+    "stats": [
+      "피해 감소 무시 19"
+    ],
+    "source": "140541",
+    "row": 5
+  },
+  {
+    "id": "hero_accessory_038",
+    "name": "숙명의 모르겔 반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_038.webp",
+    "stats": [
+      "피해 감소 무시 22"
+    ],
+    "source": "140541",
+    "row": 6
+  },
+  {
+    "id": "hero_accessory_039",
+    "name": "계시의 루넬 반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_039.webp",
+    "stats": [
+      "피해 감소 무시 22"
+    ],
+    "source": "140541",
+    "row": 7
+  },
+  {
+    "id": "hero_accessory_040",
+    "name": "섭리의 솔딘 반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_040.webp",
+    "stats": [
+      "피해 감소 무시 22"
+    ],
+    "source": "140541",
+    "row": 8
+  },
+  {
+    "id": "hero_accessory_041",
+    "name": "맹세의 세르펜 반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_041.webp",
+    "stats": [
+      "피해 감소 무시 20"
+    ],
+    "source": "140610",
+    "row": 1
+  },
+  {
+    "id": "hero_accessory_042",
+    "name": "서약의 아우렌 반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_042.webp",
+    "stats": [
+      "피해 감소 무시 20"
+    ],
+    "source": "140610",
+    "row": 2
+  },
+  {
+    "id": "hero_accessory_043",
+    "name": "필연의 듀렌 반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_043.webp",
+    "stats": [
+      "피해 감소 무시 20"
+    ],
+    "source": "140610",
+    "row": 3
+  },
+  {
+    "id": "hero_accessory_044",
+    "name": "숲의 서약 반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_044.webp",
+    "stats": [
+      "피해 감소 무시 16"
+    ],
+    "source": "140610",
+    "row": 4
+  },
+  {
+    "id": "hero_accessory_045",
+    "name": "끝나지 않은 문양의 반지",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/hero_accessory_045.webp",
+    "stats": [
+      "피해 감소 무시 14"
+    ],
+    "source": "140610",
+    "row": 5
+  },
+  {
+    "id": "hero_accessory_046",
+    "name": "칠흑의 잔불 허리띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_046.webp",
+    "stats": [
+      "최대 HP 6,984"
+    ],
+    "source": "140610",
+    "row": 6
+  },
+  {
+    "id": "hero_accessory_047",
+    "name": "볼프하르트 늑대문 수렵띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_047.webp",
+    "stats": [
+      "최대 HP 7,263"
+    ],
+    "source": "140610",
+    "row": 7
+  },
+  {
+    "id": "hero_accessory_048",
+    "name": "녹테르나 석류석 허리띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_048.webp",
+    "stats": [
+      "최대 HP 7,263"
+    ],
+    "source": "140610",
+    "row": 8
+  },
+  {
+    "id": "hero_accessory_049",
+    "name": "레오갈트 사자해골 금장띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_049.webp",
+    "stats": [
+      "최대 HP 7,263"
+    ],
+    "source": "140622",
+    "row": 1
+  },
+  {
+    "id": "hero_accessory_050",
+    "name": "벨라투르 쇄편 전투띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_050.webp",
+    "stats": [
+      "최대 HP 7,263"
+    ],
+    "source": "140622",
+    "row": 2
+  },
+  {
+    "id": "hero_accessory_051",
+    "name": "금빛 서약 허리띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_051.webp",
+    "stats": [
+      "최대 HP 6,564"
+    ],
+    "source": "140622",
+    "row": 3
+  },
+  {
+    "id": "hero_accessory_052",
+    "name": "숙명의 알트겔 허리띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_052.webp",
+    "stats": [
+      "최대 HP 7,682"
+    ],
+    "source": "140622",
+    "row": 4
+  },
+  {
+    "id": "hero_accessory_053",
+    "name": "계시의 이그렌 허리띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_053.webp",
+    "stats": [
+      "최대 HP 7,682"
+    ],
+    "source": "140622",
+    "row": 5
+  },
+  {
+    "id": "hero_accessory_054",
+    "name": "섭리의 도르닐 허리띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_054.webp",
+    "stats": [
+      "최대 HP 7,682"
+    ],
+    "source": "140622",
+    "row": 6
+  },
+  {
+    "id": "hero_accessory_055",
+    "name": "맹세의 스콜렌 허리띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_055.webp",
+    "stats": [
+      "최대 HP 6,984"
+    ],
+    "source": "140622",
+    "row": 7
+  },
+  {
+    "id": "hero_accessory_056",
+    "name": "서약의 비르넬 허리띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_056.webp",
+    "stats": [
+      "최대 HP 6,984"
+    ],
+    "source": "140622",
+    "row": 8
+  },
+  {
+    "id": "hero_accessory_057",
+    "name": "필연의 파크틸 허리띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_057.webp",
+    "stats": [
+      "최대 HP 6,984"
+    ],
+    "source": "140631",
+    "row": 1
+  },
+  {
+    "id": "hero_accessory_058",
+    "name": "거역할 수 없는 호령 허리띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_058.webp",
+    "stats": [
+      "최대 HP 5,587"
+    ],
+    "source": "140631",
+    "row": 2
+  },
+  {
+    "id": "hero_accessory_059",
+    "name": "전장의 포효 허리띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_059.webp",
+    "stats": [
+      "최대 HP 4,888"
+    ],
+    "source": "140631",
+    "row": 3
+  },
+  {
+    "id": "hero_accessory_060",
+    "name": "열린 길의 허리띠",
+    "grade": "영웅",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/hero_accessory_060.webp",
+    "stats": [
+      "최대 HP 4,190"
+    ],
+    "source": "140631",
+    "row": 4
+  },
+  {
+    "id": "sorceress_01",
+    "name": "스킬북 - 연속시전",
+    "skill": "연속시전",
+    "grade": "고급",
+    "job": "소서리스",
+    "type": "스킬북",
+    "tooltip": "assets/skills/sorceress_01.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/sorceress_01_icon.webp"
+  },
+  {
+    "id": "sorceress_02",
+    "name": "스킬북 - 마력 개방",
+    "skill": "마력 개방",
+    "grade": "희귀",
+    "job": "소서리스",
+    "type": "스킬북",
+    "tooltip": "assets/skills/sorceress_02.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/sorceress_02_icon.webp"
+  },
+  {
+    "id": "sorceress_03",
+    "name": "스킬북 - 명석함",
+    "skill": "명석함",
+    "grade": "희귀",
+    "job": "소서리스",
+    "type": "스킬북",
+    "tooltip": "assets/skills/sorceress_03.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/sorceress_03_icon.webp"
+  },
+  {
+    "id": "sorceress_04",
+    "name": "스킬북 - 마력 폭발",
+    "skill": "마력 폭발",
+    "grade": "영웅",
+    "job": "소서리스",
+    "type": "스킬북",
+    "tooltip": "assets/skills/sorceress_04.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/sorceress_04_icon.webp"
+  },
+  {
+    "id": "sorceress_05",
+    "name": "스킬북 - 상쇄",
+    "skill": "상쇄",
+    "grade": "영웅",
+    "job": "소서리스",
+    "type": "스킬북",
+    "tooltip": "assets/skills/sorceress_05.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/sorceress_05_icon.webp"
+  },
+  {
+    "id": "sorceress_06",
+    "name": "스킬북 - 마력 제어",
+    "skill": "마력 제어",
+    "grade": "영웅",
+    "job": "소서리스",
+    "type": "스킬북",
+    "tooltip": "assets/skills/sorceress_06.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/sorceress_06_icon.webp"
+  },
+  {
+    "id": "sorceress_07",
+    "name": "스킬북 - 마력 강화",
+    "skill": "마력 강화",
+    "grade": "영웅",
+    "job": "소서리스",
+    "type": "스킬북",
+    "tooltip": "assets/skills/sorceress_07.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/sorceress_07_icon.webp"
+  },
+  {
+    "id": "sorceress_08",
+    "name": "스킬북 - 과부하",
+    "skill": "과부하",
+    "grade": "영웅",
+    "job": "소서리스",
+    "type": "스킬북",
+    "tooltip": "assets/skills/sorceress_08.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/sorceress_08_icon.webp"
+  },
+  {
+    "id": "sorceress_09",
+    "name": "스킬북 - 불가침",
+    "skill": "불가침",
+    "grade": "전설",
+    "job": "소서리스",
+    "type": "스킬북",
+    "tooltip": "assets/skills/sorceress_09.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/sorceress_09_icon.webp"
+  },
+  {
+    "id": "sorceress_10",
+    "name": "스킬북 - 현자의 기백",
+    "skill": "현자의 기백",
+    "grade": "전설",
+    "job": "소서리스",
+    "type": "스킬북",
+    "tooltip": "assets/skills/sorceress_10.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/sorceress_10_icon.webp"
+  },
+  {
+    "id": "sorceress_11",
+    "name": "스킬북 - 심상 구현",
+    "skill": "심상 구현",
+    "grade": "전설",
+    "job": "소서리스",
+    "type": "스킬북",
+    "tooltip": "assets/skills/sorceress_11.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/sorceress_11_icon.webp"
+  },
+  {
+    "id": "sorceress_12",
+    "name": "스킬북 - 진보한 통찰력",
+    "skill": "진보한 통찰력",
+    "grade": "전설",
+    "job": "소서리스",
+    "type": "스킬북",
+    "tooltip": "assets/skills/sorceress_12.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/sorceress_12_icon.webp"
+  },
+  {
+    "id": "sorceress_13",
+    "name": "스킬북 - 마력 보호",
+    "skill": "마력 보호",
+    "grade": "희귀",
+    "job": "소서리스",
+    "type": "스킬북",
+    "tooltip": "assets/skills/sorceress_13.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/sorceress_13_icon.webp"
+  },
+  {
+    "id": "assassin_01",
+    "name": "스킬북 - 전율",
+    "skill": "전율",
+    "grade": "희귀",
+    "job": "어쌔신",
+    "type": "스킬북",
+    "tooltip": "assets/skills/assassin_01.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/assassin_01_icon.webp"
+  },
+  {
+    "id": "assassin_02",
+    "name": "스킬북 - 절개",
+    "skill": "절개",
+    "grade": "영웅",
+    "job": "어쌔신",
+    "type": "스킬북",
+    "tooltip": "assets/skills/assassin_02.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/assassin_02_icon.webp"
+  },
+  {
+    "id": "assassin_03",
+    "name": "스킬북 - 끝없는 단련",
+    "skill": "끝없는 단련",
+    "grade": "영웅",
+    "job": "어쌔신",
+    "type": "스킬북",
+    "tooltip": "assets/skills/assassin_03.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/assassin_03_icon.webp"
+  },
+  {
+    "id": "assassin_04",
+    "name": "스킬북 - 살기",
+    "skill": "살기",
+    "grade": "영웅",
+    "job": "어쌔신",
+    "type": "스킬북",
+    "tooltip": "assets/skills/assassin_04.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/assassin_04_icon.webp"
+  },
+  {
+    "id": "assassin_05",
+    "name": "스킬북 - 포악함",
+    "skill": "포악함",
+    "grade": "영웅",
+    "job": "어쌔신",
+    "type": "스킬북",
+    "tooltip": "assets/skills/assassin_05.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/assassin_05_icon.webp"
+  },
+  {
+    "id": "assassin_06",
+    "name": "스킬북 - 위기 극복",
+    "skill": "위기 극복",
+    "grade": "전설",
+    "job": "어쌔신",
+    "type": "스킬북",
+    "tooltip": "assets/skills/assassin_06.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/assassin_06_icon.webp"
+  },
+  {
+    "id": "assassin_07",
+    "name": "스킬북 - 날카로운 자세",
+    "skill": "날카로운 자세",
+    "grade": "전설",
+    "job": "어쌔신",
+    "type": "스킬북",
+    "tooltip": "assets/skills/assassin_07.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/assassin_07_icon.webp"
+  },
+  {
+    "id": "assassin_08",
+    "name": "스킬북 - 결의",
+    "skill": "결의",
+    "grade": "전설",
+    "job": "어쌔신",
+    "type": "스킬북",
+    "tooltip": "assets/skills/assassin_08.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/assassin_08_icon.webp"
+  },
+  {
+    "id": "assassin_09",
+    "name": "스킬북 - 격분",
+    "skill": "격분",
+    "grade": "전설",
+    "job": "어쌔신",
+    "type": "스킬북",
+    "tooltip": "assets/skills/assassin_09.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/assassin_09_icon.webp"
+  },
+  {
+    "id": "assassin_10",
+    "name": "스킬북 - 연속가르기",
+    "skill": "연속가르기",
+    "grade": "고급",
+    "job": "어쌔신",
+    "type": "스킬북",
+    "tooltip": "assets/skills/assassin_10.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/assassin_10_icon.webp"
+  },
+  {
+    "id": "assassin_11",
+    "name": "스킬북 - 노련함",
+    "skill": "노련함",
+    "grade": "희귀",
+    "job": "어쌔신",
+    "type": "스킬북",
+    "tooltip": "assets/skills/assassin_11.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/assassin_11_icon.webp"
+  },
+  {
+    "id": "assassin_12",
+    "name": "스킬북 - 예리한 감각",
+    "skill": "예리한 감각",
+    "grade": "희귀",
+    "job": "어쌔신",
+    "type": "스킬북",
+    "tooltip": "assets/skills/assassin_12.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/assassin_12_icon.webp"
+  },
+  {
+    "id": "assassin_13",
+    "name": "스킬북 - 사냥 본능",
+    "skill": "사냥 본능",
+    "grade": "영웅",
+    "job": "어쌔신",
+    "type": "스킬북",
+    "tooltip": "assets/skills/assassin_13.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/assassin_13_icon.webp"
+  },
+  {
+    "id": "ranger_01",
+    "name": "스킬북 - 예리한 사격",
+    "skill": "예리한 사격",
+    "grade": "희귀",
+    "job": "레인저",
+    "type": "스킬북",
+    "tooltip": "assets/skills/ranger_01.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/ranger_01_icon.webp"
+  },
+  {
+    "id": "ranger_02",
+    "name": "스킬북 - 호흡 조절",
+    "skill": "호흡 조절",
+    "grade": "희귀",
+    "job": "레인저",
+    "type": "스킬북",
+    "tooltip": "assets/skills/ranger_02.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/ranger_02_icon.webp"
+  },
+  {
+    "id": "ranger_03",
+    "name": "스킬북 - 감각 증폭",
+    "skill": "감각 증폭",
+    "grade": "희귀",
+    "job": "레인저",
+    "type": "스킬북",
+    "tooltip": "assets/skills/ranger_03.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/ranger_03_icon.webp"
+  },
+  {
+    "id": "ranger_04",
+    "name": "스킬북 - 연속사격",
+    "skill": "연속사격",
+    "grade": "고급",
+    "job": "레인저",
+    "type": "스킬북",
+    "tooltip": "assets/skills/ranger_04.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/ranger_04_icon.webp"
+  },
+  {
+    "id": "ranger_05",
+    "name": "스킬북 - 비축된 분노",
+    "skill": "비축된 분노",
+    "grade": "전설",
+    "job": "레인저",
+    "type": "스킬북",
+    "tooltip": "assets/skills/ranger_05.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/ranger_05_icon.webp"
+  },
+  {
+    "id": "ranger_06",
+    "name": "스킬북 - 신의",
+    "skill": "신의",
+    "grade": "전설",
+    "job": "레인저",
+    "type": "스킬북",
+    "tooltip": "assets/skills/ranger_06.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/ranger_06_icon.webp"
+  },
+  {
+    "id": "ranger_07",
+    "name": "스킬북 - 선회의 기세",
+    "skill": "선회의 기세",
+    "grade": "전설",
+    "job": "레인저",
+    "type": "스킬북",
+    "tooltip": "assets/skills/ranger_07.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/ranger_07_icon.webp"
+  },
+  {
+    "id": "ranger_08",
+    "name": "스킬북 - 생존의 기지",
+    "skill": "생존의 기지",
+    "grade": "전설",
+    "job": "레인저",
+    "type": "스킬북",
+    "tooltip": "assets/skills/ranger_08.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/ranger_08_icon.webp"
+  },
+  {
+    "id": "ranger_09",
+    "name": "스킬북 - 명사수",
+    "skill": "명사수",
+    "grade": "영웅",
+    "job": "레인저",
+    "type": "스킬북",
+    "tooltip": "assets/skills/ranger_09.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/ranger_09_icon.webp"
+  },
+  {
+    "id": "ranger_10",
+    "name": "스킬북 - 사수의 감각",
+    "skill": "사수의 감각",
+    "grade": "영웅",
+    "job": "레인저",
+    "type": "스킬북",
+    "tooltip": "assets/skills/ranger_10.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/ranger_10_icon.webp"
+  },
+  {
+    "id": "ranger_11",
+    "name": "스킬북 - 정밀 사격",
+    "skill": "정밀 사격",
+    "grade": "영웅",
+    "job": "레인저",
+    "type": "스킬북",
+    "tooltip": "assets/skills/ranger_11.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/ranger_11_icon.webp"
+  },
+  {
+    "id": "ranger_12",
+    "name": "스킬북 - 유연한 발걸음",
+    "skill": "유연한 발걸음",
+    "grade": "영웅",
+    "job": "레인저",
+    "type": "스킬북",
+    "tooltip": "assets/skills/ranger_12.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/ranger_12_icon.webp"
+  },
+  {
+    "id": "ranger_13",
+    "name": "스킬북 - 일격",
+    "skill": "일격",
+    "grade": "영웅",
+    "job": "레인저",
+    "type": "스킬북",
+    "tooltip": "assets/skills/ranger_13.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/ranger_13_icon.webp"
+  },
+  {
+    "id": "fighter_01",
+    "name": "스킬북 - 충격 저항",
+    "skill": "충격 저항",
+    "grade": "영웅",
+    "job": "파이터",
+    "type": "스킬북",
+    "tooltip": "assets/skills/fighter_01.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/fighter_01_icon.webp"
+  },
+  {
+    "id": "fighter_02",
+    "name": "스킬북 - 견고함",
+    "skill": "견고함",
+    "grade": "희귀",
+    "job": "파이터",
+    "type": "스킬북",
+    "tooltip": "assets/skills/fighter_02.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/fighter_02_icon.webp"
+  },
+  {
+    "id": "fighter_03",
+    "name": "스킬북 - 연속베기",
+    "skill": "연속베기",
+    "grade": "고급",
+    "job": "파이터",
+    "type": "스킬북",
+    "tooltip": "assets/skills/fighter_03.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/fighter_03_icon.webp"
+  },
+  {
+    "id": "fighter_04",
+    "name": "스킬북 - 투지",
+    "skill": "투지",
+    "grade": "전설",
+    "job": "파이터",
+    "type": "스킬북",
+    "tooltip": "assets/skills/fighter_04.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/fighter_04_icon.webp"
+  },
+  {
+    "id": "fighter_05",
+    "name": "스킬북 - 불굴의 의지",
+    "skill": "불굴의 의지",
+    "grade": "전설",
+    "job": "파이터",
+    "type": "스킬북",
+    "tooltip": "assets/skills/fighter_05.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/fighter_05_icon.webp"
+  },
+  {
+    "id": "fighter_06",
+    "name": "스킬북 - 용맹함",
+    "skill": "용맹함",
+    "grade": "전설",
+    "job": "파이터",
+    "type": "스킬북",
+    "tooltip": "assets/skills/fighter_06.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/fighter_06_icon.webp"
+  },
+  {
+    "id": "fighter_07",
+    "name": "스킬북 - 수호의 신념",
+    "skill": "수호의 신념",
+    "grade": "전설",
+    "job": "파이터",
+    "type": "스킬북",
+    "tooltip": "assets/skills/fighter_07.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/fighter_07_icon.webp"
+  },
+  {
+    "id": "fighter_08",
+    "name": "스킬북 - 철옹성",
+    "skill": "철옹성",
+    "grade": "영웅",
+    "job": "파이터",
+    "type": "스킬북",
+    "tooltip": "assets/skills/fighter_08.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/fighter_08_icon.webp"
+  },
+  {
+    "id": "fighter_09",
+    "name": "스킬북 - 분노",
+    "skill": "분노",
+    "grade": "영웅",
+    "job": "파이터",
+    "type": "스킬북",
+    "tooltip": "assets/skills/fighter_09.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/fighter_09_icon.webp"
+  },
+  {
+    "id": "fighter_10",
+    "name": "스킬북 - 강인함",
+    "skill": "강인함",
+    "grade": "영웅",
+    "job": "파이터",
+    "type": "스킬북",
+    "tooltip": "assets/skills/fighter_10.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/fighter_10_icon.webp"
+  },
+  {
+    "id": "fighter_11",
+    "name": "스킬북 - 생존",
+    "skill": "생존",
+    "grade": "영웅",
+    "job": "파이터",
+    "type": "스킬북",
+    "tooltip": "assets/skills/fighter_11.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/fighter_11_icon.webp"
+  },
+  {
+    "id": "fighter_12",
+    "name": "스킬북 - 강타자",
+    "skill": "강타자",
+    "grade": "희귀",
+    "job": "파이터",
+    "type": "스킬북",
+    "tooltip": "assets/skills/fighter_12.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/fighter_12_icon.webp"
+  },
+  {
+    "id": "fighter_13",
+    "name": "스킬북 - 방어 자세",
+    "skill": "방어 자세",
+    "grade": "희귀",
+    "job": "파이터",
+    "type": "스킬북",
+    "tooltip": "assets/skills/fighter_13.webp",
+    "category": "스킬북",
+    "stats": [],
+    "icon": "assets/skills/fighter_13_icon.webp"
   }
 ]

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261127_V202_BOSS_LIVE_TOUCH">
+    <meta name="class-build-id" content="CLASS_BUILD_20261127_V203_MAINTENANCE_HIDE">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -3364,7 +3364,8 @@ function renderClassRanking(){
         }
         function maintenanceDateText(ms){return new Date(ms).toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});}
         function renderMaintenanceSchedules(){
-            const windows=bossMaintenanceWindows();
+            const now=Date.now();
+            const windows=bossMaintenanceWindows().filter(w=>w.end>now);
             const el=document.getElementById('maintenance-schedule-list');
             if(el)el.innerHTML=windows.length?windows.map(w=>`<div class="py-1">${maintenanceDateText(w.start)} ~ ${maintenanceDateText(w.end)} · 종료 시 주기형 보스 초기화</div>`).join(''):'등록된 점검 없음';
             const edit=document.getElementById('maintenance-editor-list');
@@ -4072,6 +4073,7 @@ const closed=classWeekClosed(), canStart=closed;
         setInterval(() => {
             const pane = document.getElementById('content-boss-sched-2');
             if (pane && !pane.classList.contains('hidden') && db.currentUser) renderBossPreview();
+            else if(db.currentUser && !document.getElementById('maintenance-modal')?.classList.contains('hidden')) renderMaintenanceSchedules();
             if(db.currentUser){
 const kstWeek=calendarWeekKey();
                  if(window.__classDisplayedKstWeek!==kstWeek){

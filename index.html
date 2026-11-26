@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261126_V195_ITEM_COLOR_FIX">
+    <meta name="class-build-id" content="CLASS_BUILD_20261126_V196_ACCESSORY_SKILLS">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -591,6 +591,7 @@ html body #app-container #class-pages #class-siege-system table.class-v45-table 
 html body #app-container #class-pages #class-siege-system table.class-v45-table tbody tr.class-siege-own-row > td:first-child{box-shadow:inset 4px 0 0 #b58a50!important}
 </style>
 
+<style>#class-catalog-tooltip.class-skill-image-tip{padding:0;background:#171717;border:1px solid #555;width:min(338px,calc(100vw - 16px));}#class-catalog-tooltip.class-skill-image-tip img{display:block;width:100%;height:auto;max-height:calc(100vh - 16px);object-fit:contain;border:0;}</style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
 
@@ -1121,16 +1122,16 @@ const classCatalogForms=new Map();
 function classCatalogNorm(v){return String(v||'').toLowerCase().replace(/\s+/g,'');}
 function classCatalogValue(r){return r.stats[0]?.match(/\d+(?:\.\d+)?%?$/)?.[0]||'';}
 function classCatalogMatch(item){
- if(!item||item.category!=='장비'||!classCatalogItems.length)return null;
+ if(!item||!['장비','스킬북'].includes(item.category)||!classCatalogItems.length)return null;
  const grade=String(item.grade||itemRarity(item.name)||'').replace(/^\[|\]$/g,'');
- if(grade&&grade!=='영웅')return null;
+ const pool=classCatalogItems.filter(r=>(r.type==='스킬북'?'스킬북':'장비')===item.category&&(!grade||r.grade===grade));
  const raw=itemDisplayName(item.name).trim();
- const exact=classCatalogByName.get(raw); if(exact)return {r:exact,tail:''};
- const direct=classCatalogItems.find(r=>raw.startsWith(r.name)&&/^[\s(\-\/]/.test(raw.slice(r.name.length)));
- if(direct)return {r:direct,tail:raw.slice(direct.name.length).replace(/^\s*-?\s*(?:공격력|방어력|공|방|명중|이속)\s*\d+(?:\.\d+)?%?\s*/,'').trim()};
+ const normalized=raw.replace(/^스킬북\s*[-–—]\s*/, '스킬북 - '); const exact=pool.filter(r=>r.name===normalized||r.skill===normalized); if(exact.length===1)return {r:exact[0],tail:''};
+ const direct=pool.find(r=>normalized.startsWith(r.name)&&/^[\s(\-\/]/.test(normalized.slice(r.name.length)));
+ if(direct)return {r:direct,tail:normalized.slice(direct.name.length).replace(/^\s*-?\s*(?:공격력|방어력|공|방|명중|이속)\s*\d+(?:\.\d+)?%?\s*/,'').trim()};
  const legacy=raw.match(/^(?:영웅\s*)?(한손검|대검|쌍단검|카타나|석궁|활|지팡이|마법구|투구|상의|하의|장갑|신발|망토)\s*-?\s*(?:공격력|방어력|공|방|명중|이속)\s*(\d+(?:\.\d+)?%?)(?![\d.])\s*(.*)$/);
  if(!legacy||grade!=='영웅'&&!raw.startsWith('영웅'))return null;
- const matches=classCatalogItems.filter(r=>r.type===legacy[1]&&classCatalogValue(r).replace('%','')===legacy[2].replace('%',''));
+ const matches=pool.filter(r=>r.type===legacy[1]&&classCatalogValue(r).replace('%','')===legacy[2].replace('%',''));
  return matches.length===1?{r:matches[0],tail:legacy[3].trim()}:null;
 }
 function classCatalogSearchItem(item,q){const m=classCatalogMatch(item);return String(item.name||'').toLowerCase().includes(q)||!!(m&&classCatalogNorm([m.r.name,m.r.type,...m.r.stats].join(' ')).includes(classCatalogNorm(q)));}
@@ -1138,7 +1139,7 @@ function classCatalogNameMarkup(item){const m=classCatalogMatch(item);if(!m)retu
 function classCatalogFormName(id){const input=document.getElementById(id);const f=classCatalogForms.get(id);const name=input.value.trim();const memo=f?.memo.value.trim();return name+(memo?' '+memo:'');}
 function classCatalogReset(id){const f=classCatalogForms.get(id);if(f){f.memo.value='';f.results.hidden=true;f.status.textContent='';}}
 function classCatalogPrepareEdit(item){const f=classCatalogForms.get('class-v150-name');if(!f)return;classCatalogReset('class-v150-name');const m=classCatalogMatch(item);if(m){f.input.value=m.r.name;f.memo.value=m.tail;f.status.textContent='아이템 DB 연결 완료';}}
-function classCatalogMatches(q){const tokens=String(q||'').trim().split(/\s+/).filter(Boolean).map(classCatalogNorm);return classCatalogItems.filter(r=>{const hay=classCatalogNorm([r.name,r.type,r.grade,...r.stats,'공'+classCatalogValue(r),'방'+classCatalogValue(r),'이속'+classCatalogValue(r)].join(' '));return tokens.every(t=>hay.includes(t));});}
+function classCatalogMatches(q){const tokens=String(q||'').trim().split(/\s+/).filter(Boolean).map(classCatalogNorm);return classCatalogItems.filter(r=>{const hay=classCatalogNorm([r.name,r.type,r.grade,r.job||'',...r.stats,'공'+classCatalogValue(r),'방'+classCatalogValue(r),'이속'+classCatalogValue(r)].join(' '));return tokens.every(t=>hay.includes(t));});}
 function classCatalogInitForm(id,gradeId,categoryId,priceId){
  const input=document.getElementById(id);if(!input)return;
  const wrap=document.createElement('div');wrap.className='class-catalog-search';input.parentNode.insertBefore(wrap,input.nextSibling);
@@ -1150,7 +1151,7 @@ function classCatalogInitForm(id,gradeId,categoryId,priceId){
  if(classCatalogLoadError){status.textContent='DB 로드 실패 · 직접 입력 가능';results.hidden=true;return;}
  if(!classCatalogItems.length){status.textContent='아이템 DB 불러오는 중 · 직접 입력 가능';return;}
  const matches=classCatalogMatches(q);status.textContent=matches.length?`검색 결과 ${matches.length}개 · 선택하여 연결`:'DB에 없는 아이템 · 직접 등록 가능';results.hidden=!matches.length;
- for(const r of matches.slice(0,40)){const b=document.createElement('button');b.type='button';b.className='class-catalog-result';const img=document.createElement('img');img.src='./'+r.icon;img.alt='';const label=document.createElement('span');label.textContent=r.name;const small=document.createElement('small');small.textContent=r.stats[0];b.append(img,label,small);b.addEventListener('click',()=>{input.value=r.name;document.getElementById(gradeId).value=r.grade;document.getElementById(categoryId).value='장비';status.textContent='아이템 DB 연결 완료';results.hidden=true;const price=document.getElementById(priceId);if(!price.value&&typeof db!=='undefined'){const tiers=(db.tiers||[]).filter(t=>itemDisplayName(t.name).trim()===r.name&&(!t.grade||t.grade===r.grade));if(tiers.length===1)price.value=Number(tiers[0].price)||0;} });results.append(b);}
+ for(const r of matches.slice(0,40)){const b=document.createElement('button');b.type='button';b.className='class-catalog-result';const img=document.createElement('img');img.src='./'+r.icon;img.alt='';const label=document.createElement('span');label.textContent=r.name;label.style.setProperty('color',itemRarityColor(r),'important');label.style.setProperty('-webkit-text-fill-color',itemRarityColor(r),'important');const small=document.createElement('small');small.textContent=r.job||r.stats[0]||r.type;b.append(img,label,small);b.addEventListener('click',()=>{input.value=r.name;document.getElementById(gradeId).value=r.grade;document.getElementById(categoryId).value=r.type==='스킬북'?'스킬북':'장비';status.textContent='아이템 DB 연결 완료';results.hidden=true;const price=document.getElementById(priceId);if(!price.value&&typeof db!=='undefined'){const tiers=(db.tiers||[]).filter(t=>itemDisplayName(t.name).trim()===r.name&&(!t.grade||t.grade===r.grade));if(tiers.length===1)price.value=Number(tiers[0].price)||0;} });results.append(b);}
  };
  input.addEventListener('input',refresh);input.addEventListener('focus',refresh);document.addEventListener('pointerdown',e=>{if(!wrap.contains(e.target)&&e.target!==input)results.hidden=true;});
 }
@@ -1158,14 +1159,14 @@ function classCatalogStart(){
  classCatalogInitForm('new-item-name','new-item-grade','new-item-cat','new-item-price');classCatalogInitForm('class-v150-name','class-v150-grade','class-v150-category','class-v150-price');
  const tip=document.createElement('div');tip.id='class-catalog-tooltip';tip.hidden=true;tip.setAttribute('role','tooltip');document.body.append(tip);let active=null;
  const close=()=>{tip.hidden=true;active=null;};
- const open=(el)=>{const r=classCatalogItems.find(i=>i.id===el.dataset.catalogId);if(!r)return;active=el;tip.replaceChildren();const head=document.createElement('div');head.className='class-catalog-tip-head';const text=document.createElement('div');const grade=document.createElement('small');grade.textContent=r.grade;const name=document.createElement('strong');name.textContent=r.name;text.append(grade,name);const icon=document.createElement('img');icon.src='./'+r.icon;icon.alt=r.name;head.append(text,icon);const stats=document.createElement('div');stats.className='class-catalog-tip-stats';r.stats.forEach((s,i)=>{const line=document.createElement('div');line.textContent=(i===0?'✦  ':'　 ')+s;stats.append(line);});const foot=document.createElement('div');foot.className='class-catalog-tip-foot';const job=r.job||({'활':'레인저','석궁':'레인저','한손검':'파이터','대검':'파이터','지팡이':'소서리스','마법구':'소서리스','카타나':'어쌔신','쌍단검':'어쌔신'})[r.type];foot.textContent=(job?job+' · ':'')+r.type;tip.append(head,stats,foot);tip.hidden=false;tip.style.left='0px';tip.style.top='0px';const a=el.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;tip.style.left=Math.max(8,Math.min(a.left,innerWidth-w-8))+'px';tip.style.top=Math.max(8,a.bottom+h+10<=innerHeight?a.bottom+8:a.top-h-8)+'px';};
+ const open=(el)=>{const r=classCatalogItems.find(i=>i.id===el.dataset.catalogId);if(!r)return;active=el;tip.replaceChildren();tip.classList.toggle('class-skill-image-tip',!!r.tooltip);if(r.tooltip){const pic=document.createElement('img');pic.src='./'+r.tooltip;pic.alt=r.job+' '+r.name;tip.append(pic);const position=()=>{if(active!==el)return;const a=el.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;tip.style.left=Math.max(8,Math.min(a.left,innerWidth-w-8))+'px';tip.style.top=Math.max(8,a.bottom+h+10<=innerHeight?a.bottom+8:a.top-h-8)+'px';};tip.hidden=false;position();pic.addEventListener('load',position,{once:true});return;}const head=document.createElement('div');head.className='class-catalog-tip-head';const text=document.createElement('div');const grade=document.createElement('small');grade.textContent=r.grade;const name=document.createElement('strong');name.textContent=r.name;text.append(grade,name);const icon=document.createElement('img');icon.src='./'+r.icon;icon.alt=r.name;head.append(text,icon);const stats=document.createElement('div');stats.className='class-catalog-tip-stats';r.stats.forEach((s,i)=>{const line=document.createElement('div');line.textContent=(i===0?'✦  ':'　 ')+s;stats.append(line);});const foot=document.createElement('div');foot.className='class-catalog-tip-foot';const job=r.job||({'활':'레인저','석궁':'레인저','한손검':'파이터','대검':'파이터','지팡이':'소서리스','마법구':'소서리스','카타나':'어쌔신','쌍단검':'어쌔신'})[r.type];foot.textContent=(job?job+' · ':'')+r.type;tip.append(head,stats,foot);tip.hidden=false;tip.style.left='0px';tip.style.top='0px';const a=el.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;tip.style.left=Math.max(8,Math.min(a.left,innerWidth-w-8))+'px';tip.style.top=Math.max(8,a.bottom+h+10<=innerHeight?a.bottom+8:a.top-h-8)+'px';};
  const trigger=e=>e.target instanceof Element?e.target.closest('.class-catalog-trigger'):null;
  document.addEventListener('pointerover',e=>{const el=trigger(e);if(el&&e.pointerType==='mouse'&&el!==active)open(el);});
  document.addEventListener('pointerout',e=>{const el=trigger(e);if(el&&e.pointerType==='mouse'&&!el.contains(e.relatedTarget))close();});
  document.addEventListener('click',e=>{const el=trigger(e);if(el){if(active===el&&!tip.hidden&&matchMedia('(hover: none)').matches)close();else open(el);}else close();});
  document.addEventListener('focusin',e=>{const el=trigger(e);if(el)open(el);});document.addEventListener('focusout',e=>{if(trigger(e))close();});
  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();if((e.key==='Enter'||e.key===' ')&&trigger(e)){e.preventDefault();open(trigger(e));}});window.addEventListener('scroll',close,true);window.addEventListener('resize',close);
- fetch('./data/items.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('catalog');return r.json();}).then(rows=>{if(!Array.isArray(rows))throw Error('catalog format');classCatalogItems=rows.filter(r=>r.name&&Array.isArray(r.stats)&&r.icon);classCatalogByName=new Map(classCatalogItems.map(r=>[r.name,r]));if(typeof renderItems==='function'&&typeof db!=='undefined'&&Array.isArray(db.items))renderItems();}).catch(()=>{classCatalogLoadError=true;});
+ fetch('./data/items.json?v=196',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('catalog');return r.json();}).then(rows=>{if(!Array.isArray(rows))throw Error('catalog format');classCatalogItems=rows.filter(r=>r.name&&Array.isArray(r.stats)&&r.icon);classCatalogByName=new Map(classCatalogItems.map(r=>[r.name,r]));if(typeof renderItems==='function'&&typeof db!=='undefined'&&Array.isArray(db.items))renderItems();}).catch(()=>{classCatalogLoadError=true;});
 }
 document.addEventListener('DOMContentLoaded',classCatalogStart,{once:true});
 </script>

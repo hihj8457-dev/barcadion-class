@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261126_V186_FAST_TABS_VERSION_JSON">
+    <meta name="class-build-id" content="CLASS_BUILD_20261126_V187_CLASS_RANKING">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1212,6 +1212,10 @@ html body #app-container #class-pages #class-siege-system table.class-v45-table 
         db.bossMaintenance = [];
         let isRegisterMode = false;
         let cloudReady = false, sharedDataLoaded = false, cloudUnsubs = [], cloudUser = null, lastSnapshot = null;
+let classRankingBaseline=null;
+let classRankingBaselineReady=false;
+let classRankingRenderSignature='';
+
         let lastRenderedCloudState = null;
         let profileDocs = new Map(), recordDocs = new Map(), itemDocs = new Map(), applicationDocs = new Map(), guestDocs = new Map();
         const clone = x => JSON.parse(JSON.stringify(x));
@@ -1286,6 +1290,7 @@ html body #app-container #class-pages #class-siege-system table.class-v45-table 
           if(userCloudReleaseTimer!==null){clearTimeout(userCloudReleaseTimer);userCloudReleaseTimer=null;}
           if(userCloudStop){userCloudStop();userCloudStop=null;}userCloudScope='';
           classWarmSession=false;
+          classRankReset();
           if(cloudViewTimer!==null){clearTimeout(cloudViewTimer);cloudViewTimer=null;}
           cloudReady=false; sharedDataLoaded=false; window.__sharedData=null; window.__archiveData=null; lastRenderedCloudState=null;
           profileDocs.clear();recordDocs.clear();itemDocs.clear();applicationDocs.clear();guestDocs.clear();lastSnapshot=null;
@@ -1438,6 +1443,7 @@ const subscriptions={
                                                                                            
           cloudSubscriptionsStarted=true;
           syncCloudSections();
+          classRankSubscribe();
           cloudUnsubs.push(store.doc('guildData/main').onSnapshot({includeMetadataChanges:true},s=>{
             if(s.metadata && s.metadata.fromCache && !sharedDataLoaded)return;
             window.__sharedData=s.exists?s.data():{};
@@ -2351,6 +2357,64 @@ const subscriptions={
             });
         }
         window.addEventListener('resize', () => fitGuildMemberNames());
+function classRankings(users, scores, weekData) {
+    const jobs=['파이터','소서리스','레인저','어쌔신'];
+    const safe=v=>Number.isFinite(Number(v))?Math.max(0,Number(v)):0;
+    const rows=users.filter(u=>u.uid||u.isGuest).map(u=>{
+      const key=u.uid||('guest:'+String(u.guestId||u.id));
+      return {key,name:String(u.id||''),job:String(u.class||'레인저'),power:safe(u.power),points:safe(scores[u.id])+safe(weekData?.war?.[key]),siege:weekData?.siege?.participants?.[key]===true};
+    });
+    const compareKey=(a,b)=>a.key<b.key?-1:a.key>b.key?1:0;
+    const arrange=(list,mode)=>list.slice().sort((a,b)=>mode==='content'?(b.points-a.points||Number(b.siege)-Number(a.siege)||compareKey(a,b)):(b.power-a.power||compareKey(a,b))).map((x,i)=>({...x,rank:i+1}));
+    return {content:arrange(rows,'content'),power:arrange(rows,'power'),...Object.fromEntries(jobs.map(job=>[job,arrange(rows.filter(x=>x.job===job),'power')]))};
+}
+function classRankHour(ms=Date.now()){return Math.floor(ms/3600000)*3600000;}
+function classRankTime(ms){return new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(new Date(ms));}
+function classRankReset(){classRankingBaseline=null;classRankingBaselineReady=false;classRankingRenderSignature='';const mode=document.getElementById('class-ranking-mode'),jobs=document.getElementById('class-ranking-job-wrap');if(mode)mode.value='content';if(jobs)jobs.dataset.job='파이터';}
+function classRankSubscribe(){
+    const uid=cloudUser?.uid,sequence=authGateSequence;
+    if(!uid)return;
+    cloudUnsubs.push(store.doc('guildData/rankingHourly').onSnapshot({includeMetadataChanges:true},snap=>{
+      if(cloudUser?.uid!==uid||sequence!==authGateSequence)return;
+      if(snap.metadata.fromCache&&!classRankingBaselineReady)return;
+      classRankingBaselineReady=true;classRankingBaseline=snap.exists?snap.data():null;
+      renderClassRanking();
+    },e=>{if(cloudUser?.uid===uid&&sequence===authGateSequence){classRankingBaseline=null;classRankingBaselineReady=true;renderClassRanking();}console.warn('순위 기준 조회 실패',e);}));
+}
+function renderClassRanking(){
+    const card=document.getElementById('class-ranking-card');if(!card||!card.closest('.class-page')?.classList.contains('active'))return;
+    const mode=card.querySelector('#class-ranking-mode').value;
+    const jobWrap=card.querySelector('#class-ranking-job-wrap');jobWrap.hidden=mode!=='job';
+    const job=jobWrap.dataset.job||'파이터';
+    jobWrap.querySelectorAll('button[data-job]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.job===job)));
+    const type=mode==='job'?job:mode;
+    const head=card.querySelector('#class-ranking-value-label');head.textContent=mode==='content'?'점수':'전투력';
+    const list=card.querySelector('#class-ranking-list'),mine=card.querySelector('#class-ranking-mine'),foot=card.querySelector('#class-ranking-time');
+    const ready=cloudReady&&cloudUser&&profileDocs.get(cloudUser.uid)?.approved!==false&&userCloudScope==='all'&&allUsersLoaded&&optionalCloudLoaded.has('guests')&&(mode!=='content'||(bossRecordScope==='all'&&optionalCloudLoaded.has('records')&&window.classAllBossRecordsReady===true));
+    if(!ready){list.textContent='순위 데이터를 불러오는 중입니다.';mine.textContent='—';foot.textContent='매 정각 순위 반영 : —';classRankingRenderSignature='';return;}
+    const week=currentWeekKey();
+    const scores=mode==='content'?weeklyScores(week):{};
+    const ranked=classRankings(db.users,scores,db.participationSystem?.weeks?.[week])[type]||[];
+    const base=classRankingBaseline;
+    const valid=base&&base.schema===1&&base.hourStartMs===classRankHour()&&(mode!=='content'||base.weekKey===week)&&base.ranks&&base.ranks[type];
+    const previous=valid?base.ranks[type]:null;
+    const delta=m=>previous&&Object.prototype.hasOwnProperty.call(previous,m.key)&&Number.isSafeInteger(previous[m.key])?previous[m.key]-m.rank:null;
+    const my=ranked.find(m=>m.key===cloudUser.uid);
+    const timeText=valid?'매 정각 순위 반영 : '+classRankTime(base.hourStartMs):'매 정각 순위 반영 : '+(classRankingBaselineReady?'기준 대기':'확인 중');
+    const sig=JSON.stringify([type,ranked.slice(0,5).map(m=>[m,delta(m)]),my, my?delta(my):null,timeText]);
+    if(sig===classRankingRenderSignature)return;classRankingRenderSignature=sig;
+    const row=m=>{
+      const diff=delta(m);const move=diff===null?'—':diff>0?'▲'+diff:diff<0?'▼'+Math.abs(diff):'–';
+      const tone=diff>0?'rank-up':diff<0?'rank-down':'rank-flat';
+      const value=mode==='content'?m.points.toLocaleString('ko-KR')+'점':m.power.toLocaleString('ko-KR');
+      return `<div class="class-ranking-row"><b class="class-ranking-position">${m.rank}</b>${guildClassIcon(m.job)}<span class="class-ranking-name" title="${escapeAttribute(m.name)}">${escapeHtml(m.name)}</span><b class="class-ranking-value">${value}</b><span class="class-ranking-move ${tone}">${move}</span></div>`;
+    };
+    list.innerHTML=ranked.length?ranked.slice(0,5).map(row).join(''):'<div class="class-ranking-empty">등록된 길드원이 없습니다.</div>';
+    mine.innerHTML=my?row(my):'<div class="class-ranking-empty">'+(mode==='job'?'해당 직업의 랭킹 대상이 아닙니다.':'순위 대상이 아닙니다.')+'</div>';
+    foot.textContent=timeText;
+    foot.title=valid&&Number.isFinite(base.capturedAtMs)?'실제 기준 수집: '+new Date(base.capturedAtMs).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'}):'현재 시간대 기준 데이터가 아직 없습니다.';
+}
+
         function renderMembers() {
             const sorted = db.users.slice().sort((a,b)=>Number(b.power||0)-Number(a.power||0));
             const week = currentWeekKey();
@@ -4330,6 +4394,7 @@ function refreshHome(){
  updateClassBossTimer();
  renderClassHomeRatios();
  renderClassRouting();
+ renderClassRanking();
  const managerAccess=isCurrentAdmin();
   const adminLink=$('class-admin-link');
   if(adminLink){adminLink.classList.toggle('class-role-denied',!managerAccess);adminLink.hidden=!managerAccess;adminLink.style.display=managerAccess?'flex':'none';adminLink.setAttribute('aria-hidden',String(!managerAccess));}
@@ -4402,7 +4467,8 @@ function init(){const app=$('app-container'),grid=$('dashboard-grid');if(!app||!
  document.getElementById('app-container').appendChild(mobileShade);
  document.body.appendChild(mobileToggle);
 
- const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div class="class-card class-boss-card"><div class="class-actions"><h2 style="margin:0">❖ 보스 타이머</h2><button class="class-btn class-boss-register" id="class-all-bosses">＋ 보스 참여 등록</button></div><div class="class-bosses" id="class-boss-list"></div></div><div class="class-home-top"><div class="class-card class-announcements"><div class="class-notice-half"><div class="class-mini-heading"><h2>❖ 공지사항</h2><button type="button" class="class-notice-pencil" id="class-notice-edit-trigger" title="공지사항 수정" onclick="classToggleNoticeEditor()" style="display:none">✎</button></div><div id="class-notice-slot"></div></div><div class="class-patch-half"><div class="class-mini-heading"><h2>❖ 패치노트</h2><button id="class-patch-add" type="button" class="class-btn" style="display:none" onclick="classAddPatchNote()" title="패치노트 등록">✎</button></div><div id="class-patch-list" class="class-patch-list"><div class="text-slate-400">등록된 패치노트가 없습니다.</div></div></div></div></div><div class="class-home-lower-grid"><div class="class-card class-weekly-card"><h2>❖ 분배 요약</h2><div id="class-home-ratio-chart" class="class-v46-ratio-chart"></div></div><div class="class-card class-routing-card"><h2>❖ 보스 루팅 &amp; 폭젠자리</h2><div id="class-home-routing" class="class-routing-body" aria-live="polite"><p>배정 시간표를 불러오는 중입니다.</p></div></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="war"><div class="class-card"><h2>쟁 참여 관리</h2><div id="class-war-system"></div></div></section><section class="class-page" data-page="siege"><div class="class-card"><h2>공성전</h2><div id="class-siege-system"></div></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div id="class-week-control-panel" style="display:none"></div><div class="class-panel-slot" id="class-admin-slot"></div></section>`;
+ const area=document.createElement('div');area.id='class-pages';nav.after(area);area.innerHTML=`<section class="class-page active" data-page="home" id="class-home"><div class="class-card class-boss-card"><div class="class-actions"><h2 style="margin:0">❖ 보스 타이머</h2><button class="class-btn class-boss-register" id="class-all-bosses">＋ 보스 참여 등록</button></div><div class="class-bosses" id="class-boss-list"></div></div><div class="class-home-top" hidden aria-hidden="true"><div class="class-card class-announcements"><div class="class-notice-half"><div class="class-mini-heading"><h2>❖ 공지사항</h2><button type="button" class="class-notice-pencil" id="class-notice-edit-trigger" title="공지사항 수정" onclick="classToggleNoticeEditor()" style="display:none">✎</button></div><div id="class-notice-slot"></div></div><div class="class-patch-half"><div class="class-mini-heading"><h2>❖ 패치노트</h2><button id="class-patch-add" type="button" class="class-btn" style="display:none" onclick="classAddPatchNote()" title="패치노트 등록">✎</button></div><div id="class-patch-list" class="class-patch-list"><div class="text-slate-400">등록된 패치노트가 없습니다.</div></div></div></div></div><div class="class-home-lower-grid"><div class="class-card class-weekly-card"><h2>❖ 분배 요약</h2><div id="class-home-ratio-chart" class="class-v46-ratio-chart"></div></div><div class="class-card class-routing-card"><h2>❖ 보스 루팅 &amp; 폭젠자리</h2><div id="class-home-routing" class="class-routing-body" aria-live="polite"><p>배정 시간표를 불러오는 중입니다.</p></div></div><div class="class-card class-ranking-card" id="class-ranking-card"><h2>CLASS RANKING</h2><select id="class-ranking-mode" aria-label="랭킹 종류"><option value="content">콘텐츠 참여도 랭킹</option><option value="power">전투력 랭킹</option><option value="job">직업별 랭킹</option></select><div id="class-ranking-job-wrap" role="group" aria-label="직업 선택" data-job="파이터" hidden><button type="button" data-job="파이터" aria-pressed="true">파이터</button><button type="button" data-job="소서리스" aria-pressed="false">소서리스</button><button type="button" data-job="레인저" aria-pressed="false">레인저</button><button type="button" data-job="어쌔신" aria-pressed="false">어쌔신</button></div><div class="class-ranking-head"><span>순위</span><span>길드원</span><span id="class-ranking-value-label">점수</span><span>변동</span></div><div id="class-ranking-list" aria-live="polite">순위 데이터를 불러오는 중입니다.</div><div class="class-ranking-my-label">MY RANKING · 내 순위</div><div id="class-ranking-mine">—</div><div id="class-ranking-time">매 정각 순위 반영 : —</div></div></div></section><section class="class-page" data-page="members"><div class="class-panel-slot" id="class-member-slot"></div></section><section class="class-page" data-page="boss"><div class="class-panel-slot" id="class-boss-slot"></div></section><section class="class-page" data-page="war"><div class="class-card"><h2>쟁 참여 관리</h2><div id="class-war-system"></div></div></section><section class="class-page" data-page="siege"><div class="class-card"><h2>공성전</h2><div id="class-siege-system"></div></div></section><section class="class-page" data-page="items"><div class="class-panel-slot" id="class-item-slot"></div></section><section class="class-page" data-page="admin"><div class="class-actions"><h2 class="text-xl font-bold">관리자 및 길드 현황</h2><button class="class-btn" id="class-admin-back">홈으로</button></div><div id="class-week-control-panel" style="display:none"></div><div class="class-panel-slot" id="class-admin-slot"></div></section>`;
+ $('class-ranking-mode').addEventListener('change',renderClassRanking);$('class-ranking-job-wrap').addEventListener('click',e=>{const btn=e.target.closest('button[data-job]');if(btn){$('class-ranking-job-wrap').dataset.job=btn.dataset.job;renderClassRanking();}});
  $('class-all-bosses').onclick=()=>openBossModal();$('class-admin-back').onclick=()=>page('home');
  $('class-member-slot').append(panels[0]);$('class-boss-slot').append(panels[1]);$('class-item-slot').append(panels[2]);$('class-admin-slot').append(panels[3]);
  const ratioHost=document.createElement('div');ratioHost.id='class-ratio-system';
@@ -4424,6 +4490,7 @@ function bootDashboard(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootDashboard);else bootDashboard();
                                                
+let classRankLastMinute=-1;
 setInterval(()=>{
  try{
   const nodes=document.querySelectorAll('#class-boss-list .class-boss-countdown[data-target]');
@@ -4435,6 +4502,7 @@ setInterval(()=>{
   if($('class-boss-list')&&(!classBossTimerLast||now-classBossTimerLast>30000))updateClassBossTimer();
                                          
   renderClassRouting(false,now);
+  const minute=Math.floor(now/60000);if(minute!==classRankLastMinute){classRankLastMinute=minute;if(classCurrentPage()==='home')renderClassRanking();}
  }catch(e){console.warn('카운트다운 갱신',e)}
 },1000);
 document.addEventListener('visibilitychange',()=>{
@@ -6761,6 +6829,46 @@ html body #user-manage-list .class-v151-password-warning{
  color:#ba1c27!important;-webkit-text-fill-color:#ba1c27!important;font-weight:900!important;
  border-color:#e6b1b3!important;background:#fff4f4!important;
 }
+</style>
+<style id="class-v187-ranking">
+html body #class-home .class-home-top[hidden]{display:none!important}
+html body #class-home .class-home-lower-grid{grid-template-columns:minmax(0,32fr) minmax(0,27fr) minmax(0,41fr)!important;gap:14px!important;align-items:stretch!important}
+html body #class-home .class-home-lower-grid>.class-card{box-sizing:border-box!important;min-width:0!important;padding:16px 16px!important;height:auto!important}
+html body #class-home .class-home-lower-grid>.class-card>h2{font-size:18px!important;line-height:1.4!important;margin:0 0 12px!important;padding:0 0 10px!important;border-bottom:1px solid #e5d4c3!important;color:#553724!important}
+html body #class-home .class-home-lower-grid #class-home-ratio-chart{flex-direction:column!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:flex-start!important;gap:14px!important;padding:8px 0!important;min-width:0!important;width:100%!important}
+html body #class-home .class-home-lower-grid .class-dist-donut{width:clamp(112px,11vw,170px)!important;height:clamp(112px,11vw,170px)!important;flex:none!important}
+html body #class-home .class-home-lower-grid .class-dist-legend{width:100%!important;min-width:0!important;max-width:none!important;flex:none!important}
+html body #class-home .class-home-lower-grid .class-dist-row{grid-template-columns:10px minmax(0,1fr) auto!important;gap:6px!important;padding:9px 0!important;font-size:12px!important}
+html body #class-home .class-home-lower-grid .class-dist-row i{width:9px!important;height:9px!important}
+html body #class-home .class-home-lower-grid .class-dist-row b{font-size:12px!important;white-space:nowrap!important}
+html body #class-home .class-home-lower-grid .class-routing-body{min-height:0!important;gap:12px!important}
+html body #class-home .class-home-lower-grid .class-routing-zone-name,html body #class-home .class-home-lower-grid .class-routing-boss-name{font-size:19px!important;overflow-wrap:anywhere!important}
+#class-ranking-card{color:#503725!important;font-variant-numeric:tabular-nums}
+#class-ranking-card select{display:block;width:100%;height:34px;padding:4px 9px;background:#fbf4ec;color:#674932;border:1px solid #dec9b4;border-radius:6px;font-size:13px;font-weight:700}
+#class-ranking-job-wrap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;margin-top:6px}
+#class-ranking-job-wrap button{min-width:0;padding:6px 2px;border:1px solid #dec9b4;border-radius:5px;background:#fffaf5;color:#74563f;font-size:11px;font-weight:700;cursor:pointer}
+#class-ranking-job-wrap button[aria-pressed="true"]{background:#ebdbca;border-color:#b89675;color:#513420}
+#class-ranking-job-wrap[hidden]{display:none!important}
+.class-ranking-head,.class-ranking-row{display:grid;grid-template-columns:26px 24px minmax(0,1fr) max-content 34px;gap:6px;align-items:center;min-width:0}
+.class-ranking-head{margin:10px 0 5px;padding:0 6px;color:#8f755e;font-size:11px;line-height:1.4}
+.class-ranking-head span:nth-child(2){grid-column:2/4}
+.class-ranking-head span:nth-child(3){text-align:right}
+.class-ranking-head span:last-child{text-align:center}
+#class-ranking-list{display:grid;gap:5px;font-size:13px;color:#8f755e;min-height:190px;align-content:start}
+.class-ranking-row{min-height:34px;padding:4px 6px;background:#f8efe5;border:1px solid #eddfd0;border-radius:5px;font-size:13px;color:#503725;box-sizing:border-box}
+.class-ranking-row .guild-class-icon{width:23px!important;height:25px!important;flex:none!important;min-width:0!important}
+.class-ranking-row .guild-class-icon img{filter:none!important}
+.class-ranking-position{text-align:center;font-weight:800;color:#765139}
+.class-ranking-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:700}
+.class-ranking-value{white-space:nowrap;text-align:right;font-size:12px;font-weight:800;color:#64452e}
+.class-ranking-move{text-align:center;font-size:11px;font-weight:700;white-space:nowrap}
+.rank-up{color:#43835a}.rank-down{color:#b34c4c}.rank-flat{color:#a18d79}
+.class-ranking-my-label{margin-top:11px;padding-top:9px;border-top:1px solid #dfcbb7;margin-bottom:5px;color:#94765b;font-size:11px;font-weight:700}
+#class-ranking-mine .class-ranking-row{background:#ecdfd0;border-color:#e3cfbb}
+.class-ranking-empty{padding:8px;text-align:center;font-size:12px;color:#92765d}
+#class-ranking-time{text-align:right;color:#92765d;font-size:10px;margin-top:8px}
+@media(max-width:1200px) and (min-width:1051px){html body #class-home .class-home-lower-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)!important;grid-template-areas:"distribution ranking" "routing ranking"!important}html body #class-home .class-weekly-card{grid-area:distribution}html body #class-home .class-routing-card{grid-area:routing}html body #class-home .class-ranking-card{grid-area:ranking}}
+@media(max-width:1050px){html body #class-home .class-home-lower-grid{grid-template-columns:minmax(0,1fr)!important}html body #class-home .class-ranking-card{grid-column:auto!important}html body #class-home .class-home-lower-grid .class-dist-donut{width:155px!important;height:155px!important}}
 </style>
 </body>
 </html>

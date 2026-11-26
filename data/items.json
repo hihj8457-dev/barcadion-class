@@ -1,0 +1,4305 @@
+[
+  {
+    "id": "hero_001",
+    "name": "어둠의 기도 성궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/hero_001.webp",
+    "stats": [
+      "원거리 공격력 514",
+      "원거리 피해 감소 무시 9",
+      "일반 공격 피해 증폭 2%"
+    ],
+    "source": "111307",
+    "row": 1
+  },
+  {
+    "id": "hero_002",
+    "name": "최후의 방벽 석궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/hero_002.webp",
+    "stats": [
+      "원거리 공격력 468",
+      "원거리 피해 감소 무시 8",
+      "스킬 피해 증폭 1.8%"
+    ],
+    "source": "111307",
+    "row": 2
+  },
+  {
+    "id": "hero_003",
+    "name": "명예로운 최후 쌍단검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/hero_003.webp",
+    "stats": [
+      "근거리 공격력 504",
+      "근거리 피해 감소 무시 12",
+      "치명타 피해 3.9%"
+    ],
+    "source": "111307",
+    "row": 3
+  },
+  {
+    "id": "hero_004",
+    "name": "서약의 마르필 활",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/hero_004.webp",
+    "stats": [
+      "원거리 공격력 889",
+      "원거리 피해 감소 무시 17",
+      "일반 공격 피해 증폭 3.4%"
+    ],
+    "source": "111307",
+    "row": 4
+  },
+  {
+    "id": "hero_005",
+    "name": "맹세의 피오레 활",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/hero_005.webp",
+    "stats": [
+      "원거리 공격력 842",
+      "원거리 피해 감소 무시 16",
+      "일반 공격 피해 증폭 3.2%"
+    ],
+    "source": "111307",
+    "row": 5
+  },
+  {
+    "id": "hero_006",
+    "name": "맹금 수호자 각궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/hero_006.webp",
+    "stats": [
+      "원거리 공격력 795",
+      "원거리 피해 감소 무시 16",
+      "일반 공격 피해 증폭 3.1%"
+    ],
+    "source": "111307",
+    "row": 6
+  },
+  {
+    "id": "hero_007",
+    "name": "타락한 금빛 활",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/hero_007.webp",
+    "stats": [
+      "원거리 공격력 748",
+      "원거리 피해 감소 무시 14",
+      "일반 공격 피해 증폭 2.9%"
+    ],
+    "source": "111307",
+    "row": 7
+  },
+  {
+    "id": "hero_008",
+    "name": "검은 포식자 활",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/hero_008.webp",
+    "stats": [
+      "원거리 공격력 702",
+      "원거리 피해 감소 무시 13",
+      "일반 공격 피해 증폭 2.7%"
+    ],
+    "source": "111307",
+    "row": 8
+  },
+  {
+    "id": "hero_009",
+    "name": "푸른 신탁의 활",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/hero_009.webp",
+    "stats": [
+      "원거리 공격력 655",
+      "원거리 피해 감소 무시 12",
+      "일반 공격 피해 증폭 2.5%"
+    ],
+    "source": "111323",
+    "row": 1
+  },
+  {
+    "id": "hero_010",
+    "name": "용의 유해 활",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/hero_010.webp",
+    "stats": [
+      "원거리 공격력 608",
+      "원거리 피해 감소 무시 11",
+      "일반 공격 피해 증폭 2.3%"
+    ],
+    "source": "111323",
+    "row": 2
+  },
+  {
+    "id": "hero_011",
+    "name": "초승달의 사냥 활",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/hero_011.webp",
+    "stats": [
+      "원거리 공격력 561",
+      "원거리 피해 감소 무시 11",
+      "일반 공격 피해 증폭 2.2%"
+    ],
+    "source": "111323",
+    "row": 3
+  },
+  {
+    "id": "hero_012",
+    "name": "금빛 현화 화궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/hero_012.webp",
+    "stats": [
+      "원거리 공격력 468",
+      "원거리 피해 감소 무시 8",
+      "일반 공격 피해 증폭 1.8%"
+    ],
+    "source": "111323",
+    "row": 4
+  },
+  {
+    "id": "hero_013",
+    "name": "오르카일 흑단궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/hero_013.webp",
+    "stats": [
+      "원거리 공격력 421",
+      "원거리 피해 감소 무시 7",
+      "일반 공격 피해 증폭 1.6%"
+    ],
+    "source": "111323",
+    "row": 5
+  },
+  {
+    "id": "hero_014",
+    "name": "서약의 살바도 석궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/hero_014.webp",
+    "stats": [
+      "원거리 공격력 889",
+      "원거리 피해 감소 무시 17",
+      "스킬 피해 증폭 3.4%"
+    ],
+    "source": "111323",
+    "row": 6
+  },
+  {
+    "id": "hero_015",
+    "name": "맹세의 에스카 석궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/hero_015.webp",
+    "stats": [
+      "원거리 공격력 842",
+      "원거리 피해 감소 무시 16",
+      "스킬 피해 증폭 3.2%"
+    ],
+    "source": "111323",
+    "row": 7
+  },
+  {
+    "id": "hero_016",
+    "name": "맹금 포식자 석궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/hero_016.webp",
+    "stats": [
+      "원거리 공격력 795",
+      "원거리 피해 감소 무시 16",
+      "스킬 피해 증폭 3.1%"
+    ],
+    "source": "111323",
+    "row": 8
+  },
+  {
+    "id": "hero_017",
+    "name": "돌아온 죽음 석궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/hero_017.webp",
+    "stats": [
+      "원거리 공격력 748",
+      "원거리 피해 감소 무시 14",
+      "스킬 피해 증폭 2.9%"
+    ],
+    "source": "111437",
+    "row": 1
+  },
+  {
+    "id": "hero_018",
+    "name": "잃어버린 숲 석궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/hero_018.webp",
+    "stats": [
+      "원거리 공격력 702",
+      "원거리 피해 감소 무시 13",
+      "스킬 피해 증폭 2.7%"
+    ],
+    "source": "111437",
+    "row": 2
+  },
+  {
+    "id": "hero_019",
+    "name": "잔혹한 가시꽃 석궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/hero_019.webp",
+    "stats": [
+      "원거리 공격력 655",
+      "원거리 피해 감소 무시 12",
+      "스킬 피해 증폭 2.5%"
+    ],
+    "source": "111437",
+    "row": 3
+  },
+  {
+    "id": "hero_020",
+    "name": "밤눈의 사냥 석궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/hero_020.webp",
+    "stats": [
+      "원거리 공격력 608",
+      "원거리 피해 감소 무시 11",
+      "스킬 피해 증폭 2.3%"
+    ],
+    "source": "111437",
+    "row": 4
+  },
+  {
+    "id": "hero_021",
+    "name": "쌍두 야수 석궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/hero_021.webp",
+    "stats": [
+      "원거리 공격력 561",
+      "원거리 피해 감소 무시 11",
+      "스킬 피해 증폭 2.2%"
+    ],
+    "source": "111437",
+    "row": 5
+  },
+  {
+    "id": "hero_022",
+    "name": "숲의 잠식 석궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/hero_022.webp",
+    "stats": [
+      "원거리 공격력 514",
+      "원거리 피해 감소 무시 9",
+      "스킬 피해 증폭 2%"
+    ],
+    "source": "111437",
+    "row": 6
+  },
+  {
+    "id": "hero_023",
+    "name": "오르카일 석궁",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/hero_023.webp",
+    "stats": [
+      "원거리 공격력 421",
+      "원거리 피해 감소 무시 7",
+      "스킬 피해 증폭 1.6%"
+    ],
+    "source": "111437",
+    "row": 7
+  },
+  {
+    "id": "hero_024",
+    "name": "서약의 헬름릿 검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/hero_024.webp",
+    "stats": [
+      "근거리 공격력 909",
+      "피해 감소 23",
+      "피해 증폭 저항 1.7%"
+    ],
+    "source": "111437",
+    "row": 8
+  },
+  {
+    "id": "hero_025",
+    "name": "맹세의 둔켈른 검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/hero_025.webp",
+    "stats": [
+      "근거리 공격력 861",
+      "피해 감소 22",
+      "피해 증폭 저항 1.6%"
+    ],
+    "source": "111454",
+    "row": 1
+  },
+  {
+    "id": "hero_026",
+    "name": "신성한 맹세 검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/hero_026.webp",
+    "stats": [
+      "근거리 공격력 814",
+      "피해 감소 22",
+      "피해 증폭 저항 1.5%"
+    ],
+    "source": "111454",
+    "row": 2
+  },
+  {
+    "id": "hero_027",
+    "name": "빛나는 명예 검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/hero_027.webp",
+    "stats": [
+      "근거리 공격력 765",
+      "피해 감소 20",
+      "피해 증폭 저항 1.4%"
+    ],
+    "source": "111454",
+    "row": 3
+  },
+  {
+    "id": "hero_028",
+    "name": "분노한 야수 검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/hero_028.webp",
+    "stats": [
+      "근거리 공격력 718",
+      "피해 감소 18",
+      "피해 증폭 저항 1.4%"
+    ],
+    "source": "111454",
+    "row": 4
+  },
+  {
+    "id": "hero_029",
+    "name": "철가시 방벽 검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/hero_029.webp",
+    "stats": [
+      "근거리 공격력 670",
+      "피해 감소 16",
+      "피해 증폭 저항 1.3%"
+    ],
+    "source": "111454",
+    "row": 5
+  },
+  {
+    "id": "hero_030",
+    "name": "위엄의 날개 검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/hero_030.webp",
+    "stats": [
+      "근거리 공격력 622",
+      "피해 감소 15",
+      "피해 증폭 저항 1.2%"
+    ],
+    "source": "111454",
+    "row": 6
+  },
+  {
+    "id": "hero_031",
+    "name": "녹림의 지혜 검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/hero_031.webp",
+    "stats": [
+      "근거리 공격력 574",
+      "피해 감소 15",
+      "피해 증폭 저항 1.1%"
+    ],
+    "source": "111454",
+    "row": 7
+  },
+  {
+    "id": "hero_032",
+    "name": "사자의 포효 검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/hero_032.webp",
+    "stats": [
+      "근거리 공격력 526",
+      "피해 감소 13",
+      "피해 증폭 저항 1%"
+    ],
+    "source": "111454",
+    "row": 8
+  },
+  {
+    "id": "hero_033",
+    "name": "괴조의 등장 검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/hero_033.webp",
+    "stats": [
+      "근거리 공격력 479",
+      "피해 감소 12",
+      "피해 증폭 저항 0.9%"
+    ],
+    "source": "111509",
+    "row": 1
+  },
+  {
+    "id": "hero_034",
+    "name": "오르카일 흑검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/hero_034.webp",
+    "stats": [
+      "근거리 공격력 431",
+      "피해 감소 9",
+      "피해 증폭 저항 0.8%"
+    ],
+    "source": "111509",
+    "row": 2
+  },
+  {
+    "id": "hero_035",
+    "name": "서약의 골트란 대검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/hero_035.webp",
+    "stats": [
+      "근거리 공격력 958",
+      "근거리 피해 감소 무시 23",
+      "근거리 피해 증폭 1.7%"
+    ],
+    "source": "111509",
+    "row": 3
+  },
+  {
+    "id": "hero_036",
+    "name": "맹세의 나흐트겔 대검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/hero_036.webp",
+    "stats": [
+      "근거리 공격력 907",
+      "근거리 피해 감소 무시 22",
+      "근거리 피해 증폭 1.6%"
+    ],
+    "source": "111509",
+    "row": 4
+  },
+  {
+    "id": "hero_037",
+    "name": "잔혹한 단죄 대검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/hero_037.webp",
+    "stats": [
+      "근거리 공격력 857",
+      "근거리 피해 감소 무시 22",
+      "근거리 피해 증폭 1.5%"
+    ],
+    "source": "111509",
+    "row": 5
+  },
+  {
+    "id": "hero_038",
+    "name": "고요한 시선 대검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/hero_038.webp",
+    "stats": [
+      "근거리 공격력 806",
+      "근거리 피해 감소 무시 20",
+      "근거리 피해 증폭 1.4%"
+    ],
+    "source": "111509",
+    "row": 6
+  },
+  {
+    "id": "hero_039",
+    "name": "흑기사 청안 대검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/hero_039.webp",
+    "stats": [
+      "근거리 공격력 756",
+      "근거리 피해 감소 무시 18",
+      "근거리 피해 증폭 1.4%"
+    ],
+    "source": "111509",
+    "row": 7
+  },
+  {
+    "id": "hero_040",
+    "name": "가시의 구속 대검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/hero_040.webp",
+    "stats": [
+      "근거리 공격력 706",
+      "근거리 피해 감소 무시 16",
+      "근거리 피해 증폭 1.3%"
+    ],
+    "source": "111509",
+    "row": 8
+  },
+  {
+    "id": "hero_041",
+    "name": "흑문의 저주 대검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/hero_041.webp",
+    "stats": [
+      "근거리 공격력 655",
+      "근거리 피해 감소 무시 15",
+      "근거리 피해 증폭 1.2%"
+    ],
+    "source": "111520",
+    "row": 1
+  },
+  {
+    "id": "hero_042",
+    "name": "혈맥의 유산 대검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/hero_042.webp",
+    "stats": [
+      "근거리 공격력 605",
+      "근거리 피해 감소 무시 15",
+      "근거리 피해 증폭 1.1%"
+    ],
+    "source": "111520",
+    "row": 2
+  },
+  {
+    "id": "hero_043",
+    "name": "홍안의 응시 대검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/hero_043.webp",
+    "stats": [
+      "근거리 공격력 554",
+      "근거리 피해 감소 무시 13",
+      "근거리 피해 증폭 1%"
+    ],
+    "source": "111520",
+    "row": 3
+  },
+  {
+    "id": "hero_044",
+    "name": "청석의 심판 대검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/hero_044.webp",
+    "stats": [
+      "근거리 공격력 504",
+      "근거리 피해 감소 무시 12",
+      "근거리 피해 증폭 0.9%"
+    ],
+    "source": "111520",
+    "row": 4
+  },
+  {
+    "id": "hero_045",
+    "name": "오르카일 대검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/hero_045.webp",
+    "stats": [
+      "근거리 공격력 454",
+      "근거리 피해 감소 무시 9",
+      "근거리 피해 증폭 0.8%"
+    ],
+    "source": "111520",
+    "row": 5
+  },
+  {
+    "id": "hero_046",
+    "name": "서약의 시엘리스 지팡이",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/hero_046.webp",
+    "stats": [
+      "마법 공격력 934",
+      "마법 피해 감소 무시 17",
+      "마법 피해 증폭 1.7%"
+    ],
+    "source": "111520",
+    "row": 6
+  },
+  {
+    "id": "hero_047",
+    "name": "맹세의 베르넬 지팡이",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/hero_047.webp",
+    "stats": [
+      "마법 공격력 885",
+      "마법 피해 감소 무시 16",
+      "마법 피해 증폭 1.6%"
+    ],
+    "source": "111520",
+    "row": 7
+  },
+  {
+    "id": "hero_048",
+    "name": "타락한 세월의 지팡이",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/hero_048.webp",
+    "stats": [
+      "마법 공격력 836",
+      "마법 피해 감소 무시 16",
+      "마법 피해 증폭 1.5%"
+    ],
+    "source": "111520",
+    "row": 8
+  },
+  {
+    "id": "hero_049",
+    "name": "푸른 깃의 노래 지팡이",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/hero_049.webp",
+    "stats": [
+      "마법 공격력 787",
+      "마법 피해 감소 무시 14",
+      "마법 피해 증폭 1.4%"
+    ],
+    "source": "111537",
+    "row": 1
+  },
+  {
+    "id": "hero_050",
+    "name": "숲의 심장 지팡이",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/hero_050.webp",
+    "stats": [
+      "마법 공격력 738",
+      "마법 피해 감소 무시 13",
+      "마법 피해 증폭 1.4%"
+    ],
+    "source": "111537",
+    "row": 2
+  },
+  {
+    "id": "hero_051",
+    "name": "물결의 축복 지팡이",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/hero_051.webp",
+    "stats": [
+      "마법 공격력 688",
+      "마법 피해 감소 무시 12",
+      "마법 피해 증폭 1.3%"
+    ],
+    "source": "111537",
+    "row": 3
+  },
+  {
+    "id": "hero_052",
+    "name": "왕좌의 위엄 지팡이",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/hero_052.webp",
+    "stats": [
+      "마법 공격력 639",
+      "마법 피해 감소 무시 11",
+      "마법 피해 증폭 1.2%"
+    ],
+    "source": "111537",
+    "row": 4
+  },
+  {
+    "id": "hero_053",
+    "name": "꿰뚫는 천명 지팡이",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/hero_053.webp",
+    "stats": [
+      "마법 공격력 590",
+      "마법 피해 감소 무시 11",
+      "마법 피해 증폭 1.1%"
+    ],
+    "source": "111537",
+    "row": 5
+  },
+  {
+    "id": "hero_054",
+    "name": "달의 속삭임 지팡이",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/hero_054.webp",
+    "stats": [
+      "마법 공격력 541",
+      "마법 피해 감소 무시 9",
+      "마법 피해 증폭 1%"
+    ],
+    "source": "111537",
+    "row": 6
+  },
+  {
+    "id": "hero_055",
+    "name": "청석의 기도 지팡이",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/hero_055.webp",
+    "stats": [
+      "마법 공격력 492",
+      "마법 피해 감소 무시 8",
+      "마법 피해 증폭 0.9%"
+    ],
+    "source": "111537",
+    "row": 7
+  },
+  {
+    "id": "hero_056",
+    "name": "오르카일 지팡이",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/hero_056.webp",
+    "stats": [
+      "마법 공격력 442",
+      "마법 피해 감소 무시 7",
+      "마법 피해 증폭 0.8%"
+    ],
+    "source": "111537",
+    "row": 8
+  },
+  {
+    "id": "hero_057",
+    "name": "맹세의 오세르넬 마법구",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/hero_057.webp",
+    "stats": [
+      "마법 공격력 885",
+      "피해 감소 16",
+      "스킬 쿨타임 감소 3.2%"
+    ],
+    "source": "111550",
+    "row": 1
+  },
+  {
+    "id": "hero_058",
+    "name": "심연의 파편 마법구",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/hero_058.webp",
+    "stats": [
+      "마법 공격력 836",
+      "피해 감소 16",
+      "스킬 쿨타임 감소 3.1%"
+    ],
+    "source": "111550",
+    "row": 2
+  },
+  {
+    "id": "hero_059",
+    "name": "깨어난 신탁의 마법구",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/hero_059.webp",
+    "stats": [
+      "마법 공격력 787",
+      "피해 감소 14",
+      "스킬 쿨타임 감소 2.9%"
+    ],
+    "source": "111550",
+    "row": 3
+  },
+  {
+    "id": "hero_060",
+    "name": "푸른 축복의 숨 마법구",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/hero_060.webp",
+    "stats": [
+      "마법 공격력 738",
+      "피해 감소 13",
+      "스킬 쿨타임 감소 2.7%"
+    ],
+    "source": "111550",
+    "row": 4
+  },
+  {
+    "id": "hero_061",
+    "name": "황금빛 권위의 마법구",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/hero_061.webp",
+    "stats": [
+      "마법 공격력 688",
+      "피해 감소 12",
+      "스킬 쿨타임 감소 2.5%"
+    ],
+    "source": "111550",
+    "row": 5
+  },
+  {
+    "id": "hero_062",
+    "name": "어둠의 사안 마법구",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/hero_062.webp",
+    "stats": [
+      "마법 공격력 639",
+      "피해 감소 11",
+      "스킬 쿨타임 감소 2.3%"
+    ],
+    "source": "111550",
+    "row": 6
+  },
+  {
+    "id": "hero_063",
+    "name": "항성의 질서 마법구",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/hero_063.webp",
+    "stats": [
+      "마법 공격력 590",
+      "피해 감소 11",
+      "스킬 쿨타임 감소 2.2%"
+    ],
+    "source": "111550",
+    "row": 7
+  },
+  {
+    "id": "hero_064",
+    "name": "붉은 파열의 마법구",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/hero_064.webp",
+    "stats": [
+      "마법 공격력 541",
+      "피해 감소 9",
+      "스킬 쿨타임 감소 2%"
+    ],
+    "source": "111550",
+    "row": 8
+  },
+  {
+    "id": "hero_065",
+    "name": "잠든 균열의 마법구",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/hero_065.webp",
+    "stats": [
+      "마법 공격력 492",
+      "피해 감소 8",
+      "스킬 쿨타임 감소 1.8%"
+    ],
+    "source": "111604",
+    "row": 1
+  },
+  {
+    "id": "hero_066",
+    "name": "오르카일 마법구",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/hero_066.webp",
+    "stats": [
+      "마법 공격력 442",
+      "피해 감소 7",
+      "스킬 쿨타임 감소 1.6%"
+    ],
+    "source": "111604",
+    "row": 2
+  },
+  {
+    "id": "hero_067",
+    "name": "서약의 브랜다크 카타나",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/hero_067.webp",
+    "stats": [
+      "근거리 공격력 958",
+      "근거리 피해 감소 무시 14",
+      "관통 119"
+    ],
+    "source": "111604",
+    "row": 3
+  },
+  {
+    "id": "hero_068",
+    "name": "맹세의 소닐른 카타나",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/hero_068.webp",
+    "stats": [
+      "근거리 공격력 907",
+      "근거리 피해 감소 무시 13",
+      "관통 113"
+    ],
+    "source": "111604",
+    "row": 4
+  },
+  {
+    "id": "hero_069",
+    "name": "끝없는 처형 카타나",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/hero_069.webp",
+    "stats": [
+      "근거리 공격력 857",
+      "근거리 피해 감소 무시 13",
+      "관통 107"
+    ],
+    "source": "111604",
+    "row": 5
+  },
+  {
+    "id": "hero_070",
+    "name": "피의 태양 카타나",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/hero_070.webp",
+    "stats": [
+      "근거리 공격력 806",
+      "근거리 피해 감소 무시 12",
+      "관통 100"
+    ],
+    "source": "111604",
+    "row": 6
+  },
+  {
+    "id": "hero_071",
+    "name": "금빛 탐식의 카타나",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/hero_071.webp",
+    "stats": [
+      "근거리 공격력 756",
+      "근거리 피해 감소 무시 11",
+      "관통 94"
+    ],
+    "source": "111604",
+    "row": 7
+  },
+  {
+    "id": "hero_072",
+    "name": "철혈의 광기 카타나",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/hero_072.webp",
+    "stats": [
+      "근거리 공격력 706",
+      "근거리 피해 감소 무시 10",
+      "관통 88"
+    ],
+    "source": "111604",
+    "row": 8
+  },
+  {
+    "id": "hero_073",
+    "name": "고대의 맥동 카타나",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/hero_073.webp",
+    "stats": [
+      "근거리 공격력 655",
+      "근거리 피해 감소 무시 9",
+      "관통 81"
+    ],
+    "source": "111617",
+    "row": 1
+  },
+  {
+    "id": "hero_074",
+    "name": "흑핵의 구동 카타나",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/hero_074.webp",
+    "stats": [
+      "근거리 공격력 605",
+      "근거리 피해 감소 무시 9",
+      "관통 75"
+    ],
+    "source": "111617",
+    "row": 2
+  },
+  {
+    "id": "hero_075",
+    "name": "용의 군림 카타나",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/hero_075.webp",
+    "stats": [
+      "근거리 공격력 554",
+      "근거리 피해 감소 무시 8",
+      "관통 69"
+    ],
+    "source": "111617",
+    "row": 3
+  },
+  {
+    "id": "hero_076",
+    "name": "명장의 유산 카타나",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/hero_076.webp",
+    "stats": [
+      "근거리 공격력 504",
+      "근거리 피해 감소 무시 7",
+      "관통 63"
+    ],
+    "source": "111617",
+    "row": 4
+  },
+  {
+    "id": "hero_077",
+    "name": "오르카일 카타나",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/hero_077.webp",
+    "stats": [
+      "근거리 공격력 454",
+      "근거리 피해 감소 무시 6",
+      "관통 56"
+    ],
+    "source": "111617",
+    "row": 5
+  },
+  {
+    "id": "hero_078",
+    "name": "서약의 글리센 쌍단검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/hero_078.webp",
+    "stats": [
+      "근거리 공격력 958",
+      "근거리 피해 감소 무시 23",
+      "치명타 피해 7.4%"
+    ],
+    "source": "111617",
+    "row": 6
+  },
+  {
+    "id": "hero_079",
+    "name": "맹세의 인디르 쌍단검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/hero_079.webp",
+    "stats": [
+      "근거리 공격력 907",
+      "근거리 피해 감소 무시 22",
+      "치명타 피해 7%"
+    ],
+    "source": "111617",
+    "row": 7
+  },
+  {
+    "id": "hero_080",
+    "name": "되돌아온 저주 쌍단검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/hero_080.webp",
+    "stats": [
+      "근거리 공격력 857",
+      "근거리 피해 감소 무시 22",
+      "치명타 피해 6.6%"
+    ],
+    "source": "111617",
+    "row": 8
+  },
+  {
+    "id": "hero_081",
+    "name": "불길한 밤의 예언 쌍단검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/hero_081.webp",
+    "stats": [
+      "근거리 공격력 806",
+      "근거리 피해 감소 무시 20",
+      "치명타 피해 6.2%"
+    ],
+    "source": "111630",
+    "row": 3
+  },
+  {
+    "id": "hero_082",
+    "name": "핏빛 밤의 연회 쌍단검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/hero_082.webp",
+    "stats": [
+      "근거리 공격력 756",
+      "근거리 피해 감소 무시 18",
+      "치명타 피해 5.9%"
+    ],
+    "source": "111630",
+    "row": 4
+  },
+  {
+    "id": "hero_083",
+    "name": "저주의 시작 쌍단검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/hero_083.webp",
+    "stats": [
+      "근거리 공격력 706",
+      "근거리 피해 감소 무시 16",
+      "치명타 피해 5.5%"
+    ],
+    "source": "111630",
+    "row": 5
+  },
+  {
+    "id": "hero_084",
+    "name": "북풍의 출정 쌍단검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/hero_084.webp",
+    "stats": [
+      "근거리 공격력 655",
+      "근거리 피해 감소 무시 15",
+      "치명타 피해 5.1%"
+    ],
+    "source": "111630",
+    "row": 6
+  },
+  {
+    "id": "hero_085",
+    "name": "매의 세례 쌍단검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/hero_085.webp",
+    "stats": [
+      "근거리 공격력 605",
+      "근거리 피해 감소 무시 15",
+      "치명타 피해 4.7%"
+    ],
+    "source": "111630",
+    "row": 7
+  },
+  {
+    "id": "hero_086",
+    "name": "뒤틀린 주술 쌍단검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/hero_086.webp",
+    "stats": [
+      "근거리 공격력 554",
+      "근거리 피해 감소 무시 13",
+      "치명타 피해 4.3%"
+    ],
+    "source": "111630",
+    "row": 8
+  },
+  {
+    "id": "hero_087",
+    "name": "오르카일 쌍단검",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/hero_087.webp",
+    "stats": [
+      "근거리 공격력 454",
+      "근거리 피해 감소 무시 9",
+      "치명타 피해 3.5%"
+    ],
+    "source": "111630",
+    "row": 9
+  },
+  {
+    "id": "hero_088",
+    "name": "심연의 시선 다리갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_088.webp",
+    "stats": [
+      "방어력 180",
+      "원거리 치명타 피해 감소 2.31%"
+    ],
+    "source": "111721",
+    "row": 1
+  },
+  {
+    "id": "hero_089",
+    "name": "볼프하르트 쌍각 전투관",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_089.webp",
+    "stats": [
+      "방어력 259",
+      "원거리 치명타 저항 240"
+    ],
+    "source": "111721",
+    "row": 2
+  },
+  {
+    "id": "hero_090",
+    "name": "녹테르나 초승달 보석두건",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_090.webp",
+    "stats": [
+      "방어력 259",
+      "마법 치명타 저항 240"
+    ],
+    "source": "111721",
+    "row": 3
+  },
+  {
+    "id": "hero_091",
+    "name": "레오란 갈기 가죽투구",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_091.webp",
+    "stats": [
+      "방어력 259",
+      "마법 치명타 저항 240"
+    ],
+    "source": "111721",
+    "row": 4
+  },
+  {
+    "id": "hero_092",
+    "name": "벨라투르 날개깃 전투관",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_092.webp",
+    "stats": [
+      "방어력 259",
+      "근거리 치명타 저항 240"
+    ],
+    "source": "111721",
+    "row": 5
+  },
+  {
+    "id": "hero_093",
+    "name": "검은 파도 삼각모",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_093.webp",
+    "stats": [
+      "방어력 187",
+      "원거리 치명타 저항 174"
+    ],
+    "source": "111721",
+    "row": 6
+  },
+  {
+    "id": "hero_094",
+    "name": "망자의 뿔 투구",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_094.webp",
+    "stats": [
+      "방어력 187",
+      "마법 치명타 저항 174"
+    ],
+    "source": "111721",
+    "row": 7
+  },
+  {
+    "id": "hero_095",
+    "name": "별의 인도자 두건",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_095.webp",
+    "stats": [
+      "방어력 187",
+      "근거리 치명타 저항 174"
+    ],
+    "source": "111721",
+    "row": 8
+  },
+  {
+    "id": "hero_096",
+    "name": "서약의 볼타르 투구",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_096.webp",
+    "stats": [
+      "방어력 273",
+      "원거리 치명타 저항 254"
+    ],
+    "source": "111735",
+    "row": 1
+  },
+  {
+    "id": "hero_097",
+    "name": "서약의 코른헬 투구",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_097.webp",
+    "stats": [
+      "방어력 273",
+      "마법 치명타 저항 254"
+    ],
+    "source": "111735",
+    "row": 2
+  },
+  {
+    "id": "hero_098",
+    "name": "서약의 세리안느 베레모",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_098.webp",
+    "stats": [
+      "방어력 273",
+      "근거리 치명타 저항 254"
+    ],
+    "source": "111735",
+    "row": 3
+  },
+  {
+    "id": "hero_099",
+    "name": "맹세의 아르겐트 헬름",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_099.webp",
+    "stats": [
+      "방어력 259",
+      "원거리 치명타 저항 240"
+    ],
+    "source": "111735",
+    "row": 4
+  },
+  {
+    "id": "hero_100",
+    "name": "맹세의 칼베른 투구",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_100.webp",
+    "stats": [
+      "방어력 259",
+      "마법 치명타 저항 240"
+    ],
+    "source": "111735",
+    "row": 5
+  },
+  {
+    "id": "hero_101",
+    "name": "맹세의 스펙트 두건",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_101.webp",
+    "stats": [
+      "방어력 259",
+      "근거리 치명타 저항 240"
+    ],
+    "source": "111735",
+    "row": 6
+  },
+  {
+    "id": "hero_102",
+    "name": "검은 뿔의 처형자 헬름",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_102.webp",
+    "stats": [
+      "방어력 244",
+      "원거리 치명타 저항 228"
+    ],
+    "source": "111735",
+    "row": 7
+  },
+  {
+    "id": "hero_103",
+    "name": "피로 물든 의전 투구",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_103.webp",
+    "stats": [
+      "방어력 244",
+      "마법 치명타 저항 228"
+    ],
+    "source": "111735",
+    "row": 8
+  },
+  {
+    "id": "hero_104",
+    "name": "청석 첨탑의 제의 후드",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_104.webp",
+    "stats": [
+      "방어력 244",
+      "근거리 치명타 저항 228"
+    ],
+    "source": "111749",
+    "row": 1
+  },
+  {
+    "id": "hero_105",
+    "name": "꺾인 갈기의 코린트 투구",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_105.webp",
+    "stats": [
+      "방어력 230",
+      "원거리 치명타 저항 214"
+    ],
+    "source": "111749",
+    "row": 2
+  },
+  {
+    "id": "hero_106",
+    "name": "세 매듭의 전쟁 면갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_106.webp",
+    "stats": [
+      "방어력 230",
+      "마법 치명타 저항 214"
+    ],
+    "source": "111749",
+    "row": 3
+  },
+  {
+    "id": "hero_107",
+    "name": "금술의 장막 후드",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_107.webp",
+    "stats": [
+      "방어력 230",
+      "근거리 치명타 저항 214"
+    ],
+    "source": "111749",
+    "row": 4
+  },
+  {
+    "id": "hero_108",
+    "name": "그리폰의 포효 그레이트헬름",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_108.webp",
+    "stats": [
+      "방어력 216",
+      "원거리 치명타 저항 200"
+    ],
+    "source": "111749",
+    "row": 5
+  },
+  {
+    "id": "hero_109",
+    "name": "용비늘의 침묵 면갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_109.webp",
+    "stats": [
+      "방어력 216",
+      "마법 치명타 저항 200"
+    ],
+    "source": "111749",
+    "row": 6
+  },
+  {
+    "id": "hero_110",
+    "name": "홍석 야회의 베레모",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_110.webp",
+    "stats": [
+      "방어력 216",
+      "근거리 치명타 저항 200"
+    ],
+    "source": "111749",
+    "row": 7
+  },
+  {
+    "id": "hero_111",
+    "name": "열두 번의 칼자국 살렛",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_111.webp",
+    "stats": [
+      "방어력 201",
+      "원거리 치명타 저항 188"
+    ],
+    "source": "111749",
+    "row": 8
+  },
+  {
+    "id": "hero_112",
+    "name": "초원의 마지막 행군 투구",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_112.webp",
+    "stats": [
+      "방어력 201",
+      "마법 치명타 저항 188"
+    ],
+    "source": "111801",
+    "row": 1
+  },
+  {
+    "id": "hero_113",
+    "name": "은빛 그리폰의 신관 후드",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_113.webp",
+    "stats": [
+      "방어력 201",
+      "근거리 치명타 저항 188"
+    ],
+    "source": "111801",
+    "row": 2
+  },
+  {
+    "id": "hero_114",
+    "name": "백은 날개의 선언 헬름",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_114.webp",
+    "stats": [
+      "방어력 172",
+      "원거리 치명타 저항 160"
+    ],
+    "source": "111801",
+    "row": 3
+  },
+  {
+    "id": "hero_115",
+    "name": "붉은 십자의 순례 투구",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_115.webp",
+    "stats": [
+      "방어력 172",
+      "마법 치명타 저항 160"
+    ],
+    "source": "111801",
+    "row": 4
+  },
+  {
+    "id": "hero_116",
+    "name": "붉은 사자의 의전 후드",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_116.webp",
+    "stats": [
+      "방어력 172",
+      "근거리 치명타 저항 160"
+    ],
+    "source": "111801",
+    "row": 5
+  },
+  {
+    "id": "hero_117",
+    "name": "사라진 왕조의 투구",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_117.webp",
+    "stats": [
+      "방어력 158",
+      "원거리 치명타 저항 146"
+    ],
+    "source": "111801",
+    "row": 6
+  },
+  {
+    "id": "hero_118",
+    "name": "가시왕의 돌격 투구",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_118.webp",
+    "stats": [
+      "방어력 158",
+      "마법 치명타 저항 146"
+    ],
+    "source": "111801",
+    "row": 7
+  },
+  {
+    "id": "hero_119",
+    "name": "떠돌이 현자의 실크햇",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_119.webp",
+    "stats": [
+      "방어력 158",
+      "근거리 치명타 저항 146"
+    ],
+    "source": "111801",
+    "row": 8
+  },
+  {
+    "id": "hero_120",
+    "name": "마지막 장인의 바시넷",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_120.webp",
+    "stats": [
+      "방어력 144",
+      "원거리 치명타 저항 134"
+    ],
+    "source": "111917",
+    "row": 1
+  },
+  {
+    "id": "hero_121",
+    "name": "잠들지 않는 보초 면갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_121.webp",
+    "stats": [
+      "방어력 144",
+      "마법 치명타 저항 134"
+    ],
+    "source": "111917",
+    "row": 2
+  },
+  {
+    "id": "hero_122",
+    "name": "검은 깃의 연회 베레모",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_122.webp",
+    "stats": [
+      "방어력 144",
+      "근거리 치명타 저항 134"
+    ],
+    "source": "111917",
+    "row": 3
+  },
+  {
+    "id": "hero_123",
+    "name": "쉐이드론 투구",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/hero_123.webp",
+    "stats": [
+      "방어력 129",
+      "원거리 치명타 저항 120"
+    ],
+    "source": "111917",
+    "row": 4
+  },
+  {
+    "id": "hero_124",
+    "name": "볼프하르트 늑대문 수렵갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_124.webp",
+    "stats": [
+      "방어력 388",
+      "원거리 관통 저항 38"
+    ],
+    "source": "111917",
+    "row": 5
+  },
+  {
+    "id": "hero_125",
+    "name": "녹테르나 월쇄 야행복",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_125.webp",
+    "stats": [
+      "방어력 388",
+      "마법 관통 저항 38"
+    ],
+    "source": "111917",
+    "row": 6
+  },
+  {
+    "id": "hero_126",
+    "name": "레오란 가죽 흉갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_126.webp",
+    "stats": [
+      "방어력 388",
+      "마법 관통 저항 38"
+    ],
+    "source": "111917",
+    "row": 7
+  },
+  {
+    "id": "hero_127",
+    "name": "벨라투르 교차끈 흉갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_127.webp",
+    "stats": [
+      "방어력 388",
+      "근거리 관통 저항 38"
+    ],
+    "source": "111917",
+    "row": 8
+  },
+  {
+    "id": "hero_128",
+    "name": "검은 파도 상의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_128.webp",
+    "stats": [
+      "방어력 280",
+      "원거리 관통 저항 27"
+    ],
+    "source": "111929",
+    "row": 1
+  },
+  {
+    "id": "hero_129",
+    "name": "망자의 뿔 갑옷",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_129.webp",
+    "stats": [
+      "방어력 280",
+      "마법 관통 저항 27"
+    ],
+    "source": "111929",
+    "row": 2
+  },
+  {
+    "id": "hero_130",
+    "name": "별의 인도자 예복",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_130.webp",
+    "stats": [
+      "방어력 280",
+      "근거리 관통 저항 27"
+    ],
+    "source": "111929",
+    "row": 3
+  },
+  {
+    "id": "hero_131",
+    "name": "서약의 루멘트 흉갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_131.webp",
+    "stats": [
+      "방어력 410",
+      "원거리 관통 저항 40"
+    ],
+    "source": "111929",
+    "row": 4
+  },
+  {
+    "id": "hero_132",
+    "name": "서약의 프르펜스 전투복",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_132.webp",
+    "stats": [
+      "방어력 410",
+      "마법 관통 저항 40"
+    ],
+    "source": "111929",
+    "row": 5
+  },
+  {
+    "id": "hero_133",
+    "name": "서약의 큐렌스 법의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_133.webp",
+    "stats": [
+      "방어력 410",
+      "근거리 관통 저항 40"
+    ],
+    "source": "111929",
+    "row": 6
+  },
+  {
+    "id": "hero_134",
+    "name": "맹세의 벨라튼 흉갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_134.webp",
+    "stats": [
+      "방어력 388",
+      "원거리 관통 저항 38"
+    ],
+    "source": "111929",
+    "row": 7
+  },
+  {
+    "id": "hero_135",
+    "name": "맹세의 옵시렌 가죽 경갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_135.webp",
+    "stats": [
+      "방어력 388",
+      "마법 관통 저항 38"
+    ],
+    "source": "111929",
+    "row": 8
+  },
+  {
+    "id": "hero_136",
+    "name": "맹세의 노빌렌 군관복",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_136.webp",
+    "stats": [
+      "방어력 388",
+      "근거리 관통 저항 38"
+    ],
+    "source": "111942",
+    "row": 1
+  },
+  {
+    "id": "hero_137",
+    "name": "죽음의 태양 심판 흉갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_137.webp",
+    "stats": [
+      "방어력 367",
+      "원거리 관통 저항 36"
+    ],
+    "source": "111942",
+    "row": 2
+  },
+  {
+    "id": "hero_138",
+    "name": "인간사냥의 비늘복",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_138.webp",
+    "stats": [
+      "방어력 367",
+      "마법 관통 저항 36"
+    ],
+    "source": "111942",
+    "row": 3
+  },
+  {
+    "id": "hero_139",
+    "name": "금서를 태운 학자의 법의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_139.webp",
+    "stats": [
+      "방어력 367",
+      "근거리 관통 저항 36"
+    ],
+    "source": "111942",
+    "row": 4
+  },
+  {
+    "id": "hero_140",
+    "name": "신조의 사자 성전 흉갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_140.webp",
+    "stats": [
+      "방어력 345",
+      "원거리 관통 저항 34"
+    ],
+    "source": "111942",
+    "row": 5
+  },
+  {
+    "id": "hero_141",
+    "name": "왕좌를 거절한 반란군의 전투갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_141.webp",
+    "stats": [
+      "방어력 345",
+      "마법 관통 저항 34"
+    ],
+    "source": "111942",
+    "row": 6
+  },
+  {
+    "id": "hero_142",
+    "name": "전장의 치유사 법의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_142.webp",
+    "stats": [
+      "방어력 345",
+      "근거리 관통 저항 34"
+    ],
+    "source": "111942",
+    "row": 7
+  },
+  {
+    "id": "hero_143",
+    "name": "첫 번째 대관식의 의전 흉갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_143.webp",
+    "stats": [
+      "방어력 324",
+      "원거리 관통 저항 32"
+    ],
+    "source": "111942",
+    "row": 8
+  },
+  {
+    "id": "hero_144",
+    "name": "붉은 바다 제독의 전투복",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_144.webp",
+    "stats": [
+      "방어력 324",
+      "마법 관통 저항 32"
+    ],
+    "source": "111959",
+    "row": 1
+  },
+  {
+    "id": "hero_145",
+    "name": "별의 궤도 법의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_145.webp",
+    "stats": [
+      "방어력 324",
+      "근거리 관통 저항 32"
+    ],
+    "source": "111959",
+    "row": 2
+  },
+  {
+    "id": "hero_146",
+    "name": "왕을 처형한 집행관의 흉갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_146.webp",
+    "stats": [
+      "방어력 302",
+      "원거리 관통 저항 30"
+    ],
+    "source": "111959",
+    "row": 3
+  },
+  {
+    "id": "hero_147",
+    "name": "밤눈의 기사 흉갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_147.webp",
+    "stats": [
+      "방어력 302",
+      "마법 관통 저항 30"
+    ],
+    "source": "111959",
+    "row": 4
+  },
+  {
+    "id": "hero_148",
+    "name": "금지된 부활의 퀼팅",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_148.webp",
+    "stats": [
+      "방어력 302",
+      "근거리 관통 저항 30"
+    ],
+    "source": "111959",
+    "row": 5
+  },
+  {
+    "id": "hero_149",
+    "name": "그리폰 기사단의 창설 흉갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_149.webp",
+    "stats": [
+      "방어력 259",
+      "원거리 관통 저항 25"
+    ],
+    "source": "111959",
+    "row": 6
+  },
+  {
+    "id": "hero_150",
+    "name": "추방된 왕자의 야행복",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_150.webp",
+    "stats": [
+      "방어력 259",
+      "마법 관통 저항 25"
+    ],
+    "source": "111959",
+    "row": 7
+  },
+  {
+    "id": "hero_151",
+    "name": "황금 길의 녹의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_151.webp",
+    "stats": [
+      "방어력 259",
+      "근거리 관통 저항 25"
+    ],
+    "source": "111959",
+    "row": 8
+  },
+  {
+    "id": "hero_152",
+    "name": "바다에서 건진 녹동 흉갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_152.webp",
+    "stats": [
+      "방어력 237",
+      "원거리 관통 저항 23"
+    ],
+    "source": "112010",
+    "row": 1
+  },
+  {
+    "id": "hero_153",
+    "name": "증명된 결백의 전투복",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_153.webp",
+    "stats": [
+      "방어력 237",
+      "마법 관통 저항 23"
+    ],
+    "source": "112010",
+    "row": 2
+  },
+  {
+    "id": "hero_154",
+    "name": "독잔을 피한 왕자의 더블릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_154.webp",
+    "stats": [
+      "방어력 237",
+      "근거리 관통 저항 23"
+    ],
+    "source": "112010",
+    "row": 3
+  },
+  {
+    "id": "hero_155",
+    "name": "천 번의 전장 흉갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_155.webp",
+    "stats": [
+      "방어력 216",
+      "원거리 관통 저항 21"
+    ],
+    "source": "112010",
+    "row": 4
+  },
+  {
+    "id": "hero_156",
+    "name": "돌아온 복수자의 외투",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_156.webp",
+    "stats": [
+      "방어력 216",
+      "마법 관통 저항 21"
+    ],
+    "source": "112010",
+    "row": 5
+  },
+  {
+    "id": "hero_157",
+    "name": "왕궁 연금술사의 겉옷",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_157.webp",
+    "stats": [
+      "방어력 216",
+      "근거리 관통 저항 21"
+    ],
+    "source": "112010",
+    "row": 6
+  },
+  {
+    "id": "hero_158",
+    "name": "쉐이드론 갑옷",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/hero_158.webp",
+    "stats": [
+      "방어력 194",
+      "원거리 관통 저항 19"
+    ],
+    "source": "112010",
+    "row": 7
+  },
+  {
+    "id": "hero_159",
+    "name": "볼프하르트 송곳니 수렵바지",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_159.webp",
+    "stats": [
+      "방어력 324",
+      "원거리 치명타 피해 감소 4.14%"
+    ],
+    "source": "112010",
+    "row": 8
+  },
+  {
+    "id": "hero_160",
+    "name": "녹테르나 초승달 비단바지",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_160.webp",
+    "stats": [
+      "방어력 324",
+      "마법 치명타 피해 감소 4.14%"
+    ],
+    "source": "112022",
+    "row": 1
+  },
+  {
+    "id": "hero_161",
+    "name": "레오란 가죽 바지",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_161.webp",
+    "stats": [
+      "방어력 324",
+      "마법 치명타 피해 감소 4.14%"
+    ],
+    "source": "112022",
+    "row": 2
+  },
+  {
+    "id": "hero_162",
+    "name": "벨라투르 쇄편 다리갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_162.webp",
+    "stats": [
+      "방어력 324",
+      "근거리 치명타 피해 감소 4.14%"
+    ],
+    "source": "112022",
+    "row": 3
+  },
+  {
+    "id": "hero_163",
+    "name": "검은 파도 하의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_163.webp",
+    "stats": [
+      "방어력 234",
+      "원거리 치명타 피해 감소 2.99%"
+    ],
+    "source": "112022",
+    "row": 4
+  },
+  {
+    "id": "hero_164",
+    "name": "망자의 뿔 하의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_164.webp",
+    "stats": [
+      "방어력 234",
+      "마법 치명타 피해 감소 2.99%"
+    ],
+    "source": "112022",
+    "row": 5
+  },
+  {
+    "id": "hero_165",
+    "name": "별의 인도자 하의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_165.webp",
+    "stats": [
+      "방어력 234",
+      "근거리 치명타 피해 감소 2.99%"
+    ],
+    "source": "112022",
+    "row": 6
+  },
+  {
+    "id": "hero_166",
+    "name": "서약의 세레니온 다리갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_166.webp",
+    "stats": [
+      "방어력 342",
+      "원거리 치명타 피해 감소 4.33%"
+    ],
+    "source": "112022",
+    "row": 7
+  },
+  {
+    "id": "hero_167",
+    "name": "서약의 그라넬 전투복",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_167.webp",
+    "stats": [
+      "방어력 342",
+      "마법 치명타 피해 감소 4.33%"
+    ],
+    "source": "112022",
+    "row": 8
+  },
+  {
+    "id": "hero_168",
+    "name": "서약의 레갈렌 궁정복",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_168.webp",
+    "stats": [
+      "방어력 342",
+      "근거리 치명타 피해 감소 4.33%"
+    ],
+    "source": "112036",
+    "row": 1
+  },
+  {
+    "id": "hero_169",
+    "name": "맹세의 드라켄 다리갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_169.webp",
+    "stats": [
+      "방어력 324",
+      "원거리 치명타 피해 감소 4.14%"
+    ],
+    "source": "112036",
+    "row": 2
+  },
+  {
+    "id": "hero_170",
+    "name": "맹세의 울프렌 수렵복",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_170.webp",
+    "stats": [
+      "방어력 324",
+      "마법 치명타 피해 감소 4.14%"
+    ],
+    "source": "112036",
+    "row": 3
+  },
+  {
+    "id": "hero_171",
+    "name": "맹세의 그리엔 의장복",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_171.webp",
+    "stats": [
+      "방어력 324",
+      "근거리 치명타 피해 감소 4.14%"
+    ],
+    "source": "112036",
+    "row": 4
+  },
+  {
+    "id": "hero_172",
+    "name": "마지막 대관의 다리갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_172.webp",
+    "stats": [
+      "방어력 306",
+      "원거리 치명타 피해 감소 3.85%"
+    ],
+    "source": "112036",
+    "row": 5
+  },
+  {
+    "id": "hero_173",
+    "name": "실험의 기록자 하의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_173.webp",
+    "stats": [
+      "방어력 306",
+      "마법 치명타 피해 감소 3.85%"
+    ],
+    "source": "112036",
+    "row": 6
+  },
+  {
+    "id": "hero_174",
+    "name": "하늘의 심판자 하의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_174.webp",
+    "stats": [
+      "방어력 306",
+      "근거리 치명타 피해 감소 3.85%"
+    ],
+    "source": "112036",
+    "row": 7
+  },
+  {
+    "id": "hero_175",
+    "name": "용의 잠식 다리갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_175.webp",
+    "stats": [
+      "방어력 288",
+      "원거리 치명타 피해 감소 3.66%"
+    ],
+    "source": "112036",
+    "row": 8
+  },
+  {
+    "id": "hero_176",
+    "name": "멈추지 않는 전사의 하의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_176.webp",
+    "stats": [
+      "방어력 288",
+      "마법 치명타 피해 감소 3.66%"
+    ],
+    "source": "112046",
+    "row": 1
+  },
+  {
+    "id": "hero_177",
+    "name": "초대받지 않은 자의 하의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_177.webp",
+    "stats": [
+      "방어력 288",
+      "근거리 치명타 피해 감소 3.66%"
+    ],
+    "source": "112046",
+    "row": 2
+  },
+  {
+    "id": "hero_178",
+    "name": "반역의 칼날 다리갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_178.webp",
+    "stats": [
+      "방어력 270",
+      "원거리 치명타 피해 감소 3.47%"
+    ],
+    "source": "112046",
+    "row": 3
+  },
+  {
+    "id": "hero_179",
+    "name": "군법 집행관의 하의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_179.webp",
+    "stats": [
+      "방어력 270",
+      "마법 치명타 피해 감소 3.47%"
+    ],
+    "source": "112046",
+    "row": 4
+  },
+  {
+    "id": "hero_180",
+    "name": "석류의 예언자 하의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_180.webp",
+    "stats": [
+      "방어력 270",
+      "근거리 치명타 피해 감소 3.47%"
+    ],
+    "source": "112046",
+    "row": 5
+  },
+  {
+    "id": "hero_181",
+    "name": "독수리의 충성 다리갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_181.webp",
+    "stats": [
+      "방어력 252",
+      "원거리 치명타 피해 감소 3.18%"
+    ],
+    "source": "112046",
+    "row": 6
+  },
+  {
+    "id": "hero_182",
+    "name": "쇠창살의 군주 하의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_182.webp",
+    "stats": [
+      "방어력 252",
+      "마법 치명타 피해 감소 3.18%"
+    ],
+    "source": "112046",
+    "row": 7
+  },
+  {
+    "id": "hero_183",
+    "name": "연회의 마지막 주인 바지",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_183.webp",
+    "stats": [
+      "방어력 252",
+      "근거리 치명타 피해 감소 3.18%"
+    ],
+    "source": "112046",
+    "row": 8
+  },
+  {
+    "id": "hero_184",
+    "name": "황금 무도회 다리갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_184.webp",
+    "stats": [
+      "방어력 216",
+      "원거리 치명타 피해 감소 2.7%"
+    ],
+    "source": "112059",
+    "row": 1
+  },
+  {
+    "id": "hero_185",
+    "name": "지하의 왕관 하의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_185.webp",
+    "stats": [
+      "방어력 216",
+      "마법 치명타 피해 감소 2.7%"
+    ],
+    "source": "112059",
+    "row": 2
+  },
+  {
+    "id": "hero_186",
+    "name": "진실의 광대 바지",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_186.webp",
+    "stats": [
+      "방어력 216",
+      "근거리 치명타 피해 감소 2.7%"
+    ],
+    "source": "112059",
+    "row": 3
+  },
+  {
+    "id": "hero_187",
+    "name": "광기의 걸작 다리갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_187.webp",
+    "stats": [
+      "방어력 198",
+      "원거리 치명타 피해 감소 2.5%"
+    ],
+    "source": "112059",
+    "row": 4
+  },
+  {
+    "id": "hero_188",
+    "name": "푸른 독의 암살자 하의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_188.webp",
+    "stats": [
+      "방어력 198",
+      "마법 치명타 피해 감소 2.5%"
+    ],
+    "source": "112059",
+    "row": 5
+  },
+  {
+    "id": "hero_189",
+    "name": "밤을 걷는 자의 바지",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_189.webp",
+    "stats": [
+      "방어력 198",
+      "근거리 치명타 피해 감소 2.5%"
+    ],
+    "source": "112059",
+    "row": 6
+  },
+  {
+    "id": "hero_190",
+    "name": "해적단의 일등 항해사 하의",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_190.webp",
+    "stats": [
+      "방어력 180",
+      "마법 치명타 피해 감소 2.31%"
+    ],
+    "source": "112059",
+    "row": 7
+  },
+  {
+    "id": "hero_191",
+    "name": "황금 판의 도박사 바지",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_191.webp",
+    "stats": [
+      "방어력 180",
+      "근거리 치명타 피해 감소 2.31%"
+    ],
+    "source": "112059",
+    "row": 8
+  },
+  {
+    "id": "hero_192",
+    "name": "쉐이드론 다리갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/hero_192.webp",
+    "stats": [
+      "방어력 162",
+      "원거리 치명타 피해 감소 2.02%"
+    ],
+    "source": "112111",
+    "row": 1
+  },
+  {
+    "id": "hero_193",
+    "name": "볼프하르트 켈틱문 건틀릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_193.webp",
+    "stats": [
+      "명중 279",
+      "관통 38"
+    ],
+    "source": "112111",
+    "row": 2
+  },
+  {
+    "id": "hero_194",
+    "name": "녹테르나 초승달 가죽 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_194.webp",
+    "stats": [
+      "명중 279",
+      "일반 공격 피해 증폭 1.2%"
+    ],
+    "source": "112111",
+    "row": 3
+  },
+  {
+    "id": "hero_195",
+    "name": "레오란 겹가죽 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_195.webp",
+    "stats": [
+      "명중 279",
+      "일반 공격 피해 증폭 1.2%"
+    ],
+    "source": "112111",
+    "row": 4
+  },
+  {
+    "id": "hero_196",
+    "name": "벨라투르 겹판 건틀릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_196.webp",
+    "stats": [
+      "명중 279",
+      "스킬 피해 증폭 1.2%"
+    ],
+    "source": "112111",
+    "row": 5
+  },
+  {
+    "id": "hero_197",
+    "name": "검은 파도 건틀릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_197.webp",
+    "stats": [
+      "명중 202",
+      "관통 27"
+    ],
+    "source": "112111",
+    "row": 6
+  },
+  {
+    "id": "hero_198",
+    "name": "망자의 뿔 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_198.webp",
+    "stats": [
+      "명중 202",
+      "일반 공격 피해 증폭 0.9%"
+    ],
+    "source": "112111",
+    "row": 7
+  },
+  {
+    "id": "hero_199",
+    "name": "별의 인도자 제의 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_199.webp",
+    "stats": [
+      "명중 202",
+      "스킬 피해 증폭 0.9%"
+    ],
+    "source": "112111",
+    "row": 8
+  },
+  {
+    "id": "hero_200",
+    "name": "서약의 알리엣 건틀릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_200.webp",
+    "stats": [
+      "명중 295",
+      "관통 40"
+    ],
+    "source": "112121",
+    "row": 1
+  },
+  {
+    "id": "hero_201",
+    "name": "서약의 프리고스 가죽 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_201.webp",
+    "stats": [
+      "명중 295",
+      "일반 공격 피해 증폭 1.3%"
+    ],
+    "source": "112121",
+    "row": 2
+  },
+  {
+    "id": "hero_202",
+    "name": "서약의 크루첼 제의 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_202.webp",
+    "stats": [
+      "명중 295",
+      "스킬 피해 증폭 1.3%"
+    ],
+    "source": "112121",
+    "row": 3
+  },
+  {
+    "id": "hero_203",
+    "name": "맹세의 로사넬 건틀릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_203.webp",
+    "stats": [
+      "명중 279",
+      "관통 38"
+    ],
+    "source": "112121",
+    "row": 4
+  },
+  {
+    "id": "hero_204",
+    "name": "맹세의 시데리스 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_204.webp",
+    "stats": [
+      "명중 279",
+      "일반 공격 피해 증폭 1.2%"
+    ],
+    "source": "112121",
+    "row": 5
+  },
+  {
+    "id": "hero_205",
+    "name": "맹세의 유디스 제식 커프",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_205.webp",
+    "stats": [
+      "명중 279",
+      "스킬 피해 증폭 1.2%"
+    ],
+    "source": "112121",
+    "row": 6
+  },
+  {
+    "id": "hero_206",
+    "name": "붉은 눈의 건틀릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_206.webp",
+    "stats": [
+      "명중 264",
+      "관통 36"
+    ],
+    "source": "112121",
+    "row": 7
+  },
+  {
+    "id": "hero_207",
+    "name": "사슬 묶인 맹수의 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_207.webp",
+    "stats": [
+      "명중 264",
+      "일반 공격 피해 증폭 1.1%"
+    ],
+    "source": "112121",
+    "row": 8
+  },
+  {
+    "id": "hero_208",
+    "name": "길 없는 항로의 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_208.webp",
+    "stats": [
+      "명중 264",
+      "스킬 피해 증폭 1.1%"
+    ],
+    "source": "112137",
+    "row": 1
+  },
+  {
+    "id": "hero_209",
+    "name": "선고자의 건틀릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_209.webp",
+    "stats": [
+      "명중 248",
+      "관통 34"
+    ],
+    "source": "112137",
+    "row": 2
+  },
+  {
+    "id": "hero_210",
+    "name": "용비늘 서약의 가죽 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_210.webp",
+    "stats": [
+      "명중 248",
+      "일반 공격 피해 증폭 1.1%"
+    ],
+    "source": "112137",
+    "row": 3
+  },
+  {
+    "id": "hero_211",
+    "name": "황실의 낙인 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_211.webp",
+    "stats": [
+      "명중 248",
+      "스킬 피해 증폭 1.1%"
+    ],
+    "source": "112137",
+    "row": 4
+  },
+  {
+    "id": "hero_212",
+    "name": "짐승의 껍질 건틀릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_212.webp",
+    "stats": [
+      "명중 233",
+      "관통 32"
+    ],
+    "source": "112137",
+    "row": 5
+  },
+  {
+    "id": "hero_213",
+    "name": "붉은 군주의 가죽 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_213.webp",
+    "stats": [
+      "명중 233",
+      "일반 공격 피해 증폭 1%"
+    ],
+    "source": "112137",
+    "row": 6
+  },
+  {
+    "id": "hero_214",
+    "name": "풀리지 않는 매듭의 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_214.webp",
+    "stats": [
+      "명중 233",
+      "스킬 피해 증폭 1%"
+    ],
+    "source": "112137",
+    "row": 7
+  },
+  {
+    "id": "hero_215",
+    "name": "숨겨진 시선의 건틀릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_215.webp",
+    "stats": [
+      "명중 217",
+      "관통 30"
+    ],
+    "source": "112137",
+    "row": 8
+  },
+  {
+    "id": "hero_216",
+    "name": "진주 화관의 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_216.webp",
+    "stats": [
+      "명중 217",
+      "일반 공격 피해 증폭 0.9%"
+    ],
+    "source": "112146",
+    "row": 1
+  },
+  {
+    "id": "hero_217",
+    "name": "어둠의 끝마디 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_217.webp",
+    "stats": [
+      "명중 217",
+      "스킬 피해 증폭 0.9%"
+    ],
+    "source": "112146",
+    "row": 2
+  },
+  {
+    "id": "hero_218",
+    "name": "잊힌 망자의 건틀릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_218.webp",
+    "stats": [
+      "명중 186",
+      "관통 25"
+    ],
+    "source": "112146",
+    "row": 3
+  },
+  {
+    "id": "hero_219",
+    "name": "흑피 사냥꾼의 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_219.webp",
+    "stats": [
+      "명중 186",
+      "일반 공격 피해 증폭 0.8%"
+    ],
+    "source": "112146",
+    "row": 4
+  },
+  {
+    "id": "hero_220",
+    "name": "왕의 언약 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_220.webp",
+    "stats": [
+      "명중 186",
+      "스킬 피해 증폭 0.8%"
+    ],
+    "source": "112146",
+    "row": 5
+  },
+  {
+    "id": "hero_221",
+    "name": "추락한 날개의 건틀릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_221.webp",
+    "stats": [
+      "명중 170",
+      "관통 23"
+    ],
+    "source": "112146",
+    "row": 6
+  },
+  {
+    "id": "hero_222",
+    "name": "황동 용장의 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_222.webp",
+    "stats": [
+      "명중 170",
+      "일반 공격 피해 증폭 0.7%"
+    ],
+    "source": "112146",
+    "row": 7
+  },
+  {
+    "id": "hero_223",
+    "name": "붉은색 결박의 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_223.webp",
+    "stats": [
+      "명중 170",
+      "스킬 피해 증폭 0.7%"
+    ],
+    "source": "112146",
+    "row": 8
+  },
+  {
+    "id": "hero_224",
+    "name": "첫 표식의 건틀릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_224.webp",
+    "stats": [
+      "명중 155",
+      "관통 21"
+    ],
+    "source": "112157",
+    "row": 1
+  },
+  {
+    "id": "hero_225",
+    "name": "맹세의 가죽 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_225.webp",
+    "stats": [
+      "명중 155",
+      "일반 공격 피해 증폭 0.7%"
+    ],
+    "source": "112157",
+    "row": 2
+  },
+  {
+    "id": "hero_226",
+    "name": "기울어진 문장의 장갑",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_226.webp",
+    "stats": [
+      "명중 155",
+      "스킬 피해 증폭 0.7%"
+    ],
+    "source": "112157",
+    "row": 3
+  },
+  {
+    "id": "hero_227",
+    "name": "쉐이드론 건틀릿",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/hero_227.webp",
+    "stats": [
+      "명중 139",
+      "관통 19"
+    ],
+    "source": "112157",
+    "row": 4
+  },
+  {
+    "id": "hero_228",
+    "name": "볼프하르트 송곳니 전투장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_228.webp",
+    "stats": [
+      "이동 속도 5.4%",
+      "원거리 피해 감소 11"
+    ],
+    "source": "112157",
+    "row": 5
+  },
+  {
+    "id": "hero_229",
+    "name": "녹테르나 초승달 폴렌화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_229.webp",
+    "stats": [
+      "이동 속도 5.4%",
+      "마법 피해 감소 11"
+    ],
+    "source": "112157",
+    "row": 6
+  },
+  {
+    "id": "hero_230",
+    "name": "레오란 겹끈 가죽 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_230.webp",
+    "stats": [
+      "이동 속도 5.4%",
+      "마법 피해 감소 11"
+    ],
+    "source": "112157",
+    "row": 7
+  },
+  {
+    "id": "hero_231",
+    "name": "벨라투르 교차끈 전투장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_231.webp",
+    "stats": [
+      "이동 속도 5.4%",
+      "근거리 피해 감소 11"
+    ],
+    "source": "112157",
+    "row": 8
+  },
+  {
+    "id": "hero_232",
+    "name": "검은 파도 부츠",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_232.webp",
+    "stats": [
+      "이동 속도 3.9%",
+      "원거리 피해 감소 8"
+    ],
+    "source": "112214",
+    "row": 1
+  },
+  {
+    "id": "hero_233",
+    "name": "망자의 뿔 부츠",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_233.webp",
+    "stats": [
+      "이동 속도 3.9%",
+      "마법 피해 감소 8"
+    ],
+    "source": "112214",
+    "row": 2
+  },
+  {
+    "id": "hero_234",
+    "name": "별의 인도자 부츠",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_234.webp",
+    "stats": [
+      "이동 속도 3.9%",
+      "근거리 피해 감소 8"
+    ],
+    "source": "112214",
+    "row": 3
+  },
+  {
+    "id": "hero_235",
+    "name": "서약의 스케일렌 철갑부츠",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_235.webp",
+    "stats": [
+      "이동 속도 5.7%",
+      "원거리 피해 감소 11"
+    ],
+    "source": "112214",
+    "row": 4
+  },
+  {
+    "id": "hero_236",
+    "name": "서약의 펜나크 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_236.webp",
+    "stats": [
+      "이동 속도 5.7%",
+      "마법 피해 감소 11"
+    ],
+    "source": "112214",
+    "row": 5
+  },
+  {
+    "id": "hero_237",
+    "name": "서약의 그렐디스 단화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_237.webp",
+    "stats": [
+      "이동 속도 5.7%",
+      "근거리 피해 감소 11"
+    ],
+    "source": "112214",
+    "row": 6
+  },
+  {
+    "id": "hero_238",
+    "name": "맹세의 프레디온 철갑부츠",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_238.webp",
+    "stats": [
+      "이동 속도 5.4%",
+      "원거리 피해 감소 11"
+    ],
+    "source": "112214",
+    "row": 7
+  },
+  {
+    "id": "hero_239",
+    "name": "맹세의 란트리스 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_239.webp",
+    "stats": [
+      "이동 속도 5.4%",
+      "마법 피해 감소 11"
+    ],
+    "source": "112214",
+    "row": 8
+  },
+  {
+    "id": "hero_armor_b2_001",
+    "name": "맹세의 켈리온 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_001.webp",
+    "stats": [
+      "이동 속도 5.4%",
+      "근거리 피해 감소 11"
+    ],
+    "source": "image(20261126-112257).webp",
+    "row": 1,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_002",
+    "name": "주인 없는 문장의 각반",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_002.webp",
+    "stats": [
+      "이동 속도 5.1%",
+      "원거리 피해 감소 10"
+    ],
+    "source": "image(20261126-112257).webp",
+    "row": 2,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_003",
+    "name": "파문 기사의 철갑부츠",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_003.webp",
+    "stats": [
+      "이동 속도 5.1%",
+      "마법 피해 감소 10"
+    ],
+    "source": "image(20261126-112257).webp",
+    "row": 3,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_004",
+    "name": "꽃과 독의 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_004.webp",
+    "stats": [
+      "이동 속도 5.1%",
+      "근거리 피해 감소 10"
+    ],
+    "source": "image(20261126-112257).webp",
+    "row": 4,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_005",
+    "name": "검은 띠의 승전 각반",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_005.webp",
+    "stats": [
+      "이동 속도 4.8%",
+      "원거리 피해 감소 10"
+    ],
+    "source": "image(20261126-112257).webp",
+    "row": 5,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_006",
+    "name": "야수 눈의 경고 부츠",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_006.webp",
+    "stats": [
+      "이동 속도 4.8%",
+      "마법 피해 감소 10"
+    ],
+    "source": "image(20261126-112257).webp",
+    "row": 6,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_007",
+    "name": "이방의 문양 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_007.webp",
+    "stats": [
+      "이동 속도 4.8%",
+      "근거리 피해 감소 10"
+    ],
+    "source": "image(20261126-112257).webp",
+    "row": 7,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_008",
+    "name": "닳은 포효의 각반",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_008.webp",
+    "stats": [
+      "이동 속도 4.5%",
+      "원거리 피해 감소 9"
+    ],
+    "source": "image(20261126-112257).webp",
+    "row": 8,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_009",
+    "name": "엘프의 마지막 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_009.webp",
+    "stats": [
+      "이동 속도 4.5%",
+      "마법 피해 감소 9"
+    ],
+    "source": "image(20261126-112312).webp",
+    "row": 1,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_010",
+    "name": "거리의 진상품 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_010.webp",
+    "stats": [
+      "이동 속도 4.5%",
+      "근거리 피해 감소 9"
+    ],
+    "source": "image(20261126-112312).webp",
+    "row": 2,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_011",
+    "name": "냉정의 생존 각반",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_011.webp",
+    "stats": [
+      "이동 속도 4.2%",
+      "원거리 피해 감소 8"
+    ],
+    "source": "image(20261126-112312).webp",
+    "row": 3,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_012",
+    "name": "주인 없는 전투 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_012.webp",
+    "stats": [
+      "이동 속도 4.2%",
+      "마법 피해 감소 8"
+    ],
+    "source": "image(20261126-112312).webp",
+    "row": 4,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_013",
+    "name": "경계의 통역 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_013.webp",
+    "stats": [
+      "이동 속도 4.2%",
+      "근거리 피해 감소 8"
+    ],
+    "source": "image(20261126-112312).webp",
+    "row": 5,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_014",
+    "name": "붉어진 은판 각반",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_014.webp",
+    "stats": [
+      "이동 속도 3.6%",
+      "원거리 피해 감소 7"
+    ],
+    "source": "image(20261126-112312).webp",
+    "row": 6,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_015",
+    "name": "꽃 아래 균열의 부츠",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_015.webp",
+    "stats": [
+      "이동 속도 3.6%",
+      "마법 피해 감소 7"
+    ],
+    "source": "image(20261126-112312).webp",
+    "row": 7,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_016",
+    "name": "봉헌의 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_016.webp",
+    "stats": [
+      "이동 속도 3.6%",
+      "근거리 피해 감소 7"
+    ],
+    "source": "image(20261126-112312).webp",
+    "row": 8,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_017",
+    "name": "부식된 유산의 각반",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_017.webp",
+    "stats": [
+      "이동 속도 3.3%",
+      "원거리 피해 감소 6"
+    ],
+    "source": "image(20261126-112327).webp",
+    "row": 1,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_018",
+    "name": "버려진 분가의 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_018.webp",
+    "stats": [
+      "이동 속도 3.3%",
+      "마법 피해 감소 6"
+    ],
+    "source": "image(20261126-112327).webp",
+    "row": 2,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_019",
+    "name": "탑 밖의 기록 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_019.webp",
+    "stats": [
+      "이동 속도 3.3%",
+      "근거리 피해 감소 6"
+    ],
+    "source": "image(20261126-112327).webp",
+    "row": 3,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_020",
+    "name": "원반의 행군 각반",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_020.webp",
+    "stats": [
+      "이동 속도 3%",
+      "원거리 피해 감소 6"
+    ],
+    "source": "image(20261126-112327).webp",
+    "row": 4,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_021",
+    "name": "무너진 맹약의 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_021.webp",
+    "stats": [
+      "이동 속도 3%",
+      "마법 피해 감소 6"
+    ],
+    "source": "image(20261126-112327).webp",
+    "row": 5,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_022",
+    "name": "장부의 정복 장화",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_022.webp",
+    "stats": [
+      "이동 속도 3%",
+      "근거리 피해 감소 6"
+    ],
+    "source": "image(20261126-112327).webp",
+    "row": 6,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_023",
+    "name": "쉐이드론 각반",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/hero_armor_b2_023.webp",
+    "stats": [
+      "이동 속도 2.7%",
+      "원거리 피해 감소 5"
+    ],
+    "source": "image(20261126-112327).webp",
+    "row": 7,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_024",
+    "name": "불프하르트 풀퍼 수렵망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_024.webp",
+    "stats": [
+      "회피 279",
+      "원거리 방어력 43"
+    ],
+    "source": "image(20261126-112327).webp",
+    "row": 8,
+    "review_required": true
+  },
+  {
+    "id": "hero_armor_b2_025",
+    "name": "녹테르나 달문양 비단망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_025.webp",
+    "stats": [
+      "회피 279",
+      "마법 방어력 43"
+    ],
+    "source": "image(20261126-112337).webp",
+    "row": 1,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_026",
+    "name": "레오란 사자문장 케이프",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_026.webp",
+    "stats": [
+      "회피 279",
+      "마법 방어력 43"
+    ],
+    "source": "image(20261126-112337).webp",
+    "row": 2,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_027",
+    "name": "벨라투르 사자견 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_027.webp",
+    "stats": [
+      "회피 279",
+      "근거리 방어력 43"
+    ],
+    "source": "image(20261126-112337).webp",
+    "row": 3,
+    "review_required": true
+  },
+  {
+    "id": "hero_armor_b2_028",
+    "name": "검은 파도 케이프",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_028.webp",
+    "stats": [
+      "회피 202",
+      "원거리 방어력 31"
+    ],
+    "source": "image(20261126-112337).webp",
+    "row": 4,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_029",
+    "name": "망자의 뿔 깃털망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_029.webp",
+    "stats": [
+      "회피 202",
+      "마법 방어력 31"
+    ],
+    "source": "image(20261126-112337).webp",
+    "row": 5,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_030",
+    "name": "별의 인도자 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_030.webp",
+    "stats": [
+      "회피 202",
+      "근거리 방어력 31"
+    ],
+    "source": "image(20261126-112337).webp",
+    "row": 6,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_031",
+    "name": "서약의 그라이펜 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_031.webp",
+    "stats": [
+      "회피 295",
+      "원거리 방어력 45"
+    ],
+    "source": "image(20261126-112337).webp",
+    "row": 7,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_032",
+    "name": "서약의 스콜넬 케이프",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_032.webp",
+    "stats": [
+      "회피 295",
+      "마법 방어력 45"
+    ],
+    "source": "image(20261126-112337).webp",
+    "row": 8,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_033",
+    "name": "서약의 세르반 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_033.webp",
+    "stats": [
+      "회피 295",
+      "근거리 방어력 45"
+    ],
+    "source": "image(20261126-112420).webp",
+    "row": 1,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_034",
+    "name": "맹세의 클라루스 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_034.webp",
+    "stats": [
+      "회피 279",
+      "원거리 방어력 43"
+    ],
+    "source": "image(20261126-112420).webp",
+    "row": 2,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_035",
+    "name": "맹세의 벨트른 케이프",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_035.webp",
+    "stats": [
+      "회피 279",
+      "마법 방어력 43"
+    ],
+    "source": "image(20261126-112420).webp",
+    "row": 3,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_036",
+    "name": "맹세의 프리모르 케이프",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_036.webp",
+    "stats": [
+      "회피 279",
+      "근거리 방어력 43"
+    ],
+    "source": "image(20261126-112420).webp",
+    "row": 4,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_037",
+    "name": "흑태양 기사단의 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_037.webp",
+    "stats": [
+      "회피 264",
+      "원거리 방어력 40"
+    ],
+    "source": "image(20261126-112420).webp",
+    "row": 5,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_038",
+    "name": "녹림 순찰대장의 경계 케이프",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_038.webp",
+    "stats": [
+      "회피 264",
+      "마법 방어력 40"
+    ],
+    "source": "image(20261126-112420).webp",
+    "row": 6,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_039",
+    "name": "금술의 장막 숄",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_039.webp",
+    "stats": [
+      "회피 264",
+      "근거리 방어력 40"
+    ],
+    "source": "image(20261126-112420).webp",
+    "row": 7,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_040",
+    "name": "북방 총독의 원정 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_040.webp",
+    "stats": [
+      "회피 248",
+      "원거리 방어력 38"
+    ],
+    "source": "image(20261126-112420).webp",
+    "row": 8,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_041",
+    "name": "꺾이지 않는 용병대장의 케이프",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_041.webp",
+    "stats": [
+      "회피 248",
+      "마법 방어력 38"
+    ],
+    "source": "image(20261126-112437).webp",
+    "row": 1,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_042",
+    "name": "은화의 궁정 비단 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_042.webp",
+    "stats": [
+      "회피 248",
+      "근거리 방어력 38"
+    ],
+    "source": "image(20261126-112437).webp",
+    "row": 2,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_043",
+    "name": "별을 삼킨 사제 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_043.webp",
+    "stats": [
+      "회피 233",
+      "원거리 방어력 36"
+    ],
+    "source": "image(20261126-112437).webp",
+    "row": 3,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_044",
+    "name": "핏빛 백작의 연회 케이프",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_044.webp",
+    "stats": [
+      "회피 233",
+      "마법 방어력 36"
+    ],
+    "source": "image(20261126-112437).webp",
+    "row": 4,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_045",
+    "name": "왕비의 겨울 의전 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_045.webp",
+    "stats": [
+      "회피 233",
+      "근거리 방어력 36"
+    ],
+    "source": "image(20261126-112437).webp",
+    "row": 5,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_046",
+    "name": "자줏빛 섭정의 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_046.webp",
+    "stats": [
+      "회피 217",
+      "원거리 방어력 33"
+    ],
+    "source": "image(20261126-112437).webp",
+    "row": 6,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_047",
+    "name": "까마귀 암살단의 장막 케이프",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_047.webp",
+    "stats": [
+      "회피 217",
+      "마법 방어력 33"
+    ],
+    "source": "image(20261126-112437).webp",
+    "row": 7,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_048",
+    "name": "붉은 매듭의 제의 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_048.webp",
+    "stats": [
+      "회피 217",
+      "근거리 방어력 33"
+    ],
+    "source": "image(20261126-112437).webp",
+    "row": 8,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_049",
+    "name": "쌍수의 사냥꾼 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_049.webp",
+    "stats": [
+      "회피 186",
+      "원거리 방어력 29"
+    ],
+    "source": "image(20261126-112449).webp",
+    "row": 1,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_050",
+    "name": "암시장의 왕 케이프",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_050.webp",
+    "stats": [
+      "회피 186",
+      "마법 방어력 29"
+    ],
+    "source": "image(20261126-112449).webp",
+    "row": 2,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_051",
+    "name": "굶주린 늑대의 군기 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_051.webp",
+    "stats": [
+      "회피 186",
+      "근거리 방어력 29"
+    ],
+    "source": "image(20261126-112449).webp",
+    "row": 3,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_052",
+    "name": "왕실 근위대의 의전 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_052.webp",
+    "stats": [
+      "회피 171",
+      "원거리 방어력 26"
+    ],
+    "source": "image(20261126-112449).webp",
+    "row": 4,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_053",
+    "name": "추방된 영주의 귀환 케이프",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_053.webp",
+    "stats": [
+      "회피 171",
+      "마법 방어력 26"
+    ],
+    "source": "image(20261126-112449).webp",
+    "row": 5,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_054",
+    "name": "궁정을 떠난 자의 깃 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_054.webp",
+    "stats": [
+      "회피 171",
+      "근거리 방어력 26"
+    ],
+    "source": "image(20261126-112449).webp",
+    "row": 6,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_055",
+    "name": "녹림 현자의 첫 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_055.webp",
+    "stats": [
+      "회피 155",
+      "원거리 방어력 24"
+    ],
+    "source": "image(20261126-112449).webp",
+    "row": 7,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_056",
+    "name": "사자왕의 행군 케이프",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_056.webp",
+    "stats": [
+      "회피 155",
+      "마법 방어력 24"
+    ],
+    "source": "image(20261126-112449).webp",
+    "row": 8,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_057",
+    "name": "뼛조각 주술사의 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_057.webp",
+    "stats": [
+      "회피 155",
+      "근거리 방어력 24"
+    ],
+    "source": "image(20261126-112500).webp",
+    "row": 1,
+    "review_required": false
+  },
+  {
+    "id": "hero_armor_b2_058",
+    "name": "쉐이드론 망토",
+    "grade": "영웅",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/hero_armor_b2_058.webp",
+    "stats": [
+      "회피 139",
+      "원거리 방어력 21"
+    ],
+    "source": "image(20261126-112500).webp",
+    "row": 2,
+    "review_required": false
+  }
+]

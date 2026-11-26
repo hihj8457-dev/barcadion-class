@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261126_V192_ITEM_HISTORY">
+    <meta name="class-build-id" content="CLASS_BUILD_20261126_V193_ITEM_CATALOG">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -1112,7 +1112,66 @@ html body #app-container #class-pages #class-siege-system table.class-v45-table 
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
-    <script>        const DEFAULT_DB = {
+    <script id="class-v193-catalog">
+let classCatalogItems=[];
+let classCatalogByName=new Map();
+let classCatalogLoadError=false;
+const classCatalogForms=new Map();
+function classCatalogNorm(v){return String(v||'').toLowerCase().replace(/\s+/g,'');}
+function classCatalogValue(r){return r.stats[0]?.match(/\d+(?:\.\d+)?%?$/)?.[0]||'';}
+function classCatalogMatch(item){
+ if(!item||item.category!=='장비'||!classCatalogItems.length)return null;
+ const grade=String(item.grade||itemRarity(item.name)||'').replace(/^\[|\]$/g,'');
+ if(grade&&grade!=='영웅')return null;
+ const raw=itemDisplayName(item.name).trim();
+ const exact=classCatalogByName.get(raw); if(exact)return {r:exact,tail:''};
+ const direct=classCatalogItems.find(r=>raw.startsWith(r.name)&&/^[\s(\-\/]/.test(raw.slice(r.name.length)));
+ if(direct)return {r:direct,tail:raw.slice(direct.name.length).replace(/^\s*-?\s*(?:공격력|방어력|공|방|명중|이속)\s*\d+(?:\.\d+)?%?\s*/,'').trim()};
+ const legacy=raw.match(/^(?:영웅\s*)?(한손검|대검|쌍단검|카타나|석궁|활|지팡이|마법구|투구|상의|하의|장갑|신발|망토)\s*-?\s*(?:공격력|방어력|공|방|명중|이속)\s*(\d+(?:\.\d+)?%?)(?![\d.])\s*(.*)$/);
+ if(!legacy||grade!=='영웅'&&!raw.startsWith('영웅'))return null;
+ const matches=classCatalogItems.filter(r=>r.type===legacy[1]&&classCatalogValue(r).replace('%','')===legacy[2].replace('%',''));
+ return matches.length===1?{r:matches[0],tail:legacy[3].trim()}:null;
+}
+function classCatalogSearchItem(item,q){const m=classCatalogMatch(item);return String(item.name||'').toLowerCase().includes(q)||!!(m&&classCatalogNorm([m.r.name,m.r.type,...m.r.stats].join(' ')).includes(classCatalogNorm(q)));}
+function classCatalogNameMarkup(item){const m=classCatalogMatch(item);if(!m)return escapeDistributionText(itemDisplayName(item.name));return `<span class="class-catalog-trigger" data-catalog-id="${escapeDistributionText(m.r.id)}" tabindex="0" role="button" aria-label="${escapeDistributionText(m.r.name)} 상세 정보">${escapeDistributionText(m.r.name)}</span>${m.tail?' '+escapeDistributionText(m.tail):''}`;}
+function classCatalogFormName(id){const input=document.getElementById(id);const f=classCatalogForms.get(id);const name=input.value.trim();const memo=f?.memo.value.trim();return name+(memo?' '+memo:'');}
+function classCatalogReset(id){const f=classCatalogForms.get(id);if(f){f.memo.value='';f.results.hidden=true;f.status.textContent='';}}
+function classCatalogPrepareEdit(item){const f=classCatalogForms.get('class-v150-name');if(!f)return;classCatalogReset('class-v150-name');const m=classCatalogMatch(item);if(m){f.input.value=m.r.name;f.memo.value=m.tail;f.status.textContent='아이템 DB 연결 완료';}}
+function classCatalogMatches(q){const tokens=String(q||'').trim().split(/\s+/).filter(Boolean).map(classCatalogNorm);return classCatalogItems.filter(r=>{const hay=classCatalogNorm([r.name,r.type,r.grade,...r.stats,'공'+classCatalogValue(r),'방'+classCatalogValue(r),'이속'+classCatalogValue(r)].join(' '));return tokens.every(t=>hay.includes(t));});}
+function classCatalogInitForm(id,gradeId,categoryId,priceId){
+ const input=document.getElementById(id);if(!input)return;
+ const wrap=document.createElement('div');wrap.className='class-catalog-search';input.parentNode.insertBefore(wrap,input.nextSibling);
+ const status=document.createElement('div');status.className='class-catalog-status';status.textContent='아이템명 또는 종류·스탯으로 검색 (예: 석궁 608)';
+ const results=document.createElement('div');results.className='class-catalog-results';results.hidden=true;
+ const memo=document.createElement('input');memo.type='text';memo.placeholder='추가 메모 (획득일·획득처 등, 선택)';memo.maxLength=120;memo.className='class-catalog-memo';
+ wrap.append(status,results,memo);classCatalogForms.set(id,{input,status,results,memo});
+ const refresh=()=>{results.replaceChildren();const q=input.value.trim();if(!q){results.hidden=true;status.textContent='아이템명 또는 종류·스탯으로 검색';return;}
+ if(classCatalogLoadError){status.textContent='DB 로드 실패 · 직접 입력 가능';results.hidden=true;return;}
+ if(!classCatalogItems.length){status.textContent='아이템 DB 불러오는 중 · 직접 입력 가능';return;}
+ const matches=classCatalogMatches(q);status.textContent=matches.length?`검색 결과 ${matches.length}개 · 선택하여 연결`:'DB에 없는 아이템 · 직접 등록 가능';results.hidden=!matches.length;
+ for(const r of matches.slice(0,40)){const b=document.createElement('button');b.type='button';b.className='class-catalog-result';const img=document.createElement('img');img.src='./'+r.icon;img.alt='';const label=document.createElement('span');label.textContent=r.name;const small=document.createElement('small');small.textContent=r.stats[0];b.append(img,label,small);b.addEventListener('click',()=>{input.value=r.name;document.getElementById(gradeId).value=r.grade;document.getElementById(categoryId).value='장비';status.textContent='아이템 DB 연결 완료';results.hidden=true;const price=document.getElementById(priceId);if(!price.value&&typeof db!=='undefined'){const tiers=(db.tiers||[]).filter(t=>itemDisplayName(t.name).trim()===r.name&&(!t.grade||t.grade===r.grade));if(tiers.length===1)price.value=Number(tiers[0].price)||0;} });results.append(b);}
+ };
+ input.addEventListener('input',refresh);input.addEventListener('focus',refresh);document.addEventListener('pointerdown',e=>{if(!wrap.contains(e.target)&&e.target!==input)results.hidden=true;});
+}
+function classCatalogStart(){
+ classCatalogInitForm('new-item-name','new-item-grade','new-item-cat','new-item-price');classCatalogInitForm('class-v150-name','class-v150-grade','class-v150-category','class-v150-price');
+ const tip=document.createElement('div');tip.id='class-catalog-tooltip';tip.hidden=true;tip.setAttribute('role','tooltip');document.body.append(tip);let active=null;
+ const close=()=>{tip.hidden=true;active=null;};
+ const open=(el)=>{const r=classCatalogItems.find(i=>i.id===el.dataset.catalogId);if(!r)return;active=el;tip.replaceChildren();const head=document.createElement('div');head.className='class-catalog-tip-head';const text=document.createElement('div');const grade=document.createElement('small');grade.textContent=r.grade;const name=document.createElement('strong');name.textContent=r.name;text.append(grade,name);const icon=document.createElement('img');icon.src='./'+r.icon;icon.alt=r.name;head.append(text,icon);const stats=document.createElement('div');stats.className='class-catalog-tip-stats';r.stats.forEach((s,i)=>{const line=document.createElement('div');line.textContent=(i===0?'✦  ':'　 ')+s;stats.append(line);});const foot=document.createElement('div');foot.className='class-catalog-tip-foot';const job=r.job||({'활':'레인저','석궁':'레인저','한손검':'파이터','대검':'파이터','지팡이':'소서리스','마법구':'소서리스','카타나':'어쌔신','쌍단검':'어쌔신'})[r.type];foot.textContent=(job?job+' · ':'')+r.type;tip.append(head,stats,foot);tip.hidden=false;tip.style.left='0px';tip.style.top='0px';const a=el.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;tip.style.left=Math.max(8,Math.min(a.left,innerWidth-w-8))+'px';tip.style.top=Math.max(8,a.bottom+h+10<=innerHeight?a.bottom+8:a.top-h-8)+'px';};
+ const trigger=e=>e.target instanceof Element?e.target.closest('.class-catalog-trigger'):null;
+ document.addEventListener('pointerover',e=>{const el=trigger(e);if(el&&e.pointerType==='mouse'&&el!==active)open(el);});
+ document.addEventListener('pointerout',e=>{const el=trigger(e);if(el&&e.pointerType==='mouse'&&!el.contains(e.relatedTarget))close();});
+ document.addEventListener('click',e=>{const el=trigger(e);if(el){if(active===el&&!tip.hidden&&matchMedia('(hover: none)').matches)close();else open(el);}else close();});
+ document.addEventListener('focusin',e=>{const el=trigger(e);if(el)open(el);});document.addEventListener('focusout',e=>{if(trigger(e))close();});
+ document.addEventListener('keydown',e=>{if(e.key==='Escape')close();if((e.key==='Enter'||e.key===' ')&&trigger(e)){e.preventDefault();open(trigger(e));}});window.addEventListener('scroll',close,true);window.addEventListener('resize',close);
+ fetch('./data/items.json',{cache:'no-cache'}).then(r=>{if(!r.ok)throw Error('catalog');return r.json();}).then(rows=>{if(!Array.isArray(rows))throw Error('catalog format');classCatalogItems=rows.filter(r=>r.name&&Array.isArray(r.stats)&&r.icon);classCatalogByName=new Map(classCatalogItems.map(r=>[r.name,r]));if(typeof renderItems==='function'&&typeof db!=='undefined'&&Array.isArray(db.items))renderItems();}).catch(()=>{classCatalogLoadError=true;});
+}
+document.addEventListener('DOMContentLoaded',classCatalogStart,{once:true});
+</script>
+<style id="class-v193-catalog-style">
+.class-catalog-search{display:grid;gap:6px;margin-top:6px}.class-catalog-status{font-size:11px;color:#73543b!important;line-height:1.4}.class-catalog-results{max-height:230px;overflow:auto;border:1px solid #d6c6b8;border-radius:8px;background:#fff}.class-catalog-result{display:flex;width:100%;align-items:center;gap:8px;padding:7px 8px;border-bottom:1px solid #eee3da;text-align:left;background:#fff!important;color:#b83232!important;font-size:12px;font-weight:700}.class-catalog-result:hover{background:#f8eee5!important}.class-catalog-result img{width:32px;height:35px;object-fit:contain;flex:none}.class-catalog-result span{flex:1}.class-catalog-result small{font-size:11px;color:#675c54;font-weight:500}.class-catalog-memo{width:100%;box-sizing:border-box;background:#fff!important;color:#292929!important;border:1px solid #d6c6b8!important;border-radius:8px;padding:8px;font-size:12px}.class-catalog-trigger{cursor:help;outline-offset:3px}.class-catalog-trigger:hover{text-decoration:underline;text-underline-offset:3px}#class-catalog-tooltip{position:fixed;z-index:30000;width:min(320px,calc(100vw - 16px));box-sizing:border-box;color:#e6ded1!important;background:radial-gradient(ellipse at 75% 10%,#572322 0%,#211515 37%,#151313 75%);border:1px solid #986256;border-radius:5px;box-shadow:0 0 0 2px #2f2020,0 8px 25px #0009;pointer-events:none;font:14px/1.65 Pretendard,'Malgun Gothic',sans-serif;padding:14px;overflow:hidden}#class-catalog-tooltip *{-webkit-text-fill-color:initial!important}#class-catalog-tooltip .class-catalog-tip-head{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #795147}#class-catalog-tooltip .class-catalog-tip-head>div{flex:1;min-width:0}#class-catalog-tooltip small,#class-catalog-tooltip strong{display:block;color:#ef5953!important}#class-catalog-tooltip small{font-size:13px;margin-bottom:4px}#class-catalog-tooltip strong{font-size:18px;line-height:1.35}#class-catalog-tooltip img{width:64px;height:70px;object-fit:contain;border:1px solid #936359;flex:none}#class-catalog-tooltip .class-catalog-tip-stats{padding:12px 0;color:#e6ded1!important;font-size:14px}#class-catalog-tooltip .class-catalog-tip-foot{padding-top:10px;border-top:1px solid #795147;color:#c7b9a9!important;font-size:13px}
+</style>
+<script>        const DEFAULT_DB = {
             users: [],
             currentUser: null,
             settings: {
@@ -2524,7 +2583,7 @@ function renderClassRanking(){
         function renderItems() {
             const filtered = (currentItemCategory === '전체' ? db.items : db.items.filter(i => i.category === currentItemCategory))
                 .filter(i => itemStatusFilter === '전체' || (itemStatusFilter === '분배 대기' ? !i.distributed : !!i.distributed))
-                .filter(i => !itemSearchText || String(i.name||'').toLowerCase().includes(itemSearchText))
+                .filter(i => !itemSearchText || classCatalogSearchItem(i,itemSearchText))
                 .slice().sort((a,b) => {
                     const statusOrder = Number(!!a.distributed) - Number(!!b.distributed);
                     if (statusOrder) return statusOrder;
@@ -2576,7 +2635,7 @@ function renderClassRanking(){
                                 <div class="class-item-details">
                                     <span class="bg-slate-800 text-amber-400 px-1.5 py-0.5 rounded text-xs">${escapeDistributionText(item.category)}</span>
                                     ${item.grade || itemRarity(item.name) ? `<span class="class-item-grade text-xs font-bold ${itemRarityClass(item)}" style="color:${itemRarityColor(item)} !important;-webkit-text-fill-color:${itemRarityColor(item)} !important">[${escapeDistributionText(item.grade || itemRarity(item.name))}]</span>` : ''}
-                                    <span class="class-item-name font-bold ${itemRarityClass(item)}" style="color:${itemRarityColor(item)} !important;-webkit-text-fill-color:${itemRarityColor(item)} !important">${escapeDistributionText(itemDisplayName(item.name))}</span>
+                                    <span class="class-item-name font-bold ${itemRarityClass(item)}" style="color:${itemRarityColor(item)} !important;-webkit-text-fill-color:${itemRarityColor(item)} !important">${classCatalogNameMarkup(item)}</span>
                                     <span class="class-item-price">기준가: ${Number(item.price || 0).toLocaleString()} 다이아</span>
                                 </div>
                                 <span class="class-item-action">${adminBtn}${item.distributed ? '' : btnHtml}</span>
@@ -4149,7 +4208,7 @@ const kstWeek=calendarWeekKey();
             renderItems();
         }
         function addNewItem() {
-            const name = document.getElementById('new-item-name').value.trim();
+            const name = classCatalogFormName("new-item-name");
             const category = document.getElementById('new-item-cat').value;
             const grade = document.getElementById('new-item-grade').value;
             const price = parseInt(document.getElementById('new-item-price').value) || 0;
@@ -4160,6 +4219,7 @@ const kstWeek=calendarWeekKey();
             document.getElementById('new-item-name').value = '';
             document.getElementById('new-item-grade').value = '';
             document.getElementById('new-item-price').value = '';
+            classCatalogReset('new-item-name');
             renderAdminItemList(); renderItems();
         }
         function editAdminItem(itemId) {
@@ -6722,6 +6782,7 @@ function classV150OpenItemEdit(itemId){
   if(!item){alert('아이템을 찾을 수 없습니다.');return;}
   classV150EditingItemId=String(item.id);
   document.getElementById('class-v150-name').value=itemDisplayName(item.name);
+  classCatalogPrepareEdit(item);
   document.getElementById('class-v150-category').value=['장비','스킬북','편린','기타'].includes(item.category)?item.category:'기타';
   document.getElementById('class-v150-grade').value=item.grade||itemRarity(item.name)||'';
   document.getElementById('class-v150-price').value=Number(item.price||0);
@@ -6739,7 +6800,7 @@ async function classV150SaveItemEdit(ev){
   if(typeof isCurrentAdmin!=='function'||!isCurrentAdmin()){alert('운영진 이상만 수정할 수 있습니다.');return;}
   const item=db.items.find(i=>String(i.id)===classV150EditingItemId);
   if(!item){alert('아이템을 찾지 못했습니다.');return;}
-  const name=document.getElementById('class-v150-name').value.trim();
+  const name=classCatalogFormName("class-v150-name");
   const category=document.getElementById('class-v150-category').value;
   const grade=document.getElementById('class-v150-grade').value;
   const price=Number(document.getElementById('class-v150-price').value);

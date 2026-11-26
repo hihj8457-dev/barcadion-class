@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta name="class-build-id" content="CLASS_BUILD_20261126_V194_ITEM_COLOR">
+    <meta name="class-build-id" content="CLASS_BUILD_20261126_V195_ITEM_COLOR_FIX">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -590,7 +590,7 @@ html body #class-pages > .class-page[data-page="members"] #class-member-slot #me
 html body #app-container #class-pages #class-siege-system table.class-v45-table tbody tr.class-siege-own-row > td{background-color:#fbf0df!important;background-image:none!important}
 html body #app-container #class-pages #class-siege-system table.class-v45-table tbody tr.class-siege-own-row > td:first-child{box-shadow:inset 4px 0 0 #b58a50!important}
 </style>
-<style id="class-v194-item-color">html body #class-pages #item-market-list .class-item-name.class-rarity-heroic .class-catalog-trigger{color:#dc2626!important;-webkit-text-fill-color:#dc2626!important} </style>
+
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen"><div id="class-v131-save-indicator" role="status" aria-live="polite"></div>
 
@@ -1134,7 +1134,7 @@ function classCatalogMatch(item){
  return matches.length===1?{r:matches[0],tail:legacy[3].trim()}:null;
 }
 function classCatalogSearchItem(item,q){const m=classCatalogMatch(item);return String(item.name||'').toLowerCase().includes(q)||!!(m&&classCatalogNorm([m.r.name,m.r.type,...m.r.stats].join(' ')).includes(classCatalogNorm(q)));}
-function classCatalogNameMarkup(item){const m=classCatalogMatch(item);if(!m)return escapeDistributionText(itemDisplayName(item.name));return `<span class="class-catalog-trigger" data-catalog-id="${escapeDistributionText(m.r.id)}" tabindex="0" role="button" aria-label="${escapeDistributionText(m.r.name)} 상세 정보">${escapeDistributionText(m.r.name)}</span>${m.tail?' '+escapeDistributionText(m.tail):''}`;}
+function classCatalogNameMarkup(item){const m=classCatalogMatch(item);if(!m)return escapeDistributionText(itemDisplayName(item.name));return `<span class="class-catalog-trigger" style="color:${itemRarityColor(item)} !important;-webkit-text-fill-color:${itemRarityColor(item)} !important" data-catalog-id="${escapeDistributionText(m.r.id)}" tabindex="0" role="button" aria-label="${escapeDistributionText(m.r.name)} 상세 정보">${escapeDistributionText(m.r.name)}</span>${m.tail?' '+escapeDistributionText(m.tail):''}`;}
 function classCatalogFormName(id){const input=document.getElementById(id);const f=classCatalogForms.get(id);const name=input.value.trim();const memo=f?.memo.value.trim();return name+(memo?' '+memo:'');}
 function classCatalogReset(id){const f=classCatalogForms.get(id);if(f){f.memo.value='';f.results.hidden=true;f.status.textContent='';}}
 function classCatalogPrepareEdit(item){const f=classCatalogForms.get('class-v150-name');if(!f)return;classCatalogReset('class-v150-name');const m=classCatalogMatch(item);if(m){f.input.value=m.r.name;f.memo.value=m.tail;f.status.textContent='아이템 DB 연결 완료';}}

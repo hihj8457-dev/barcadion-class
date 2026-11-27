@@ -57,7 +57,9 @@
       "일반 공격 피해 증폭 3.4%"
     ],
     "source": "111307",
-    "row": 4
+    "row": 4,
+    "uniqueEffect": "일반 공격 적중 시 5% 확률로 공격력의 140% 추가피해 (쿨타임 1초)",
+    "uniqueName": "강철군주의 관통"
   },
   {
     "id": "hero_005",
@@ -72,7 +74,9 @@
       "일반 공격 피해 증폭 3.2%"
     ],
     "source": "111307",
-    "row": 5
+    "row": 5,
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 원거리 공격력 100% 증가 (쿨타임 30초)",
+    "uniqueName": "로얀의 혈화 사격"
   },
   {
     "id": "hero_006",
@@ -207,7 +211,9 @@
       "스킬 피해 증폭 3.4%"
     ],
     "source": "111323",
-    "row": 6
+    "row": 6,
+    "uniqueEffect": "일반 공격 적중 시 5% 확률로 공격력의 140% 추가 피해 (쿨타임 1초)",
+    "uniqueName": "고룡 말살자의 표식"
   },
   {
     "id": "hero_015",
@@ -222,7 +228,9 @@
       "스킬 피해 증폭 3.2%"
     ],
     "source": "111323",
-    "row": 7
+    "row": 7,
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 원거리 공격력 100% 증가 (쿨타임 30초)",
+    "uniqueName": "평의회의 결속 사격"
   },
   {
     "id": "hero_016",
@@ -357,7 +365,9 @@
       "피해 증폭 저항 1.7%"
     ],
     "source": "111437",
-    "row": 8
+    "row": 8,
+    "uniqueEffect": "일반 공격 적중 시 5% 확률로 공격력의 140% 추가피해 (쿨타임 1초)",
+    "uniqueName": "발칸의 신혈 각성"
   },
   {
     "id": "hero_025",
@@ -372,7 +382,9 @@
       "피해 증폭 저항 1.6%"
     ],
     "source": "111454",
-    "row": 1
+    "row": 1,
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 방어력 90, 피해감소 5 증가 (쿨타임 30초)",
+    "uniqueName": "구원의 성광"
   },
   {
     "id": "hero_026",
@@ -522,7 +534,9 @@
       "근거리 피해 증폭 1.7%"
     ],
     "source": "111509",
-    "row": 3
+    "row": 3,
+    "uniqueEffect": "일반 공격 적중 시 5% 확률로 공격력의 140% 추가 피해 (쿨타임 1초)",
+    "uniqueName": "황제 칙령"
   },
   {
     "id": "hero_036",
@@ -537,7 +551,9 @@
       "근거리 피해 증폭 1.6%"
     ],
     "source": "111509",
-    "row": 4
+    "row": 4,
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 근거리 공격력 100 증가 (쿨타임 30초)",
+    "uniqueName": "절대왕의 위엄"
   },
   {
     "id": "hero_037",
@@ -687,7 +703,9 @@
       "마법 피해 증폭 1.7%"
     ],
     "source": "111520",
-    "row": 6
+    "row": 6,
+    "uniqueEffect": "일반 공격 적중 시 5% 확률로 공격력의 140% 추가 피해 (쿨타임 1초)",
+    "uniqueName": "수호자의 결계"
   },
   {
     "id": "hero_047",
@@ -702,7 +720,9 @@
       "마법 피해 증폭 1.6%"
     ],
     "source": "111520",
-    "row": 7
+    "row": 7,
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 마법 공격력 100 증가 (쿨타임 30초)",
+    "uniqueName": "은밀한 축복"
   },
   {
     "id": "hero_048",
@@ -840,6 +860,21 @@
     "row": 8
   },
   {
+    "id": "hero_unique_endigonel",
+    "name": "서약의 엔디고넬 마법구",
+    "grade": "영웅",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/hero_unique_endigonel.webp",
+    "stats": [
+      "마법 공격력 934",
+      "피해 감소 17",
+      "스킬 쿨타임 감소 3.4%"
+    ],
+    "uniqueEffect": "일반 공격 적중 시 5% 확률로 공격력의 140% 추가 피해 (쿨타임 1초)",
+    "uniqueName": "심장 공명"
+  },
+  {
     "id": "hero_057",
     "name": "맹세의 오세르넬 마법구",
     "grade": "영웅",
@@ -852,7 +887,9 @@
       "스킬 쿨타임 감소 3.2%"
     ],
     "source": "111550",
-    "row": 1
+    "row": 1,
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 마법 공격력 100 증가 (쿨타임 30초)",
+    "uniqueName": "타타라의 염원 방출"
   },
   {
     "id": "hero_058",
@@ -1002,7 +1039,9 @@
       "관통 119"
     ],
     "source": "111604",
-    "row": 3
+    "row": 3,
+    "uniqueEffect": "일반 공격 적중 시 5% 확률로 공격력의 140% 추가 피해 (쿨타임 1초)",
+    "uniqueName": "섬광 일도양단"
   },
   {
     "id": "hero_068",
@@ -1017,7 +1056,9 @@
       "관통 113"
     ],
     "source": "111604",
-    "row": 4
+    "row": 4,
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 근거리 공격력 100 증가 (쿨타임 30초)",
+    "uniqueName": "순참의 형"
   },
   {
     "id": "hero_069",
@@ -1167,7 +1208,9 @@
       "치명타 피해 7.4%"
     ],
     "source": "111617",
-    "row": 6
+    "row": 6,
+    "uniqueEffect": "일반 공격 적중 시 5% 확률로 공격력의 140% 추가 피해 (쿨타임 1초)",
+    "uniqueName": "그림자 난무"
   },
   {
     "id": "hero_079",
@@ -1182,7 +1225,9 @@
       "치명타 피해 7%"
     ],
     "source": "111617",
-    "row": 7
+    "row": 7,
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 근거리 공격력 100 증가 (쿨타임 30초)",
+    "uniqueName": "연속 암살"
   },
   {
     "id": "hero_080",
@@ -1428,7 +1473,8 @@
       "원거리 치명타 저항 254"
     ],
     "source": "111735",
-    "row": 1
+    "row": 1,
+    "uniqueEffect": "근거리 관통 저항 20"
   },
   {
     "id": "hero_097",
@@ -1442,7 +1488,8 @@
       "마법 치명타 저항 254"
     ],
     "source": "111735",
-    "row": 2
+    "row": 2,
+    "uniqueEffect": "원거리 관통 저항 20"
   },
   {
     "id": "hero_098",
@@ -1456,7 +1503,8 @@
       "근거리 치명타 저항 254"
     ],
     "source": "111735",
-    "row": 3
+    "row": 3,
+    "uniqueEffect": "마법 관통 저항 20"
   },
   {
     "id": "hero_099",
@@ -1470,7 +1518,8 @@
       "원거리 치명타 저항 240"
     ],
     "source": "111735",
-    "row": 4
+    "row": 4,
+    "uniqueEffect": "근거리 회피 20"
   },
   {
     "id": "hero_100",
@@ -1484,7 +1533,8 @@
       "마법 치명타 저항 240"
     ],
     "source": "111735",
-    "row": 5
+    "row": 5,
+    "uniqueEffect": "원거리 회피 20"
   },
   {
     "id": "hero_101",
@@ -1498,7 +1548,8 @@
       "근거리 치명타 저항 240"
     ],
     "source": "111735",
-    "row": 6
+    "row": 6,
+    "uniqueEffect": "마법 회피 20"
   },
   {
     "id": "hero_102",
@@ -1918,7 +1969,8 @@
       "원거리 관통 저항 40"
     ],
     "source": "111929",
-    "row": 4
+    "row": 4,
+    "uniqueEffect": "근거리 피해 감소 5"
   },
   {
     "id": "hero_132",
@@ -1932,7 +1984,8 @@
       "마법 관통 저항 40"
     ],
     "source": "111929",
-    "row": 5
+    "row": 5,
+    "uniqueEffect": "원거리 피해 감소 5"
   },
   {
     "id": "hero_133",
@@ -1946,7 +1999,8 @@
       "근거리 관통 저항 40"
     ],
     "source": "111929",
-    "row": 6
+    "row": 6,
+    "uniqueEffect": "마법 피해 감소 5"
   },
   {
     "id": "hero_134",
@@ -1960,7 +2014,8 @@
       "원거리 관통 저항 38"
     ],
     "source": "111929",
-    "row": 7
+    "row": 7,
+    "uniqueEffect": "근거리 방어력 30"
   },
   {
     "id": "hero_135",
@@ -1974,7 +2029,8 @@
       "마법 관통 저항 38"
     ],
     "source": "111929",
-    "row": 8
+    "row": 8,
+    "uniqueEffect": "원거리 방어력 30"
   },
   {
     "id": "hero_136",
@@ -1988,7 +2044,8 @@
       "근거리 관통 저항 38"
     ],
     "source": "111942",
-    "row": 1
+    "row": 1,
+    "uniqueEffect": "마법 방어력 30"
   },
   {
     "id": "hero_137",
@@ -2408,7 +2465,8 @@
       "원거리 치명타 피해 감소 4.33%"
     ],
     "source": "112022",
-    "row": 7
+    "row": 7,
+    "uniqueEffect": "근거리 피해 감소 5"
   },
   {
     "id": "hero_167",
@@ -2422,7 +2480,8 @@
       "마법 치명타 피해 감소 4.33%"
     ],
     "source": "112022",
-    "row": 8
+    "row": 8,
+    "uniqueEffect": "원거리 피해 감소 5"
   },
   {
     "id": "hero_168",
@@ -2436,7 +2495,8 @@
       "근거리 치명타 피해 감소 4.33%"
     ],
     "source": "112036",
-    "row": 1
+    "row": 1,
+    "uniqueEffect": "마법 피해 감소 5"
   },
   {
     "id": "hero_169",
@@ -2450,7 +2510,8 @@
       "원거리 치명타 피해 감소 4.14%"
     ],
     "source": "112036",
-    "row": 2
+    "row": 2,
+    "uniqueEffect": "근거리 방어력 30"
   },
   {
     "id": "hero_170",
@@ -2464,7 +2525,8 @@
       "마법 치명타 피해 감소 4.14%"
     ],
     "source": "112036",
-    "row": 3
+    "row": 3,
+    "uniqueEffect": "원거리 방어력 30"
   },
   {
     "id": "hero_171",
@@ -2478,7 +2540,8 @@
       "근거리 치명타 피해 감소 4.14%"
     ],
     "source": "112036",
-    "row": 4
+    "row": 4,
+    "uniqueEffect": "마법 방어력 30"
   },
   {
     "id": "hero_172",
@@ -2884,7 +2947,8 @@
       "관통 40"
     ],
     "source": "112121",
-    "row": 1
+    "row": 1,
+    "uniqueEffect": "근거리 명중 25"
   },
   {
     "id": "hero_201",
@@ -2898,7 +2962,8 @@
       "일반 공격 피해 증폭 1.3%"
     ],
     "source": "112121",
-    "row": 2
+    "row": 2,
+    "uniqueEffect": "원거리 명중 25"
   },
   {
     "id": "hero_202",
@@ -2912,7 +2977,8 @@
       "스킬 피해 증폭 1.3%"
     ],
     "source": "112121",
-    "row": 3
+    "row": 3,
+    "uniqueEffect": "마법 명중 25"
   },
   {
     "id": "hero_203",
@@ -2926,7 +2992,8 @@
       "관통 38"
     ],
     "source": "112121",
-    "row": 4
+    "row": 4,
+    "uniqueEffect": "근거리 공격력 20"
   },
   {
     "id": "hero_204",
@@ -2940,7 +3007,8 @@
       "일반 공격 피해 증폭 1.2%"
     ],
     "source": "112121",
-    "row": 5
+    "row": 5,
+    "uniqueEffect": "원거리 공격력 20"
   },
   {
     "id": "hero_205",
@@ -2954,7 +3022,8 @@
       "스킬 피해 증폭 1.2%"
     ],
     "source": "112121",
-    "row": 6
+    "row": 6,
+    "uniqueEffect": "마법 공격력 20"
   },
   {
     "id": "hero_206",
@@ -3364,7 +3433,7 @@
   },
   {
     "id": "hero_235",
-    "name": "서약의 스케일렌 철갑부츠",
+    "name": "서약의 스퀘일렌 철갑부츠",
     "grade": "영웅",
     "category": "방어구",
     "type": "신발",
@@ -3374,7 +3443,8 @@
       "원거리 피해 감소 11"
     ],
     "source": "112214",
-    "row": 4
+    "row": 4,
+    "uniqueEffect": "근거리 치명타 저항 40"
   },
   {
     "id": "hero_236",
@@ -3388,7 +3458,8 @@
       "마법 피해 감소 11"
     ],
     "source": "112214",
-    "row": 5
+    "row": 5,
+    "uniqueEffect": "원거리 치명타 저항 40"
   },
   {
     "id": "hero_237",
@@ -3402,7 +3473,8 @@
       "근거리 피해 감소 11"
     ],
     "source": "112214",
-    "row": 6
+    "row": 6,
+    "uniqueEffect": "마법 치명타 저항 40"
   },
   {
     "id": "hero_238",
@@ -3416,7 +3488,8 @@
       "원거리 피해 감소 11"
     ],
     "source": "112214",
-    "row": 7
+    "row": 7,
+    "uniqueEffect": "근거리 관통 저항 15"
   },
   {
     "id": "hero_239",
@@ -3430,7 +3503,8 @@
       "마법 피해 감소 11"
     ],
     "source": "112214",
-    "row": 8
+    "row": 8,
+    "uniqueEffect": "원거리 관통 저항 15"
   },
   {
     "id": "hero_armor_b2_001",
@@ -3445,7 +3519,8 @@
     ],
     "source": "image(20261126-112257).webp",
     "row": 1,
-    "review_required": false
+    "review_required": false,
+    "uniqueEffect": "마법 관통 저항 15"
   },
   {
     "id": "hero_armor_b2_002",
@@ -3895,7 +3970,8 @@
     ],
     "source": "image(20261126-112337).webp",
     "row": 7,
-    "review_required": false
+    "review_required": false,
+    "uniqueEffect": "근거리 치명타 피해 감소 1%"
   },
   {
     "id": "hero_armor_b2_032",
@@ -3910,7 +3986,8 @@
     ],
     "source": "image(20261126-112337).webp",
     "row": 8,
-    "review_required": false
+    "review_required": false,
+    "uniqueEffect": "원거리 치명타 피해 감소 1%"
   },
   {
     "id": "hero_armor_b2_033",
@@ -3925,7 +4002,8 @@
     ],
     "source": "image(20261126-112420).webp",
     "row": 1,
-    "review_required": false
+    "review_required": false,
+    "uniqueEffect": "마법 치명타 피해 감소 1%"
   },
   {
     "id": "hero_armor_b2_034",
@@ -3940,7 +4018,8 @@
     ],
     "source": "image(20261126-112420).webp",
     "row": 2,
-    "review_required": false
+    "review_required": false,
+    "uniqueEffect": "근거리 회피 20"
   },
   {
     "id": "hero_armor_b2_035",
@@ -3955,7 +4034,8 @@
     ],
     "source": "image(20261126-112420).webp",
     "row": 3,
-    "review_required": false
+    "review_required": false,
+    "uniqueEffect": "원거리 회피 20"
   },
   {
     "id": "hero_armor_b2_036",
@@ -3970,7 +4050,8 @@
     ],
     "source": "image(20261126-112420).webp",
     "row": 4,
-    "review_required": false
+    "review_required": false,
+    "uniqueEffect": "마법 회피 20"
   },
   {
     "id": "hero_armor_b2_037",
@@ -4404,7 +4485,8 @@
       "피해 감소 24"
     ],
     "source": "140453",
-    "row": 8
+    "row": 8,
+    "uniqueEffect": "근거리 치명타 피해 1%"
   },
   {
     "id": "hero_accessory_009",
@@ -4417,7 +4499,8 @@
       "피해 감소 24"
     ],
     "source": "140504",
-    "row": 1
+    "row": 1,
+    "uniqueEffect": "원거리 치명타 피해 1%"
   },
   {
     "id": "hero_accessory_010",
@@ -4430,7 +4513,8 @@
       "피해 감소 24"
     ],
     "source": "140504",
-    "row": 2
+    "row": 2,
+    "uniqueEffect": "마법 치명타 피해 1%"
   },
   {
     "id": "hero_accessory_011",
@@ -4443,7 +4527,8 @@
       "피해 감소 22"
     ],
     "source": "140504",
-    "row": 3
+    "row": 3,
+    "uniqueEffect": "근거리 치명타 50"
   },
   {
     "id": "hero_accessory_012",
@@ -4456,7 +4541,8 @@
       "피해 감소 22"
     ],
     "source": "140504",
-    "row": 4
+    "row": 4,
+    "uniqueEffect": "원거리 치명타 50"
   },
   {
     "id": "hero_accessory_013",
@@ -4469,7 +4555,8 @@
       "피해 감소 22"
     ],
     "source": "140504",
-    "row": 5
+    "row": 5,
+    "uniqueEffect": "마법 치명타 50"
   },
   {
     "id": "hero_accessory_014",
@@ -4599,7 +4686,8 @@
       "최대 MP 1,760"
     ],
     "source": "140517",
-    "row": 7
+    "row": 7,
+    "uniqueEffect": "근거리 피해 증폭 1%"
   },
   {
     "id": "hero_accessory_024",
@@ -4612,7 +4700,8 @@
       "최대 MP 1,760"
     ],
     "source": "140517",
-    "row": 8
+    "row": 8,
+    "uniqueEffect": "원거리 피해 증폭 1%"
   },
   {
     "id": "hero_accessory_025",
@@ -4625,7 +4714,8 @@
       "최대 MP 1,760"
     ],
     "source": "140528",
-    "row": 1
+    "row": 1,
+    "uniqueEffect": "마법 피해 증폭 1%"
   },
   {
     "id": "hero_accessory_026",
@@ -4638,7 +4728,8 @@
       "최대 MP 1,600"
     ],
     "source": "140528",
-    "row": 2
+    "row": 2,
+    "uniqueEffect": "근거리 관통 20"
   },
   {
     "id": "hero_accessory_027",
@@ -4651,7 +4742,8 @@
       "최대 MP 1,600"
     ],
     "source": "140528",
-    "row": 3
+    "row": 3,
+    "uniqueEffect": "원거리 관통 20"
   },
   {
     "id": "hero_accessory_028",
@@ -4664,7 +4756,8 @@
       "최대 MP 1,600"
     ],
     "source": "140528",
-    "row": 4
+    "row": 4,
+    "uniqueEffect": "마법 관통 20"
   },
   {
     "id": "hero_accessory_029",
@@ -4794,7 +4887,9 @@
       "피해 감소 무시 22"
     ],
     "source": "140541",
-    "row": 6
+    "row": 6,
+    "uniqueEffect": "공격 적중 시 5% 확률로 5초 동안 관통 50 증가 (쿨타임 23초)",
+    "uniqueName": "평의장 권위"
   },
   {
     "id": "hero_accessory_039",
@@ -4807,7 +4902,9 @@
       "피해 감소 무시 22"
     ],
     "source": "140541",
-    "row": 7
+    "row": 7,
+    "uniqueEffect": "공격 적중 시 5% 확률로 5초 동안 공격 속도 5%, 시전 속도 3.5% 증가 (쿨타임 23초)",
+    "uniqueName": "계승자의 맹약"
   },
   {
     "id": "hero_accessory_040",
@@ -4820,7 +4917,9 @@
       "피해 감소 무시 22"
     ],
     "source": "140541",
-    "row": 8
+    "row": 8,
+    "uniqueEffect": "공격 적중 시 5% 확률로 5초 동안 치명타 피해 4.5% 증가 (쿨타임 23초)",
+    "uniqueName": "영혼의 연합"
   },
   {
     "id": "hero_accessory_041",
@@ -4833,7 +4932,9 @@
       "피해 감소 무시 20"
     ],
     "source": "140610",
-    "row": 1
+    "row": 1,
+    "uniqueEffect": "공격 적중 시 5% 확률로 5초 동안 관통 35 증가 (쿨타임 23초)",
+    "uniqueName": "절대자의 명령"
   },
   {
     "id": "hero_accessory_042",
@@ -4846,7 +4947,9 @@
       "피해 감소 무시 20"
     ],
     "source": "140610",
-    "row": 2
+    "row": 2,
+    "uniqueEffect": "공격 적중 시 5% 확률로 5초 동안 공격 속도 3.5%, 시전 속도 2% 증가 (쿨타임 23초)",
+    "uniqueName": "레스보스의 성은"
   },
   {
     "id": "hero_accessory_043",
@@ -4859,7 +4962,9 @@
       "피해 감소 무시 20"
     ],
     "source": "140610",
-    "row": 3
+    "row": 3,
+    "uniqueEffect": "공격 적중 시 5% 확률로 5초 동안 치명타 피해 3% 증가 (쿨타임 23초)",
+    "uniqueName": "정령 동조"
   },
   {
     "id": "hero_accessory_044",
@@ -4976,7 +5081,9 @@
       "최대 HP 7,682"
     ],
     "source": "140622",
-    "row": 4
+    "row": 4,
+    "uniqueEffect": "피격 시 5% 확률로 7초 동안 회피 45 증가 (쿨타임 30초)",
+    "uniqueName": "성왕의 제압"
   },
   {
     "id": "hero_accessory_053",
@@ -4989,7 +5096,9 @@
       "최대 HP 7,682"
     ],
     "source": "140622",
-    "row": 5
+    "row": 5,
+    "uniqueEffect": "피격 시 5% 확률로 7초 동안 상태 이상 저항 3%, 이동 속도 5% 증가 (쿨타임 30초)",
+    "uniqueName": "대관의 순간"
   },
   {
     "id": "hero_accessory_054",
@@ -5002,7 +5111,9 @@
       "최대 HP 7,682"
     ],
     "source": "140622",
-    "row": 6
+    "row": 6,
+    "uniqueEffect": "피격 시 5% 확률로 HP 400 회복 (쿨타임 30초)",
+    "uniqueName": "성역 수호"
   },
   {
     "id": "hero_accessory_055",
@@ -5015,7 +5126,9 @@
       "최대 HP 6,984"
     ],
     "source": "140622",
-    "row": 7
+    "row": 7,
+    "uniqueEffect": "피격 시 5% 확률로 7초 동안 회피 30 증가 (쿨타임 30초)",
+    "uniqueName": "레스보스의 권좌"
   },
   {
     "id": "hero_accessory_056",
@@ -5028,7 +5141,9 @@
       "최대 HP 6,984"
     ],
     "source": "140622",
-    "row": 8
+    "row": 8,
+    "uniqueEffect": "피격 시 5% 확률로 7초 동안 상태 이상 저항 2%, 이동 속도 3% 증가 (쿨타임 30초)",
+    "uniqueName": "야브라임의 축복"
   },
   {
     "id": "hero_accessory_057",
@@ -5041,7 +5156,9 @@
       "최대 HP 6,984"
     ],
     "source": "140631",
-    "row": 1
+    "row": 1,
+    "uniqueEffect": "피격 시 5% 확률로 HP 400 회복 (쿨타임 30초)",
+    "uniqueName": "대지 생명순환"
   },
   {
     "id": "hero_accessory_058",

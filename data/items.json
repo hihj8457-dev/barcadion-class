@@ -5822,5 +5822,1886 @@
     "category": "스킬북",
     "stats": [],
     "icon": "assets/skills/fighter_13_icon.webp"
+  },
+  {
+    "id": "legend_001",
+    "name": "심판의 라디아스 활",
+    "grade": "전설",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/legend_001.webp",
+    "stats": [
+      "원거리 공격력 1,450",
+      "원거리 피해 감소 무시 28",
+      "일반 공격 피해 증폭 5.6%"
+    ],
+    "uniqueName": "신단의 대축 사도",
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 원거리 공격력 150, 일반 공격 피해 증폭 3% 증가 (쿨타임 30초)",
+    "isUnique": true
+  },
+  {
+    "id": "legend_002",
+    "name": "세라피카 활",
+    "grade": "전설",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/legend_002.webp",
+    "stats": [
+      "원거리 공격력 1,232",
+      "원거리 피해 감소 무시 24",
+      "일반 공격 피해 증폭 4.7%"
+    ]
+  },
+  {
+    "id": "legend_003",
+    "name": "에스펙트라 활",
+    "grade": "전설",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/legend_003.webp",
+    "stats": [
+      "원거리 공격력 1,123",
+      "원거리 피해 감소 무시 22",
+      "일반 공격 피해 증폭 4.3%"
+    ]
+  },
+  {
+    "id": "legend_004",
+    "name": "파빌라 활",
+    "grade": "전설",
+    "category": "무기",
+    "type": "활",
+    "icon": "assets/items/legend_004.webp",
+    "stats": [
+      "원거리 공격력 1,014",
+      "원거리 피해 감소 무시 19",
+      "일반 공격 피해 증폭 3.9%"
+    ]
+  },
+  {
+    "id": "legend_005",
+    "name": "심판의 셀테로 석궁",
+    "grade": "전설",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/legend_005.webp",
+    "stats": [
+      "원거리 공격력 1,450",
+      "원거리 피해 감소 무시 28",
+      "스킬 피해 증폭 5.6%"
+    ],
+    "uniqueName": "대축 성역 관통",
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 원거리 공격력 150, 스킬 피해 증폭 3% 증가 (쿨타임 30초)",
+    "isUnique": true
+  },
+  {
+    "id": "legend_006",
+    "name": "데모니르 석궁",
+    "grade": "전설",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/legend_006.webp",
+    "stats": [
+      "원거리 공격력 1,232",
+      "원거리 피해 감소 무시 24",
+      "스킬 피해 증폭 4.7%"
+    ]
+  },
+  {
+    "id": "legend_007",
+    "name": "비스세라 석궁",
+    "grade": "전설",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/legend_007.webp",
+    "stats": [
+      "원거리 공격력 1,123",
+      "원거리 피해 감소 무시 22",
+      "스킬 피해 증폭 4.3%"
+    ]
+  },
+  {
+    "id": "legend_008",
+    "name": "셀레스티아 석궁",
+    "grade": "전설",
+    "category": "무기",
+    "type": "석궁",
+    "icon": "assets/items/legend_008.webp",
+    "stats": [
+      "원거리 공격력 1,014",
+      "원거리 피해 감소 무시 19",
+      "스킬 피해 증폭 3.9%"
+    ]
+  },
+  {
+    "id": "legend_009",
+    "name": "심판의 브란드 검",
+    "grade": "전설",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/legend_009.webp",
+    "stats": [
+      "근거리 공격력 1,484",
+      "피해 감소 38",
+      "피해 증폭 저항 2.8%"
+    ],
+    "uniqueName": "성혼의 파열",
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 방어력 130, 피해 감소 10, 피해 증폭 저항 3% 증가 (쿨타임 30초)",
+    "isUnique": true
+  },
+  {
+    "id": "legend_010",
+    "name": "헬가르트 검",
+    "grade": "전설",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/legend_010.webp",
+    "stats": [
+      "근거리 공격력 1,260",
+      "피해 감소 33",
+      "피해 증폭 저항 2.4%"
+    ]
+  },
+  {
+    "id": "legend_011",
+    "name": "콘가르 검",
+    "grade": "전설",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/legend_011.webp",
+    "stats": [
+      "근거리 공격력 1,149",
+      "피해 감소 30",
+      "피해 증폭 저항 2.2%"
+    ]
+  },
+  {
+    "id": "legend_012",
+    "name": "린드브룸 검",
+    "grade": "전설",
+    "category": "무기",
+    "type": "한손검",
+    "icon": "assets/items/legend_012.webp",
+    "stats": [
+      "근거리 공격력 1,037",
+      "피해 감소 26",
+      "피해 증폭 저항 2%"
+    ]
+  },
+  {
+    "id": "legend_013",
+    "name": "심판의 아라투 대검",
+    "grade": "전설",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/legend_013.webp",
+    "stats": [
+      "근거리 공격력 1,562",
+      "근거리 피해 감소 무시 38",
+      "근거리 피해 증폭 2.8%"
+    ],
+    "uniqueName": "신단 초월의 일격",
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 근거리 공격력 150, 스킬 피해 증폭 3% 증가 (쿨타임 30초)",
+    "isUnique": true
+  },
+  {
+    "id": "legend_014",
+    "name": "빌트크랄 대검",
+    "grade": "전설",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/legend_014.webp",
+    "stats": [
+      "근거리 공격력 1,327",
+      "근거리 피해 감소 무시 33",
+      "근거리 피해 증폭 2.4%"
+    ]
+  },
+  {
+    "id": "legend_015",
+    "name": "골트헤른 대검",
+    "grade": "전설",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/legend_015.webp",
+    "stats": [
+      "근거리 공격력 1,210",
+      "근거리 피해 감소 무시 30",
+      "근거리 피해 증폭 2.2%"
+    ]
+  },
+  {
+    "id": "legend_016",
+    "name": "룬발트 대검",
+    "grade": "전설",
+    "category": "무기",
+    "type": "대검",
+    "icon": "assets/items/legend_016.webp",
+    "stats": [
+      "근거리 공격력 1,092",
+      "근거리 피해 감소 무시 26",
+      "근거리 피해 증폭 2%"
+    ]
+  },
+  {
+    "id": "legend_017",
+    "name": "심판의 토퀘르엘 지팡이",
+    "grade": "전설",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/legend_017.webp",
+    "stats": [
+      "마법 공격력 1,525",
+      "마법 피해 감소 무시 28",
+      "마법 피해 증폭 2.8%"
+    ],
+    "uniqueName": "성왕의 관철",
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 마법 공격력 150, 스킬 피해 증폭 3% 증가 (쿨타임 30초)",
+    "isUnique": true
+  },
+  {
+    "id": "legend_018",
+    "name": "에벤타넬 지팡이",
+    "grade": "전설",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/legend_018.webp",
+    "stats": [
+      "마법 공격력 1,295",
+      "마법 피해 감소 무시 24",
+      "마법 피해 증폭 2.4%"
+    ]
+  },
+  {
+    "id": "legend_019",
+    "name": "브뤼르넬 지팡이",
+    "grade": "전설",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/legend_019.webp",
+    "stats": [
+      "마법 공격력 1,180",
+      "마법 피해 감소 무시 22",
+      "마법 피해 증폭 2.2%"
+    ]
+  },
+  {
+    "id": "legend_020",
+    "name": "글라시엘 지팡이",
+    "grade": "전설",
+    "category": "무기",
+    "type": "지팡이",
+    "icon": "assets/items/legend_020.webp",
+    "stats": [
+      "마법 공격력 1,066",
+      "마법 피해 감소 무시 19",
+      "마법 피해 증폭 2%"
+    ]
+  },
+  {
+    "id": "legend_021",
+    "name": "심판의 루이넬 마법구",
+    "grade": "전설",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/legend_021.webp",
+    "stats": [
+      "마법 공격력 1,525",
+      "피해 감소 28",
+      "스킬 쿨타임 감소 5.6%"
+    ],
+    "uniqueName": "대지의 맥동",
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 마법 공격력 150, 일반 공격 피해 증폭 3% 증가 (쿨타임 30초)",
+    "isUnique": true
+  },
+  {
+    "id": "legend_022",
+    "name": "프리므젤 마법구",
+    "grade": "전설",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/legend_022.webp",
+    "stats": [
+      "마법 공격력 1,295",
+      "피해 감소 24",
+      "스킬 쿨타임 감소 4.7%"
+    ]
+  },
+  {
+    "id": "legend_023",
+    "name": "브레시르 마법구",
+    "grade": "전설",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/legend_023.webp",
+    "stats": [
+      "마법 공격력 1,180",
+      "피해 감소 22",
+      "스킬 쿨타임 감소 4.3%"
+    ]
+  },
+  {
+    "id": "legend_024",
+    "name": "베르투아 마법구",
+    "grade": "전설",
+    "category": "무기",
+    "type": "마법구",
+    "icon": "assets/items/legend_024.webp",
+    "stats": [
+      "마법 공격력 1,066",
+      "피해 감소 19",
+      "스킬 쿨타임 감소 3.9%"
+    ]
+  },
+  {
+    "id": "legend_025",
+    "name": "심판의 라이센 카타나",
+    "grade": "전설",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/legend_025.webp",
+    "stats": [
+      "근거리 공격력 1,562",
+      "근거리 피해 감소 무시 23",
+      "관통 195"
+    ],
+    "uniqueName": "검혼 각성",
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 근거리 공격력 150, 일반 공격 피해 증폭 3% 증가 (쿨타임 30초)",
+    "isUnique": true
+  },
+  {
+    "id": "legend_026",
+    "name": "프리겐 카타나",
+    "grade": "전설",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/legend_026.webp",
+    "stats": [
+      "근거리 공격력 1,327",
+      "근거리 피해 감소 무시 20",
+      "관통 165"
+    ]
+  },
+  {
+    "id": "legend_027",
+    "name": "글렌트 카타나",
+    "grade": "전설",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/legend_027.webp",
+    "stats": [
+      "근거리 공격력 1,210",
+      "근거리 피해 감소 무시 18",
+      "관통 151"
+    ]
+  },
+  {
+    "id": "legend_028",
+    "name": "에들릭 카타나",
+    "grade": "전설",
+    "category": "무기",
+    "type": "카타나",
+    "icon": "assets/items/legend_028.webp",
+    "stats": [
+      "근거리 공격력 1,092",
+      "근거리 피해 감소 무시 16",
+      "관통 136"
+    ]
+  },
+  {
+    "id": "legend_029",
+    "name": "심판의 코로드 쌍단검",
+    "grade": "전설",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/legend_029.webp",
+    "stats": [
+      "근거리 공격력 1,562",
+      "근거리 피해 감소 무시 38",
+      "치명타 피해 12.1%"
+    ],
+    "uniqueName": "피의 교차점",
+    "uniqueEffect": "일반 공격 적중 시 10% 확률로 7초 동안 근거리 공격력 150, 스킬 피해 증폭 3% 증가 (쿨타임 30초)",
+    "isUnique": true
+  },
+  {
+    "id": "legend_030",
+    "name": "블라센 쌍단검",
+    "grade": "전설",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/legend_030.webp",
+    "stats": [
+      "근거리 공격력 1,327",
+      "근거리 피해 감소 무시 33",
+      "치명타 피해 10.3%"
+    ]
+  },
+  {
+    "id": "legend_031",
+    "name": "그렐든 쌍단검",
+    "grade": "전설",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/legend_031.webp",
+    "stats": [
+      "근거리 공격력 1,210",
+      "근거리 피해 감소 무시 30",
+      "치명타 피해 9.4%"
+    ]
+  },
+  {
+    "id": "legend_032",
+    "name": "실브렌 쌍단검",
+    "grade": "전설",
+    "category": "무기",
+    "type": "쌍단검",
+    "icon": "assets/items/legend_032.webp",
+    "stats": [
+      "근거리 공격력 1,092",
+      "근거리 피해 감소 무시 26",
+      "치명타 피해 8.5%"
+    ]
+  },
+  {
+    "id": "legend_033",
+    "name": "우르발트 뼈왕관 두건",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/legend_033.webp",
+    "stats": [
+      "방어력 446",
+      "원거리 치명타 저항 416"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_034",
+    "name": "아스테렌 성월 두건",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/legend_034.webp",
+    "stats": [
+      "방어력 446",
+      "마법 치명타 저항 416"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_035",
+    "name": "움브란 가죽 투구",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/legend_035.webp",
+    "stats": [
+      "방어력 446",
+      "마법 치명타 저항 416"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_036",
+    "name": "둠카렌 쌍각 투구",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/legend_036.webp",
+    "stats": [
+      "방어력 446",
+      "근거리 치명타 저항 416"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_037",
+    "name": "심판의 아우리펜스 면갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/legend_037.webp",
+    "stats": [
+      "방어력 446",
+      "원거리 치명타 저항 416"
+    ],
+    "uniqueEffect": "근거리 회피 40, 상태 이상 저항 1%",
+    "isUnique": true
+  },
+  {
+    "id": "legend_038",
+    "name": "심판의 아르카디스 투구",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/legend_038.webp",
+    "stats": [
+      "방어력 446",
+      "마법 치명타 저항 416"
+    ],
+    "uniqueEffect": "원거리 회피 40, 상태 이상 저항 1%",
+    "isUnique": true
+  },
+  {
+    "id": "legend_039",
+    "name": "심판의 아메시온 가시관모",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/legend_039.webp",
+    "stats": [
+      "방어력 446",
+      "근거리 치명타 저항 416"
+    ],
+    "uniqueEffect": "마법 회피 40, 상태 이상 저항 1%",
+    "isUnique": true
+  },
+  {
+    "id": "legend_040",
+    "name": "코르나리스 면갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/legend_040.webp",
+    "stats": [
+      "방어력 345",
+      "원거리 치명타 저항 322"
+    ]
+  },
+  {
+    "id": "legend_041",
+    "name": "나크리온 투구",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/legend_041.webp",
+    "stats": [
+      "방어력 345",
+      "마법 치명타 저항 322"
+    ]
+  },
+  {
+    "id": "legend_042",
+    "name": "노크투스 탑햇",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/legend_042.webp",
+    "stats": [
+      "방어력 345",
+      "근거리 치명타 저항 322"
+    ]
+  },
+  {
+    "id": "legend_043",
+    "name": "라피나스 면갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/legend_043.webp",
+    "stats": [
+      "방어력 312",
+      "원거리 치명타 저항 290"
+    ]
+  },
+  {
+    "id": "legend_044",
+    "name": "도르나크 투구",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/legend_044.webp",
+    "stats": [
+      "방어력 312",
+      "마법 치명타 저항 290"
+    ]
+  },
+  {
+    "id": "legend_045",
+    "name": "루나비스 터번",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "투구",
+    "icon": "assets/items/legend_045.webp",
+    "stats": [
+      "방어력 312",
+      "근거리 치명타 저항 290"
+    ]
+  },
+  {
+    "id": "legend_046",
+    "name": "우르발트 메달리온 흉갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/legend_046.webp",
+    "stats": [
+      "방어력 669",
+      "원거리 관통 저항 65"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_047",
+    "name": "아스테렌 쌍월 도포",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/legend_047.webp",
+    "stats": [
+      "방어력 669",
+      "마법 관통 저항 65"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_048",
+    "name": "움브란 녹문 가죽 흉갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/legend_048.webp",
+    "stats": [
+      "방어력 669",
+      "마법 관통 저항 65"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_049",
+    "name": "둠카렌 청석 흉갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/legend_049.webp",
+    "stats": [
+      "방어력 669",
+      "근거리 관통 저항 65"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_050",
+    "name": "심판의 모르디칸 흉갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/legend_050.webp",
+    "stats": [
+      "방어력 669",
+      "원거리 관통 저항 65"
+    ],
+    "uniqueEffect": "근거리 피해 증폭 저항 1.5%, 근거리 방어력 40",
+    "isUnique": true
+  },
+  {
+    "id": "legend_051",
+    "name": "심판의 레오니쿠스 의전복",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/legend_051.webp",
+    "stats": [
+      "방어력 669",
+      "마법 관통 저항 65"
+    ],
+    "uniqueEffect": "원거리 피해 증폭 저항 1.5%, 원거리 방어력 40",
+    "isUnique": true,
+    "aliases": [
+      "심판의 레오니쿠 의전복"
+    ]
+  },
+  {
+    "id": "legend_052",
+    "name": "심판의 벨리칸 전투복",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/legend_052.webp",
+    "stats": [
+      "방어력 669",
+      "근거리 관통 저항 65"
+    ],
+    "uniqueEffect": "마법 피해 증폭 저항 1.5%, 마법 방어력 40",
+    "isUnique": true
+  },
+  {
+    "id": "legend_053",
+    "name": "솔리페르 금선 흉갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/legend_053.webp",
+    "stats": [
+      "방어력 518",
+      "원거리 관통 저항 51"
+    ]
+  },
+  {
+    "id": "legend_054",
+    "name": "노크타른 비늘 전투복",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/legend_054.webp",
+    "stats": [
+      "방어력 518",
+      "마법 관통 저항 51"
+    ]
+  },
+  {
+    "id": "legend_055",
+    "name": "비올라르 견갑 전투복",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/legend_055.webp",
+    "stats": [
+      "방어력 518",
+      "근거리 관통 저항 51"
+    ]
+  },
+  {
+    "id": "legend_056",
+    "name": "프로스텔 은빛 흉갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/legend_056.webp",
+    "stats": [
+      "방어력 468",
+      "원거리 관통 저항 46"
+    ]
+  },
+  {
+    "id": "legend_057",
+    "name": "산그리엘 가시 전투복",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/legend_057.webp",
+    "stats": [
+      "방어력 468",
+      "마법 관통 저항 46"
+    ]
+  },
+  {
+    "id": "legend_058",
+    "name": "카발리스 퀼팅 군복",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "상의",
+    "icon": "assets/items/legend_058.webp",
+    "stats": [
+      "방어력 468",
+      "근거리 관통 저항 46"
+    ]
+  },
+  {
+    "id": "legend_059",
+    "name": "우르발트 백골 전투갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/legend_059.webp",
+    "stats": [
+      "방어력 558",
+      "원거리 치명타 피해 감소 7.13%"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_060",
+    "name": "아스테렌 가득 찬 달의 하의",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/legend_060.webp",
+    "stats": [
+      "방어력 558",
+      "마법 치명타 피해 감소 7.13%"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_061",
+    "name": "움브란 야행 가죽 바지",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/legend_061.webp",
+    "stats": [
+      "방어력 558",
+      "마법 치명타 피해 감소 7.13%"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_062",
+    "name": "둠카렌 체인 각갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/legend_062.webp",
+    "stats": [
+      "방어력 558",
+      "근거리 치명타 피해 감소 7.13%"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_063",
+    "name": "심판의 아비스칸 다리갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/legend_063.webp",
+    "stats": [
+      "방어력 558",
+      "원거리 치명타 피해 감소 7.13%"
+    ],
+    "uniqueEffect": "근거리 피해 증폭 저항 1.5%, 근거리 방어력 40",
+    "isUnique": true
+  },
+  {
+    "id": "legend_064",
+    "name": "심판의 아퀼렌 금익 기사복",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/legend_064.webp",
+    "stats": [
+      "방어력 558",
+      "마법 치명타 피해 감소 7.13%"
+    ],
+    "uniqueEffect": "원거리 피해 증폭 저항 1.5%, 원거리 방어력 40",
+    "isUnique": true
+  },
+  {
+    "id": "legend_065",
+    "name": "심판의 카엘리스 의전 하의",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/legend_065.webp",
+    "stats": [
+      "방어력 558",
+      "근거리 치명타 피해 감소 7.13%"
+    ],
+    "uniqueEffect": "마법 피해 증폭 저항 1.5%, 마법 방어력 40",
+    "isUnique": true
+  },
+  {
+    "id": "legend_066",
+    "name": "겔리디스 비늘 다리갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/legend_066.webp",
+    "stats": [
+      "방어력 432",
+      "원거리 치명타 피해 감소 5.49%"
+    ]
+  },
+  {
+    "id": "legend_067",
+    "name": "그리페리온 금익 기사복",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/legend_067.webp",
+    "stats": [
+      "방어력 432",
+      "마법 치명타 피해 감소 5.49%"
+    ]
+  },
+  {
+    "id": "legend_068",
+    "name": "모르타니스 암관 법의",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/legend_068.webp",
+    "stats": [
+      "방어력 432",
+      "근거리 치명타 피해 감소 5.49%"
+    ]
+  },
+  {
+    "id": "legend_069",
+    "name": "루비칸 은갑 하의",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/legend_069.webp",
+    "stats": [
+      "방어력 390",
+      "원거리 치명타 피해 감소 5.01%"
+    ]
+  },
+  {
+    "id": "legend_070",
+    "name": "루노칸 룬 전투복",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/legend_070.webp",
+    "stats": [
+      "방어력 390",
+      "마법 치명타 피해 감소 5.01%"
+    ]
+  },
+  {
+    "id": "legend_071",
+    "name": "리갈디스 의전 하의",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "하의",
+    "icon": "assets/items/legend_071.webp",
+    "stats": [
+      "방어력 390",
+      "근거리 치명타 피해 감소 5.01%"
+    ]
+  },
+  {
+    "id": "legend_072",
+    "name": "우르발트 뼈스파이크 장갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/legend_072.webp",
+    "stats": [
+      "명중 481",
+      "관통 65"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_073",
+    "name": "아스테렌 성월 가죽 장갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/legend_073.webp",
+    "stats": [
+      "명중 481",
+      "일반 공격 피해 증폭 2.1%"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_074",
+    "name": "움브란 가죽 장갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/legend_074.webp",
+    "stats": [
+      "명중 481",
+      "일반 공격 피해 증폭 2.1%"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_075",
+    "name": "둠카렌 청석 건틀릿",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/legend_075.webp",
+    "stats": [
+      "명중 481",
+      "스킬 피해 증폭 2.1%"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_076",
+    "name": "심판의 베노칸 건틀릿",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/legend_076.webp",
+    "stats": [
+      "명중 481",
+      "관통 65"
+    ],
+    "uniqueEffect": "근거리 공격력 30, 근거리 피해 감소 무시 7",
+    "isUnique": true
+  },
+  {
+    "id": "legend_077",
+    "name": "심판의 디비나렌 금익 장갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/legend_077.webp",
+    "stats": [
+      "명중 481",
+      "일반 공격 피해 증폭 2.1%"
+    ],
+    "uniqueEffect": "원거리 공격력 30, 원거리 피해 감소 무시 7",
+    "isUnique": true
+  },
+  {
+    "id": "legend_078",
+    "name": "심판의 시데리엘 장갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/legend_078.webp",
+    "stats": [
+      "명중 481",
+      "스킬 피해 증폭 2.1%"
+    ],
+    "uniqueEffect": "마법 공격력 30, 마법 피해 감소 무시 7",
+    "isUnique": true
+  },
+  {
+    "id": "legend_079",
+    "name": "바실렌 익갑 건틀릿",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/legend_079.webp",
+    "stats": [
+      "명중 372",
+      "관통 51"
+    ]
+  },
+  {
+    "id": "legend_080",
+    "name": "테네리스 흑석 장갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/legend_080.webp",
+    "stats": [
+      "명중 372",
+      "일반 공격 피해 증폭 1.6%"
+    ]
+  },
+  {
+    "id": "legend_081",
+    "name": "플로리엔 궁정 장갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/legend_081.webp",
+    "stats": [
+      "명중 372",
+      "스킬 피해 증폭 1.6%"
+    ]
+  },
+  {
+    "id": "legend_082",
+    "name": "스쿠타렌 비늘 건틀릿",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/legend_082.webp",
+    "stats": [
+      "명중 336",
+      "관통 46"
+    ]
+  },
+  {
+    "id": "legend_083",
+    "name": "토파리엔 가시 장갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/legend_083.webp",
+    "stats": [
+      "명중 336",
+      "일반 공격 피해 증폭 1.5%"
+    ]
+  },
+  {
+    "id": "legend_084",
+    "name": "누미스칸 은화 장갑",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "장갑",
+    "icon": "assets/items/legend_084.webp",
+    "stats": [
+      "명중 336",
+      "스킬 피해 증폭 1.5%"
+    ]
+  },
+  {
+    "id": "legend_085",
+    "name": "우르발트 모피 전투화",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/legend_085.webp",
+    "stats": [
+      "이동 속도 9.3%",
+      "원거리 피해 감소 19"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_086",
+    "name": "아스테렌 은월 폴렌화",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/legend_086.webp",
+    "stats": [
+      "이동 속도 9.3%",
+      "마법 피해 감소 19"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_087",
+    "name": "움브란 무음 가죽 장화",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/legend_087.webp",
+    "stats": [
+      "이동 속도 9.3%",
+      "마법 피해 감소 19"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_088",
+    "name": "둠카렌 고딕 철갑부츠",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/legend_088.webp",
+    "stats": [
+      "이동 속도 9.3%",
+      "근거리 피해 감소 19"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_089",
+    "name": "심판의 스티기렌 철갑부츠",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/legend_089.webp",
+    "stats": [
+      "이동 속도 9.3%",
+      "원거리 피해 감소 19"
+    ],
+    "uniqueEffect": "상태 이상 저항 1%, 근거리 관통 저항 30",
+    "isUnique": true
+  },
+  {
+    "id": "legend_090",
+    "name": "심판의 리가멘 장화",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/legend_090.webp",
+    "stats": [
+      "이동 속도 9.3%",
+      "마법 피해 감소 19"
+    ],
+    "uniqueEffect": "상태 이상 저항 1%, 원거리 관통 저항 30",
+    "isUnique": true
+  },
+  {
+    "id": "legend_091",
+    "name": "심판의 코로넬 의전화",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/legend_091.webp",
+    "stats": [
+      "이동 속도 9.3%",
+      "근거리 피해 감소 19"
+    ],
+    "uniqueEffect": "상태 이상 저항 1%, 마법 관통 저항 30",
+    "isUnique": true
+  },
+  {
+    "id": "legend_092",
+    "name": "모르페니스 각반",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/legend_092.webp",
+    "stats": [
+      "이동 속도 7.2%",
+      "원거리 피해 감소 15"
+    ]
+  },
+  {
+    "id": "legend_093",
+    "name": "켈티론 금장 가죽부츠",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/legend_093.webp",
+    "stats": [
+      "이동 속도 7.2%",
+      "마법 피해 감소 15"
+    ]
+  },
+  {
+    "id": "legend_094",
+    "name": "솔레니스 장화",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/legend_094.webp",
+    "stats": [
+      "이동 속도 7.2%",
+      "근거리 피해 감소 15"
+    ]
+  },
+  {
+    "id": "legend_095",
+    "name": "아우로칸 용각 각반",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/legend_095.webp",
+    "stats": [
+      "이동 속도 6.5%",
+      "원거리 피해 감소 13"
+    ]
+  },
+  {
+    "id": "legend_096",
+    "name": "칼카렌 금장 장화",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/legend_096.webp",
+    "stats": [
+      "이동 속도 6.5%",
+      "마법 피해 감소 13"
+    ]
+  },
+  {
+    "id": "legend_097",
+    "name": "미스티렌 부츠",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "신발",
+    "icon": "assets/items/legend_097.webp",
+    "stats": [
+      "이동 속도 6.5%",
+      "근거리 피해 감소 13"
+    ]
+  },
+  {
+    "id": "legend_098",
+    "name": "우르발트 야수피 망토",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/legend_098.webp",
+    "stats": [
+      "회피 482",
+      "원거리 방어력 74"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_099",
+    "name": "아스테렌 은월 망토",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/legend_099.webp",
+    "stats": [
+      "회피 482",
+      "마법 방어력 74"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_100",
+    "name": "움브란 칠흑 망토",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/legend_100.webp",
+    "stats": [
+      "회피 482",
+      "마법 방어력 74"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_101",
+    "name": "둠카렌 흑익 망토",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/legend_101.webp",
+    "stats": [
+      "회피 482",
+      "근거리 방어력 74"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_102",
+    "name": "심판의 크리살렌 견장 망토",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/legend_102.webp",
+    "stats": [
+      "회피 482",
+      "원거리 방어력 74"
+    ],
+    "uniqueEffect": "근거리 회피 40, 근거리 치명타 저항 70",
+    "isUnique": true
+  },
+  {
+    "id": "legend_103",
+    "name": "심판의 디비나르 의전 케이프",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/legend_103.webp",
+    "stats": [
+      "회피 482",
+      "마법 방어력 74"
+    ],
+    "uniqueEffect": "원거리 회피 40, 원거리 치명타 저항 70",
+    "isUnique": true
+  },
+  {
+    "id": "legend_104",
+    "name": "심판의 펜나리스 깃 망토",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/legend_104.webp",
+    "stats": [
+      "회피 482",
+      "근거리 방어력 74"
+    ],
+    "uniqueEffect": "마법 회피 40, 근거리 치명타 저항 70",
+    "isUnique": true
+  },
+  {
+    "id": "legend_105",
+    "name": "크리미엘 녹깃 금장 망토",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/legend_105.webp",
+    "stats": [
+      "회피 373",
+      "원거리 방어력 57"
+    ]
+  },
+  {
+    "id": "legend_106",
+    "name": "노크탈리스 야행 케이프",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/legend_106.webp",
+    "stats": [
+      "회피 373",
+      "마법 방어력 57"
+    ]
+  },
+  {
+    "id": "legend_107",
+    "name": "실바렌스 대례 망토",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/legend_107.webp",
+    "stats": [
+      "회피 373",
+      "근거리 방어력 57"
+    ]
+  },
+  {
+    "id": "legend_108",
+    "name": "아메티스 가시 견장 망토",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/legend_108.webp",
+    "stats": [
+      "회피 336",
+      "원거리 방어력 52"
+    ]
+  },
+  {
+    "id": "legend_109",
+    "name": "프레다토르 가시 케이프",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/legend_109.webp",
+    "stats": [
+      "회피 336",
+      "마법 방어력 52"
+    ]
+  },
+  {
+    "id": "legend_110",
+    "name": "오블리아 동전 망토",
+    "grade": "전설",
+    "category": "방어구",
+    "type": "망토",
+    "icon": "assets/items/legend_110.webp",
+    "stats": [
+      "회피 336",
+      "근거리 방어력 52"
+    ]
+  },
+  {
+    "id": "legend_111",
+    "name": "우르발트 메달리온 뼈 목걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/legend_111.webp",
+    "stats": [
+      "피해 감소 37"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_112",
+    "name": "아스테렌 은월 사슬 목걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/legend_112.webp",
+    "stats": [
+      "피해 감소 37"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_113",
+    "name": "노크타른 쌍룡 에메랄드 목걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/legend_113.webp",
+    "stats": [
+      "피해 감소 37"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_114",
+    "name": "둠카렌 사파이어 콜라 목걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/legend_114.webp",
+    "stats": [
+      "피해 감소 37"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_115",
+    "name": "심판의 오르페디스 목걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/legend_115.webp",
+    "stats": [
+      "피해 감소 35"
+    ],
+    "uniqueEffect": "근거리 치명타 70, 근거리 피해 감소 무시 7",
+    "isUnique": true
+  },
+  {
+    "id": "legend_116",
+    "name": "군림의 크나르실 목걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/legend_116.webp",
+    "stats": [
+      "피해 감소 35"
+    ],
+    "uniqueEffect": "원거리 치명타 70, 원거리 피해 감소 무시 7",
+    "isUnique": true
+  },
+  {
+    "id": "legend_117",
+    "name": "황혼의 탄나기스 목걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/legend_117.webp",
+    "stats": [
+      "피해 감소 35"
+    ],
+    "uniqueEffect": "마법 치명타 70, 마법 피해 감소 무시 7",
+    "isUnique": true
+  },
+  {
+    "id": "legend_118",
+    "name": "비르디엘 목걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/legend_118.webp",
+    "stats": [
+      "피해 감소 32"
+    ]
+  },
+  {
+    "id": "legend_119",
+    "name": "셀리안드 목걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "목걸이",
+    "icon": "assets/items/legend_119.webp",
+    "stats": [
+      "피해 감소 29"
+    ]
+  },
+  {
+    "id": "legend_120",
+    "name": "우르발트 뼈다발 귀걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/legend_120.webp",
+    "stats": [
+      "최대 MP 2,688"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_121",
+    "name": "아스테렌 쌍월 귀걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/legend_121.webp",
+    "stats": [
+      "최대 MP 2,688"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_122",
+    "name": "노크타른 에메랄드 귀걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/legend_122.webp",
+    "stats": [
+      "최대 MP 2,688"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_123",
+    "name": "둠카렌 사파이어 샹들리에 귀걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/legend_123.webp",
+    "stats": [
+      "최대 MP 2,688"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_124",
+    "name": "심판의 아퀼란 귀걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/legend_124.webp",
+    "stats": [
+      "최대 MP 2,560"
+    ],
+    "uniqueEffect": "상태 이상 적중 1%, 근거리 관통 30",
+    "isUnique": true
+  },
+  {
+    "id": "legend_125",
+    "name": "군림의 솔리안 귀걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/legend_125.webp",
+    "stats": [
+      "최대 MP 2,560"
+    ],
+    "uniqueEffect": "상태 이상 적중 1%, 원거리 관통 30",
+    "isUnique": true
+  },
+  {
+    "id": "legend_126",
+    "name": "황혼의 카에룰 귀걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/legend_126.webp",
+    "stats": [
+      "최대 MP 2,560"
+    ],
+    "uniqueEffect": "상태 이상 적중 1%, 마법 관통 30",
+    "isUnique": true
+  },
+  {
+    "id": "legend_127",
+    "name": "셀리스타 귀걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/legend_127.webp",
+    "stats": [
+      "최대 MP 2,304"
+    ]
+  },
+  {
+    "id": "legend_128",
+    "name": "에르세넬 귀걸이",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "귀걸이",
+    "icon": "assets/items/legend_128.webp",
+    "stats": [
+      "최대 MP 2,080"
+    ]
+  },
+  {
+    "id": "legend_129",
+    "name": "우르발트 룬 인장반지",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/legend_129.webp",
+    "stats": [
+      "피해 감소 무시 34"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_130",
+    "name": "아스테렌 쌍월 반지",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/legend_130.webp",
+    "stats": [
+      "피해 감소 무시 34"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_131",
+    "name": "노크타른 쌍룡 에메랄드 반지",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/legend_131.webp",
+    "stats": [
+      "피해 감소 무시 34"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_132",
+    "name": "둠카렌 사파이어 화관 반지",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/legend_132.webp",
+    "stats": [
+      "피해 감소 무시 34"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_133",
+    "name": "심판의 블루투겔 반지",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/legend_133.webp",
+    "stats": [
+      "피해 감소 무시 32"
+    ],
+    "uniqueEffect": "공격 적중 시 5% 확률로 5초 동안 관통 70 증가 (쿨타임 23초)",
+    "isUnique": true,
+    "uniqueName": "이단 감별"
+  },
+  {
+    "id": "legend_134",
+    "name": "군림의 펜리발트 반지",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/legend_134.webp",
+    "stats": [
+      "피해 감소 무시 32"
+    ],
+    "uniqueEffect": "공격 적중 시 5% 확률로 5초 동안 공격 속도 6.5%, 시전 속도 5% 증가 (쿨타임 23초)",
+    "isUnique": true,
+    "uniqueName": "불가침의 서약"
+  },
+  {
+    "id": "legend_135",
+    "name": "황혼의 아쉬나르 반지",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/legend_135.webp",
+    "stats": [
+      "피해 감소 무시 32"
+    ],
+    "uniqueEffect": "공격 적중 시 5% 확률로 5초 동안 치명타 피해 6% 증가 (쿨타임 23초)",
+    "isUnique": true,
+    "uniqueName": "침묵의 파동"
+  },
+  {
+    "id": "legend_136",
+    "name": "루미엘라 반지",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/legend_136.webp",
+    "stats": [
+      "피해 감소 무시 29"
+    ]
+  },
+  {
+    "id": "legend_137",
+    "name": "프리엘가 반지",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "반지",
+    "icon": "assets/items/legend_137.webp",
+    "stats": [
+      "피해 감소 무시 26"
+    ]
+  },
+  {
+    "id": "legend_138",
+    "name": "우르발트 발톱술 허리띠",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/legend_138.webp",
+    "stats": [
+      "최대 HP 12,096"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_139",
+    "name": "아스테렌 은월 허리띠",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/legend_139.webp",
+    "stats": [
+      "최대 HP 12,096"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_140",
+    "name": "노크타른 생명수 허리띠",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/legend_140.webp",
+    "stats": [
+      "최대 HP 12,096"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_141",
+    "name": "둠카렌 흑익 허리띠",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/legend_141.webp",
+    "stats": [
+      "최대 HP 12,096"
+    ],
+    "isSet": true
+  },
+  {
+    "id": "legend_142",
+    "name": "심판의 나디르자르 허리띠",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/legend_142.webp",
+    "stats": [
+      "최대 HP 11,520"
+    ],
+    "uniqueEffect": "피격 시 5% 확률로 7초 동안 회피 60 증가 (쿨타임 30초)",
+    "isUnique": true,
+    "uniqueName": "전장 통솔"
+  },
+  {
+    "id": "legend_143",
+    "name": "군림의 레오반트 허리띠",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/legend_143.webp",
+    "stats": [
+      "최대 HP 11,520"
+    ],
+    "uniqueEffect": "피격 시 5% 확률로 7초 동안 상태 이상 저항 5%, 이동 속도 7% 증가 (쿨타임 30초)",
+    "isUnique": true,
+    "uniqueName": "귀족의 위신"
+  },
+  {
+    "id": "legend_144",
+    "name": "황혼의 발크헤른 허리띠",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/legend_144.webp",
+    "stats": [
+      "최대 HP 11,520"
+    ],
+    "uniqueEffect": "피격 시 5% 확률로 HP 600 회복 (쿨타임 30초)",
+    "isUnique": true,
+    "uniqueName": "가문의 긍지"
+  },
+  {
+    "id": "legend_145",
+    "name": "볼트렌 허리띠",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/legend_145.webp",
+    "stats": [
+      "최대 HP 10,368"
+    ]
+  },
+  {
+    "id": "legend_146",
+    "name": "노크테른 허리띠",
+    "grade": "전설",
+    "category": "장신구",
+    "type": "허리띠",
+    "icon": "assets/items/legend_146.webp",
+    "stats": [
+      "최대 HP 9,079"
+    ]
   }
 ]

@@ -3809,7 +3809,7 @@ const closed=classWeekClosed(), canStart=closed;
             const fields = [
                 ['길드 총 다이아',d.total],['백 단위 절사 다이아',d.truncated],['운영진 분배 ('+(db.participationSystem?.ratios?.operations??20)+'%)',d.expense],
                 ['길드 여유 자금 ('+(db.participationSystem?.ratios?.reserve??5)+'%)',d.reserve],['길드원 총 참여 점수',d.points],
-                ['보스 배정 다이아',d.bossPool],['쟁 배정 다이아',d.warPool],['보스 1점당 다이아',d.unit],['총 배정·분배 금액',d.distributed]
+                ['보스 분배',d.bossPool],['쟁 분배',d.warPool],['보스 1점당 다이아',d.unit],['총 분배 다이아',d.distributed]
             ];
             container.innerHTML = fields.map(([label,value])=>`<div class="flex justify-between gap-2"><span>${label}</span><strong class="text-amber-300">${Number(value).toLocaleString()}${label.includes('점수')?'점':' 다이아'}</strong></div>`).join('');
             const edit = document.getElementById('diamond-admin-edit');
